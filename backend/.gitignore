@@ -39,7 +39,7 @@ build/
 .vscode/
 
 ### application.properties ###
-application-test.properties
+application-dev.yml
 
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,maven,windows,macos
 

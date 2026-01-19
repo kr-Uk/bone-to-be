@@ -1,0 +1,92 @@
+spring:
+  application:
+    name: backend
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+  ##################################
+  # Datasource
+  ##################################
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:app}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+
+  ##################################
+  # JPA
+  ##################################
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  ##################################
+  # Mail (SMTP)
+  ##################################
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:app-password}
+    default-encoding: UTF-8
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  ##################################
+  # RabbitMQ
+  ##################################
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_VHOST:/}
+
+    listener:
+      simple:
+        acknowledge-mode: manual
+        concurrency: 3
+        max-concurrency: 10
+        prefetch: 10
+
+  ##################################
+  # Jackson
+  ##################################
+  jackson:
+    time-zone: Asia/Seoul
+
+server:
+  port: 8080
+
+##################################
+# Logging
+##################################
+logging:
+  level:
+    root: INFO
+    com.yourcompany.backend: DEBUG
+
+##################################
+# Actuator
+##################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

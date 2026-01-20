@@ -13,7 +13,7 @@ axiosInstance.interceptors.request.use(
   function (config) {
     return config;
   },
-  function (error) {
+  function (error: AxiosError) {
     return Promise.reject(error);
   },
 );

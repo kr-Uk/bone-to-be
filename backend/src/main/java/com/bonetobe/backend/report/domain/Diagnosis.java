@@ -1,6 +1,5 @@
 package com.bonetobe.backend.report.domain;
 
-import com.bonetobe.backend.common.BaseEntity;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.Getter;

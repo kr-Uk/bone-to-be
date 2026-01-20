@@ -1,5 +1,13 @@
+import MainPage from "./pages/mainpage/MainPage";
+import { GlobalStyle } from "./shared/styles/globalStyle";
+
 function App() {
-  return <div>Open console to check mock response</div>;
+  return (
+    <>
+      <GlobalStyle />
+      <MainPage />
+    </>
+  );
 }
 
 export default App;

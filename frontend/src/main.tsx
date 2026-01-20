@@ -2,8 +2,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import "./index.css";
-import App from "./App";
+import { RouterProvider } from "react-router-dom";
+
 import { QueryProvider } from "@/app/providers/QueryProvider";
+import { router } from "@/app/router/routes";
 
 async function enableMocking() {
   if (import.meta.env.MODE !== "development") return;
@@ -28,13 +30,10 @@ async function enableMocking() {
 async function bootstrap() {
   await enableMocking();
 
-  console.log("MODE:", import.meta.env.MODE);
-  console.log("VITE_API_MOCKING:", import.meta.env.VITE_API_MOCKING);
-
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <QueryProvider>
-        <App />
+        <RouterProvider router={router} />
       </QueryProvider>
     </StrictMode>,
   );

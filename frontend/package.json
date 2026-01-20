@@ -6,10 +6,20 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "preview": "vite preview"
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@tanstack/react-query": "5.90.16",
@@ -22,6 +32,7 @@
     "zustand": "5.0.9"
   },
   "devDependencies": {
+    "@commitlint/types": "^20.3.1",
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
@@ -39,6 +50,7 @@
     "globals": "^16.5.0",
     "msw": "2.12.7",
     "prettier": "^3.8.0",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "7.2.4"

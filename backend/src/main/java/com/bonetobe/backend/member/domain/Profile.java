@@ -18,8 +18,8 @@ public class Profile extends BaseEntity {
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -31,7 +31,7 @@ public class Profile extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SkeletonType type;
 
-    public Profile(Member member) {
-        this.member = Objects.requireNonNull(member);
+    public Profile(User user) {
+        this.user = Objects.requireNonNull(user);
     }
 }

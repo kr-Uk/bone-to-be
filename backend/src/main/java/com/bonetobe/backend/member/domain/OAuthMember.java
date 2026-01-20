@@ -22,8 +22,8 @@ public class OAuthMember extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)

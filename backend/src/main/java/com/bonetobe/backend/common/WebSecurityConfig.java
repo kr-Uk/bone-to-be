@@ -83,7 +83,14 @@ public class WebSecurityConfig {
                             response.getWriter().write("{\"message\": \"로그아웃 성공\"}");
                         })
                         .invalidateHttpSession(true)
-                );
+                )
+
+                .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.getWriter().write("{\"code\": 401, \"message\": \"인증이 필요합니다. (또는 잘못된 접근입니다.)\"}");
+                    }));
 
         return http.build();
     }

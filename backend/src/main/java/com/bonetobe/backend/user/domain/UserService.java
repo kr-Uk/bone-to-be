@@ -25,13 +25,18 @@ public class UserService {
 
     @Transactional
     public Long save(AddUserRequest dto) {
-        // 1. 비밀번호와 비밀번호 확인 일치 검사
+        // 1. 비밀번호 일치 검사
         if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        // 2. 이메일 중복 검사 (이메일을 아이디로 사용)
-        validateDuplicateEmail(dto.getEmail());
+        // 2. 이메일 및 닉네임 중복 최종 검사 (재사용)
+        if (existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
+        if (existsByNickname(dto.getNickname())) {
+            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+        }
 
         // 3. 엔티티 생성 및 저장
         User user = User.builder()

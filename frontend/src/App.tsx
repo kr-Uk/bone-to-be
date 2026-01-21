@@ -1,13 +1,7 @@
 import MainPage from "./pages/mainpage/MainPage";
-import { GlobalStyle } from "./shared/styles/globalStyle";
 
 function App() {
-  return (
-    <>
-      <GlobalStyle />
-      <MainPage />
-    </>
-  );
+  return <MainPage />;
 }
 
 export default App;

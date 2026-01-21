@@ -8,7 +8,7 @@ import BodySpecsInput from "./components/BodySpecsInput";
 import DiagnosisLeftPanel from "./components/DiagnosisLeftPanel";
 import FavoriteStyleSelector from "./components/FavoriteStyleSelector";
 import GenderSelection from "./components/GenderSelection";
-import MobileHeader from "./components/MobileHeader";
+import { MobileHeaderContent, MobileHeaderTop } from "./components/MobileHeader";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -36,10 +36,11 @@ const FormContainer = styled.div`
   max-width: 28rem;
   margin: 0 auto;
   width: 100%;
+  gap: ${({ theme }) => theme.spacing.xxl};
 `;
 
 const FormSection = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  /* margin-bottom: ${({ theme }) => theme.spacing.xl}; */
 `;
 
 const StartButton = styled.button`
@@ -64,7 +65,7 @@ const StartButton = styled.button`
 
 const BasicInfoPage = () => {
   const navigate = useNavigate();
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const [gender, setGender] = useState<"women" | "men">("women");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
@@ -95,20 +96,16 @@ const BasicInfoPage = () => {
               bone structure.
             </>
           }
-          description={
-            <>
-              정확한 AI 골격분석을 위해 기본 정보를 입력해주세요.
-              <br />
-              입력된 데이터는, 운영중..
-            </>
-          }
+          description={<>정확한 AI 골격분석을 위해 기본 정보를 입력해주세요.</>}
         />
       )}
 
       <RightPanel>
-        {!isDesktop && <MobileHeader stepLabel="STEP 01" title="Basic Info" />}
+        {!isDesktop && <MobileHeaderTop />}
 
         <FormContainer>
+          {!isDesktop && <MobileHeaderContent stepLabel="STEP 01" title="Basic Info" />}
+
           <FormSection>
             <GenderSelection gender={gender} onGenderChange={setGender} />
           </FormSection>

@@ -4,8 +4,9 @@ const Container = styled.div``;
 
 const Label = styled.label`
   display: block;
-  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
+  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
+  /* font-weight: ${({ theme }) => theme.typography.body.sm.semibold.fontWeight}; */
+  font-weight: 700;
   color: ${({ theme }) => theme.colors.gray[600]};
   margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
@@ -13,22 +14,49 @@ const Label = styled.label`
 const InputGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: ${({ theme }) => theme.spacing.md};
+  gap: ${({ theme }) => theme.spacing.xl};
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
+
+const InputLabel = styled.label`
+  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
+  color: ${({ theme }) => theme.colors.gray[500]};
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 0.5rem;
+  padding: ${({ theme }) => theme.spacing.sm} 0;
+  border: none;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  background: transparent;
+  font-size: ${({ theme }) => theme.typography.body.lg.regular.fontSize};
+  color: ${({ theme }) => theme.colors.text};
 
   &:focus {
     outline: none;
-    border-color: ${({ theme }) => theme.colors.primary};
+    border-bottom-color: ${({ theme }) => theme.colors.primary};
   }
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray[400]};
+  }
+
+  /* Hide number input spinner */
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
 `;
 
@@ -45,22 +73,53 @@ const BodySpecsInput = ({
   onHeightChange,
   onWeightChange,
 }: BodySpecsInputProps) => {
+  const handleInputChange = (value: string, onChange: (value: string) => void) => {
+    // 빈 값 허용
+    if (value === "") {
+      onChange("");
+      return;
+    }
+
+    // 숫자만 허용하고 최대 3자리까지
+    const numericValue = value.replace(/\D/g, "");
+    if (numericValue.length <= 3) {
+      onChange(numericValue);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // 음수 기호(-), e, +, . 입력 방지
+    if (e.key === "-" || e.key === "e" || e.key === "+" || e.key === ".") {
+      e.preventDefault();
+    }
+  };
+
   return (
     <Container>
       <Label>BODY SPECS</Label>
       <InputGrid>
-        <Input
-          type="number"
-          placeholder="Height (cm)"
-          value={height}
-          onChange={(e) => onHeightChange(e.target.value)}
-        />
-        <Input
-          type="number"
-          placeholder="Weight (kg)"
-          value={weight}
-          onChange={(e) => onWeightChange(e.target.value)}
-        />
+        <InputWrapper>
+          <InputLabel>Height (cm)</InputLabel>
+          <Input
+            type="number"
+            value={height}
+            onChange={(e) => handleInputChange(e.target.value, onHeightChange)}
+            onKeyDown={handleKeyDown}
+            min="0"
+            max="999"
+          />
+        </InputWrapper>
+        <InputWrapper>
+          <InputLabel>Weight (kg)</InputLabel>
+          <Input
+            type="number"
+            value={weight}
+            onChange={(e) => handleInputChange(e.target.value, onWeightChange)}
+            onKeyDown={handleKeyDown}
+            min="0"
+            max="999"
+          />
+        </InputWrapper>
       </InputGrid>
     </Container>
   );

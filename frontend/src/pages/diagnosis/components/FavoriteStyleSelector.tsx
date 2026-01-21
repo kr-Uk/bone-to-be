@@ -11,8 +11,9 @@ const StyleHeader = styled.div`
 
 const Label = styled.label`
   display: block;
-  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
+  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
+  /* font-weight: ${({ theme }) => theme.typography.body.sm.semibold.fontWeight}; */
+  font-weight: 700;
   color: ${({ theme }) => theme.colors.gray[600]};
 `;
 
@@ -28,11 +29,15 @@ const StyleOptions = styled.div`
 `;
 
 const StyleButton = styled.button<{ $selected: boolean }>`
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  padding: 10px 20px;
   border-radius: 9999px;
-  border: 1px solid ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.gray[300])};
-  background-color: ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.secondary)};
+  border: 1px solid
+    ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.gray[300])};
+  background-color: ${({ theme, $selected }) =>
+    $selected ? theme.colors.primary : theme.colors.secondary};
   color: ${({ theme, $selected }) => ($selected ? theme.colors.secondary : theme.colors.gray[600])};
+  font-size: ${({ theme }) => theme.typography.body.md.medium.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.md.medium.fontWeight};
   transition: all 0.2s;
   cursor: pointer;
 

@@ -4,7 +4,7 @@ const LeftPanel = styled.div`
   display: flex;
   background-color: ${({ theme }) => theme.colors.backgroundDark};
   color: ${({ theme }) => theme.colors.secondary};
-  padding: ${({ theme }) => theme.spacing.xxxl};
+  padding: ${({ theme }) => theme.spacing.xxl};
   flex-direction: column;
   justify-content: space-between;
   position: relative;
@@ -12,12 +12,8 @@ const LeftPanel = styled.div`
   width: 50%;
 `;
 
-const LeftPanelContent = styled.div``;
-
-const Logo = styled.h1`
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 8rem;
+const LeftPanelContent = styled.div`
+  margin-top: 80px;
 `;
 
 const LeftPanelText = styled.div`
@@ -33,10 +29,15 @@ const StepIndicator = styled.p`
 `;
 
 const Title = styled.h2`
-  font-size: ${({ theme }) => theme.typography.heading["3xl"].fontSize};
-  font-family: serif;
-  font-style: italic;
-  line-height: ${({ theme }) => theme.typography.heading["3xl"].lineHeight};
+  font-size: ${({ theme }) => theme.typography.heading["2xl"].fontSize};
+  font-weight: ${({ theme }) => theme.typography.heading["2xl"].fontWeight};
+  line-height: ${({ theme }) => theme.typography.heading["2xl"].lineHeight};
+
+  @media (min-width: 1024px) {
+    font-size: ${({ theme }) => theme.typography.heading["3xl"].fontSize};
+    font-weight: ${({ theme }) => theme.typography.heading["3xl"].fontWeight};
+    line-height: ${({ theme }) => theme.typography.heading["3xl"].lineHeight};
+  }
 `;
 
 const Description = styled.p`
@@ -86,7 +87,6 @@ const DiagnosisLeftPanel = ({
   return (
     <LeftPanel>
       <LeftPanelContent>
-        <Logo>BONE:TOBE</Logo>
         <LeftPanelText>
           <StepIndicator>{stepLabel}</StepIndicator>
           <Title>{title}</Title>

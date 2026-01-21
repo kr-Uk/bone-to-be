@@ -1,9 +1,5 @@
 import styled from "styled-components";
 
-const Container = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-`;
-
 const HeaderTop = styled.div`
   display: flex;
   justify-content: space-between;
@@ -23,6 +19,10 @@ const MenuButton = styled.button`
   cursor: pointer;
 `;
 
+const ContentWrapper = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+`;
+
 const StepIndicator = styled.p`
   font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
   color: ${({ theme }) => theme.colors.gray[500]};
@@ -34,22 +34,30 @@ const Title = styled.h2`
   font-style: italic;
 `;
 
-interface MobileHeaderProps {
-  stepLabel: string;
-  title: string;
+interface MobileHeaderTopProps {
+  className?: string;
 }
 
-const MobileHeader = ({ stepLabel, title }: MobileHeaderProps) => {
+export const MobileHeaderTop = ({ className }: MobileHeaderTopProps) => {
   return (
-    <Container>
-      <HeaderTop>
-        <Logo>BONE:TOBE</Logo>
-        <MenuButton>☰</MenuButton>
-      </HeaderTop>
-      <StepIndicator>{stepLabel}</StepIndicator>
-      <Title>{title}</Title>
-    </Container>
+    <HeaderTop className={className}>
+      <Logo>BONE:TOBE</Logo>
+      <MenuButton>☰</MenuButton>
+    </HeaderTop>
   );
 };
 
-export default MobileHeader;
+interface MobileHeaderContentProps {
+  stepLabel: string;
+  title: string;
+  className?: string;
+}
+
+export const MobileHeaderContent = ({ stepLabel, title, className }: MobileHeaderContentProps) => {
+  return (
+    <ContentWrapper className={className}>
+      <StepIndicator>{stepLabel}</StepIndicator>
+      <Title>{title}</Title>
+    </ContentWrapper>
+  );
+};

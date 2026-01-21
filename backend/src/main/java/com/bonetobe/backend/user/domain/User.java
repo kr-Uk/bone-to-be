@@ -36,12 +36,14 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String nickname;
 
     @Builder
-    public User(String email, String password, String auth) {
+    public User(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
     }
 
     @Override

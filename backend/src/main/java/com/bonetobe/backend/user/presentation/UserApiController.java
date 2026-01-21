@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +27,20 @@ public class UserApiController {
         return ResponseEntity
                 .status(SuccessCode.CREATED.getStatus())
                 .body(APIResponse.success(SuccessCode.CREATED, userId));
+    }
+
+    @GetMapping("/check/email")
+    public ResponseEntity<APIResponse<Map<String, Boolean>>> checkEmail(@RequestParam String email) {
+        boolean hasEmail = userService.existsByEmail(email);
+
+        return ResponseEntity.ok(
+                APIResponse.success(SuccessCode.OK, Map.of("hasEmail", hasEmail))
+        );
+    }
+
+    @GetMapping("/check/nickname")
+    public ResponseEntity<APIResponse<Boolean>> checkNickname(@RequestParam String nickname) {
+        boolean isDuplicate = userService.existsByNickname(nickname);
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, isDuplicate));
     }
 }

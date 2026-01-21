@@ -48,7 +48,7 @@ public class WebSecurityConfig {
 
                 // 2. HTTP 요청에 대한 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/signup", "/auth/user").permitAll() // 인증 없이 접근 가능
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
 

@@ -1,7 +1,47 @@
 stages:
-  - test
+  - deploy
 
-hello-job:
-  stage: test
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+
+build_frontend:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  only:
+    refs: [ main ]
+    changes: [ frontend/**/* ]
   script:
-    - echo "CI pipeline is working"
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
+    - docker build -f frontend/Dockerfile -t "$DOCKERHUB_USERNAME/frontend:${CI_COMMIT_SHORT_SHA}" ./frontend
+    - docker tag "$DOCKERHUB_USERNAME/frontend:${CI_COMMIT_SHORT_SHA}" "$DOCKERHUB_USERNAME/frontend:latest"
+    - docker push "$DOCKERHUB_USERNAME/frontend:${CI_COMMIT_SHORT_SHA}"
+    - docker push "$DOCKERHUB_USERNAME/frontend:latest"
+    - apk add --no-cache openssh-client
+    - chmod 600 "$SSH_PRIVATE_KEY"
+    - ssh -o StrictHostKeyChecking=no -i "$SSH_PRIVATE_KEY" $SSH_USER@$SSH_HOST \
+      "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN && \
+      docker-compose pull frontend && docker-compose up -d frontend"
+
+build_backend:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  only:
+    refs: [ main ]
+    changes: [ backend/**/* ]
+  script:
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
+    - docker build -f backend/Dockerfile -t "$DOCKERHUB_USERNAME/backend:${CI_COMMIT_SHORT_SHA}" ./backend
+    - docker tag "$DOCKERHUB_USERNAME/backend:${CI_COMMIT_SHORT_SHA}" "$DOCKERHUB_USERNAME/backend:latest"
+    - docker push "$DOCKERHUB_USERNAME/backend:${CI_COMMIT_SHORT_SHA}"
+    - docker push "$DOCKERHUB_USERNAME/backend:latest"
+    - apk add --no-cache openssh-client
+    - chmod 600 "$SSH_PRIVATE_KEY"
+    - ssh -o StrictHostKeyChecking=no -i "$SSH_PRIVATE_KEY" $SSH_USER@$SSH_HOST \
+      "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN && \
+      docker-compose pull backend && docker-compose up -d backend"

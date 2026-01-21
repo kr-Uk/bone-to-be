@@ -1,4 +1,4 @@
-package com.bonetobe.backend.member.domain;
+package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package com.bonetobe.backend.member.domain;
+package com.bonetobe.backend.user.domain;
 
 public enum OAuthProvider {
     GOOGLE, KAKAO

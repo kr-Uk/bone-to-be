@@ -3,7 +3,7 @@ package com.bonetobe.backend.post.domain;
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.common.domain.StoredFile;
-import com.bonetobe.backend.member.domain.User;
+import com.bonetobe.backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

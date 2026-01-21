@@ -13,7 +13,7 @@ const LeftPanel = styled.div`
 `;
 
 const LeftPanelContent = styled.div`
-  margin-top: 80px;
+  margin-top: 5rem;
 `;
 
 const LeftPanelText = styled.div`

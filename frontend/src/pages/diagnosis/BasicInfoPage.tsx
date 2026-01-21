@@ -17,14 +17,14 @@ const Container = styled.div`
 
 const RightPanel = styled.div`
   width: 100%;
-  background-color: #fff;
-  padding: 2rem;
+  background-color: ${({ theme }) => theme.colors.background};
+  padding: ${({ theme }) => theme.spacing.xl};
   display: flex;
   flex-direction: column;
 
   @media (min-width: 1024px) {
     width: 50%;
-    padding: 4rem;
+    padding: ${({ theme }) => theme.spacing.xxxl};
   }
 `;
 
@@ -39,26 +39,26 @@ const FormContainer = styled.div`
 `;
 
 const FormSection = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
 `;
 
 const StartButton = styled.button`
   width: 100%;
-  background-color: #000;
-  color: #fff;
-  padding: 1rem;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.secondary};
+  padding: ${({ theme }) => theme.spacing.md};
   border-radius: 9999px;
-  font-weight: 600;
+  font-weight: ${({ theme }) => theme.typography.body.lg.semibold.fontWeight};
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: ${({ theme }) => theme.spacing.sm};
 
   &:hover {
-    background-color: #1f2937;
+    background-color: ${({ theme }) => theme.colors.gray[800]};
   }
 `;
 

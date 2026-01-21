@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 const LeftPanel = styled.div`
   display: flex;
-  background-color: #000;
-  color: #fff;
-  padding: 4rem;
+  background-color: ${({ theme }) => theme.colors.backgroundDark};
+  color: ${({ theme }) => theme.colors.secondary};
+  padding: ${({ theme }) => theme.spacing.xxxl};
   flex-direction: column;
   justify-content: space-between;
   position: relative;
@@ -23,26 +23,26 @@ const Logo = styled.h1`
 const LeftPanelText = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const StepIndicator = styled.p`
-  font-size: 0.875rem;
-  color: #9ca3af;
+  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
+  color: ${({ theme }) => theme.colors.gray[400]};
   letter-spacing: 0.05em;
 `;
 
 const Title = styled.h2`
-  font-size: 3rem;
+  font-size: ${({ theme }) => theme.typography.heading["3xl"].fontSize};
   font-family: serif;
   font-style: italic;
-  line-height: 1.2;
+  line-height: ${({ theme }) => theme.typography.heading["3xl"].lineHeight};
 `;
 
 const Description = styled.p`
-  font-size: 0.875rem;
-  color: #9ca3af;
-  margin-top: 1.5rem;
+  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
+  color: ${({ theme }) => theme.colors.gray[400]};
+  margin-top: ${({ theme }) => theme.spacing.lg};
 `;
 
 const DecorativeBackground = styled.div`
@@ -55,19 +55,19 @@ const DecorativeBackground = styled.div`
 const PurplePlaceholder = styled.div`
   width: 100%;
   height: 100%;
-  background: purple;
+  background: ${({ theme }) => theme.colors.purple[600]};
   clip-path: ellipse(40% 50% at 50% 100%);
 `;
 
 const ProgressSteps = styled.div`
   display: flex;
-  gap: 2rem;
-  font-size: 0.875rem;
+  gap: ${({ theme }) => theme.spacing.xl};
+  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
 `;
 
 const ProgressStep = styled.span<{ $active?: boolean }>`
-  font-weight: ${(props) => (props.$active ? "bold" : "normal")};
-  color: ${(props) => (props.$active ? "#fff" : "#4b5563")};
+  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
+  color: ${({ theme, $active }) => ($active ? theme.colors.secondary : theme.colors.gray[600])};
 `;
 
 interface DiagnosisLeftPanelProps {

@@ -4,31 +4,31 @@ const Container = styled.div``;
 
 const Label = styled.label`
   display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #4b5563;
-  margin-bottom: 1rem;
+  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
+  color: ${({ theme }) => theme.colors.gray[600]};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 const InputGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 0.5rem;
 
   &:focus {
     outline: none;
-    border-color: #000;
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 
   &::placeholder {
-    color: #9ca3af;
+    color: ${({ theme }) => theme.colors.gray[400]};
   }
 `;
 

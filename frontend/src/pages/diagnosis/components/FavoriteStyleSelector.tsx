@@ -6,38 +6,38 @@ const StyleHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 const Label = styled.label`
   display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #4b5563;
+  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
+  color: ${({ theme }) => theme.colors.gray[600]};
 `;
 
 const StyleHint = styled.span`
-  font-size: 0.75rem;
-  color: #9ca3af;
+  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
+  color: ${({ theme }) => theme.colors.gray[400]};
 `;
 
 const StyleOptions = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const StyleButton = styled.button<{ $selected: boolean }>`
-  padding: 0.5rem 1rem;
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
   border-radius: 9999px;
-  border: 1px solid ${(props) => (props.$selected ? "#000" : "#d1d5db")};
-  background-color: ${(props) => (props.$selected ? "#000" : "#fff")};
-  color: ${(props) => (props.$selected ? "#fff" : "#4b5563")};
+  border: 1px solid ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.gray[300])};
+  background-color: ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.secondary)};
+  color: ${({ theme, $selected }) => ($selected ? theme.colors.secondary : theme.colors.gray[600])};
   transition: all 0.2s;
   cursor: pointer;
 
   &:hover {
-    border-color: #000;
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
 

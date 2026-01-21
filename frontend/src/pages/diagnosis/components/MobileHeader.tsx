@@ -1,19 +1,19 @@
 import styled from "styled-components";
 
 const Container = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
 `;
 
 const HeaderTop = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 const Logo = styled.h1`
-  font-size: 1.25rem;
-  font-weight: bold;
+  font-size: ${({ theme }) => theme.typography.heading.sm.fontSize};
+  font-weight: ${({ theme }) => theme.typography.heading.sm.fontWeight};
 `;
 
 const MenuButton = styled.button`
@@ -24,8 +24,8 @@ const MenuButton = styled.button`
 `;
 
 const StepIndicator = styled.p`
-  font-size: 0.875rem;
-  color: #6b7280;
+  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
+  color: ${({ theme }) => theme.colors.gray[500]};
 `;
 
 const Title = styled.h2`

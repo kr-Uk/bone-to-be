@@ -4,40 +4,40 @@ const Container = styled.div``;
 
 const Label = styled.label`
   display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #4b5563;
-  margin-bottom: 1rem;
+  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
+  color: ${({ theme }) => theme.colors.gray[600]};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 const GenderGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const GenderButton = styled.button<{ $selected: boolean }>`
-  padding: 1.5rem;
+  padding: ${({ theme }) => theme.spacing.lg};
   border-radius: 0.75rem;
-  border: 2px solid ${(props) => (props.$selected ? "#000" : "#e5e7eb")};
-  background-color: ${(props) => (props.$selected ? "#000" : "#fff")};
-  color: ${(props) => (props.$selected ? "#fff" : "#9ca3af")};
+  border: 2px solid ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.border)};
+  background-color: ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.secondary)};
+  color: ${({ theme, $selected }) => ($selected ? theme.colors.secondary : theme.colors.gray[400])};
   transition: all 0.2s;
   cursor: pointer;
 
   &:hover {
-    border-color: ${(props) => (props.$selected ? "#000" : "#d1d5db")};
+    border-color: ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.gray[300])};
   }
 `;
 
 const GenderLetter = styled.div`
   font-size: 1.875rem;
   font-weight: bold;
-  margin-bottom: 0.25rem;
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
 `;
 
 const GenderText = styled.div`
-  font-size: 0.875rem;
+  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
 `;
 
 interface GenderSelectionProps {

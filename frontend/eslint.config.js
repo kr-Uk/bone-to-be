@@ -40,6 +40,7 @@ export default [
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
       "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-misused-promises": "off",
 
       // import 정리
       "unused-imports/no-unused-imports": "error",

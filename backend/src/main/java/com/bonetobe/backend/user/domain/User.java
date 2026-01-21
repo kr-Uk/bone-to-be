@@ -1,6 +1,7 @@
 package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
+import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,14 +30,19 @@ public class User extends BaseEntity implements UserDetails {
     )
     private Profile profile;
 
-    @Embedded
-    private Email email;
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     private String nickname;
+
+    @Builder
+    public User(String email, String password, String auth) {
+        this.email = email;
+        this.password = password;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -45,7 +51,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email.getEmail();
+        return email;
     }
 
     @Override

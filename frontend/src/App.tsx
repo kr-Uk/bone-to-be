@@ -1,5 +1,7 @@
+import MainPage from "./pages/mainpage/MainPage";
+
 function App() {
-  return <div>Open console to check mock response</div>;
+  return <MainPage />;
 }
 
 export default App;

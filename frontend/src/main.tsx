@@ -1,11 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
 
 import "./index.css";
-import { RouterProvider } from "react-router-dom";
 
 import { QueryProvider } from "@/app/providers/QueryProvider";
 import { router } from "@/app/router/routes";
+import { GlobalStyle } from "@/shared/styles/globalStyle";
+import { theme } from "@/shared/styles/theme";
 
 async function enableMocking() {
   if (import.meta.env.MODE !== "development") return;
@@ -32,9 +35,12 @@ async function bootstrap() {
 
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
-      <QueryProvider>
-        <RouterProvider router={router} />
-      </QueryProvider>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <QueryProvider>
+          <RouterProvider router={router} />
+        </QueryProvider>
+      </ThemeProvider>
     </StrictMode>,
   );
 }

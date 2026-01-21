@@ -39,8 +39,11 @@ public class UserApiController {
     }
 
     @GetMapping("/check/nickname")
-    public ResponseEntity<APIResponse<Boolean>> checkNickname(@RequestParam String nickname) {
-        boolean isDuplicate = userService.existsByNickname(nickname);
-        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, isDuplicate));
+    public ResponseEntity<APIResponse<Map<String, Boolean>>> checkNickname(@RequestParam String nickname) {
+        boolean hasNickname = userService.existsByNickname(nickname);
+
+        return ResponseEntity.ok(
+                APIResponse.success(SuccessCode.OK, Map.of("hasNickname", hasNickname))
+        );
     }
 }

@@ -19,9 +19,7 @@ const MenuButton = styled.button`
   cursor: pointer;
 `;
 
-const ContentWrapper = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-`;
+const ContentWrapper = styled.div``;
 
 const StepIndicator = styled.p`
   font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};

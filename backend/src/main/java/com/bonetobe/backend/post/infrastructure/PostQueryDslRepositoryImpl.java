@@ -22,7 +22,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.bonetobe.backend.common.domain.QStoredFile.storedFile;
+import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
 import static com.bonetobe.backend.user.domain.QProfile.profile;
 import static com.bonetobe.backend.post.domain.QPost.post;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
@@ -84,7 +84,10 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                 Projections.constructor(
                                         PostSummary.class,
                                         post.id,
-                                        storedFile.storagePath,
+                                        /*
+                                            TODO : 파일 서비스로 presigned 생성하여 삽입
+                                         */
+                                        storedFile.key,
                                         profile.gender.stringValue(),
                                         post.skeletonType,
                                         GroupBy.list(style.styleName.stringValue()),

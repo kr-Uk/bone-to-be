@@ -95,7 +95,6 @@ const CountdownNumber = styled.div`
 
 interface CameraPreviewProps {
   capturedImage: string | null;
-  isMirror?: boolean;
   showFlash: boolean;
   countdown?: number | null;
   onCaptureReady?: (captureFunc: () => string | null) => void;
@@ -105,7 +104,6 @@ interface CameraPreviewProps {
 
 const CameraPreview = ({
   capturedImage,
-  isMirror = true,
   showFlash,
   countdown,
   onCaptureReady,
@@ -116,7 +114,7 @@ const CameraPreview = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 새로운 hook: 카메라 시작, 프레임 캡처, 랜드마크 그리기 모두 처리
-  const { cameraActive, latestLandmarks } = usePoseDetection(videoRef, canvasRef, isMirror);
+  const { cameraActive, latestLandmarks } = usePoseDetection(videoRef, canvasRef);
 
   // 카메라 활성화 상태를 부모에게 전달
   useEffect(() => {

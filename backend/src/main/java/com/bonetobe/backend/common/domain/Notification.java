@@ -1,7 +1,7 @@
 package com.bonetobe.backend.common.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
-import com.bonetobe.backend.member.domain.Member;
+import com.bonetobe.backend.member.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
         name = "notification",
         indexes = {
                 // 특정 회원의 알림을 최신순으로 빠르게 조회하기 위한 복합 인덱스
-                @Index(name = "idx_notification_member_created", columnList = "member_id, created_at DESC")
+                @Index(name = "idx_notification_member_created", columnList = "user_id, created_at DESC")
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,8 +23,8 @@ public class Notification extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     private String message;

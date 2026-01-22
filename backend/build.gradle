@@ -25,15 +25,9 @@ repositories {
 }
 
 dependencies {
-    /**
-     * TODO : rabbitMQ 사용 시 해제
-     */
-//    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    /**
-     * TODO : redis 필요 시 주석 해제
-     */
-//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
 

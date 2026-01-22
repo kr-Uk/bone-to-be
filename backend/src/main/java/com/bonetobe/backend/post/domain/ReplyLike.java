@@ -1,7 +1,7 @@
 package com.bonetobe.backend.post.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
-import com.bonetobe.backend.member.domain.Member;
+import com.bonetobe.backend.member.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,6 +21,6 @@ public class ReplyLike extends BaseEntity {
     private Reply reply;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 }

@@ -7,15 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Member extends BaseEntity {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(
-            mappedBy = "member",
+            mappedBy = "user",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY

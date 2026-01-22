@@ -4,7 +4,7 @@ import com.bonetobe.backend.cloth.domain.Cloth;
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.common.domain.StoredFile;
-import com.bonetobe.backend.member.domain.Member;
+import com.bonetobe.backend.member.domain.User;
 import com.bonetobe.backend.report.domain.Report;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -24,8 +24,8 @@ public class Recommendation extends BaseEntity {
     private Report report;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")

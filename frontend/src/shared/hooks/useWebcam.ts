@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseWebcamReturn {
-  videoRef: React.RefObject<HTMLVideoElement>;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
   isActive: boolean;
   error: string | null;
   startCamera: () => Promise<void>;
@@ -21,8 +21,11 @@ export const useWebcam = (): UseWebcamReturn => {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: "user",
-          width: { ideal: 1080 },
-          height: { ideal: 1920 },
+          aspectRatio: { ideal: 1.333333 },
+          // width: { ideal: 1080 },
+          // height: { ideal: 1920 },
+          width: { ideal: 1280 },
+          height: { ideal: 960 },
         },
         audio: false,
       });
@@ -33,8 +36,7 @@ export const useWebcam = (): UseWebcamReturn => {
         setIsActive(true);
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to access camera";
+      const errorMessage = err instanceof Error ? err.message : "Failed to access camera";
       setError(errorMessage);
       setIsActive(false);
     }

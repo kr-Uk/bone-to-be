@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# 변경된 파일 확인
+CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# frontend 파일이 변경되었는지 확인
+if echo "$CHANGED_FILES" | grep -q "^frontend/"; then
+  echo "📦 Frontend files changed, running checks..."
+  cd frontend
+  npx.cmd lint-staged
+  pnpm run type-check
+  cd ..
+fi
+
+echo "✅ Pre-commit checks passed!"

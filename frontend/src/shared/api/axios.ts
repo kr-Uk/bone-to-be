@@ -1,0 +1,30 @@
+import axios, { type AxiosError } from "axios";
+
+export const baseURL =
+  import.meta.env.VITE_API_MOCKING === "enabled"
+    ? import.meta.env.VITE_MOCK_BASE_URL
+    : import.meta.env.VITE_BASE_URL;
+
+const axiosInstance = axios.create({
+  baseURL,
+});
+
+axiosInstance.interceptors.request.use(
+  function (config) {
+    return config;
+  },
+  function (error: AxiosError) {
+    return Promise.reject(error);
+  },
+);
+
+axiosInstance.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  async function (error: AxiosError) {
+    return Promise.reject(error);
+  },
+);
+
+export default axiosInstance;

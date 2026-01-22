@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Validating commit message..."
+
+# commitlint 실행 (Git root 기준)
+npx.cmd --no -- commitlint --edit $1
+
+echo "✅ Commit message is valid!"

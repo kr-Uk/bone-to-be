@@ -1,4 +1,8 @@
+import { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
+
+import { usePoseDetection } from "@/shared/hooks/usePoseDetection";
+import type { Results } from "@mediapipe/pose";
 
 const Container = styled.div`
   display: flex;
@@ -11,47 +15,32 @@ const PreviewWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 400px;
-  /* aspect-ratio: 9 / 16; */
   aspect-ratio: 3 / 4;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   border-radius: 1rem;
   overflow: hidden;
 `;
 
-const Video = styled.video<{ $hidden?: boolean }>`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: ${({ $hidden }) => ($hidden ? "none" : "block")};
+const Video = styled.video`
+  display: none;
 `;
 
-const CapturedImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const ErrorMessage = styled.div`
+const CapturedImage = styled.img<{ $show: boolean }>`
   position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing.md};
-  padding: ${({ theme }) => theme.spacing.xl};
-  text-align: center;
-  color: ${({ theme }) => theme.colors.secondary};
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
+  pointer-events: ${({ $show }) => ($show ? "auto" : "none")};
+  z-index: ${({ $show }) => ($show ? 2 : 0)};
 `;
 
-const ErrorTitle = styled.h3`
-  font-size: ${({ theme }) => theme.typography.body.lg.semibold.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.lg.semibold.fontWeight};
-`;
-
-const ErrorText = styled.p`
-  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
-  color: ${({ theme }) => theme.colors.gray[400]};
+const LandmarkCanvas = styled.canvas`
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 `;
 
 const LoadingOverlay = styled.div`
@@ -79,40 +68,99 @@ const FlashOverlay = styled.div`
   pointer-events: none;
 `;
 
+const countdownAnimation = keyframes`
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+`;
+
+const CountdownOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  pointer-events: none;
+`;
+
+const CountdownNumber = styled.div`
+  font-size: 8rem;
+  font-weight: bold;
+  color: ${({ theme }) => theme.colors.secondary};
+  animation: ${countdownAnimation} 0.3s ease-out;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+`;
+
 interface CameraPreviewProps {
   capturedImage: string | null;
-  videoRef: React.RefObject<HTMLVideoElement | null>;
-  isActive: boolean;
-  error: string | null;
+  isMirror?: boolean;
   showFlash: boolean;
+  countdown?: number | null;
+  onCaptureReady?: (captureFunc: () => string | null) => void;
+  onCameraActiveChange?: (isActive: boolean) => void;
+  onLandmarksUpdate?: (landmarks: Results | null) => void;
 }
 
 const CameraPreview = ({
   capturedImage,
-  videoRef,
-  isActive,
-  error,
+  isMirror = true,
   showFlash,
+  countdown,
+  onCaptureReady,
+  onCameraActiveChange,
+  onLandmarksUpdate,
 }: CameraPreviewProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // 새로운 hook: 카메라 시작, 프레임 캡처, 랜드마크 그리기 모두 처리
+  const { cameraActive, latestLandmarks } = usePoseDetection(videoRef, canvasRef, isMirror);
+
+  // 카메라 활성화 상태를 부모에게 전달
+  useEffect(() => {
+    onCameraActiveChange?.(cameraActive);
+  }, [cameraActive, onCameraActiveChange]);
+
+  // Landmarks 업데이트를 부모에게 전달
+  useEffect(() => {
+    onLandmarksUpdate?.(latestLandmarks);
+  }, [latestLandmarks, onLandmarksUpdate]);
+
+  // 캡처 함수를 부모 컴포넌트에 전달
+  useEffect(() => {
+    if (cameraActive && canvasRef.current && onCaptureReady) {
+      const captureFunc = () => {
+        if (!canvasRef.current) return null;
+        return canvasRef.current.toDataURL("image/jpeg", 0.95);
+      };
+      onCaptureReady(captureFunc);
+    }
+  }, [cameraActive, onCaptureReady]);
+
   return (
     <Container>
       <PreviewWrapper>
-        {capturedImage ? (
-          <CapturedImage src={capturedImage} alt="Captured" />
-        ) : (
-          <Video ref={videoRef} autoPlay playsInline muted />
+        {/* 비디오는 숨겨져 있음 (hook이 canvas에 그림) */}
+        <Video ref={videoRef} autoPlay playsInline muted />
+        {/* 캔버스에 비디오 + 랜드마크가 그려짐 (항상 렌더링) */}
+        <LandmarkCanvas ref={canvasRef} />
+
+        {/* 캡처된 이미지 오버레이 (있을 때만 보임) */}
+        {capturedImage && (
+          <CapturedImage $show={!!capturedImage} src={capturedImage} alt="Captured" />
         )}
 
-        {!capturedImage && !isActive && !error && (
+        {!capturedImage && !cameraActive && (
           <LoadingOverlay>카메라를 시작하는 중...</LoadingOverlay>
         )}
 
-        {error && (
-          <ErrorMessage>
-            <ErrorTitle>카메라 접근 실패</ErrorTitle>
-            <ErrorText>{error}</ErrorText>
-            <ErrorText>브라우저 설정에서 카메라 권한을 허용해주세요.</ErrorText>
-          </ErrorMessage>
+        {/* 카운트다운 오버레이 */}
+        {countdown && countdown > 0 && (
+          <CountdownOverlay>
+            <CountdownNumber key={countdown}>{countdown}</CountdownNumber>
+          </CountdownOverlay>
         )}
 
         {showFlash && <FlashOverlay />}

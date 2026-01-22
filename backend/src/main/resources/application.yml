@@ -77,6 +77,8 @@ spring:
 
 server:
   port: 8080
+  servlet:
+    context-path: /api
 
 ##################################
 # Logging
@@ -94,6 +96,3 @@ management:
     web:
       exposure:
         include: health,info
-springdoc:
-  swagger-ui:
-    path: /api/v3/api-docs

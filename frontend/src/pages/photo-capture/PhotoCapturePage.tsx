@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { useMediaQuery } from "@/shared/hooks";
+import { useMediaQuery, useWebcam } from "@/shared/hooks";
 
 import DiagnosisLeftPanel from "../diagnosis/components/DiagnosisLeftPanel";
 import { MobileHeaderContent, MobileHeaderTop } from "../diagnosis/components/MobileHeader";
@@ -50,10 +50,8 @@ const ModeButton = styled.button<{ $active: boolean }>`
   flex: 1;
   padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
   border-radius: 9999px;
-  background-color: ${({ theme, $active }) =>
-    $active ? theme.colors.primary : "transparent"};
-  color: ${({ theme, $active }) =>
-    $active ? theme.colors.secondary : theme.colors.gray[600]};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : "transparent")};
+  color: ${({ theme, $active }) => ($active ? theme.colors.secondary : theme.colors.gray[600])};
   font-size: ${({ theme }) => theme.typography.body.md.medium.fontSize};
   font-weight: ${({ theme }) => theme.typography.body.md.medium.fontWeight};
   transition: all 0.2s;
@@ -65,10 +63,18 @@ const ModeButton = styled.button<{ $active: boolean }>`
   }
 `;
 
-const ActionButton = styled.button`
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.secondary};
+`;
+
+const ActionButton = styled.button<{ $variant?: "primary" | "secondary" }>`
+  flex: 1;
+  background-color: ${({ theme, $variant }) =>
+    $variant === "secondary" ? theme.colors.gray[200] : theme.colors.primary};
+  color: ${({ theme, $variant }) =>
+    $variant === "secondary" ? theme.colors.gray[700] : theme.colors.secondary};
   padding: ${({ theme }) => theme.spacing.md};
   border-radius: 9999px;
   font-weight: ${({ theme }) => theme.typography.body.lg.semibold.fontWeight};
@@ -81,11 +87,13 @@ const ActionButton = styled.button`
   gap: ${({ theme }) => theme.spacing.sm};
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.gray[800]};
+    background-color: ${({ theme, $variant }) =>
+      $variant === "secondary" ? theme.colors.gray[300] : theme.colors.gray[800]};
   }
 
   &:disabled {
     background-color: ${({ theme }) => theme.colors.gray[300]};
+    color: ${({ theme }) => theme.colors.gray[500]};
     cursor: not-allowed;
   }
 `;
@@ -97,17 +105,56 @@ const PhotoCapturePage = () => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [mode, setMode] = useState<CaptureMode>("camera");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [showFlash, setShowFlash] = useState(false);
+
+  const { videoRef, isActive, error, startCamera, captureImage, stopCamera } = useWebcam();
+
+  useEffect(() => {
+    if (mode === "camera" && !capturedImage) {
+      startCamera();
+    } else {
+      stopCamera();
+    }
+  }, [mode, capturedImage, startCamera, stopCamera]);
 
   const handleCapture = () => {
+    if (mode === "camera") {
+      const imageData = captureImage();
+      if (imageData) {
+        // Flash effect
+        setShowFlash(true);
+        setTimeout(() => setShowFlash(false), 300);
+
+        // Vibration feedback (mobile)
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+
+        setCapturedImage(imageData);
+      }
+    }
+  };
+
+  const handleRetake = () => {
+    setCapturedImage(null);
+  };
+
+  const handleConfirm = () => {
     if (capturedImage) {
       // TODO: 다음 단계로 이동 (분석 페이지)
-      console.log("Image captured:", capturedImage);
+      console.log("Image confirmed:", capturedImage);
+      alert("이미지가 저장되었습니다! (다음 페이지 준비 중)");
       // navigate("/diagnosis/analysis");
     }
   };
 
   const handleImageSelect = (imageData: string) => {
     setCapturedImage(imageData);
+  };
+
+  const handleModeChange = (newMode: CaptureMode) => {
+    setMode(newMode);
+    setCapturedImage(null); // 모드 변경 시 캡처된 이미지 초기화
   };
 
   return (
@@ -142,24 +189,44 @@ const PhotoCapturePage = () => {
           {!isDesktop && <MobileHeaderContent stepLabel="STEP 02" title="Photo Scan" />}
 
           <ModeToggleWrapper>
-            <ModeButton $active={mode === "camera"} onClick={() => setMode("camera")}>
+            <ModeButton $active={mode === "camera"} onClick={() => handleModeChange("camera")}>
               📷 웹캠 촬영
             </ModeButton>
-            <ModeButton $active={mode === "upload"} onClick={() => setMode("upload")}>
+            <ModeButton $active={mode === "upload"} onClick={() => handleModeChange("upload")}>
               📁 이미지 업로드
             </ModeButton>
           </ModeToggleWrapper>
 
           {mode === "camera" ? (
-            <CameraPreview onCapture={handleImageSelect} />
+            <CameraPreview
+              capturedImage={capturedImage}
+              videoRef={videoRef}
+              isActive={isActive}
+              error={error}
+              showFlash={showFlash}
+            />
           ) : (
             <ImageUpload onImageSelect={handleImageSelect} />
           )}
 
-          <ActionButton onClick={handleCapture} disabled={!capturedImage}>
-            {mode === "camera" ? "촬영하기" : "다음 단계"}
-            <span>→</span>
-          </ActionButton>
+          {capturedImage ? (
+            <ButtonGroup>
+              <ActionButton $variant="secondary" onClick={handleRetake}>
+                ↺ 다시 {mode === "camera" ? "촬영" : "선택"}
+              </ActionButton>
+              <ActionButton onClick={handleConfirm}>
+                확인
+                <span>→</span>
+              </ActionButton>
+            </ButtonGroup>
+          ) : (
+            <ActionButton
+              onClick={handleCapture}
+              disabled={mode === "upload" || (mode === "camera" && !isActive)}
+            >
+              {mode === "camera" ? "📷 촬영하기" : "이미지를 업로드해주세요"}
+            </ActionButton>
+          )}
         </ContentContainer>
       </RightPanel>
     </Container>

@@ -1,7 +1,4 @@
-import { useEffect } from "react";
-import styled from "styled-components";
-
-import { useWebcam } from "@/shared/hooks";
+import styled, { keyframes } from "styled-components";
 
 const Container = styled.div`
   display: flex;
@@ -14,13 +11,21 @@ const PreviewWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 400px;
-  aspect-ratio: 9 / 16;
+  /* aspect-ratio: 9 / 16; */
+  aspect-ratio: 3 / 4;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   border-radius: 1rem;
   overflow: hidden;
 `;
 
-const Video = styled.video`
+const Video = styled.video<{ $hidden?: boolean }>`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: ${({ $hidden }) => ($hidden ? "none" : "block")};
+`;
+
+const CapturedImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -60,23 +65,45 @@ const LoadingOverlay = styled.div`
   font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
 `;
 
+const flashAnimation = keyframes`
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+`;
+
+const FlashOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: ${({ theme }) => theme.colors.secondary};
+  animation: ${flashAnimation} 0.3s ease-out;
+  pointer-events: none;
+`;
+
 interface CameraPreviewProps {
-  onCapture?: (imageData: string) => void;
+  capturedImage: string | null;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+  isActive: boolean;
+  error: string | null;
+  showFlash: boolean;
 }
 
-const CameraPreview = ({ onCapture }: CameraPreviewProps) => {
-  const { videoRef, isActive, error, startCamera } = useWebcam();
-
-  useEffect(() => {
-    startCamera();
-  }, [startCamera]);
-
+const CameraPreview = ({
+  capturedImage,
+  videoRef,
+  isActive,
+  error,
+  showFlash,
+}: CameraPreviewProps) => {
   return (
     <Container>
       <PreviewWrapper>
-        <Video ref={videoRef} autoPlay playsInline muted />
+        {capturedImage ? (
+          <CapturedImage src={capturedImage} alt="Captured" />
+        ) : (
+          <Video ref={videoRef} autoPlay playsInline muted />
+        )}
 
-        {!isActive && !error && (
+        {!capturedImage && !isActive && !error && (
           <LoadingOverlay>카메라를 시작하는 중...</LoadingOverlay>
         )}
 
@@ -84,11 +111,11 @@ const CameraPreview = ({ onCapture }: CameraPreviewProps) => {
           <ErrorMessage>
             <ErrorTitle>카메라 접근 실패</ErrorTitle>
             <ErrorText>{error}</ErrorText>
-            <ErrorText>
-              브라우저 설정에서 카메라 권한을 허용해주세요.
-            </ErrorText>
+            <ErrorText>브라우저 설정에서 카메라 권한을 허용해주세요.</ErrorText>
           </ErrorMessage>
         )}
+
+        {showFlash && <FlashOverlay />}
       </PreviewWrapper>
     </Container>
   );

@@ -12,12 +12,12 @@ const UploadArea = styled.div<{ $isDragging: boolean; $hasImage: boolean }>`
   position: relative;
   width: 100%;
   max-width: 400px;
-  aspect-ratio: 9 / 16;
+  /* aspect-ratio: 9 / 16; */
+  aspect-ratio: 3 / 4;
   background-color: ${({ theme, $hasImage }) =>
     $hasImage ? theme.colors.gray[900] : theme.colors.gray[100]};
   border: 2px dashed
-    ${({ theme, $isDragging }) =>
-      $isDragging ? theme.colors.primary : theme.colors.border};
+    ${({ theme, $isDragging }) => ($isDragging ? theme.colors.primary : theme.colors.border)};
   border-radius: 1rem;
   overflow: hidden;
   cursor: pointer;
@@ -178,12 +178,7 @@ const ImageUpload = ({ onImageSelect }: ImageUploadProps) => {
         )}
       </UploadArea>
 
-      <HiddenInput
-        id="file-input"
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-      />
+      <HiddenInput id="file-input" type="file" accept="image/*" onChange={handleFileChange} />
     </Container>
   );
 };

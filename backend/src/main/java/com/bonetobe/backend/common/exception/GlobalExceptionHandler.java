@@ -40,4 +40,21 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(APIResponse.fail(ErrorCode.BAD_REQUEST, e.getMessage()));
     }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusiness(BusinessException e) {
+        ErrorCode ec = e.getErrorCode();
+        return ResponseEntity
+            .status(ec.getStatus())
+            .body(new ErrorResponse(ec.getCode(), ec.getMessage()));
+    }
+
+    // 예상치 못한 에러 처리
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpected(Exception e) {
+
+        return ResponseEntity
+            .internalServerError()
+            .body(new ErrorResponse(9999, "서버 오류가 발생했습니다."));
+    }
 }

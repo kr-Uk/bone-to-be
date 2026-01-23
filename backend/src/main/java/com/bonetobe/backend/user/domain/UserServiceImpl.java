@@ -3,10 +3,12 @@ package com.bonetobe.backend.user.domain;
 import com.bonetobe.backend.user.infrastructure.UserRepository;
 import com.bonetobe.backend.user.presentation.AddUser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true) // 기본을 ReadOnly로 설정하여 성능 최적화
@@ -28,14 +30,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional // 쓰기 작업에만 별도의 트랜잭션 선언
     public AddUser.Response save(UserCreateCommand command) {
+        log.info("[회원가입 시작] email: {}, nickname: {}", command.email(), command.nickname());
+
         // 1. 비밀번호 일치 검사
         command.validate();
+        log.debug("비밀번호 일치 검증 완료: {}", command.email());
 
         // 2. 이메일 인증 여부 최종 검증 (Redis 확인)
         validateEmailVerification(command.email(), command.authCode());
+        log.debug("이메일 인증번호 검증 완료: {}", command.email());
 
         // 3. 중복 조회를 별도 private 메서드로 분리 (트랜잭션 전파 명확화)
         validateDuplication(command.email(), command.nickname());
+        log.debug("이메일 및 닉네임 중복 검증 완료: {}", command.email());
 
         // 4. 엔티티 생성 및 저장
         User user = User.createUser(
@@ -45,6 +52,8 @@ public class UserServiceImpl implements UserService {
         );
 
         User savedUser = userRepository.save(user);
+        log.info("[회원가입 완료] 성공 ID: {}, email: {}", savedUser.getId(), savedUser.getEmail());
+
         return AddUser.Response.from(savedUser);
     }
 

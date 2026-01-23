@@ -1,10 +1,11 @@
 package com.bonetobe.backend.post.presentation;
 
+import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.PaginatedResponse;
+import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.post.application.PostFacade;
-import com.bonetobe.backend.post.application.query.PostSummary;
-import com.bonetobe.backend.post.presentation.dto.PostDto;
-import com.bonetobe.backend.post.presentation.dto.PostListGetDto;
+import com.bonetobe.backend.post.domain.query.PostSummary;
+import com.bonetobe.backend.post.presentation.dto.PostListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,21 +18,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/feeds")
 public class PostController {
 
     private final PostFacade postFacade;
 
-    @GetMapping("/feeds")
-    public ResponseEntity<PaginatedResponse<PostDto>> getPostList(
-            @ModelAttribute PostListGetDto.Request request,
+    @GetMapping
+    public ResponseEntity<APIResponse<PaginatedResponse<PostListDto.Response>>> getPostList(
+            @ModelAttribute PostListDto.Request request,
             @PageableDefault(size = 20) Pageable pageable
     ) {
 
-        Page<PostSummary> summaryPage = postFacade.getPostList(request.toCondition(), pageable);
+        Page<PostSummary> summaryPage = postFacade.getPostList(request.toQuery(), pageable);
+        Page<PostListDto.Response> dtoPage = summaryPage.map(PostListDto.Response::of);
 
-        Page<PostDto> dtoPage = summaryPage.map(PostDto::of);
+        PaginatedResponse<PostListDto.Response> paginated = PaginatedResponse.createPaginatedResponse(dtoPage);
 
-        return ResponseEntity.ok(PaginatedResponse.createPaginatedResponse(dtoPage));
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, paginated));
     }
 }

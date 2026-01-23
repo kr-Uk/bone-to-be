@@ -1,17 +1,19 @@
-package com.bonetobe.backend.post.application.query;
+package com.bonetobe.backend.post.domain.query;
 
 import com.bonetobe.backend.common.SkeletonType;
-import com.bonetobe.backend.member.domain.Gender;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-public record PostSummaryRow(
+public record PostSummary(
         Long postId,
-        String storagePath,
-        Gender gender,
+        String imageUrl,
+        String gender,
         SkeletonType skeletonType,
+        List<String> style,
         Integer height,
         Integer weight,
+        boolean isLiked,
         LocalDateTime createdAt
 ) {
 }

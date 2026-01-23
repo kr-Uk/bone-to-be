@@ -3,6 +3,7 @@ package com.bonetobe.backend.post.presentation.dto;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.member.domain.Gender;
+import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;
 import com.bonetobe.backend.style.domain.StyleName;
@@ -22,16 +23,14 @@ public class PostListDto {
             List<String> style
     ) {
         public PostListQuery toQuery() {
-            validateSort(sort);
             validateRange(minHeight, maxHeight, minWeight, maxWeight);
 
+            PostSort parsedPostSort = parseSort(sort);
             Gender parsedGender = parseGender(gender);
             List<StyleName> parsedStyles = parseStyles(style);
 
-            String normalizedSort = (sort == null || sort.isBlank()) ? "latest" : sort.toLowerCase();
-
             return new PostListQuery(
-                    normalizedSort,
+                    parsedPostSort,
                     parsedGender,
                     minHeight,
                     maxHeight,
@@ -39,15 +38,6 @@ public class PostListDto {
                     maxWeight,
                     parsedStyles
             );
-        }
-
-        private static void validateSort(String sort) {
-            if (sort == null || sort.isBlank()) return;
-
-            String s = sort.trim().toLowerCase();
-            if (!s.equals("latest") && !s.equals("popular")) {
-                throw new BusinessException(ErrorCode.POST_LIST_INVALID_SORT);
-            }
         }
 
         private static void validateRange(
@@ -65,6 +55,17 @@ public class PostListDto {
             if (minWeight != null && maxWeight != null && minWeight > maxWeight) {
                 throw new BusinessException(ErrorCode.POST_LIST_INVALID_RANGE);
             }
+        }
+
+        private static PostSort parseSort(String sort) {
+            if (sort == null || sort.isBlank()) return PostSort.LATEST;
+
+            String s = sort.trim().toUpperCase();
+            return switch (s) {
+                case "POPULAR" -> PostSort.POPULAR;
+                case "LATEST" -> PostSort.LATEST;
+                default -> throw new BusinessException(ErrorCode.POST_LIST_INVALID_SORT);
+            };
         }
 
         private static Gender parseGender(String gender) {

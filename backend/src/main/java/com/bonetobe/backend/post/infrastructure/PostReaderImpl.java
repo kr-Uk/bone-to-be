@@ -14,7 +14,7 @@ public class PostReaderImpl implements PostReader {
     private final PostQueryDslRepository postQueryDslRepository;
 
     @Override
-    public Page<PostSummary> findPostList(PostListQuery condition, Pageable pageable) {
-        return postQueryDslRepository.findPostList(condition, pageable);
+    public Page<PostSummary> findPostList(PostListQuery query, Pageable pageable) {
+        return postQueryDslRepository.findPostList(query, pageable);
     }
 }

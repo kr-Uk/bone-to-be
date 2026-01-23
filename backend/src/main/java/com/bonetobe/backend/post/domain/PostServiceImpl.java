@@ -13,7 +13,7 @@ public class PostServiceImpl implements PostService{
 
     private final PostReader postReader;
     @Override
-    public Page<PostSummary> getPostList(PostListQuery condition, Pageable pageable) {
-        return postReader.findPostList(condition, pageable);
+    public Page<PostSummary> getPostList(PostListQuery query, Pageable pageable) {
+        return postReader.findPostList(query, pageable);
     }
 }

@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostService {
 
-    Page<PostSummary> getPostList(PostListQuery condition, Pageable pageable);
+    Page<PostSummary> getPostList(PostListQuery query, Pageable pageable);
 }

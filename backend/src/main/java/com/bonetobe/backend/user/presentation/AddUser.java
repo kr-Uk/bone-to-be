@@ -5,6 +5,7 @@ import com.bonetobe.backend.user.domain.UserCreateCommand;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -58,6 +59,36 @@ public class AddUser {
                     .email(user.getEmail())
                     .nickname(user.getNickname())
                     .build();
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class NicknameCheckResponse {
+        private boolean hasNickname;
+
+        public static NicknameCheckResponse from(boolean hasNickname) {
+            return new NicknameCheckResponse(hasNickname);
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class EmailCheckResponse {
+        private boolean hasEmail;
+
+        public static EmailCheckResponse from(boolean hasEmail) {
+            return new EmailCheckResponse(hasEmail);
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class EmailVerificationResponse {
+        private boolean isValid;
+
+        public static EmailVerificationResponse from(boolean isValid) {
+            return new EmailVerificationResponse(isValid);
         }
     }
 }

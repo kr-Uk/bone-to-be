@@ -21,20 +21,20 @@ public class UserApiController {
     private final EmailService emailService;
 
     @GetMapping("/check/nickname")
-    public ResponseEntity<APIResponse<Map<String, Boolean>>> checkNickname(@RequestParam String nickname) {
-        boolean hasNickname = userService.existsByNickname(nickname);
+    public ResponseEntity<APIResponse<AddUser.NicknameCheckResponse>> checkNickname(@RequestParam String nickname) {
+        boolean isDuplicated = userService.existsByNickname(nickname);
 
         return ResponseEntity.ok(
-                APIResponse.success(SuccessCode.OK, Map.of("hasNickname", hasNickname))
+                APIResponse.success(SuccessCode.OK, AddUser.NicknameCheckResponse.from(isDuplicated))
         );
     }
 
     @GetMapping("/check/email")
-    public ResponseEntity<APIResponse<Map<String, Boolean>>> checkEmail(@RequestParam String email) {
-        boolean hasEmail = userService.existsByEmail(email);
+    public ResponseEntity<APIResponse<AddUser.EmailCheckResponse>> checkEmail(@RequestParam String email) {
+        boolean isDuplicated = userService.existsByEmail(email);
 
         return ResponseEntity.ok(
-                APIResponse.success(SuccessCode.OK, Map.of("hasEmail", hasEmail))
+                APIResponse.success(SuccessCode.OK, AddUser.EmailCheckResponse.from(isDuplicated))
         );
     }
 
@@ -45,15 +45,14 @@ public class UserApiController {
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 
-    // 이메일 인증코드 확인
     @GetMapping("/email/validate")
-    public ResponseEntity<APIResponse<Map<String, Boolean>>> verifyEmailCode(
+    public ResponseEntity<APIResponse<AddUser.EmailVerificationResponse>> verifyEmailCode(
             @RequestParam String email,
             @RequestParam String code) {
 
         boolean isValid = emailService.verifyCode(email, code);
         return ResponseEntity.ok(
-                APIResponse.success(SuccessCode.OK, Map.of("isValid", isValid))
+                APIResponse.success(SuccessCode.OK, AddUser.EmailVerificationResponse.from(isValid))
         );
     }
 

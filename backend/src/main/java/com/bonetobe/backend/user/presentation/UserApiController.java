@@ -4,6 +4,7 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.EmailService;
 import com.bonetobe.backend.user.domain.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -57,16 +58,14 @@ public class UserApiController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<APIResponse<Long>> signup(@RequestBody AddUserRequest request) {
+    public ResponseEntity<APIResponse<AddUser.Response>> signup(@RequestBody @Valid AddUser.Request request) {
         log.info("회원가입 요청 수신: email={}", request.getEmail());
 
-        Long userId = userService.save(request.toCommand());
-        log.info("회원가입 완료: userId={}", userId);
+        AddUser.Response response = userService.save(request.toCommand());
+        log.info("회원가입 완료: userId={}", response.getId());
 
         return ResponseEntity
                 .status(SuccessCode.CREATED.getStatus())
-                .body(APIResponse.success(SuccessCode.CREATED, userId));
+                .body(APIResponse.success(SuccessCode.CREATED, response));
     }
-
-
 }

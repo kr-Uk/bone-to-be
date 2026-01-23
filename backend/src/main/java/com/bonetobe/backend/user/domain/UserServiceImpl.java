@@ -1,7 +1,7 @@
 package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.user.infrastructure.UserRepository;
-import com.bonetobe.backend.user.presentation.AddUserRequest;
+import com.bonetobe.backend.user.presentation.AddUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional // 쓰기 작업에만 별도의 트랜잭션 선언
-    public Long save(UserCreateCommand command) {
+    public AddUser.Response save(UserCreateCommand command) {
         // 1. 비밀번호 일치 검사
         command.validate();
 
@@ -44,7 +44,8 @@ public class UserServiceImpl implements UserService {
                 command.nickname()
         );
 
-        return userRepository.save(user).getId();
+        User savedUser = userRepository.save(user);
+        return AddUser.Response.from(savedUser);
     }
 
     /**

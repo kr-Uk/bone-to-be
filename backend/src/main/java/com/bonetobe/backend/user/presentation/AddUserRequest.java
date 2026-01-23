@@ -1,5 +1,6 @@
 package com.bonetobe.backend.user.presentation;
 
+import com.bonetobe.backend.user.domain.UserCreateCommand;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -28,4 +29,15 @@ public class AddUserRequest {
 
     @NotBlank(message = "비밀번호 확인을 입력해주세요.")
     private String passwordConfirm;
+
+
+    public UserCreateCommand toCommand() {
+        return UserCreateCommand.builder()
+                .email(email)
+                .password(password)
+                .passwordConfirm(passwordConfirm)
+                .nickname(nickname)
+                .authCode(authCode)
+                .build();
+    }
 }

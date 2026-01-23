@@ -3,7 +3,6 @@ package com.bonetobe.backend.common;
 import com.bonetobe.backend.user.domain.UserDetailService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,7 +10,6 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,14 +22,14 @@ public class WebSecurityConfig {
     private final UserDetailService userService;
 
     // 스프링 시큐리티 일부 기능 비활성화
-    @Bean
-    public WebSecurityCustomizer configure() {
-        return (web) -> web.ignoring()
-                // 스프링 부트가 제공하는 기본 정적 리소스 위치를 모두 무시
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                // H2 콘솔 경로 무시 (PathRequest 사용 권장)
-                .requestMatchers(PathRequest.toH2Console());
-    }
+//    @Bean
+//    public WebSecurityCustomizer configure() {
+//        return (web) -> web.ignoring()
+//                // 스프링 부트가 제공하는 기본 정적 리소스 위치를 모두 무시
+//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+//                // H2 콘솔 경로 무시 (PathRequest 사용 권장)
+//                .requestMatchers(PathRequest.toH2Console());
+//    }
 
     // 패스워드 인코더로 사용할 빈 등록
     @Bean

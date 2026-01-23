@@ -60,7 +60,7 @@ public class UserApiController {
     public ResponseEntity<APIResponse<Long>> signup(@RequestBody AddUserRequest request) {
         log.info("회원가입 요청 수신: email={}", request.getEmail());
 
-        Long userId = userService.save(request);
+        Long userId = userService.save(request.toCommand());
         log.info("회원가입 완료: userId={}", userId);
 
         return ResponseEntity

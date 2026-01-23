@@ -38,11 +38,11 @@ public class UserServiceImpl implements UserService {
         validateDuplication(command.email(), command.nickname());
 
         // 4. 엔티티 생성 및 저장
-        User user = User.builder()
-                .email(command.email())
-                .password(passwordEncoder.encode(command.password()))
-                .nickname(command.nickname())
-                .build();
+        User user = User.createUser(
+                command.email(),
+                passwordEncoder.encode(command.password()),
+                command.nickname()
+        );
 
         return userRepository.save(user).getId();
     }

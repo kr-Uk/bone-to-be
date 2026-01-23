@@ -39,11 +39,13 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String nickname;
 
-    @Builder
-    public User(String email, String password, String nickname) {
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
+    // 정적 팩토리 메서드 도입
+    public static User createUser(String email, String password, String nickname) {
+        User user = new User();
+        user.email = email;
+        user.password = password;
+        user.nickname = nickname;
+        return user;
     }
 
     @Override

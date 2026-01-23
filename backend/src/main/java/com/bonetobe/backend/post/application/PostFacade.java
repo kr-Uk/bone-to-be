@@ -16,8 +16,8 @@ public class PostFacade {
 
     private final PostService postService;
 
-    public Page<PostSummary> getPostList(PostListQuery condition, Pageable pageable) {
-        return postService.getPostList(condition, pageable);
+    public Page<PostSummary> getPostList(PostListQuery query, Pageable pageable) {
+        return postService.getPostList(query, pageable);
     }
 }
 

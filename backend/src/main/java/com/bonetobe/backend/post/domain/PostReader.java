@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PostReader {
-    Page<PostSummary> findPostList(PostListQuery condition, Pageable pageable);
+    Page<PostSummary> findPostList(PostListQuery query, Pageable pageable);
 }

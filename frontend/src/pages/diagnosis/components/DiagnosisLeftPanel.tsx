@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 const LeftPanel = styled.div`
   display: flex;
-  background-color: ${({ theme }) => theme.colors.backgroundDark};
+  background-color: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.secondary};
-  padding: ${({ theme }) => theme.spacing.xxl};
+  padding: 3rem;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
@@ -23,27 +23,30 @@ const LeftPanelText = styled.div`
 `;
 
 const StepIndicator = styled.p`
-  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
-  color: ${({ theme }) => theme.colors.gray[400]};
-  letter-spacing: 0.05em;
+  font-size: 1rem;
+  color: ${({ theme }) => theme.colors.purple[600]};
+  font-weight: 700;
+  line-height: 1rem;
+  letter-spacing: 0.15rem;
 `;
 
 const Title = styled.h2`
-  font-size: ${({ theme }) => theme.typography.heading["2xl"].fontSize};
-  font-weight: ${({ theme }) => theme.typography.heading["2xl"].fontWeight};
-  line-height: ${({ theme }) => theme.typography.heading["2xl"].lineHeight};
+  // font-size: ${({ theme }) => theme.typography.heading["2xl"].fontSize};
+  // font-weight: ${({ theme }) => theme.typography.heading["2xl"].fontWeight};
+  // line-height: ${({ theme }) => theme.typography.heading["2xl"].lineHeight};
 
   @media (min-width: 1024px) {
-    font-size: ${({ theme }) => theme.typography.heading["3xl"].fontSize};
-    font-weight: ${({ theme }) => theme.typography.heading["3xl"].fontWeight};
-    line-height: ${({ theme }) => theme.typography.heading["3xl"].lineHeight};
+    font-size: 3.75rem;
+    font-weight: 700;
+    line-height: 1.2;
   }
 `;
 
 const Description = styled.p`
   font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
-  color: ${({ theme }) => theme.colors.gray[400]};
-  margin-top: ${({ theme }) => theme.spacing.lg};
+  font-weight: 300;
+  line-height: 1.421875rem;
+  color: ${({ theme }) => theme.colors.gray[300]};
 `;
 
 const DecorativeBackground = styled.div`
@@ -76,6 +79,7 @@ interface DiagnosisLeftPanelProps {
   stepLabel: string;
   title: React.ReactNode;
   description: React.ReactNode;
+  onClose?: () => void;
 }
 
 const DiagnosisLeftPanel = ({
@@ -83,6 +87,7 @@ const DiagnosisLeftPanel = ({
   stepLabel,
   title,
   description,
+  
 }: DiagnosisLeftPanelProps) => {
   return (
     <LeftPanel>

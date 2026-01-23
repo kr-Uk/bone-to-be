@@ -65,13 +65,28 @@ const PurplePlaceholder = styled.div`
 
 const ProgressSteps = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing.xl};
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
   font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
 `;
 
 const ProgressStep = styled.span<{ $active?: boolean }>`
-  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
-  color: ${({ theme, $active }) => ($active ? theme.colors.secondary : theme.colors.gray[600])};
+  font-weight: ${({ $active }) => ($active ? "700" : "500")};
+  color: ${({ theme, $active }) => ($active ? theme.colors.gray[50] : theme.colors.gray[500])};
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+`;
+
+const StepNumber = styled.span<{ $active?: boolean }>`
+  font-weight: ${({ $active }) => ($active ? "700" : "500")};
+  color: ${({ theme, $active }) => ($active ? theme.colors.purple[600] : theme.colors.gray[500])};
+`;
+
+const StepSeparator = styled.div`
+  width: 2rem;
+  height: 1px;
+  background-color: ${({ theme }) => theme.colors.gray[700]};
 `;
 
 interface DiagnosisLeftPanelProps {
@@ -104,9 +119,17 @@ const DiagnosisLeftPanel = ({
       </DecorativeBackground>
 
       <ProgressSteps>
-        <ProgressStep $active={currentStep === 1}>01 Basic Info</ProgressStep>
-        <ProgressStep $active={currentStep === 2}>02 Photo Scan</ProgressStep>
-        <ProgressStep $active={currentStep === 3}>03 Analysis</ProgressStep>
+        <ProgressStep $active={currentStep === 1}>
+          <StepNumber $active={currentStep === 1}>01</StepNumber> Basic Info
+        </ProgressStep>
+        <StepSeparator />
+        <ProgressStep $active={currentStep === 2}>
+          <StepNumber $active={currentStep === 2}>02</StepNumber> Photo Scan
+        </ProgressStep>
+        <StepSeparator />
+        <ProgressStep $active={currentStep === 3}>
+          <StepNumber $active={currentStep === 3}>03</StepNumber> Analysis
+        </ProgressStep>
       </ProgressSteps>
     </LeftPanel>
   );

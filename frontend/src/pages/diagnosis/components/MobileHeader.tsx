@@ -1,5 +1,6 @@
-import DiagnosisHeader from "@/shared/components/DiagnosisHeader";
 import styled from "styled-components";
+
+import DiagnosisHeader from "@/shared/components/DiagnosisHeader";
 
 const ContentWrapper = styled.div``;
 

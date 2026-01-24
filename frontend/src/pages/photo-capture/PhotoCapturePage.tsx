@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { useMediaQuery, useWebcam } from "@/shared/hooks";
 
 import DiagnosisExplainSection from "../diagnosis/components/DiagnosisExplainSection";
+
 // import { MobileHeaderTop } from "../diagnosis/components/MobileHeader";
 import CameraPreview from "./components/CameraPreview";
 import ImageUpload from "./components/ImageUpload";
+
+import { useMediaQuery, useWebcam } from "@/shared/hooks";
+import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
 const Container = styled.div`
   min-height: calc(100vh - 5rem);
@@ -107,15 +110,22 @@ const ActionButton = styled.button<{ $variant?: "primary" | "secondary" }>`
 type CaptureMode = "camera" | "upload";
 
 const PhotoCapturePage = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { diagnosisData, setPhotoData } = useDiagnosisStore();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
-  // const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [mode, setMode] = useState<CaptureMode>("camera");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [showFlash, setShowFlash] = useState(false);
 
   const { videoRef, isActive, error, startCamera, captureImage, stopCamera } = useWebcam();
+
+  // BasicInfo 없으면 첫 페이지로 리다이렉트
+  useEffect(() => {
+    if (!diagnosisData.basicInfo) {
+      navigate("/diagnosis/basic-info", { replace: true });
+    }
+  }, [diagnosisData.basicInfo, navigate]);
 
   useEffect(() => {
     if (mode === "camera" && !capturedImage) {
@@ -149,9 +159,16 @@ const PhotoCapturePage = () => {
 
   const handleConfirm = () => {
     if (capturedImage) {
-      // TODO: 다음 단계로 이동 (분석 페이지)
-      console.log("Image confirmed:", capturedImage);
-      alert("이미지가 저장되었습니다! (다음 페이지 준비 중)");
+      setPhotoData(capturedImage);
+
+      // 콘솔에서 전체 데이터 확인
+      console.log("Complete diagnosis data:", {
+        basicInfo: diagnosisData.basicInfo,
+        photo: capturedImage,
+      });
+
+      // TODO: 서버 전송
+      alert("이미지가 저장되었습니다!");
       // navigate("/diagnosis/analysis");
     }
   };

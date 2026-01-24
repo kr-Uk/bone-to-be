@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { useMediaQuery } from "@/shared/hooks";
-import { BasicInfoExplainData } from "@/shared/constants/diagnosis";
 
 import BodySpecsInput from "./components/BodySpecsInput";
 import DiagnosisExplainSection from "./components/DiagnosisExplainSection";
 import FavoriteStyleSelector from "./components/FavoriteStyleSelector";
 import GenderSelection from "./components/GenderSelection";
+import { basicInfoSchema, type BasicInfoFormValues } from "./schemas/basicInfoSchema";
+
+import { BasicInfoExplainData } from "@/shared/constants/diagnosis";
+import { useMediaQuery } from "@/shared/hooks";
+import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -70,6 +74,19 @@ const StartButton = styled.button`
   &:hover {
     background-color: ${({ theme }) => theme.colors.gray[800]};
   }
+
+  &:disabled {
+    background-color: ${({ theme }) => theme.colors.gray[300]};
+    color: ${({ theme }) => theme.colors.gray[500]};
+    cursor: not-allowed;
+  }
+`;
+
+const ErrorMessage = styled.p`
+  color: #ef4444;
+  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
+  margin-top: ${({ theme }) => theme.spacing.xs};
+  padding-left: ${({ theme }) => theme.spacing.sm};
 `;
 
 
@@ -79,18 +96,51 @@ const BasicInfoPage = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
-  const [gender, setGender] = useState<"women" | "men">("women");
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
-  const [styles, setStyles] = useState<string[]>([]);
+  const setBasicInfo = useDiagnosisStore((state) => state.setBasicInfo);
+
+  const {
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<BasicInfoFormValues>({
+    resolver: zodResolver(basicInfoSchema),
+    mode: "onChange",
+    defaultValues: {
+      gender: "women",
+      height: "",
+      weight: "",
+      styles: [],
+    },
+  });
+
+  // 자식 컴포넌트에 전달할 값
+  const gender = watch("gender");
+  const height = watch("height");
+  const weight = watch("weight");
+  const styles = watch("styles");
 
   const toggleStyle = (style: string) => {
-    setStyles((prev) =>
-      prev.includes(style) ? prev.filter((s) => s !== style) : [...prev, style],
-    );
+    const currentStyles = watch("styles");
+    const newStyles = currentStyles.includes(style)
+      ? currentStyles.filter((s) => s !== style)
+      : [...currentStyles, style];
+    setValue("styles", newStyles, { shouldValidate: true });
   };
 
-  const handleStartScan = () => {
+  const onSubmit = (data: BasicInfoFormValues) => {
+    // API용 데이터로 변환 (string → number)
+    const apiData = {
+      gender: data.gender,
+      height: parseInt(data.height, 10),
+      weight: parseInt(data.weight, 10),
+      styles: data.styles,
+    };
+
+    // Zustand 스토어에 저장
+    setBasicInfo(apiData);
+
+    // 다음 단계로 이동
     navigate("/diagnosis/photo-capture");
   };
 
@@ -107,26 +157,34 @@ const BasicInfoPage = () => {
         variant={variant}
       />
       <FormContainer>
-        <FormSection>
-          <GenderSelection gender={gender} onGenderChange={setGender} />
-        </FormSection>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormSection>
+            <GenderSelection
+              gender={gender}
+              onGenderChange={(g) => setValue("gender", g, { shouldValidate: true })}
+            />
+            {errors.gender && <ErrorMessage>{errors.gender.message}</ErrorMessage>}
+          </FormSection>
 
-        <FormSection>
-          <BodySpecsInput
-            height={height}
-            weight={weight}
-            onHeightChange={setHeight}
-            onWeightChange={setWeight}
-          />
-        </FormSection>
+          <FormSection>
+            <BodySpecsInput
+              height={height}
+              weight={weight}
+              onHeightChange={(h) => setValue("height", h, { shouldValidate: true })}
+              onWeightChange={(w) => setValue("weight", w, { shouldValidate: true })}
+            />
+            {errors.height && <ErrorMessage>{errors.height.message}</ErrorMessage>}
+            {errors.weight && <ErrorMessage>{errors.weight.message}</ErrorMessage>}
+          </FormSection>
 
-        <FormSection>
-          <FavoriteStyleSelector styles={styles} onToggleStyle={toggleStyle} />
-        </FormSection>
+          <FormSection>
+            <FavoriteStyleSelector styles={styles} onToggleStyle={toggleStyle} />
+          </FormSection>
 
-        <StartButton onClick={handleStartScan}>
-          분석 시작하기 →
-        </StartButton>
+          <StartButton type="submit" disabled={!isValid}>
+            분석 시작하기 →
+          </StartButton>
+        </form>
       </FormContainer>
     </Container>
   );

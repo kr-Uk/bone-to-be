@@ -48,7 +48,8 @@ public class UserServiceImpl implements UserService {
         User user = User.createUser(
                 command.email(),
                 passwordEncoder.encode(command.password()),
-                command.nickname()
+                command.nickname(),
+                "USER"
         );
 
         User savedUser = userRepository.save(user);

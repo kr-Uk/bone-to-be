@@ -1,4 +1,4 @@
-package com.bonetobe.backend.member.domain;
+package com.bonetobe.backend.user.domain;
 
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;

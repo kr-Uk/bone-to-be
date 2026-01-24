@@ -32,17 +32,17 @@ const StyleButton = styled.button<{ $selected: boolean }>`
   padding: 10px 20px;
   border-radius: 9999px;
   border: 1px solid
-    ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.gray[300])};
+    ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.gray[200])};
   background-color: ${({ theme, $selected }) =>
-    $selected ? theme.colors.primary : theme.colors.secondary};
-  color: ${({ theme, $selected }) => ($selected ? theme.colors.secondary : theme.colors.gray[600])};
+    $selected ? theme.colors.purple[600] : ''};
+  color: ${({ theme, $selected }) => ($selected ? theme.colors.secondary : theme.colors.gray[300])};
   font-size: ${({ theme }) => theme.typography.body.md.medium.fontSize};
   font-weight: ${({ theme }) => theme.typography.body.md.medium.fontWeight};
   transition: all 0.2s;
   cursor: pointer;
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
+    border-color: ${({ theme }) => theme.colors.purple[600]};
   }
 `;
 
@@ -60,7 +60,7 @@ const FavoriteStyleSelector = ({
   return (
     <Container>
       <StyleHeader>
-        <Label>FAVORITE STYLE</Label>
+        <Label>선호하는 스타일</Label>
         <StyleHint>* 복수 선택 가능</StyleHint>
       </StyleHeader>
       <StyleOptions>

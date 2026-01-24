@@ -20,10 +20,10 @@ const GenderGrid = styled.div`
 const GenderButton = styled.button<{ $selected: boolean }>`
   padding: ${({ theme }) => theme.spacing.lg};
   border-radius: 0.75rem;
-  border: 2px solid
+  border: 1px solid
     ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.border)};
   background-color: ${({ theme, $selected }) =>
-    $selected ? theme.colors.primary : theme.colors.secondary};
+    $selected ? theme.colors.purple[600]: 'inherit'};
   color: ${({ theme, $selected }) => ($selected ? theme.colors.secondary : theme.colors.gray[400])};
   transition: all 0.2s;
   cursor: pointer;
@@ -52,7 +52,7 @@ interface GenderSelectionProps {
 const GenderSelection = ({ gender, onGenderChange }: GenderSelectionProps) => {
   return (
     <Container>
-      <Label>GENDER</Label>
+      <Label>성별</Label>
       <GenderGrid>
         <GenderButton $selected={gender === "women"} onClick={() => onGenderChange("women")}>
           <GenderLetter>W</GenderLetter>

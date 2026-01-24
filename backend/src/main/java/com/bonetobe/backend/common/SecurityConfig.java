@@ -17,19 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class WebSecurityConfig {
+public class SecurityConfig {
 
     private final UserDetailService userService;
-
-    // 스프링 시큐리티 일부 기능 비활성화
-//    @Bean
-//    public WebSecurityCustomizer configure() {
-//        return (web) -> web.ignoring()
-//                // 스프링 부트가 제공하는 기본 정적 리소스 위치를 모두 무시
-//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-//                // H2 콘솔 경로 무시 (PathRequest 사용 권장)
-//                .requestMatchers(PathRequest.toH2Console());
-//    }
 
     // 패스워드 인코더로 사용할 빈 등록
     @Bean
@@ -59,6 +49,8 @@ public class WebSecurityConfig {
                 // 3. 폼 로그인 설정
                 .formLogin(formLogin -> formLogin
                         .loginProcessingUrl("/auth/login") // 프론트에서 POST로 로그인을 요청할 주소
+                        .usernameParameter("email") // 아이디 파라미터명 email
+                        .passwordParameter("password")
                         .successHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
                             response.setContentType("application/json;charset=UTF-8");
@@ -67,14 +59,20 @@ public class WebSecurityConfig {
                         .failureHandler((request, response, exception) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write("{\"message\": \"로그인 실패: " + exception.getMessage() + "\"}");
-                        })
+                            response.getWriter().write("""
+                                        {
+                                          "code": 401,
+                                          "message": "이메일 또는 비밀번호가 올바르지 않습니다."
+                                        }
+                                    """);
+                         })
                         .permitAll()
                 )
 
                 // 6. 로그아웃 설정
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
+                        .deleteCookies("JSESSIONID") // 로그아웃 시 쿠키 삭제
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
                             response.setContentType("application/json;charset=UTF-8");
@@ -104,7 +102,7 @@ public class WebSecurityConfig {
 
         // 2. 사용자 세부 정보 서비스 설정 (DB에서 사용자 정보를 가져오는 역할)
         // 매개변수로 받은 userDetailService를 사용하여 DB와 연결
-        authProvider.setUserDetailsService(userService);
+        authProvider.setUserDetailsService(userDetailService);
 
         // 3. 비밀번호 검증을 위한 인코더 설정 (BCrypt 등을 사용하여 암호화된 비번 비교)
         authProvider.setPasswordEncoder(passwordEncoder);

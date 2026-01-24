@@ -71,7 +71,6 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
         }
 
         // 상세조회
-
         List<PostSummary> content = qf
                 .from(post)
                 .join(post.user.profile, profile)
@@ -79,6 +78,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 .leftJoin(postStyle).on(postStyle.post.eq(post))
                 .leftJoin(postStyle.style, style)
                 .where(post.id.in(postIds))
+                .orderBy(orderSpecifiers.toArray(OrderSpecifier[]::new))
                 .transform(
                         GroupBy.groupBy(post.id).list(
                                 Projections.constructor(

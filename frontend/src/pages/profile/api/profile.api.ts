@@ -1,6 +1,13 @@
 ﻿import axiosInstance from "../../../shared/api/axios";
 
-import type { BodyTypeHistoryItem, BodyTypeRatio, UserPost, UserProfile } from "./profile.types";
+import type {
+  BodyTypeHistoryItem,
+  BodyTypeRatio,
+  FollowModalType,
+  FollowUser,
+  UserPost,
+  UserProfile,
+} from "./profile.types";
 
 export interface UserPostDto {
   postID: number;
@@ -41,23 +48,41 @@ export interface UserProfileDto {
   saved: UserPostDto[];
 }
 
+export interface FollowUserDto {
+  id: string | number;
+  username: string;
+  styleTag?: string;
+  bio?: string;
+  avatarUrl?: string;
+  isFollowing?: boolean;
+}
+
 const mapPost = (post: UserPostDto): UserPost => ({
   postId: post.postID,
   imageUrl: post.image,
 });
 
+const mapFollowUser = (user: FollowUserDto): FollowUser => ({
+  id: String(user.id),
+  username: user.username,
+  styleTag: user.styleTag,
+  bio: user.bio,
+  avatarUrl: user.avatarUrl,
+  isFollowing: user.isFollowing,
+});
+
 const getFallbackRatio = (bodyType?: string): BodyTypeRatio => {
   const normalizedType = bodyType?.toLowerCase() ?? "";
 
-  if (normalizedType.includes("???") || normalizedType.includes("natural")) {
+  if (normalizedType.includes("내츄럴") || normalizedType.includes("natural")) {
     return { natural: 50, wave: 25, straight: 25 };
   }
 
-  if (normalizedType.includes("???") || normalizedType.includes("wave")) {
+  if (normalizedType.includes("웨이브") || normalizedType.includes("wave")) {
     return { natural: 25, wave: 50, straight: 25 };
   }
 
-  if (normalizedType.includes("?????") || normalizedType.includes("straight")) {
+  if (normalizedType.includes("스트레이트") || normalizedType.includes("straight")) {
     return { natural: 25, wave: 25, straight: 50 };
   }
 
@@ -142,10 +167,21 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
     bodyType: data.bodyType,
     bodyTypeRatio,
     profileMeta: getProfileMeta(data),
-    bio: data.bio,
+    bio: data.bio ?? "소개글이 없습니다.",
     isOwner: data.isOwner ?? false,
     bodyTypeHistory,
     posts: data.posts.map(mapPost),
     saved: data.saved.map(mapPost),
   };
+};
+
+const followEndpoint: Record<FollowModalType, string> = {
+  following: "/v1/users/following",
+  follower: "/v1/users/followers",
+};
+
+export const fetchFollowList = async (type: FollowModalType): Promise<FollowUser[]> => {
+  const { data } = await axiosInstance.get<FollowUserDto[]>(followEndpoint[type]);
+
+  return data.map(mapFollowUser);
 };

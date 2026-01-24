@@ -2,43 +2,47 @@
 
 const Wrapper = styled.header`
   width: 100%;
-  background: ${({ theme }) => theme.colors.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-  backdrop-filter: blur(2px);
+  background: var(--base-black, #0b0b0b);
+  border-bottom: 0.041875rem var(--neutral-600, #525252) solid;
+  backdrop-filter: blur(0.125rem);
 `;
 
 const Inner = styled.div`
-  max-width: 1280px;
-  height: 80px;
-  padding: 0 ${({ theme }) => theme.spacing.lg};
+  max-width: 120rem;
+  height: 5rem;
+  padding: 0 6.25rem;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 1024px) {
+    padding: 0 2rem;
+  }
 `;
 
 const Logo = styled.div`
-  color: ${({ theme }) => theme.colors.text};
-  font-size: ${({ theme }) => theme.typography.heading.sm.fontSize};
-  font-weight: ${({ theme }) => theme.typography.heading.sm.fontWeight};
-  line-height: ${({ theme }) => theme.typography.heading.sm.lineHeight};
+  color: var(--neutral-50, #fafafa);
+  font-size: 1.09375rem;
+  font-weight: 700;
+  line-height: 1.5625rem;
 `;
 
 const Nav = styled.nav`
   display: flex;
-  gap: ${({ theme }) => theme.spacing.xl};
+  gap: 1.5rem;
 `;
 
 const NavItem = styled.button`
-  color: ${({ theme }) => theme.colors.text};
-  font-size: ${({ theme }) => theme.typography.body.md.medium.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.md.medium.fontWeight};
-  line-height: ${({ theme }) => theme.typography.body.md.medium.lineHeight};
+  color: var(--neutral-300, #d4d4d4);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.25rem;
 `;
 
 const BellButton = styled.button`
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -46,13 +50,13 @@ const BellButton = styled.button`
 `;
 
 const BellIcon = styled.span`
-  width: 17px;
-  height: 19px;
+  width: 1.0625rem;
+  height: 1.1875rem;
   position: absolute;
-  left: 4px;
-  top: 2px;
-  border: 2px solid ${({ theme }) => theme.colors.text};
-  border-radius: 4px;
+  left: 0.25rem;
+  top: 0.125rem;
+  border: 0.125rem solid var(--neutral-50, #fafafa);
+  border-radius: 0.25rem;
 `;
 
 const ProfileNavbar = () => {

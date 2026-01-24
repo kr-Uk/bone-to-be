@@ -3,62 +3,66 @@ import styled from "styled-components";
 
 import { applySmoothing, getBodyTypeBadge, toPoint, toVertex } from "../hooks/useBodyTypeChart";
 
+import { Stack, Text } from "./ProfileCommon";
+
 import type { BodyTypeRatio } from "../api/profile.types";
 
 const Section = styled.section`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.lg};
+  gap: 2.46rem;
 `;
 
 const SectionHeader = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing.md};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  padding-bottom: 1.25rem;
+  border-bottom: 0.041875rem var(--neutral-600, #525252) solid;
 `;
 
-const Title = styled.h2`
-  color: ${({ theme }) => theme.colors.text};
-  font-size: ${({ theme }) => theme.typography.heading.sm.fontSize};
-  font-weight: ${({ theme }) => theme.typography.heading.sm.fontWeight};
-  line-height: ${({ theme }) => theme.typography.heading.sm.lineHeight};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
+const Title = styled(Text)`
+  color: var(--neutral-50, #fafafa);
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 2.5rem;
 `;
 
-const Subtitle = styled.p`
-  color: ${({ theme }) => theme.colors.textLight};
-  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.sm.regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.body.sm.regular.lineHeight};
-  margin-top: ${({ theme }) => theme.spacing.xs};
+const Subtitle = styled(Text)`
+  color: var(--neutral-500, #737373);
+  font-size: 1.09375rem;
+  font-weight: 400;
+  line-height: 1.5625rem;
+  margin-top: 0.375rem;
 `;
 
 const Card = styled.div`
-  padding: ${({ theme }) => theme.spacing.xl};
-  background: ${({ theme }) => theme.colors.gray[50]};
-  border-radius: 5px;
-  border: 1px solid ${({ theme }) => theme.colors.gray[200]};
+  padding: 1.875rem;
+  background: var(--neutral-900, #171717);
+  border-radius: 1.875rem;
+  outline: 0.0625rem var(--neutral-600, #525252) solid;
+  outline-offset: -0.0625rem;
   display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing.xxl};
+  align-items: center;
+  gap: 3.125rem;
+
+  @media (max-width: 1024px) {
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
 `;
 
 const ChartWrap = styled.div`
-  width: 192px;
-  height: 192px;
-  border-radius: 9999px;
-  background: ${({ theme }) => theme.colors.secondary};
-  border: 1px solid ${({ theme }) => theme.colors.gray[200]};
-  box-shadow: 0 1px 2px ${({ theme }) => theme.colors.gray[200]};
-  position: relative;
+  width: 12.5rem;
+  height: 12.5rem;
+  border-radius: 624.9375rem;
+  background: var(--base-black, black);
+  border: 0.0625rem var(--neutral-600, #525252) solid;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 const ChartInner = styled.div`
-  width: 140px;
-  height: 140px;
+  width: 8.75rem;
+  height: 8.75rem;
   position: relative;
 `;
 
@@ -68,89 +72,81 @@ const ChartSvg = styled.svg`
 `;
 
 const ChartTypeLabel = styled.text`
-  fill: ${({ theme }) => theme.colors.textLight};
-  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.sm.semibold.fontWeight};
+  fill: var(--neutral-500, #737373);
+  font-size: 0.9375rem;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 `;
 
 const TriangleOutline = styled.polygon`
   fill: none;
-  stroke: ${({ theme }) => theme.colors.gray[300]};
-  stroke-width: 1.2;
+  stroke: var(--neutral-600, #525252);
+  stroke-width: 2.8;
   stroke-dasharray: 4 4;
 `;
 
 const TriangleFill = styled.polygon`
-  fill: ${({ theme }) => theme.colors.gray[900]};
+  fill: var(--color-brand-primary-900, #59168b);
   opacity: 0.15;
 `;
 
 const TriangleStroke = styled.polygon`
-  fill: ${({ theme }) => theme.colors.gray[800]};
-  stroke: ${({ theme }) => theme.colors.primary};
-  stroke-width: 1.6;
+  fill: none;
+  stroke: var(--color-bg-brand, #9810fa);
+  stroke-width: 2;
 `;
 
-const Details = styled.div`
+const Details = styled(Stack)`
   flex: 1;
-  min-height: 192px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing.sm};
+  gap: 1.5rem;
 `;
 
 const LatestBadge = styled.span`
   align-self: flex-start;
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
-  background: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.sm.semibold.fontWeight};
-  line-height: ${({ theme }) => theme.typography.body.sm.semibold.lineHeight};
+  padding: 0.3125rem 0.625rem;
+  background: var(--color-bg-brand, #9810fa);
+  color: var(--neutral-50, #fafafa);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 0.9375rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  border-radius: 0.15625rem;
 `;
 
-const TypeTitle = styled.h3`
-  color: ${({ theme }) => theme.colors.text};
-  font-size: ${({ theme }) => theme.typography.heading.lg.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.md.medium.fontWeight};
-  line-height: ${({ theme }) => theme.typography.heading.lg.lineHeight};
+const TypeTitle = styled(Text)`
+  color: var(--neutral-50, #fafafa);
+  font-size: 1.5625rem;
+  font-weight: 700;
+  line-height: 2.1875rem;
 `;
 
-const TypeDescription = styled.p`
-  color: ${({ theme }) => theme.colors.textLight};
-  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.md.regular.fontWeight};
-  line-height: 1.6;
+const TypeDescription = styled(Text)`
+  color: var(--neutral-300, #d4d4d4);
+  font-size: 1.09375rem;
+  font-weight: 400;
+  line-height: 1.5625rem;
 `;
 
 const PrivateBadge = styled.div`
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  background: ${({ theme }) => theme.colors.secondary};
-  border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.colors.gray[200]};
-`;
-const TypeTextGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
+  gap: 0.625rem;
+  padding: 0.625rem 0.9375rem;
+  background: var(--neutral-900, #171717);
+  border-radius: 0.5rem;
+  outline: 0.0625rem var(--neutral-600, #525252) solid;
+  outline-offset: -0.0625rem;
+  color: var(--neutral-500, #737373);
 `;
 
-
-
-const PrivateText = styled.span`
-  color: ${({ theme }) => theme.colors.gray[400]};
-  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.sm.regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.body.sm.regular.lineHeight};
+const PrivateText = styled(Text)`
+  color: inherit;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
 `;
 
 interface SkeletalTypeSectionProps {
@@ -195,8 +191,8 @@ const SkeletalTypeSection = ({ bodyType, bodyTypeRatio }: SkeletalTypeSectionPro
   return (
     <Section>
       <SectionHeader>
-        <Title>Skeletal Type</Title>
-        <Subtitle>이 유저의 최근 골격 진단 결과입니다.</Subtitle>
+        <Title as="h2">Skeletal Type</Title>
+        <Subtitle as="p">이 유저의 최근 골격 진단 결과입니다.</Subtitle>
       </SectionHeader>
       <Card>
         <ChartWrap>
@@ -213,16 +209,14 @@ const SkeletalTypeSection = ({ bodyType, bodyTypeRatio }: SkeletalTypeSectionPro
         </ChartWrap>
         <Details>
           <LatestBadge>Latest Analysis</LatestBadge>
-
-          <TypeTextGroup>
-            <TypeTitle>{typeTitle}</TypeTitle>
-            <TypeDescription>
+          <Stack $gap="0.625rem">
+            <TypeTitle as="h3">{typeTitle}</TypeTitle>
+            <TypeDescription as="p">
               뼈대가 뚜렷하고 프레임이 단단한 체형.
               <br />
               루즈하고 자연스러운 실루엣이 가장 잘 어울립니다.
             </TypeDescription>
-          </TypeTextGroup>
-
+          </Stack>
           <PrivateBadge>
             <CiLock />
             <PrivateText>Detailed report is private</PrivateText>

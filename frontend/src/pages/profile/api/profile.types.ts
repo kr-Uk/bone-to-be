@@ -3,6 +3,17 @@
   imageUrl: string;
 };
 
+export type FollowModalType = "following" | "follower";
+
+export type FollowUser = {
+  id: string;
+  username: string;
+  styleTag?: string;
+  bio?: string;
+  avatarUrl?: string;
+  isFollowing?: boolean;
+};
+
 export type BodyTypeRatio = {
   natural: number;
   wave: number;

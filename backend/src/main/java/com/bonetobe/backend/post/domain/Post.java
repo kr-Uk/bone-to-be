@@ -5,7 +5,7 @@ import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.common.domain.StoredFile;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
-import com.bonetobe.backend.member.domain.User;
+import com.bonetobe.backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

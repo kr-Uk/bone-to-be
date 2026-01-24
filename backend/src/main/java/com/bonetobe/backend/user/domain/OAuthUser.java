@@ -1,4 +1,4 @@
-package com.bonetobe.backend.member.domain;
+package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
 import jakarta.persistence.*;
@@ -10,22 +10,25 @@ import lombok.NoArgsConstructor;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"follower_id", "following_id"}
+                        columnNames = {"provider", "provider_user_id"}
                 )
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Follow extends BaseEntity {
+public class OAuthUser extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_id", nullable = false)
-    private User follower;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_id", nullable = false)
-    private User following;
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    private OAuthProvider provider;
+
+    @Column(name = "provider_user_id", nullable = false)
+    private String providerUserId;
 }

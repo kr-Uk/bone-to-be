@@ -5,6 +5,7 @@ import RootLayout from "@/app/layouts/RootLayout";
 import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
 import MainPage from "@/pages/mainpage/MainPage";
 import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
+import ProfilePage from "@/pages/profile/profile";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
       {
         path: "diagnosis/photo-capture",
         element: <PhotoCapturePage />,
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />,
       },
     ],
   },

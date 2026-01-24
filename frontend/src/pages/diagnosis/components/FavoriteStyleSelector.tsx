@@ -11,10 +11,15 @@ const StyleHeader = styled.div`
 
 const Label = styled.label`
   display: block;
-  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
+  font-size: 1.5rem;
   /* font-weight: ${({ theme }) => theme.typography.body.sm.semibold.fontWeight}; */
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.gray[600]};
+  color: ${({ theme }) => theme.colors.gray[500]};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+
+  @media (max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 const StyleHint = styled.span`
@@ -33,8 +38,7 @@ const StyleButton = styled.button<{ $selected: boolean }>`
   border-radius: 9999px;
   border: 1px solid
     ${({ theme, $selected }) => ($selected ? theme.colors.primary : theme.colors.gray[200])};
-  background-color: ${({ theme, $selected }) =>
-    $selected ? theme.colors.purple[600] : ''};
+  background-color: ${({ theme, $selected }) => ($selected ? theme.colors.purple[600] : "")};
   color: ${({ theme, $selected }) => ($selected ? theme.colors.secondary : theme.colors.gray[300])};
   font-size: ${({ theme }) => theme.typography.body.md.medium.fontSize};
   font-weight: ${({ theme }) => theme.typography.body.md.medium.fontWeight};

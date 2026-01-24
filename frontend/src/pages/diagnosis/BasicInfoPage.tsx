@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-
 import BodySpecsInput from "./components/BodySpecsInput";
 import DiagnosisExplainSection from "./components/DiagnosisExplainSection";
 import FavoriteStyleSelector from "./components/FavoriteStyleSelector";
@@ -50,10 +49,8 @@ const FormContainer = styled.div`
   }
 `;
 
-
-
 const FormSection = styled.div`
-  /* margin-bottom: ${({ theme }) => theme.spacing.xl}; */
+  margin-bottom: 1rem;
 `;
 
 const StartButton = styled.button`
@@ -88,9 +85,6 @@ const ErrorMessage = styled.p`
   margin-top: ${({ theme }) => theme.spacing.xs};
   padding-left: ${({ theme }) => theme.spacing.sm};
 `;
-
-
-
 
 const BasicInfoPage = () => {
   const navigate = useNavigate();
@@ -172,9 +166,9 @@ const BasicInfoPage = () => {
               weight={weight}
               onHeightChange={(h) => setValue("height", h, { shouldValidate: true })}
               onWeightChange={(w) => setValue("weight", w, { shouldValidate: true })}
+              heightError={errors.height?.message}
+              weightError={errors.weight?.message}
             />
-            {errors.height && <ErrorMessage>{errors.height.message}</ErrorMessage>}
-            {errors.weight && <ErrorMessage>{errors.weight.message}</ErrorMessage>}
           </FormSection>
 
           <FormSection>

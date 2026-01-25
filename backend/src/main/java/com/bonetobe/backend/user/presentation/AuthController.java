@@ -37,7 +37,6 @@ public class AuthController {
         );
     }
 
-    // 이메일 인증코드 발송
     @PostMapping("/email/validate")
     public ResponseEntity<APIResponse<Void>> sendEmailCode(@RequestParam String email) {
         emailService.sendEmailCode(email);
@@ -49,7 +48,12 @@ public class AuthController {
             @RequestParam String email,
             @RequestParam String code) {
 
+        log.info("[이메일 검증 요청] email: {}, code: {}", email, code); // 요청 데이터 확인
+
         boolean isValid = emailService.verifyCode(email, code);
+
+        log.info("[이메일 검증 결과] email: {}, isValid: {}", email, isValid); // 서비스 결과 확인
+
         return ResponseEntity.ok(
                 APIResponse.success(SuccessCode.OK, AddUser.EmailVerificationResponse.from(isValid))
         );

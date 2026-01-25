@@ -14,11 +14,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 1. 이미 관리자 계정이 있는지 확인 (중복 생성 방지)
         String adminEmail = "admin@example.com";
 
-        if (userRepository.findByEmail(adminEmail).isEmpty()) {
-            // 2. 관리자 계정 생성 (비밀번호 암호화)
+        // findByEmail 대신, 삭제된 계정까지 다 찾아보는 findAnyByEmail 사용
+        if (userRepository.findAnyByEmail(adminEmail).isEmpty()) {
             String encodedPassword = passwordEncoder.encode("Admin1234!");
 
             User admin = User.createUser(
@@ -28,9 +27,10 @@ public class DataInitializer implements CommandLineRunner {
                     "ADMIN"
             );
 
-            // 3. DB 저장
             userRepository.save(admin);
             System.out.println("초기 관리자 계정이 생성되었습니다: " + adminEmail);
+        } else {
+            System.out.println("관리자 계정이 이미 존재합니다 (탈퇴 상태 포함).");
         }
     }
 }

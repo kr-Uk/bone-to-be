@@ -3,7 +3,6 @@ package com.bonetobe.backend.user.presentation;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.User;
-import com.bonetobe.backend.user.domain.AuthService;
 import com.bonetobe.backend.user.domain.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

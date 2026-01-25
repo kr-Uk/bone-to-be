@@ -19,6 +19,8 @@ public enum ErrorCode {
     POST_LIST_INVALID_RANGE(2003, HttpStatus.BAD_REQUEST, "유효하지 않은 범위 조건입니다."),
     POST_LIST_INVALID_LIKE(2004, HttpStatus.BAD_REQUEST, "좋아요 개수는 음수가 될 수 없습니다."),
     POST_NOT_FOUND(2005, HttpStatus.BAD_REQUEST, "게시글을 찾을 수 없습니다."),
+    POST_CREATE_FILE_REQUIRED(2006, HttpStatus.BAD_REQUEST, "게시글에는 이미지 파일이 반드시 필요합니다."),
+    POST_CREATE_CONTENT_REQUIRED(2007, HttpStatus.BAD_REQUEST, "게시글 내용은 비어 있을 수 없습니다."),
 
     // 3000번대 코드 : DB 관련
 

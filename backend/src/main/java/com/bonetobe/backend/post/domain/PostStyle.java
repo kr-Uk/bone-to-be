@@ -23,4 +23,11 @@ public class PostStyle extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public static PostStyle create(Post post, Style style) {
+        PostStyle ps = new PostStyle();
+        ps.post = post;
+        ps.style = style;
+        return ps;
+    }
 }

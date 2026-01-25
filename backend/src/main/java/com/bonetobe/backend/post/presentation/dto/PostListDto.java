@@ -2,7 +2,7 @@ package com.bonetobe.backend.post.presentation.dto;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
-import com.bonetobe.backend.member.domain.Gender;
+import com.bonetobe.backend.user.domain.Gender;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;

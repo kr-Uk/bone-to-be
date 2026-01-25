@@ -1,6 +1,6 @@
 package com.bonetobe.backend.post.infrastructure;
 
-import com.bonetobe.backend.member.domain.Gender;
+import com.bonetobe.backend.user.domain.Gender;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.bonetobe.backend.common.domain.QStoredFile.storedFile;
-import static com.bonetobe.backend.member.domain.QProfile.profile;
+import static com.bonetobe.backend.user.domain.QProfile.profile;
 import static com.bonetobe.backend.post.domain.QPost.post;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
 import static com.bonetobe.backend.style.domain.QStyle.style;

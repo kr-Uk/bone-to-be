@@ -1,6 +1,6 @@
 package com.bonetobe.backend.post.domain.query;
 
-import com.bonetobe.backend.member.domain.Gender;
+import com.bonetobe.backend.user.domain.Gender;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.style.domain.StyleName;
 

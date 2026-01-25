@@ -71,7 +71,7 @@ class SMPL(nn.Module):
     NAME = 'smpl'
 
     def __init__(self,
-                 model_folder='data/models/smpl',
+                 model_folder='data/body_models/smplx',
                  data_struct=None,
                  betas=None,
                  gender='neutral',

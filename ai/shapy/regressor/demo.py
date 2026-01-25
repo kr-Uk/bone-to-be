@@ -17,7 +17,7 @@ from loguru import logger
 from collections import OrderedDict
 import numpy as np
 from omegaconf import OmegaConf, DictConfig
-
+from pathlib import Path
 import resource
 
 from human_shape.config.defaults import conf as default_conf
@@ -27,7 +27,16 @@ from human_shape.data import build_all_data_loaders
 from human_shape.data.structures.image_list import to_image_list
 from human_shape.utils import Checkpointer, COLORS, OverlayRenderer, HDRenderer
 
+ROOT = Path(__file__).resolve().parent.parent
 
+# shapy/
+sys.path.insert(0, str(ROOT))
+
+# shapy/measurements
+sys.path.insert(0, str(ROOT / "measurements"))
+
+# shapy/attributes
+sys.path.insert(0, str(ROOT / "attributes"))
 rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
 resource.setrlimit(resource.RLIMIT_NOFILE, (rlimit[1], rlimit[1]))
 

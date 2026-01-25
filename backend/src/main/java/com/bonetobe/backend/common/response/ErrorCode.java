@@ -13,12 +13,6 @@ public enum ErrorCode {
     FORBIDDEN(1001, HttpStatus.FORBIDDEN, "사용 권한이 없습니다."),
 
     // 2000번대 코드 : 게시판 관련
-    POST_LIST_INVALID_SORT(2000, HttpStatus.BAD_REQUEST, "유효하지 않은 정렬 조건입니다."),
-    POST_LIST_INVALID_STYLE(2001, HttpStatus.BAD_REQUEST, "유효하지 않은 스타일 값입니다."),
-    POST_LIST_INVALID_GENDER(2002, HttpStatus.BAD_REQUEST, "유효하지 않은 성별 값입니다."),
-    POST_LIST_INVALID_RANGE(2003, HttpStatus.BAD_REQUEST, "유효하지 않은 범위 조건입니다."),
-    POST_LIST_INVALID_LIKE(2004, HttpStatus.BAD_REQUEST, "좋아요 개수는 음수가 될 수 없습니다."),
-    POST_NOT_FOUND(2005, HttpStatus.BAD_REQUEST, "게시글을 찾을 수 없습니다."),
 
     // 3000번대 코드 : DB 관련
 

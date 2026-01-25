@@ -1,9 +1,12 @@
+import * as S from "../styles/LoginModal.styles";
 
-import * as S from "./LoginModal.styles";
+import googleIcon from "@/assets/image/Google.png";
+import kakaoIcon from "@/assets/image/Kakao.png";
 
 type Props = {
   email?: string;
   password?: string;
+  loginError?: string;
   onChangeEmail?: (v: string) => void;
   onChangePassword?: (v: string) => void;
   onSubmit?: () => void;
@@ -16,6 +19,7 @@ type Props = {
 export const LoginModalView = ({
   email = "",
   password = "",
+  loginError,
   onChangeEmail,
   onChangePassword,
   onSubmit,
@@ -42,7 +46,7 @@ export const LoginModalView = ({
       <S.RightPanel>
         <S.Brand>
           <S.BrandTitle>BONE:TOBE</S.BrandTitle>
-          <S.BrandSub>타고난 골격을 찾아 떠나는 여정</S.BrandSub>
+          <S.BrandSub>당신만의 골격을 완성하다</S.BrandSub>
         </S.Brand>
 
         <S.Form>
@@ -55,6 +59,7 @@ export const LoginModalView = ({
               autoComplete="email"
             />
           </S.Field>
+          <S.PasswordSpacer />
 
           <S.Field>
             <S.Label>비밀번호</S.Label>
@@ -66,6 +71,12 @@ export const LoginModalView = ({
               autoComplete="current-password"
             />
           </S.Field>
+          <S.ValidationMessage
+            $isError
+            style={{ visibility: loginError ? "visible" : "hidden" }}
+          >
+            {loginError ?? " "}
+          </S.ValidationMessage>
 
           <S.PrimaryButton type="button" onClick={onSubmit}>
             로그인
@@ -78,12 +89,12 @@ export const LoginModalView = ({
           </S.OrRow>
 
           <S.SocialButtonKakao type="button" onClick={onClickKakao}>
-            <S.KakaoDot aria-hidden />
+            <img alt="Kakao" src={kakaoIcon} width={16} height={16} />
             카카오로 시작하기
           </S.SocialButtonKakao>
 
           <S.SocialButton type="button" onClick={onClickGoogle}>
-            <S.GoogleDot aria-hidden />
+            <img alt="Google" src={googleIcon} width={16} height={16} />
             구글로 시작하기
           </S.SocialButton>
 
@@ -96,7 +107,7 @@ export const LoginModalView = ({
             </S.LinkRow>
 
             <S.LinkRow>
-              <S.SmallText>비밀번호를 잊어버리셨나요?</S.SmallText>
+              <S.SmallText>비밀번호를 잃어버리셨나요?</S.SmallText>
               <S.LinkButton type="button" onClick={onClickFindPassword}>
                 비밀번호 찾기
               </S.LinkButton>

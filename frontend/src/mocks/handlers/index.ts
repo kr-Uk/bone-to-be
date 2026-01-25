@@ -4,6 +4,80 @@ export const handlers = [
   http.get("/api/health", () => {
     return HttpResponse.json({ ok: true });
   }),
+  http.get("/api/auth/check/email", ({ request }) => {
+    const url = new URL(request.url);
+    const email = url.searchParams.get("email") ?? "";
+    const hasEmail =
+      email.includes("taken") || email.includes("duplicate") || email.endsWith("@used.com");
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: { hasEmail },
+    });
+  }),
+  http.get("/api/auth/check/nickname", ({ request }) => {
+    const url = new URL(request.url);
+    const nickname = url.searchParams.get("nickname") ?? "";
+    const hasNickname =
+      nickname.includes("taken") ||
+      nickname.includes("duplicate");
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: { hasNickname },
+    });
+  }),
+  http.post("/api/auth/email/validate", async ({ request }) => {
+    const body = (await request.json()) as { email?: string };
+    if (!body?.email) {
+      return HttpResponse.json(
+        { code: 400, message: "요청 실패", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+  http.get("/api/auth/email/validate", ({ request }) => {
+    const url = new URL(request.url);
+    const code = url.searchParams.get("code");
+    if (code !== "388433") {
+      return HttpResponse.json(
+        { code: 400, message: "인증 실패", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+  http.post("/api/auth/login", async ({ request }) => {
+    const bodyText = await request.text();
+    const params = new URLSearchParams(bodyText);
+    const email = params.get("email") ?? "";
+    const password = params.get("password") ?? "";
+
+    if (email === "user@example.com" && password === "1234") {
+      return HttpResponse.json({ message: "로그인 성공" });
+    }
+
+    return HttpResponse.json(
+      {
+        code: 401,
+        message: "이메일 또는 비밀번호가 올바르지 않습니다.",
+      },
+      { status: 401 },
+    );
+  }),
   http.get("/api/v1/users", () => {
     return HttpResponse.json({
       username: "ssong_0530",

@@ -6,7 +6,7 @@ export const PageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${theme.colors.gray[50]};
+  background-color: ${theme.colors.gray[900]};
   padding: 16px;
 `;
 

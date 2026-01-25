@@ -1,13 +1,25 @@
 import styled from "styled-components";
+
 import { theme } from "@/shared/styles/theme";
+
+const loginPalette = {
+  primary: "#9810FA",
+  cardDark: "#121212",
+  panelDark: "#0F0F0F",
+  slate100: "#F1F5F9",
+  slate400: "#94A3B8",
+  whiteLine: "rgba(255, 255, 255, 0.1)",
+};
+
 
 export const ModalCard = styled.div`
   width: min(980px, calc(100vw - 32px));
-  height: min(560px, calc(100vh - 32px));
-  background: ${theme.colors.background};
+  height: min(600px, calc(100vh - 24px));
+  background: ${loginPalette.cardDark};
   border-radius: 18px;
-  border: 1px solid ${theme.colors.gray[300]};
+  border: 1px solid ${loginPalette.whiteLine};
   overflow: hidden;
+  color: ${loginPalette.slate100};
 
   display: grid;
   grid-template-columns: 55% 1px 45%;
@@ -15,64 +27,81 @@ export const ModalCard = styled.div`
   /* ✅ 768 ~ 1024 */
   @media (max-width: 1024px) {
     width: min(920px, calc(100vw - 24px));
-    height: min(540px, calc(100vh - 24px));
+    height: min(580px, calc(100vh - 24px));
     grid-template-columns: 50% 1px 50%;
   }
 
   /* ✅ <= 768 */
   @media (max-width: 768px) {
     width: calc(100vw - 24px);
-    height: min(720px, calc(100vh - 24px));
+    height: min(740px, calc(100vh - 24px));
     grid-template-columns: 1fr;
     grid-template-rows: 240px 1px 1fr;
   }
 
   /* ✅ <= 375 */
   @media (max-width: 375px) {
-    height: min(760px, calc(100vh - 16px));
+    height: min(780px, calc(100vh - 16px));
     grid-template-rows: 210px 1px 1fr;
   }
 `;
 
+export const SignUpCard = styled(ModalCard)`
+  height: min(900px, 100%);
+  background: ${loginPalette.cardDark};
+
+  @media (max-width: 1024px) {
+    height: min(840px, 100%);
+  }
+
+  @media (max-width: 768px) {
+    height: min(900px, 100%);
+  }
+
+  @media (max-width: 375px) {
+    height: min(920px, 100%);
+  }
+`;
+
 export const LeftPanel = styled.div`
-  background: ${theme.colors.gray[100]};
+  background: ${loginPalette.panelDark};
   position: relative;
 `;
 
 export const Divider = styled.div`
-  background: ${theme.colors.gray[300]};
+  background: ${loginPalette.whiteLine};
 `;
 
 export const RightPanel = styled.div`
-  background: ${theme.colors.background};
+  background: ${loginPalette.cardDark};
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 44px 56px;
+  padding: 36px 48px;
+  overflow: hidden;
 
   & > * {
     width: 100%;
-    max-width: 360px;
     margin-left: auto;
     margin-right: auto;
   }
 
   @media (max-width: 1024px) {
-    padding: 36px 36px;
+    padding: 30px 32px;
     & > * {
       max-width: 340px;
     }
   }
 
   @media (max-width: 768px) {
-    padding: 28px 20px;
+    padding: 24px 20px;
     & > * {
       max-width: 380px;
     }
   }
 
   @media (max-width: 375px) {
-    padding: 22px 16px;
+    padding: 20px 14px;
   }
 `;
 
@@ -166,19 +195,19 @@ export const Brand = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  margin-bottom: 18px;
+  margin-bottom: 28px;
 `;
 
 export const BrandTitle = styled.div`
-  font-size: clamp(28px, 3.2vw, 38px);
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: ${theme.colors.gray[900]};
+  font-size: clamp(30px, 3.3vw, 42px);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: ${loginPalette.slate100};
 `;
 
 export const BrandSub = styled.div`
-  font-size: clamp(11px, 1.2vw, 12px);
-  color: ${theme.colors.gray[500]};
+  font-size: clamp(12px, 1.3vw, 13px);
+  color: ${loginPalette.slate400};
 `;
 
 export const Form = styled.div`
@@ -190,121 +219,138 @@ export const Form = styled.div`
 export const Field = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 `;
 
 export const Label = styled.div`
   font-size: 12px;
-  font-weight: 700;
-  color: ${theme.colors.gray[900]};
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: ${loginPalette.slate400};
+  margin-left: 4px;
 `;
 
 export const Input = styled.input`
-  height: 42px;
-  border: 1px solid ${theme.colors.gray[300]};
-  border-radius: 6px;
-  padding: 0 12px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.05);
+  color: ${loginPalette.slate100};
+  border: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 15px;
   outline: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+  &::placeholder {
+    color: rgba(148, 163, 184, 0.65);
+  }
 
   &:focus {
-    border-color: ${theme.colors.purple[600]};
-    box-shadow: 0 0 0 3px rgba(152, 16, 250, 0.15); /* using mapped purple 600 rgb approx */
+    box-shadow: inset 0 0 0 1px rgba(152, 16, 250, 0.6),
+      0 0 0 4px rgba(152, 16, 250, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 
   @media (max-width: 1024px) {
-    height: 40px;
+    height: 34px;
   }
 
   @media (max-width: 375px) {
-    height: 38px;
+    height: 32px;
   }
 `;
 
 export const PrimaryButton = styled.button`
-  height: 44px;
-  border: none;
-  border-radius: 6px;
+  height: 38px;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: ${loginPalette.primary};
+  color: #fff;
+  font-weight: 900;
+  font-size: 15px;
   cursor: pointer;
-
-  background: ${theme.colors.purple[600]};
-  color: ${theme.colors.secondary};
-  font-weight: 800;
+  box-shadow: 0 14px 28px -10px rgba(152, 16, 250, 0.55);
 
   &:active {
-    transform: translateY(1px);
+    transform: scale(0.985);
   }
 
   @media (max-width: 1024px) {
-    height: 42px;
+    height: 36px;
   }
 
   @media (max-width: 375px) {
-    height: 40px;
+    height: 34px;
   }
 `;
 
 export const OrRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 14px;
+  margin: 10px 0px;
 `;
 
 export const OrLine = styled.div`
   height: 1px;
-  background: ${theme.colors.gray[200]};
+  flex: 1;
+  background: ${loginPalette.whiteLine};
 `;
 
 export const OrText = styled.div`
-  color: ${theme.colors.gray[400]};
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: ${loginPalette.slate400};
 `;
 
 export const SocialButtonKakao = styled.button`
-  height: 42px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-
-  background: #fee500; /* Kakao Brand Color */
-  color: ${theme.colors.gray[900]};
-  font-weight: 700;
-
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  border-radius: 14px;
+  padding: 12px 12px;
+  background: #fee500;
+  border: 0;
+  color: #191919;
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
 
-  @media (max-width: 1024px) {
-    height: 40px;
-  }
-
-  @media (max-width: 375px) {
-    height: 38px;
+  &:active {
+    opacity: 0.85;
+    transform: scale(0.985);
   }
 `;
 
 export const SocialButton = styled.button`
-  height: 42px;
-  border-radius: 6px;
-  border: 1px solid ${theme.colors.gray[200]};
-  cursor: pointer;
-
-  background: ${theme.colors.background};
-  color: ${theme.colors.gray[900]};
-  font-weight: 700;
-
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  border-radius: 14px;
+  padding: 12px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: ${loginPalette.slate100};
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
 
-  @media (max-width: 1024px) {
-    height: 40px;
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
   }
 
-  @media (max-width: 375px) {
-    height: 38px;
+  &:active {
+    transform: scale(0.985);
   }
 `;
 
@@ -324,7 +370,7 @@ export const GoogleDot = styled.div`
 `;
 
 export const BottomLinks = styled.div`
-  margin-top: 6px;
+  margin-top: 4px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -338,13 +384,13 @@ export const LinkRow = styled.div`
 `;
 
 export const SmallText = styled.span`
-  font-size: 11px;
-  color: ${theme.colors.gray[400]};
+  font-size: 12px;
+  color: ${loginPalette.slate400};
 `;
 
 export const LinkButton = styled.button`
-  font-size: 11px;
-  color: ${theme.colors.purple[600]};
+  font-size: 12px;
+  color: ${loginPalette.primary};
   font-weight: 800;
   background: transparent;
   border: none;
@@ -354,4 +400,132 @@ export const LinkButton = styled.button`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+/* Sign Up Specifics */
+export const InputRow = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+`;
+
+export const InputGroupBtn = styled.button`
+  flex: 0 0 auto;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: transparent;
+  color: ${loginPalette.slate100};
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 1024px) {
+    height: 34px;
+  }
+`;
+
+export const ValidationMessage = styled.div<{ $isError?: boolean }>`
+  font-size: 12px;
+  font-weight: 600;
+  color: ${({ $isError }) => ($isError ? "#EF4444" : "#22C55E")};
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+`;
+
+
+export const TimerWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const TimerText = styled.span`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  font-weight: 700;
+  color: ${loginPalette.primary};
+`;
+
+/* Sign-Up Custom Components from Design */
+export const OutlineBtn = styled.button`
+  flex: 0 0 auto;
+  padding: 14px 16px;
+  border-radius: 14px; /* Updated radius */
+  background: transparent;
+  color: ${loginPalette.slate100};
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
+export const DarkBtn = styled.button`
+  flex: 0 0 auto;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: ${loginPalette.slate100};
+  font-size: 13px;
+  font-weight: 900;
+  border: 0;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
+export const SuccessText = styled.p`
+  margin: 0;
+  margin-left: 4px;
+  font-size: 12px;
+  color: ${loginPalette.primary};
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const Hint = styled.div`
+  margin-left: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: ${loginPalette.slate400};
+`;
+
+export const HintOn = styled.span`
+  color: ${loginPalette.primary};
+  font-weight: 600;
 `;

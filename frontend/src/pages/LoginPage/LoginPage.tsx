@@ -1,13 +1,44 @@
-
 import { useState } from "react";
-import * as S from "./LoginPage.styles";
+import type { AxiosError } from "axios";
+
+import * as S from "./styles/LoginPage.styles";
+
+import { LoginModalView } from "./components/LoginModalView";
+import { SignUpModalView } from "./components/SignUpModalView";
+import { login } from "./api/authApi";
 
 export const LoginPage = () => {
+  const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
-  const handleSubmit = () => {
-    console.log("TODO: Login API Call", { email, password });
+  const handleSubmit = async () => {
+    setLoginError("");
+    try {
+      await login(email, password);
+    } catch (error) {
+      const status = (error as AxiosError).response?.status;
+      if (status === 401) {
+        setLoginError("아이디 및 비밀번호가 일치하지 않습니다.");
+        return;
+      }
+      setLoginError("서버 연결이 원활하지 않습니다.");
+    }
+  };
+
+  const handleChangeEmail = (value: string) => {
+    setEmail(value);
+    if (loginError) {
+      setLoginError("");
+    }
+  };
+
+  const handleChangePassword = (value: string) => {
+    setPassword(value);
+    if (loginError) {
+      setLoginError("");
+    }
   };
 
   const handleKakao = () => {
@@ -18,8 +49,12 @@ export const LoginPage = () => {
     console.log("TODO: Google Login");
   };
 
-  const handleSignUp = () => {
-    console.log("TODO: Go to Sign Up");
+  const handleSwitchToSignUp = () => {
+    setViewMode("SIGNUP");
+  };
+
+  const handleSwitchToLogin = () => {
+    setViewMode("LOGIN");
   };
 
   const handleFindPassword = () => {
@@ -28,86 +63,22 @@ export const LoginPage = () => {
 
   return (
     <S.PageWrapper>
-      <S.LoginCard>
-        {/* LEFT: Illustration */}
-        <S.LeftPanel>
-          <S.Shapes>
-            <S.Hourglass />
-            <S.Trapezoid />
-            <S.TallRect />
-          </S.Shapes>
-        </S.LeftPanel>
-
-        {/* Divider */}
-        <S.Divider />
-
-        {/* RIGHT: Login Form */}
-        <S.RightPanel>
-          <S.Brand>
-            <S.BrandTitle>BONE:TOBE</S.BrandTitle>
-            <S.BrandSub>타고난 골격을 찾아 떠나는 여정</S.BrandSub>
-          </S.Brand>
-
-          <S.Form>
-            <S.Field>
-              <S.Label>이메일</S.Label>
-              <S.Input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder=""
-                autoComplete="email"
-              />
-            </S.Field>
-
-            <S.Field>
-              <S.Label>비밀번호</S.Label>
-              <S.Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder=""
-                autoComplete="current-password"
-              />
-            </S.Field>
-
-            <S.PrimaryButton type="button" onClick={handleSubmit}>
-              로그인
-            </S.PrimaryButton>
-
-            <S.OrRow>
-              <S.OrLine />
-              <S.OrText>간편 로그인</S.OrText>
-              <S.OrLine />
-            </S.OrRow>
-
-            <S.SocialButtonKakao type="button" onClick={handleKakao}>
-              <S.KakaoDot aria-hidden />
-              카카오로 시작하기
-            </S.SocialButtonKakao>
-
-            <S.SocialButton type="button" onClick={handleGoogle}>
-              <S.GoogleDot aria-hidden />
-              구글로 시작하기
-            </S.SocialButton>
-
-            <S.BottomLinks>
-              <S.LinkRow>
-                <S.SmallText>아직 회원이 아니신가요?</S.SmallText>
-                <S.LinkButton type="button" onClick={handleSignUp}>
-                  회원가입
-                </S.LinkButton>
-              </S.LinkRow>
-
-              <S.LinkRow>
-                <S.SmallText>비밀번호를 잊어버리셨나요?</S.SmallText>
-                <S.LinkButton type="button" onClick={handleFindPassword}>
-                  비밀번호 찾기
-                </S.LinkButton>
-              </S.LinkRow>
-            </S.BottomLinks>
-          </S.Form>
-        </S.RightPanel>
-      </S.LoginCard>
+      {viewMode === "LOGIN" ? (
+        <LoginModalView
+          email={email}
+          password={password}
+          loginError={loginError}
+          onChangeEmail={handleChangeEmail}
+          onChangePassword={handleChangePassword}
+          onSubmit={handleSubmit}
+          onClickKakao={handleKakao}
+          onClickGoogle={handleGoogle}
+          onClickSignUp={handleSwitchToSignUp}
+          onClickFindPassword={handleFindPassword}
+        />
+      ) : (
+        <SignUpModalView onSwitchToLogin={handleSwitchToLogin} />
+      )}
     </S.PageWrapper>
   );
 };

@@ -1,21 +1,22 @@
-import { useEffect, useState } from 'react';
-import { IoArrowForward, IoPerson } from 'react-icons/io5';
-import { MdMyLocation } from 'react-icons/md';
-import { TbBoxAlignBottomRight } from 'react-icons/tb';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import { useEffect, useState } from "react";
+import { IoArrowForward, IoPerson } from "react-icons/io5";
+import { MdMyLocation } from "react-icons/md";
+import { TbBoxAlignBottomRight } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
-import { ProgressSteps } from './components/ProgressSteps';
-import { ScanningGuideBullet } from './components/ScanningGuideBullet';
-import { ScanningGuideCard } from './components/ScanningGuideCard';
-import { UploadArea } from './components/UploadArea';
+import { ProgressSteps } from "./components/ProgressSteps";
+import { ScanningGuideBullet } from "./components/ScanningGuideBullet";
+import { ScanningGuideCard } from "./components/ScanningGuideCard";
+import { UploadArea } from "./components/UploadArea";
 
-import { useMediaQuery } from '@/shared/hooks';
-import { useDiagnosisStore } from '@/shared/stores/diagnosisStore';
+import { useMediaQuery } from "@/shared/hooks";
+import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
 // Layout containers
 const PageContainer = styled.div`
   min-height: 100vh;
+  margin-top: 80px;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.secondary};
   display: flex;
@@ -234,7 +235,7 @@ const ButtonGroup = styled.div`
   }
 `;
 
-const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
+const Button = styled.button<{ $variant?: "primary" | "secondary" }>`
   flex: 1;
   padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
   border-radius: 9999px;
@@ -249,7 +250,7 @@ const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
   gap: ${({ theme }) => theme.spacing.sm};
 
   ${({ theme, $variant }) =>
-    $variant === 'primary'
+    $variant === "primary"
       ? `
     background-color: ${theme.colors.purple[600]};
     color: ${theme.colors.secondary};
@@ -289,14 +290,14 @@ const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
 const PhotoCapturePage = () => {
   const navigate = useNavigate();
   const { diagnosisData, setPhotoData } = useDiagnosisStore();
-  const isMobile = useMediaQuery('(max-width: 767px)');
-  const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1023px)');
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Redirect if no basic info
   useEffect(() => {
     if (!diagnosisData.basicInfo) {
-      navigate('/diagnosis/basic-info', { replace: true });
+      navigate("/diagnosis/basic-info", { replace: true });
     }
   }, [diagnosisData.basicInfo, navigate]);
 
@@ -307,18 +308,18 @@ const PhotoCapturePage = () => {
   const handleAnalyze = () => {
     if (selectedImage) {
       setPhotoData(selectedImage);
-      console.log('Photo saved to store:', {
+      console.log("Photo saved to store:", {
         basicInfo: diagnosisData.basicInfo,
         photo: selectedImage,
       });
       // TODO: Navigate to analysis page or send to server
-      alert('이미지가 저장되었습니다! 분석 페이지로 이동합니다.');
+      alert("이미지가 저장되었습니다! 분석 페이지로 이동합니다.");
       // navigate('/diagnosis/analysis');
     }
   };
 
   const handleBack = () => {
-    navigate('/diagnosis/basic-info');
+    navigate("/diagnosis/basic-info");
   };
 
   return (

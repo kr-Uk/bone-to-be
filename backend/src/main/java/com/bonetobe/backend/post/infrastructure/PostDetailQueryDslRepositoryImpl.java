@@ -1,23 +1,21 @@
 package com.bonetobe.backend.post.infrastructure;
 
-import com.bonetobe.backend.post.domain.query.PostDetailSummary;
+import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
 import static com.bonetobe.backend.post.domain.QPost.post;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
 import static com.bonetobe.backend.style.domain.QStyle.style;
-import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
-import static com.bonetobe.backend.user.domain.QUser.user;
 import static com.bonetobe.backend.user.domain.QProfile.profile;
+import static com.bonetobe.backend.user.domain.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,11 +24,11 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
     private final JPAQueryFactory qf;
 
     @Override
-    public PostDetailSummary findPostDetail(Long postId) {
+    public PostDetailSummaryRaw findPostDetail(Long postId) {
 
         var commentCountExpr = Expressions.constant(0L);
 
-        List<PostDetailSummary> results = qf
+        List<PostDetailSummaryRaw> results = qf
                 .from(post)
                 .join(post.user, user)
                 .join(user.profile, profile)
@@ -41,9 +39,9 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
                 .transform(
                         GroupBy.groupBy(post.id).list(
                                 Projections.constructor(
-                                        PostDetailSummary.class,
+                                        PostDetailSummaryRaw.class,
                                         post.id,
-                                        storedFile.key,
+                                        storedFile.id,
                                         GroupBy.list(style.styleName),
                                         profile.gender,
                                         profile.height,
@@ -54,11 +52,10 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
                                         commentCountExpr,
                                         Expressions.FALSE,
                                         Projections.constructor(
-                                                PostDetailSummary.AuthorSummary.class,
+                                                PostDetailSummaryRaw.AuthorSummary.class,
                                                 user.id,
-                                                // profile.profileImage, // TODO: 프로필 이미지
                                                 user.nickname,
-                                                Expressions.FALSE // TODO: isFollowing
+                                                Expressions.FALSE
                                         ),
                                         post.createdAt
                                 )
@@ -67,4 +64,5 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
 
         return results.isEmpty() ? null : results.get(0);
     }
+
 }

@@ -1,6 +1,7 @@
 package com.bonetobe.backend.post.domain;
 
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
+import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;
 import org.springframework.data.domain.Page;
@@ -10,5 +11,5 @@ public interface PostService {
 
     Page<PostSummary> getPostList(PostListQuery query, Pageable pageable);
 
-    PostDetailSummary getPostDetail(Long postId);
+    PostDetailSummaryRaw getPostDetail(Long postId);
 }

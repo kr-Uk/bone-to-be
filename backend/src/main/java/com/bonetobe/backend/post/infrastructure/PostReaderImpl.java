@@ -2,6 +2,7 @@ package com.bonetobe.backend.post.infrastructure;
 
 import com.bonetobe.backend.post.domain.PostReader;
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
+import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class PostReaderImpl implements PostReader {
     private final PostQueryDslRepository postQueryDslRepository;
+    private final PostDetailQueryDslRepository postDetailQueryDslRepository;
 
     @Override
     public Page<PostSummary> findPostList(PostListQuery query, Pageable pageable) {
@@ -20,7 +22,7 @@ public class PostReaderImpl implements PostReader {
     }
 
     @Override
-    public PostDetailSummary findPostDetail(Long postId){
-        return null;
+    public PostDetailSummaryRaw findPostDetail(Long postId) {
+        return postDetailQueryDslRepository.findPostDetail(postId);
     }
 }

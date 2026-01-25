@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import DiagnosisLayout from "../layouts/DiagnosisLayout";
+
 import ErrorLayout from "@/app/layouts/ErrorLayout";
 import RootLayout from "@/app/layouts/RootLayout";
 import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
@@ -18,12 +20,18 @@ export const router = createBrowserRouter([
         element: <MainPage />,
       },
       {
-        path: "diagnosis/basic-info",
-        element: <BasicInfoPage />,
-      },
-      {
-        path: "diagnosis/photo-capture",
-        element: <PhotoCapturePage />,
+        path: "diagnosis",
+        element: <DiagnosisLayout />,
+        children: [
+          {
+            path: "basic-info",
+            element: <BasicInfoPage />,
+          },
+          {
+            path: "photo-capture",
+            element: <PhotoCapturePage />,
+          },
+        ],
       },
       {
         path: "profile",

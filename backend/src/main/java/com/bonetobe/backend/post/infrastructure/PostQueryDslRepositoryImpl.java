@@ -88,9 +88,9 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                             TODO : 파일 서비스로 presigned 생성하여 삽입
                                          */
                                         storedFile.key,
-                                        profile.gender.stringValue(),
+                                        profile.gender,
                                         post.skeletonType,
-                                        GroupBy.list(style.styleName.stringValue()),
+                                        GroupBy.list(style.styleName),
                                         profile.height,
                                         profile.weight,
                                         Expressions.FALSE,

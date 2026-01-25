@@ -1,8 +1,7 @@
 package com.bonetobe.backend.post.application;
 
-import com.bonetobe.backend.common.exception.BusinessException;
-import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.post.domain.PostService;
+import com.bonetobe.backend.post.domain.query.PostDetailSummary;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,11 @@ public class PostFacade {
     @Transactional(readOnly = true)
     public Page<PostSummary> getPostList(PostListQuery query, Pageable pageable) {
         return postService.getPostList(query, pageable);
+    }
+
+    @Transactional
+    public PostDetailSummary getPostDetail(Long postId){
+        return postService.getPostDetail(postId);
     }
 }
 

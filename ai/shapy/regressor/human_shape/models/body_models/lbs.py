@@ -11,7 +11,7 @@ import torch.autograd as autograd
 from loguru import logger
 
 from .utils import transform_mat
-from human_shape.utils import (
+from regressor.human_shape.utils import (
     rot_mat_to_euler, batch_rodrigues, batch_rot2aa,
     Tensor, IntList
 )

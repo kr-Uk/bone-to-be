@@ -21,7 +21,7 @@ from ..utils import (
     keyps_to_bbox, bbox_to_center_scale,
     KEYPOINT_NAMES_DICT, KEYPOINT_PARTS,
 )
-from human_shape.utils import read_img, binarize
+from regressor.human_shape.utils import read_img, binarize
 
 FOLDER_MAP_FNAME = 'folder_map.pkl'
 

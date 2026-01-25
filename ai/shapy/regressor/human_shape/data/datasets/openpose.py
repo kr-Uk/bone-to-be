@@ -28,7 +28,7 @@ from ..utils import (
     KEYPOINT_NAMES_DICT, KEYPOINT_PARTS,
 )
 
-from human_shape.utils import read_img, nand, binarize
+from regressor.human_shape.utils import read_img, nand, binarize
 
 
 class OpenPose(dutils.Dataset):

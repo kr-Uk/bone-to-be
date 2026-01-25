@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as scheduler
 
-from human_shape.utils import TensorList
+from regressor.human_shape.utils import TensorList
 
 
 def build_optimizer(

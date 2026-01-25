@@ -4,7 +4,7 @@ from typing import Dict, NewType, Tuple
 import torch
 import numpy as np
 from loguru import logger
-from human_shape.utils import Tensor
+from regressor.human_shape.utils import Tensor
 
 __all__ = [
     'points_to_bbox',

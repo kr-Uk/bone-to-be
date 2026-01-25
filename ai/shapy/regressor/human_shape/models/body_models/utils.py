@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from loguru import logger
 
-from human_shape.utils import Tensor, StringList
+from regressor.human_shape.utils import Tensor, StringList
 
 
 def transform_mat(R: Tensor, t: Tensor) -> Tensor:

@@ -4,7 +4,7 @@ from loguru import logger
 from copy import deepcopy
 from dataclasses import dataclass
 from omegaconf import OmegaConf
-from human_shape.utils.typing import StringTuple, FloatTuple
+from regressor.human_shape.utils.typing import StringTuple, FloatTuple
 
 
 ############################## DATASETS ##############################

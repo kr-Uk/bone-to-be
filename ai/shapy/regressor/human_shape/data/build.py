@@ -18,7 +18,7 @@ from .samplers import EqualSampler, ShapeSampler
 from .structures import (AbstractStructure, StructureList, to_image_list,
                          ImageList, ImageListPacked)
 from .transforms import build_transforms
-from human_shape.utils import Tensor, TensorList
+from regressor.human_shape.utils import Tensor, TensorList
 
 DEFAULT_NUM_WORKERS = {
     'train': 0,

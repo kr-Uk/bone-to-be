@@ -7,9 +7,9 @@ import torch.nn as nn
 
 from loguru import logger
 
-from human_shape.losses import build_loss
-from human_shape.models.body_models.utils import KeypointTensor
-from human_shape.utils import Tensor, StringList
+from regressor.human_shape.losses import build_loss
+from regressor.human_shape.models.body_models.utils import KeypointTensor
+from regressor.human_shape.utils import Tensor, StringList
 
 
 class KeypointLosses(nn.Module):

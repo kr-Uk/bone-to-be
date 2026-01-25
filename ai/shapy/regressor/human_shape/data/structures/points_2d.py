@@ -5,7 +5,7 @@ import cv2
 from loguru import logger
 from .abstract_structure import AbstractStructure
 
-from human_shape.utils import Array, Tensor, IntTuple, get_transform
+from regressor.human_shape.utils import Array, Tensor, IntTuple, get_transform
 
 # transpose
 FLIP_LEFT_RIGHT = 0

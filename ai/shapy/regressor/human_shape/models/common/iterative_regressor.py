@@ -28,9 +28,9 @@ from ..body_models import KeypointTensor
 from ..backbone import build_backbone
 from ..camera import CameraParams, build_cam_proj
 
-from human_shape.losses import build_loss
-from human_shape.data.structures import StructureList
-from human_shape.utils import (
+from regressor.human_shape.losses import build_loss
+from regressor.human_shape.data.structures import StructureList
+from regressor.human_shape.utils import (
     Tensor, BlendShapeDescription, StringList, AppearanceDescription,
     Timer)
 

@@ -25,13 +25,13 @@ from .utils import (
     KeypointTensor,
 )
 
-from human_shape.data.utils import (
+from regressor.human_shape.data.utils import (
     KEYPOINT_NAMES_DICT, KEYPOINT_CONNECTIONS,
     KEYPOINT_PARTS,
     PART_NAMES,
     get_part_idxs,
     kp_connections)
-from human_shape.utils import to_np, Struct, StringList, IntList, Tensor
+from regressor.human_shape.utils import to_np, Struct, StringList, IntList, Tensor
 
 J14_NAMES = [
     'right_ankle',

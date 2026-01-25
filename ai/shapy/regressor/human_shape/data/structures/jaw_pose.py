@@ -4,7 +4,7 @@ import torch
 
 from loguru import logger
 from .abstract_structure import AbstractStructure
-from human_shape.utils.rotation_utils import batch_rodrigues
+from regressor.human_shape.utils.rotation_utils import batch_rodrigues
 
 # transpose
 FLIP_LEFT_RIGHT = 0

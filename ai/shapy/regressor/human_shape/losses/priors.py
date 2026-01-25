@@ -15,7 +15,7 @@ import kornia
 from loguru import logger
 
 from .utils import get_reduction_method
-from human_shape.utils import Tensor, StringList
+from regressor.human_shape.utils import Tensor, StringList
 
 
 __all__ = ['build_prior',

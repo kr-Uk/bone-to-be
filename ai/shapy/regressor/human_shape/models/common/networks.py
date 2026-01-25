@@ -13,7 +13,7 @@ from ..nnutils import init_weights
 
 from loguru import logger
 
-from human_shape.utils import (
+from regressor.human_shape.utils import (
     CN, Tensor, Array, IntList, IntTuple, FloatList, FloatTuple, TensorList)
 
 CONV_DIM_DICT = {

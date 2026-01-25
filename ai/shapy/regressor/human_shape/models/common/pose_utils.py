@@ -15,7 +15,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-from human_shape.utils import (batch_rodrigues, batch_rot2aa, Tensor)
+from regressor.human_shape.utils import (batch_rodrigues, batch_rot2aa, Tensor)
 
 
 def build_pose_decoder(cfg, num_angles, mean_pose=None, pca_basis=None):

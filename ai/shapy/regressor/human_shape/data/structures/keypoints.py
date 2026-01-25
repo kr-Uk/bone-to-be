@@ -15,8 +15,8 @@ from ..utils import (
     KEYPOINT_PARTS_DICT,
 )
 
-from human_shape.utils.transf_utils import get_transform
-from human_shape.utils import Array, Tensor, StringList, IntTuple
+from regressor.human_shape.utils.transf_utils import get_transform
+from regressor.human_shape.utils import Array, Tensor, StringList, IntTuple
 
 # transpose
 FLIP_LEFT_RIGHT = 0

@@ -2,7 +2,7 @@ from typing import Tuple
 import numpy as np
 import torch
 
-from human_shape.utils import Array
+from regressor.human_shape.utils import Array
 
 
 def targets_to_array_and_indices(

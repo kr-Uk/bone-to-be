@@ -14,8 +14,8 @@ import torchvision
 from torchvision.transforms import functional as F
 
 from ..structures import AbstractStructure
-from human_shape.utils.transf_utils import crop, get_transform
-from human_shape.utils import Timer
+from regressor.human_shape.utils.transf_utils import crop, get_transform
+from regressor.human_shape.utils import Timer
 
 
 class Compose(object):

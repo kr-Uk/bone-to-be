@@ -42,7 +42,7 @@ from ..utils import (
     KEYPOINT_NAMES_DICT, KEYPOINT_PARTS,
 )
 
-from human_shape.utils import read_img, Tensor, batch_rot2aa
+from regressor.human_shape.utils import read_img, Tensor, batch_rot2aa
 
 
 class SSP3D(Dataset):

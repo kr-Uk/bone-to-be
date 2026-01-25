@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from loguru import logger
-from human_shape.models.body_models import KeypointTensor
+from regressor.human_shape.models.body_models import KeypointTensor
 
 DEFAULT_FOCAL_LENGTH = 5000
 

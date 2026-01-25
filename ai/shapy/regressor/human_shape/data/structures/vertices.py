@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from .abstract_structure import AbstractStructure
-from human_shape.utils import Array, Tensor
+from regressor.human_shape.utils import Array, Tensor
 from loguru import logger
 
 # transpose

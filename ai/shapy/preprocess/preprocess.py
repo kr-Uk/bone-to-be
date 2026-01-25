@@ -21,10 +21,10 @@ from loguru import logger
 import resource
 
 # human_shape 라이브러리 모듈
-from human_shape.config.defaults import conf as default_conf
-from human_shape.models.build import build_model
-from human_shape.data.structures.image_list import to_image_list
-from human_shape.utils import Checkpointer, COLORS, HDRenderer
+from regressor.human_shape.config.defaults import conf as default_conf
+from regressor.human_shape.models.build import build_model
+from regressor.human_shape.data.structures.image_list import to_image_list
+from regressor.human_shape.utils import Checkpointer, COLORS, HDRenderer
 
 # 리소스 제한 해제
 rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)

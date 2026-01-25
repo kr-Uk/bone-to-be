@@ -22,7 +22,7 @@ from torchvision import models
 
 from .robustifiers import build_robustifier
 from .utils import get_reduction_method
-from human_shape.models.body_models import KeypointTensor
+from regressor.human_shape.models.body_models import KeypointTensor
 
 __all__ = ['GMofLoss',
            'KeypointLoss',

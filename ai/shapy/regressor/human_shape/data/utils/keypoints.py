@@ -4,7 +4,7 @@ import json
 import numpy as np
 from loguru import logger
 
-from human_shape.utils import Array, StringList, nand, binarize
+from regressor.human_shape.utils import Array, StringList, nand, binarize
 
 
 def threshold_and_keep_parts(

@@ -112,9 +112,9 @@ class ShapyModelLoader:
             self._setup_pythonpath()
 
             # 여기서부터는 sys.path가 정리된 상태여야 import가 안전함
-            from human_shape.config.defaults import conf as default_conf
-            from human_shape.models.build import build_model
-            from human_shape.utils import Checkpointer
+            from regressor.human_shape.config.defaults import conf as default_conf
+            from regressor.human_shape.models.build import build_model
+            from regressor.human_shape.utils import Checkpointer
 
             device = self._resolve_device(self._device_str)
 
@@ -201,7 +201,7 @@ class ShapyModelLoader:
           - preprocess/
         """
         shapy_root = Path(__file__).resolve().parent            # .../ai/shapy
-        regressor_root = shapy_root / "regressor"              # .../ai/shapy/regressor
+        regressor_root = shapy_root              # .../ai/shapy/regressor
 
         # human_shape 패키지는 regressor 아래에 있으므로 regressor_root가 필요
         self._sys_path_insert(str(regressor_root))
@@ -236,7 +236,7 @@ def load_shapy_singleton(
     # model_loader.py는 shapy/에 있으므로 exp_cfg는 regressor 기준으로 맞춰야 함
     # => 기본값은 regressor/configs/.. 로 맞춘다.
     shapy_root = Path(__file__).resolve().parent
-    regressor_root = shapy_root / "regressor"
+    regressor_root = shapy_root
     cfg_abs = str((regressor_root / exp_cfg_path).resolve()) if not os.path.isabs(exp_cfg_path) else exp_cfg_path
 
     loader = ShapyModelLoader.get_instance(exp_cfg_paths=[cfg_abs], exp_opts=exp_opts, device=device)

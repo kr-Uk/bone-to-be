@@ -23,8 +23,8 @@ from .body_loss_modules import (
 )
 from .registry import BODY_HEAD_REGISTRY
 
-from human_shape.data.structures import StructureList
-from human_shape.utils import Tensor, BlendShapeDescription, StringList
+from regressor.human_shape.data.structures import StructureList
+from regressor.human_shape.utils import Tensor, BlendShapeDescription, StringList
 
 __all__ = [
     'SMPLRegressor',

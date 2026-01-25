@@ -8,7 +8,7 @@ from loguru import logger
 
 from .discriminator import build_discriminator
 from .body_heads import build_body_head, BODY_HEAD_REGISTRY
-from human_shape.losses import build_adv_loss
+from regressor.human_shape.losses import build_adv_loss
 
 
 def build_model(exp_cfg) -> Dict[str, nn.Module]:

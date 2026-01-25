@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from loguru import logger
 
-from human_shape.utils import Tensor, Timer
+from regressor.human_shape.utils import Tensor, Timer
 
 
 class ImageList(object):

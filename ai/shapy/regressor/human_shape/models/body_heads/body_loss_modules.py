@@ -10,10 +10,10 @@ from collections import defaultdict
 
 from loguru import logger
 
-from human_shape.losses import build_loss, build_prior
-from human_shape.data.structures import StructureList
+from regressor.human_shape.losses import build_loss, build_prior
+from regressor.human_shape.data.structures import StructureList
 
-from human_shape.utils import Tensor, TensorList, IntList, StringList
+from regressor.human_shape.utils import Tensor, TensorList, IntList, StringList
 
 PARAM_KEYS = ['betas', 'expression', 'global_rot', 'body_pose', 'hand_pose',
               'jaw_pose']

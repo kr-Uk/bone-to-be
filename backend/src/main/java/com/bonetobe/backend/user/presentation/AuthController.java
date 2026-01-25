@@ -3,27 +3,25 @@ package com.bonetobe.backend.user.presentation;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.EmailService;
-import com.bonetobe.backend.user.domain.UserService;
-import io.swagger.v3.oas.annotations.Operation;
+import com.bonetobe.backend.user.domain.AuthService;
+import com.bonetobe.backend.user.domain.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class UserApiController {
-    private final UserService userService;
+public class AuthController {
+    private final AuthService authService;
     private final EmailService emailService;
 
     @GetMapping("/check/nickname")
     public ResponseEntity<APIResponse<AddUser.NicknameCheckResponse>> checkNickname(@RequestParam String nickname) {
-        boolean isDuplicated = userService.existsByNickname(nickname);
+        boolean isDuplicated = authService.existsByNickname(nickname);
 
         return ResponseEntity.ok(
                 APIResponse.success(SuccessCode.OK, AddUser.NicknameCheckResponse.from(isDuplicated))
@@ -32,7 +30,7 @@ public class UserApiController {
 
     @GetMapping("/check/email")
     public ResponseEntity<APIResponse<AddUser.EmailCheckResponse>> checkEmail(@RequestParam String email) {
-        boolean isDuplicated = userService.existsByEmail(email);
+        boolean isDuplicated = authService.existsByEmail(email);
 
         return ResponseEntity.ok(
                 APIResponse.success(SuccessCode.OK, AddUser.EmailCheckResponse.from(isDuplicated))
@@ -59,13 +57,7 @@ public class UserApiController {
 
     @PostMapping("/signup")
     public ResponseEntity<APIResponse<AddUser.Response>> signup(@RequestBody @Valid AddUser.Request request) {
-        log.info("회원가입 요청 수신: email={}", request.getEmail());
-
-        AddUser.Response response = userService.save(request.toCommand());
-        log.info("회원가입 완료: userId={}", response.getId());
-
-        return ResponseEntity
-                .status(SuccessCode.CREATED.getStatus())
-                .body(APIResponse.success(SuccessCode.CREATED, response));
+        User user = authService.save(request.toCommand());
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.CREATED, AddUser.Response.from(user)));
     }
 }

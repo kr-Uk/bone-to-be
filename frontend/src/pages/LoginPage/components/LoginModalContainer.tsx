@@ -1,19 +1,23 @@
 import { useState } from "react";
-import type { AxiosError } from "axios";
+
+
+import { login } from "../api/authApi";
 
 import { LoginModalView } from "./LoginModalView";
 import { SignUpModalView } from "./SignUpModalView";
 
+import type { AxiosError } from "axios";
+
 import { Modal } from "@/shared/components/Modal/Modal";
 import { useAuthStore } from "@/shared/stores/authStore";
-import { login } from "../api/authApi";
+
+
 
 
 export const LoginModalContainer = () => {
   const { isLoginModalOpen, closeLoginModal } = useAuthStore();
   const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");
 
-  // Login States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");

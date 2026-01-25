@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
-
-import * as S from "../styles/LoginModal.styles";
-
-import googleIcon from "@/assets/image/Google.png";
-import kakaoIcon from "@/assets/image/Kakao.png";
+import { useEffect, useState } from "react";
 
 import {
   checkEmail,
   checkNickname,
   confirmEmailValidation,
   sendEmailValidation,
+  signup,
 } from "../api/authApi";
+import * as S from "../styles/LoginModal.styles";
+
+import googleIcon from "@/assets/image/Google.png";
+import kakaoIcon from "@/assets/image/Kakao.png";
+
 
 type Props = {
   onSwitchToLogin: () => void;
@@ -128,6 +129,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
       setEmailCheckStatus("verified");
       setIsTimerRunning(false);
     } catch (error) {
+      console.log("TODO: Confirm Email Validation Error", error);
       setAuthError("인증번호가 올바르지 않습니다");
     }
   };
@@ -150,7 +152,21 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
   };
 
   const handleSignUp = () => {
-    console.log("TODO: Sign Up Submit", { nickname, email, password });
+    const payload = {
+      nickname: nickname.trim(),
+      email: trimmedEmail,
+      authCode,
+      password,
+      passwordConfirm: confirmPassword,
+    };
+    signup(payload)
+      .then(() => {
+        window.alert("회원가입이 완료되었습니다");
+        onSwitchToLogin();
+      })
+      .catch((error) => {
+        console.log("TODO: Sign Up Error", error);
+      });
   };
 
   return (

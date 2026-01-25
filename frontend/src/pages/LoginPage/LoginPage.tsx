@@ -1,11 +1,12 @@
 import { useState } from "react";
-import type { AxiosError } from "axios";
 
-import * as S from "./styles/LoginPage.styles";
-
+import { login } from "./api/authApi";
 import { LoginModalView } from "./components/LoginModalView";
 import { SignUpModalView } from "./components/SignUpModalView";
-import { login } from "./api/authApi";
+import * as S from "./styles/LoginPage.styles";
+
+import type { AxiosError } from "axios";
+
 
 export const LoginPage = () => {
   const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");

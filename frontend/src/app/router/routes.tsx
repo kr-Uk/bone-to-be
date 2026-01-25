@@ -1,10 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import DiagnosisLayout from "../layouts/DiagnosisLayout";
+
 import ErrorLayout from "@/app/layouts/ErrorLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
-import MainPage from "@/pages/mainpage/MainPage";
 import { LoginPage } from "@/pages/LoginPage";
+import MainPage from "@/pages/mainpage/MainPage";
 import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
 import ProfilePage from "@/pages/profile/profile";
 
@@ -23,12 +25,18 @@ export const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: "diagnosis/basic-info",
-        element: <BasicInfoPage />,
-      },
-      {
-        path: "diagnosis/photo-capture",
-        element: <PhotoCapturePage />,
+        path: "diagnosis",
+        element: <DiagnosisLayout />,
+        children: [
+          {
+            path: "basic-info",
+            element: <BasicInfoPage />,
+          },
+          {
+            path: "photo-capture",
+            element: <PhotoCapturePage />,
+          },
+        ],
       },
       {
         path: "profile",

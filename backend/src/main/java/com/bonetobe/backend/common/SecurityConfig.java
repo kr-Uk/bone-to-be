@@ -36,14 +36,14 @@ public class SecurityConfig {
 
                 // 2. HTTP 요청에 대한 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/auth/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**"
-                        ).permitAll()
-                        .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
+                    .requestMatchers(
+                        "/auth/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                    ).permitAll()
+                    .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
 
                 // 3. 폼 로그인 설정

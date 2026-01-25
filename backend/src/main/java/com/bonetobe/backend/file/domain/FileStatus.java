@@ -1,4 +1,4 @@
-package com.bonetobe.backend.common.domain;
+package com.bonetobe.backend.file.domain;
 
 public enum FileStatus {
     REQUESTED,   // presigned 발급됨

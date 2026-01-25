@@ -1,23 +1,6 @@
 import styled from "styled-components";
 
-const HeaderTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-`;
-
-const Logo = styled.h1`
-  font-size: ${({ theme }) => theme.typography.heading.sm.fontSize};
-  font-weight: ${({ theme }) => theme.typography.heading.sm.fontWeight};
-`;
-
-const MenuButton = styled.button`
-  font-size: 1.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-`;
+import DiagnosisHeader from "@/shared/components/DiagnosisHeader";
 
 const ContentWrapper = styled.div``;
 
@@ -33,16 +16,11 @@ const Title = styled.h2`
 `;
 
 interface MobileHeaderTopProps {
-  className?: string;
+  onClose?: () => void;
 }
 
-export const MobileHeaderTop = ({ className }: MobileHeaderTopProps) => {
-  return (
-    <HeaderTop className={className}>
-      <Logo>BONE:TOBE</Logo>
-      <MenuButton>☰</MenuButton>
-    </HeaderTop>
-  );
+export const MobileHeaderTop = ({ onClose }: MobileHeaderTopProps) => {
+  return <DiagnosisHeader onClose={onClose} />;
 };
 
 interface MobileHeaderContentProps {

@@ -38,18 +38,22 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String nickname;
 
+    @Column(nullable = false)
+    private String role; // "USER" 또는 "ADMIN"
+
     // 정적 팩토리 메서드 도입
-    public static User createUser(String email, String password, String nickname) {
+    public static User createUser(String email, String password, String nickname, String role) {
         User user = new User();
         user.email = email;
         user.password = password;
         user.nickname = nickname;
+        user.role = (role == null) ? "USER" : role; // 권한이 입력되지 않으면 기본값 "USER"
         return user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
     }
 
     @Override

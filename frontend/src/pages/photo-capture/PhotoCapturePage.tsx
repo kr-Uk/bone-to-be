@@ -2,40 +2,49 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { useMediaQuery, useWebcam } from "@/shared/hooks";
 
-import DiagnosisLeftPanel from "../diagnosis/components/DiagnosisLeftPanel";
-import { MobileHeaderContent, MobileHeaderTop } from "../diagnosis/components/MobileHeader";
+import DiagnosisExplainSection from "../diagnosis/components/DiagnosisExplainSection";
+
+// import { MobileHeaderTop } from "../diagnosis/components/MobileHeader";
 import CameraPreview from "./components/CameraPreview";
 import ImageUpload from "./components/ImageUpload";
 
-const Container = styled.div`
-  min-height: 100vh;
-  display: flex;
-`;
+import { useMediaQuery, useWebcam } from "@/shared/hooks";
+import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
-const RightPanel = styled.div`
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.background};
-  padding: ${({ theme }) => theme.spacing.xl};
+const Container = styled.div`
+  min-height: calc(100vh - 5rem);
   display: flex;
-  flex-direction: column;
+  flex-direction: column; // Default to vertical (Mobile/Tablet)
 
   @media (min-width: 1024px) {
-    width: 50%;
-    padding: ${({ theme }) => theme.spacing.xxl};
+    flex-direction: row; // Horizontal for Desktop
   }
 `;
+
+
 
 const ContentContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 28rem;
-  margin: 0 auto;
   width: 100%;
+  margin: 0 auto;
   gap: ${({ theme }) => theme.spacing.xl};
+
+  @media (min-width: 1024px) {
+    width: 50%;
+    max-width: none;
+    padding: ${({ theme }) => theme.spacing.xxl};
+  }
+
+  & > * {
+    max-width: 28rem;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 `;
 
 const ModeToggleWrapper = styled.div`
@@ -102,12 +111,21 @@ type CaptureMode = "camera" | "upload";
 
 const PhotoCapturePage = () => {
   const navigate = useNavigate();
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const { diagnosisData, setPhotoData } = useDiagnosisStore();
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
   const [mode, setMode] = useState<CaptureMode>("camera");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [showFlash, setShowFlash] = useState(false);
 
   const { videoRef, isActive, error, startCamera, captureImage, stopCamera } = useWebcam();
+
+  // BasicInfo 없으면 첫 페이지로 리다이렉트
+  useEffect(() => {
+    if (!diagnosisData.basicInfo) {
+      navigate("/diagnosis/basic-info", { replace: true });
+    }
+  }, [diagnosisData.basicInfo, navigate]);
 
   useEffect(() => {
     if (mode === "camera" && !capturedImage) {
@@ -141,9 +159,16 @@ const PhotoCapturePage = () => {
 
   const handleConfirm = () => {
     if (capturedImage) {
-      // TODO: 다음 단계로 이동 (분석 페이지)
-      console.log("Image confirmed:", capturedImage);
-      alert("이미지가 저장되었습니다! (다음 페이지 준비 중)");
+      setPhotoData(capturedImage);
+
+      // 콘솔에서 전체 데이터 확인
+      console.log("Complete diagnosis data:", {
+        basicInfo: diagnosisData.basicInfo,
+        photo: capturedImage,
+      });
+
+      // TODO: 서버 전송
+      alert("이미지가 저장되었습니다!");
       // navigate("/diagnosis/analysis");
     }
   };
@@ -159,76 +184,70 @@ const PhotoCapturePage = () => {
 
   return (
     <Container>
-      {isDesktop && (
-        <DiagnosisLeftPanel
-          currentStep={2}
-          stepLabel="STEP 02. PHOTO SCAN"
-          title={
-            <>
-              Capture your
-              <br />
-              bone structure
-              <br />
-              photo.
-            </>
-          }
-          description={
-            <>
-              전신 사진을 촬영하거나 업로드해주세요.
-              <br />
-              정면을 바라보고 팔을 자연스럽게 내린 자세가 좋습니다.
-            </>
-          }
-        />
-      )}
+      <DiagnosisExplainSection
+        currentStep={2}
+        stepLabel="STEP 02. PHOTO SCAN"
+        title={
+          <>
+            Capture your
+            <br />
+            bone structure
+            <br />
+            photo.
+          </>
+        }
+        description={
+          <>
+            전신 사진을 촬영하거나 업로드해주세요.
+            <br />
+            정면을 바라보고 팔을 자연스럽게 내린 자세가 좋습니다.
+          </>
+        }
+        variant={isMobile ? "mobile" : isTablet ? "tablet" : "desktop"}
+      />
 
-      <RightPanel>
-        {!isDesktop && <MobileHeaderTop />}
+      <ContentContainer>
 
-        <ContentContainer>
-          {!isDesktop && <MobileHeaderContent stepLabel="STEP 02" title="Photo Scan" />}
+        <ModeToggleWrapper>
+          <ModeButton $active={mode === "camera"} onClick={() => handleModeChange("camera")}>
+            📷 웹캠 촬영
+          </ModeButton>
+          <ModeButton $active={mode === "upload"} onClick={() => handleModeChange("upload")}>
+            📁 이미지 업로드
+          </ModeButton>
+        </ModeToggleWrapper>
 
-          <ModeToggleWrapper>
-            <ModeButton $active={mode === "camera"} onClick={() => handleModeChange("camera")}>
-              📷 웹캠 촬영
-            </ModeButton>
-            <ModeButton $active={mode === "upload"} onClick={() => handleModeChange("upload")}>
-              📁 이미지 업로드
-            </ModeButton>
-          </ModeToggleWrapper>
+        {mode === "camera" ? (
+          <CameraPreview
+            capturedImage={capturedImage}
+            videoRef={videoRef}
+            isActive={isActive}
+            error={error}
+            showFlash={showFlash}
+          />
+        ) : (
+          <ImageUpload onImageSelect={handleImageSelect} />
+        )}
 
-          {mode === "camera" ? (
-            <CameraPreview
-              capturedImage={capturedImage}
-              videoRef={videoRef}
-              isActive={isActive}
-              error={error}
-              showFlash={showFlash}
-            />
-          ) : (
-            <ImageUpload onImageSelect={handleImageSelect} />
-          )}
-
-          {capturedImage ? (
-            <ButtonGroup>
-              <ActionButton $variant="secondary" onClick={handleRetake}>
-                ↺ 다시 {mode === "camera" ? "촬영" : "선택"}
-              </ActionButton>
-              <ActionButton onClick={handleConfirm}>
-                확인
-                <span>→</span>
-              </ActionButton>
-            </ButtonGroup>
-          ) : (
-            <ActionButton
-              onClick={handleCapture}
-              disabled={mode === "upload" || (mode === "camera" && !isActive)}
-            >
-              {mode === "camera" ? "📷 촬영하기" : "이미지를 업로드해주세요"}
+        {capturedImage ? (
+          <ButtonGroup>
+            <ActionButton $variant="secondary" onClick={handleRetake}>
+              ↺ 다시 {mode === "camera" ? "촬영" : "선택"}
             </ActionButton>
-          )}
-        </ContentContainer>
-      </RightPanel>
+            <ActionButton onClick={handleConfirm}>
+              확인
+              <span>→</span>
+            </ActionButton>
+          </ButtonGroup>
+        ) : (
+          <ActionButton
+            onClick={handleCapture}
+            disabled={mode === "upload" || (mode === "camera" && !isActive)}
+          >
+            {mode === "camera" ? "📷 촬영하기" : "이미지를 업로드해주세요"}
+          </ActionButton>
+        )}
+      </ContentContainer>
     </Container>
   );
 };

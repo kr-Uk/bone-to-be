@@ -4,11 +4,15 @@ const Container = styled.div``;
 
 const Label = styled.label`
   display: block;
-  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
+  font-size: 1.5rem;
   /* font-weight: ${({ theme }) => theme.typography.body.sm.semibold.fontWeight}; */
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.gray[600]};
+  color: ${({ theme }) => theme.colors.gray[500]};
   margin-bottom: ${({ theme }) => theme.spacing.md};
+
+  @media (max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 const InputGrid = styled.div`
@@ -24,9 +28,15 @@ const InputWrapper = styled.div`
 `;
 
 const InputLabel = styled.label`
-  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
-  color: ${({ theme }) => theme.colors.gray[500]};
+  font-size: 1.25rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.purple[600]};
   margin-bottom: ${({ theme }) => theme.spacing.xs};
+
+  @media (max-width: 1023px) {
+    font-size: 1rem;
+  }
 `;
 
 const Input = styled.input`
@@ -36,7 +46,7 @@ const Input = styled.input`
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   background: transparent;
   font-size: ${({ theme }) => theme.typography.body.lg.regular.fontSize};
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.gray[50]};
 
   &:focus {
     outline: none;
@@ -44,7 +54,7 @@ const Input = styled.input`
   }
 
   &::placeholder {
-    color: ${({ theme }) => theme.colors.gray[400]};
+    color: ${({ theme }) => theme.colors.primary};
   }
 
   /* Hide number input spinner */
@@ -60,11 +70,20 @@ const Input = styled.input`
   }
 `;
 
+const ErrorMessage = styled.p`
+  color: #ef4444;
+  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
+  margin-top: ${({ theme }) => theme.spacing.xs};
+  padding-left: ${({ theme }) => theme.spacing.sm};
+`;
+
 interface BodySpecsInputProps {
   height: string;
   weight: string;
   onHeightChange: (height: string) => void;
   onWeightChange: (weight: string) => void;
+  heightError?: string;
+  weightError?: string;
 }
 
 const BodySpecsInput = ({
@@ -72,6 +91,8 @@ const BodySpecsInput = ({
   weight,
   onHeightChange,
   onWeightChange,
+  heightError,
+  weightError,
 }: BodySpecsInputProps) => {
   const handleInputChange = (value: string, onChange: (value: string) => void) => {
     // 빈 값 허용
@@ -96,10 +117,10 @@ const BodySpecsInput = ({
 
   return (
     <Container>
-      <Label>BODY SPECS</Label>
+      <Label>신체 정보</Label>
       <InputGrid>
         <InputWrapper>
-          <InputLabel>Height (cm)</InputLabel>
+          <InputLabel>키(cm)</InputLabel>
           <Input
             type="number"
             value={height}
@@ -108,9 +129,10 @@ const BodySpecsInput = ({
             min="0"
             max="999"
           />
+          {heightError && <ErrorMessage>{heightError}</ErrorMessage>}
         </InputWrapper>
         <InputWrapper>
-          <InputLabel>Weight (kg)</InputLabel>
+          <InputLabel>몸무게(kg)</InputLabel>
           <Input
             type="number"
             value={weight}
@@ -119,6 +141,7 @@ const BodySpecsInput = ({
             min="0"
             max="999"
           />
+          {weightError && <ErrorMessage>{weightError}</ErrorMessage>}
         </InputWrapper>
       </InputGrid>
     </Container>

@@ -3,7 +3,7 @@ package com.bonetobe.backend.recommendation.domain;
 import com.bonetobe.backend.cloth.domain.Cloth;
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
-import com.bonetobe.backend.common.domain.StoredFile;
+import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.report.domain.Report;
 import jakarta.persistence.*;

@@ -16,4 +16,17 @@ public record PostSummaryRaw(
         boolean isLiked,
         LocalDateTime createdAt
 ) {
+    public PostSummary toSummary(String imageUrl) {
+        return new PostSummary(
+                postId,
+                imageUrl,
+                gender,
+                skeletonType,
+                style,
+                height,
+                weight,
+                isLiked,
+                createdAt
+        );
+    }
 }

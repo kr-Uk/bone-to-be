@@ -50,6 +50,9 @@ spring:
           writetimeout: 5000
 
   ##################################
+  # SpringDoc
+  ##################################
+  ##################################
   # RabbitMQ
   ##################################
   rabbitmq:
@@ -72,8 +75,25 @@ spring:
   jackson:
     time-zone: Asia/Seoul
 
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+      region:
+        static:
+          ${AWS_REGION}
+
+      s3:
+        enabled: true
+s3:
+  bucket : ${AWS_S3_BUCKET}
+  region : ${AWS_REGION}
+
 server:
   port: 8080
+  servlet:
+    context-path: /api
 
 ##################################
 # Logging
@@ -81,7 +101,7 @@ server:
 logging:
   level:
     root: INFO
-    com.yourcompany.backend: DEBUG
+    com.bonetobe.backend: DEBUG
 
 ##################################
 # Actuator

@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CgProfile } from "react-icons/cg";
 import { FaRegBell } from "react-icons/fa";
-import { GrUserSettings } from "react-icons/gr";
+import { FiUser, FiUsers } from "react-icons/fi";
 import { IoMenu } from "react-icons/io5";
-import { MdFavoriteBorder, MdLogout } from "react-icons/md";
+import { LuUserCog } from "react-icons/lu";
+import { MdFavoriteBorder, MdLogout, MdOutlineClose } from "react-icons/md";
+import { RiShareBoxLine } from "react-icons/ri";
+import { TbLineScan } from "react-icons/tb";
 import { useLocation, useNavigate } from "react-router-dom";
-import styled, { css } from "styled-components";
-
-import type { AppTheme } from "@/shared/styles/theme";
+import styled, { css, type DefaultTheme } from "styled-components";
 
 import logo from "@/assets/image/MainLogo.svg";
 import { useAuth } from "@/shared/hooks/useAuth";
@@ -36,8 +37,10 @@ const applyTypography = (styles: TypographyToken) => css`
   line-height: ${styles.lineHeight};
 `;
 
-const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
-  ${({ theme }) => applyTypography(getToken(theme as AppTheme))};
+const withTypography = (
+  getToken: (theme: DefaultTheme) => TypographyToken,
+) => css`
+  ${({ theme }) => applyTypography(getToken(theme))};
 `;
 
 export const MainHeader = () => {
@@ -51,10 +54,16 @@ export const MainHeader = () => {
   const navItems: NavItem[] = isLoggedIn
     ? [...baseNavItems, { label: "MYPAGE", path: "/profile" }]
     : baseNavItems;
+  const navIcons: Record<string, ReactNode> = {
+    ABOUT: <RiShareBoxLine size={19} strokeWidth={2.1} />,
+    FUNCTION: <TbLineScan size={19} strokeWidth={2.1} />,
+    COMMUNITY: <FiUsers size={19} strokeWidth={2.1} />,
+    MYPAGE: <FiUser size={19} strokeWidth={2.1} />,
+    "MY PAGE": <FiUser size={19} strokeWidth={2.1} />,
+  };
 
   const displayName = me?.nickname ?? "User";
   const avatarInitial = displayName.slice(0, 1).toUpperCase();
-
   const handleNavigate = (path: string) => {
     navigate(path);
     setIsMobileMenuOpen(false);
@@ -64,6 +73,7 @@ export const MainHeader = () => {
     try {
       await logoutMutation.mutateAsync();
       setIsProfileMenuOpen(false);
+      setIsMobileMenuOpen(false);
     } catch (error) {
       console.error("Logout failed", error);
     }
@@ -89,7 +99,45 @@ export const MainHeader = () => {
 
   useEffect(() => {
     setIsProfileMenuOpen(false);
+    setIsMobileMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const handleChange = () => {
+      if (mediaQuery.matches) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    handleChange();
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleChange);
+    } else {
+      mediaQuery.addListener(handleChange);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", handleChange);
+      } else {
+        mediaQuery.removeListener(handleChange);
+      }
+    };
+  }, []);
 
   return (
     <Header>
@@ -122,7 +170,7 @@ export const MainHeader = () => {
         ) : isLoggedIn ? (
           <AuthIcons>
             <AuthIconButton type="button" aria-label="Notifications">
-              <FaRegBell size={18} />
+              <FaRegBell size={26} />
             </AuthIconButton>
             <ProfileMenuWrap ref={profileMenuRef}>
               <AuthIconButton
@@ -131,31 +179,29 @@ export const MainHeader = () => {
                 aria-expanded={isProfileMenuOpen}
                 onClick={() => setIsProfileMenuOpen((prev) => !prev)}
               >
-                <CgProfile size={20} />
+                <CgProfile size={26} />
               </AuthIconButton>
               <ProfileMenu $isOpen={isProfileMenuOpen}>
                 <ProfileMenuHeader>
-                  <Avatar>
+                  <ProfileMenuAvatar aria-hidden="true">
                     {me?.avatarUrl ? (
-                      <AvatarImage src={me.avatarUrl} alt={displayName} />
+                      <ProfileMenuAvatarImage src={me.avatarUrl} alt={displayName} />
                     ) : (
-                      <AvatarFallback>{avatarInitial}</AvatarFallback>
+                      <ProfileMenuAvatarFallback>{avatarInitial}</ProfileMenuAvatarFallback>
                     )}
-                  </Avatar>
-                  <ProfileMeta>
-                    <ProfileName>{displayName}</ProfileName>
-                    {me?.email && <ProfileEmail>{me.email}</ProfileEmail>}
-                  </ProfileMeta>
+                  </ProfileMenuAvatar>
+                  <ProfileName>{displayName}</ProfileName>
                 </ProfileMenuHeader>
+                <ProfileMenuHeaderDivider />
                 <ProfileMenuList>
                   <ProfileMenuItem type="button">
                     <IconNudge>
-                      <GrUserSettings size={16} />
+                      <LuUserCog size={20} />
                     </IconNudge>
                     회원정보 수정
                   </ProfileMenuItem>
                   <ProfileMenuItem type="button">
-                    <MdFavoriteBorder size={18} />
+                    <MdFavoriteBorder size={20} />
                     Like한 게시물
                   </ProfileMenuItem>
                 </ProfileMenuList>
@@ -186,47 +232,97 @@ export const MainHeader = () => {
           <IoMenu size={22} />
         </MobileMenuButton>
       </HeaderInner>
-      <MobileMenu $isOpen={isMobileMenuOpen}>
-        <MobileMenuNav>
-          {navItems.map((item) => {
-            const isActive = Boolean(item.path && location.pathname.startsWith(item.path));
-            return (
-              <MobileMenuLink
-                key={item.label}
-                type="button"
-                $isActive={isActive}
-                onClick={() => {
-                  if (!item.path) {
-                    setIsMobileMenuOpen(false);
-                    return;
-                  }
-                  handleNavigate(item.path);
-                }}
-              >
-                {item.label}
-              </MobileMenuLink>
-            );
-          })}
-        </MobileMenuNav>
-        <MobileMenuDivider />
-        {isAuthLoading ? (
-          <MobileMenuPlaceholder />
-        ) : isLoggedIn ? (
-          <MobileMenuAction type="button" onClick={() => handleNavigate("/profile")}>
-            마이 프로필
-          </MobileMenuAction>
-        ) : (
-          <MobileMenuAction type="button" onClick={() => handleNavigate("/login")}>
-            LOGIN
-          </MobileMenuAction>
-        )}
-      </MobileMenu>
+      <SideMenuOverlay $isOpen={isMobileMenuOpen} aria-hidden={!isMobileMenuOpen}>
+        <SideMenuBackdrop
+          type="button"
+          aria-label="Close menu"
+          $isOpen={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+        <SideMenuPanel $isOpen={isMobileMenuOpen} role="dialog" aria-modal="true">
+          <SideMenuTop>
+            <SideMenuList>
+              {navItems.map((item) => {
+                const isActive = Boolean(item.path && location.pathname.startsWith(item.path));
+                return (
+                  <SideMenuRowButton
+                    key={item.label}
+                    type="button"
+                    $isActive={isActive}
+                    onClick={() => {
+                      if (!item.path) {
+                        setIsMobileMenuOpen(false);
+                        return;
+                      }
+                      handleNavigate(item.path);
+                    }}
+                  >
+                    <SideMenuIconSlot aria-hidden="true" $isActive={isActive}>
+                      {navIcons[item.label] ?? null}
+                    </SideMenuIconSlot>
+                    <SideMenuRowText $isActive={isActive}>{item.label}</SideMenuRowText>
+                  </SideMenuRowButton>
+                );
+              })}
+            </SideMenuList>
+
+            {isLoggedIn && (
+              <SideMenuAccountSection>
+                <SideMenuRowButton type="button">
+                  <SideMenuIconSlot aria-hidden="true">
+                    <FaRegBell size={18} />
+                  </SideMenuIconSlot>
+                  <SideMenuRowText>알림함</SideMenuRowText>
+                </SideMenuRowButton>
+                <SideMenuRowButton type="button">
+                  <SideMenuIconSlot aria-hidden="true">
+                    <LuUserCog size={16} />
+                  </SideMenuIconSlot>
+                  <SideMenuRowText>회원정보 수정</SideMenuRowText>
+                </SideMenuRowButton>
+                <SideMenuRowButton type="button">
+                  <SideMenuIconSlot aria-hidden="true">
+                    <MdFavoriteBorder size={18} />
+                  </SideMenuIconSlot>
+                  <SideMenuRowText>Like한 게시물</SideMenuRowText>
+                </SideMenuRowButton>
+              </SideMenuAccountSection>
+            )}
+          </SideMenuTop>
+
+          {isAuthLoading ? (
+            <SideMenuPlaceholder />
+          ) : isLoggedIn ? (
+            <SideMenuLogoutButton type="button" onClick={handleLogout}>
+              <SideMenuIconSlot aria-hidden="true" $danger>
+                <MdLogout size={18} />
+              </SideMenuIconSlot>
+              <SideMenuLogoutText>로그아웃</SideMenuLogoutText>
+            </SideMenuLogoutButton>
+          ) : (
+            <SideMenuLoginBar>
+              <SideMenuLoginRow>
+                <SideMenuLoginHint>로그인이 필요합니다.</SideMenuLoginHint>
+                <SideMenuLoginLink type="button" onClick={() => handleNavigate("/login")}>
+                  로그인
+                </SideMenuLoginLink>
+              </SideMenuLoginRow>
+            </SideMenuLoginBar>
+          )}
+
+          <SideMenuCloseButton type="button" aria-label="Close menu" onClick={() => setIsMobileMenuOpen(false)}>
+            <MdOutlineClose size={24} />
+          </SideMenuCloseButton>
+        </SideMenuPanel>
+      </SideMenuOverlay>
     </Header>
   );
 };
 
 const Header = styled.header`
   width: 100%;
+  position: relative;
+  z-index: 900;
   background-color: ${({ theme }) => theme.colors.primary};
   border-bottom: 0.0625rem solid ${({ theme }) => theme.colors.primary};
   backdrop-filter: blur(2px);
@@ -281,10 +377,6 @@ const Nav = styled.nav`
   gap: 2rem;
 
   @media (max-width: 1023px) {
-    gap: 1.25rem;
-  }
-
-  @media (max-width: 768px) {
     display: none;
   }
 `;
@@ -297,10 +389,24 @@ const NavLink = styled.button<{ $isActive?: boolean }>`
   text-decoration: none;
   background: transparent;
   border: none;
-  padding: 0 0 0.2rem;
-  border-bottom: 1px solid
-    ${({ theme, $isActive }) => ($isActive ? theme.colors.brand : "transparent")};
+  padding: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: color 0.3s ease;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    bottom: -0.2rem;
+    background: ${({ theme }) => theme.colors.brand};
+    opacity: ${({ $isActive }) => ($isActive ? 1 : 0)};
+    transition: opacity 0.2s ease;
+  }
 
   &:hover {
     color: ${({ theme }) => theme.colors.gray[300]};
@@ -313,10 +419,6 @@ const AuthLinks = styled.div`
   gap: 1.5rem;
 
   @media (max-width: 1023px) {
-    gap: 1rem;
-  }
-
-  @media (max-width: 768px) {
     display: none;
   }
 `;
@@ -326,7 +428,7 @@ const AuthIcons = styled.div`
   align-items: center;
   gap: 0.75rem;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1023px) {
     display: none;
   }
 `;
@@ -348,8 +450,16 @@ const AuthIconButton = styled.button`
   cursor: pointer;
   transition: color 0.2s ease;
 
+  &[aria-expanded="true"] {
+    color: ${({ theme }) => theme.colors.brand};
+  }
+
   &:hover {
     color: ${({ theme }) => theme.colors.gray[300]};
+  }
+
+  &[aria-expanded="true"]:hover {
+    color: ${({ theme }) => theme.colors.brand};
   }
 `;
 
@@ -360,8 +470,8 @@ const ProfileMenu = styled.div<{ $isOpen: boolean }>`
   min-width: 15.5rem;
   padding: 0.75rem;
   border-radius: 0.75rem;
-  background: ${({ theme }) => theme.colors.gray[900]};
-  border: 1px solid ${({ theme }) => theme.colors.gray[800]};
+  background: ${({ theme }) => theme.colors.gray[800]};
+  border: 1px solid ${({ theme }) => theme.colors.gray[600]};
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
   display: ${({ $isOpen }) => ($isOpen ? "grid" : "none")};
   gap: 0.75rem;
@@ -374,33 +484,27 @@ const ProfileMenuHeader = styled.div`
   gap: 0.75rem;
 `;
 
-const Avatar = styled.div`
-  width: 2.5rem;
-  height: 2.5rem;
+const ProfileMenuAvatar = styled.span`
+  width: 2rem;
+  height: 2rem;
   border-radius: 999px;
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.gray[800]};
-  display: flex;
+  background: ${({ theme }) => theme.colors.gray[700]};
+  color: ${({ theme }) => theme.colors.gray[50]};
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 `;
 
-const AvatarImage = styled.img`
+const ProfileMenuAvatarImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
 `;
 
-const AvatarFallback = styled.span`
-  color: ${({ theme }) => theme.colors.gray[50]};
+const ProfileMenuAvatarFallback = styled.span`
   font-weight: 700;
-  font-size: 0.95rem;
-`;
-
-const ProfileMeta = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  font-size: 0.85rem;
 `;
 
 const ProfileName = styled.span`
@@ -409,9 +513,9 @@ const ProfileName = styled.span`
   font-size: 0.95rem;
 `;
 
-const ProfileEmail = styled.span`
-  color: ${({ theme }) => theme.colors.gray[400]};
-  font-size: 0.8rem;
+const ProfileMenuHeaderDivider = styled.div`
+  height: 1px;
+  background: ${({ theme }) => theme.colors.gray[600]};
 `;
 
 const ProfileMenuList = styled.div`
@@ -452,7 +556,7 @@ const IconNudge = styled.span`
 
 const ProfileMenuDivider = styled.div`
   height: 1px;
-  background: ${({ theme }) => theme.colors.gray[800]};
+  background: ${({ theme }) => theme.colors.gray[600]};
 `;
 
 const ProfileMenuLogout = styled.button`
@@ -485,7 +589,7 @@ const AuthPlaceholder = styled.div`
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
 
-  @media (max-width: 768px) {
+  @media (max-width: 1023px) {
     display: none;
   }
 `;
@@ -528,58 +632,228 @@ const MobileMenuButton = styled.button`
   color: ${({ theme }) => theme.colors.gray[50]};
   cursor: pointer;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1023px) {
     display: flex;
   }
 `;
 
-const MobileMenu = styled.div<{ $isOpen: boolean }>`
-  display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
-  padding: 0.75rem 1.5rem 1rem;
-  border-top: 1px solid ${({ theme }) => theme.colors.gray[800]};
-  background-color: ${({ theme }) => theme.colors.primary};
+const SideMenuOverlay = styled.div<{ $isOpen: boolean }>`
+  position: fixed;
+  inset: 0;
+  display: block;
+  height: 100dvh;
+  min-height: 100vh;
+  z-index: 300;
+  pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
 
-  @media (min-width: 769px) {
+  @media (min-width: 1024px) {
     display: none;
   }
 `;
 
-const MobileMenuNav = styled.div`
-  display: grid;
-  gap: 0.5rem;
+const SideMenuBackdrop = styled.button<{ $isOpen: boolean }>`
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: ${({ $isOpen }) => ($isOpen ? "rgba(3, 3, 3, 0.35)" : "transparent")};
+  backdrop-filter: ${({ $isOpen }) => ($isOpen ? "blur(6px)" : "none")};
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+  visibility: ${({ $isOpen }) => ($isOpen ? "visible" : "hidden")};
+  transition:
+    opacity 0.2s ease,
+    visibility 0s linear ${({ $isOpen }) => ($isOpen ? "0s" : "0.2s")};
 `;
 
-const MobileMenuLink = styled.button<{ $isActive?: boolean }>`
-  ${withTypography((theme) => theme.typography.body.md.medium)};
+const SideMenuPanel = styled.aside<{ $isOpen: boolean }>`
+  width: clamp(18rem, 40vw, 24rem);
+  min-width: 18rem;
+  max-width: 90vw;
+  height: 100dvh;
+  min-height: 100vh;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: 4rem 0.5rem 1.25rem;
+  background: ${({ theme }) => theme.colors.gray[900]};
+  border-left: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: ${({ $isOpen }) => ($isOpen ? "-16px 0 32px rgba(0, 0, 0, 0.45)" : "none")};
+  transform: translateX(${({ $isOpen }) => ($isOpen ? "0%" : "100%")});
+  transition:
+    transform 0.25s ease,
+    width 0.25s ease;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    border-left: none;
+  }
+`;
+
+const SideMenuTop = styled.div`
+  width: 100%;
+  padding-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const SideMenuList = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const SideMenuAccountSection = styled.div`
+  width: 100%;
+  padding-top: 4px;
+  border-top: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const SideMenuRowButton = styled.button<{ $isActive?: boolean }>`
+  width: 100%;
+  padding: 12px 20px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &:active {
+    background: rgba(255, 255, 255, 0.07);
+  }
+`;
+
+const SideMenuIconSlot = styled.span<{ $danger?: boolean; $isActive?: boolean }>`
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ $danger, $isActive, theme }) => {
+    if ($danger) {
+      return "#f87171";
+    }
+    if ($isActive) {
+      return theme.colors.brand;
+    }
+    return theme.colors.gray[50];
+  }};
+
+  & > svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const SideMenuRowText = styled.span<{ $isActive?: boolean }>`
   color: ${({ theme, $isActive }) =>
     $isActive ? theme.colors.brand : theme.colors.gray[50]};
-  background: transparent;
-  border: none;
-  padding: 0.4rem 0;
-  text-align: left;
+  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24px;
+`;
+
+const SideMenuLogoutButton = styled.button`
+  width: 100%;
+  padding: 12px 12px;
+  border: 0;
   cursor: pointer;
-  border-bottom: 1px solid
-    ${({ theme, $isActive }) => ($isActive ? theme.colors.brand : "transparent")};
+  background: ${({ theme }) => theme.colors.gray[900]};
+  border-top: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+
+  &:hover {
+    background: rgba(248, 113, 113, 0.06);
+  }
 `;
 
-const MobileMenuDivider = styled.div`
-  height: 1px;
-  margin: 0.75rem 0;
-  background: ${({ theme }) => theme.colors.gray[800]};
+const SideMenuLogoutText = styled.span`
+  color: #f87171;
+  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24px;
 `;
 
-const MobileMenuAction = styled.button`
-  ${withTypography((theme) => theme.typography.body.md.semibold)};
-  color: ${({ theme }) => theme.colors.gray[50]};
+const SideMenuLoginBar = styled.div`
+  width: 100%;
+  padding: 12px 12px;
+  background: ${({ theme }) => theme.colors.gray[900]};
+  border-top: 1px solid ${({ theme }) => theme.colors.gray[600]};
+`;
+
+const SideMenuLoginRow = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+`;
+
+const SideMenuLoginHint = styled.span`
+  color: ${({ theme }) => theme.colors.gray[300]};
+  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 24px;
+`;
+
+const SideMenuLoginLink = styled.button`
+  border: 0;
   background: transparent;
-  border: none;
-  padding: 0.35rem 0;
-  text-align: left;
   cursor: pointer;
+  color: ${({ theme }) => theme.colors.brand};
+  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.brand};
+  padding: 0;
+
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
-const MobileMenuPlaceholder = styled.div`
+const SideMenuCloseButton = styled.button`
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.colors.gray[400]};
+`;
+
+const SideMenuPlaceholder = styled.div`
   height: 1.5rem;
+  margin: 0 12px 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
 `;

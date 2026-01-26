@@ -81,7 +81,7 @@ export const handlers = [
     const email = params.get("email") ?? "";
     const password = params.get("password") ?? "";
 
-    if (email === "user@example.com" && password === "1234") {
+    if (email === "1234" && password === "1234") {
       mockAuthState = {
         isLoggedIn: true,
         me: {

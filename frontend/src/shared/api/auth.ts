@@ -21,7 +21,7 @@ export type LogoutResponse = {
 };
 
 export const getMe = async (): Promise<Me> => {
-  const { data } = await axiosInstance.get<Me>("/api/auth/me");
+  const { data } = await axiosInstance.get<Me>("/auth/me");
   return data;
 };
 
@@ -30,7 +30,7 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   form.set("email", payload.email);
   form.set("password", payload.password);
 
-  const { data } = await axiosInstance.post<LoginResponse>("/api/auth/login", form, {
+  const { data } = await axiosInstance.post<LoginResponse>("/auth/login", form, {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
 
@@ -38,6 +38,6 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
 };
 
 export const logout = async (): Promise<LogoutResponse> => {
-  const { data } = await axiosInstance.post<LogoutResponse>("/api/auth/logout");
+  const { data } = await axiosInstance.post<LogoutResponse>("/auth/logout");
   return data;
 };

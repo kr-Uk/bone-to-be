@@ -1,12 +1,11 @@
 package com.bonetobe.backend.user.presentation;
 
-import com.bonetobe.backend.auth.security.UserPrincipal;
+import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.common.response.SuccessCode;
-import com.bonetobe.backend.user.domain.User;
-import com.bonetobe.backend.user.application.UserService;
+import com.bonetobe.backend.user.domain.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

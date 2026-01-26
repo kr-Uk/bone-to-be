@@ -1,6 +1,5 @@
-package com.bonetobe.backend.user.application;
+package com.bonetobe.backend.user.domain;
 
-import com.bonetobe.backend.user.domain.UserUpdateCommand;
 import com.bonetobe.backend.user.presentation.UpdateUser;
 
 public interface UserService {

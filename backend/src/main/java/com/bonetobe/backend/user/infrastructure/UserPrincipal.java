@@ -1,4 +1,4 @@
-package com.bonetobe.backend.auth.security;
+package com.bonetobe.backend.user.infrastructure;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

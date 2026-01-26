@@ -1,4 +1,4 @@
-package com.bonetobe.backend.auth.security;
+package com.bonetobe.backend.user.infrastructure;
 
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserRepository;

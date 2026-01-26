@@ -1,4 +1,4 @@
-package com.bonetobe.backend.auth.initializer;
+package com.bonetobe.backend.common;
 
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserRepository;

@@ -1,25 +1,12 @@
-package com.bonetobe.backend.user.application;
+package com.bonetobe.backend.user.domain;
 
-import com.bonetobe.backend.common.S3Properties;
 import com.bonetobe.backend.file.domain.FileService;
-import com.bonetobe.backend.file.presentation.FileUploadUrl;
-import com.bonetobe.backend.user.domain.User;
-import com.bonetobe.backend.user.domain.UserRepository;
-import com.bonetobe.backend.user.domain.UserUpdateCommand;
 import com.bonetobe.backend.user.presentation.UpdateUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
-
-import java.time.Duration;
-import java.util.UUID;
 
 @Slf4j
 @Service

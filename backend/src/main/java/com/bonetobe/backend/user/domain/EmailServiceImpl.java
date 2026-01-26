@@ -1,4 +1,4 @@
-package com.bonetobe.backend.auth.application;
+package com.bonetobe.backend.user.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

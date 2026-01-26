@@ -1,8 +1,5 @@
-package com.bonetobe.backend.auth.application;
+package com.bonetobe.backend.user.domain;
 
-import com.bonetobe.backend.user.domain.User;
-import com.bonetobe.backend.user.domain.UserCreateCommand;
-import com.bonetobe.backend.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

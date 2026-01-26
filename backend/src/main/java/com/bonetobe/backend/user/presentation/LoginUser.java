@@ -1,4 +1,4 @@
-package com.bonetobe.backend.auth.presentation;
+package com.bonetobe.backend.user.presentation;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

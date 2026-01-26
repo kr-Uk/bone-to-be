@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
-import static com.bonetobe.backend.user.domain.QProfile.profile;
 import static com.bonetobe.backend.post.domain.QPost.post;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
 import static com.bonetobe.backend.style.domain.QStyle.style;
@@ -48,7 +47,6 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
         JPAQuery<Long> countQuery = qf
                 .select(post.id.count())
                 .from(post)
-                .join(post.user.profile, profile)
                 .where(conditions);
 
         List<OrderSpecifier<?>> orderSpecifiers = orderSpecifiers(c.postSort());
@@ -57,7 +55,6 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
         List<Long> postIds = qf
                 .select(post.id)
                 .from(post)
-                .join(post.user.profile, profile)
                 .where(conditions)
                 .orderBy(orderSpecifiers.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -71,7 +68,6 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
         // id에 따라 상세조회
         List<PostSummaryRaw> content = qf
                 .from(post)
-                .join(post.user.profile, profile)
                 .join(post.storedFile, storedFile)
                 .leftJoin(postStyle).on(postStyle.post.eq(post))
                 .leftJoin(postStyle.style, style)
@@ -83,11 +79,11 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                         PostSummaryRaw.class,
                                         post.id,
                                         storedFile.id,
-                                        profile.gender.stringValue(),
+                                        post.gender,
                                         post.skeletonType,
-                                        GroupBy.list(style.styleName.stringValue()),
-                                        profile.height,
-                                        profile.weight,
+                                        GroupBy.list(style.styleName),
+                                        post.height,
+                                        post.weight,
                                         Expressions.FALSE,
                                         post.createdAt
                                 )
@@ -115,21 +111,21 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
     }
 
     private BooleanExpression eqGender(Gender gender) {
-        return gender == null ? null : profile.gender.eq(gender);
+        return gender == null ? null : post.gender.eq(gender);
     }
 
     private BooleanExpression betweenHeight(Integer min, Integer max) {
         if (min == null && max == null) return null;
-        if (min != null && max != null) return profile.height.between(min, max);
-        if (min != null) return profile.height.goe(min);
-        return profile.height.loe(max);
+        if (min != null && max != null) return post.height.between(min, max);
+        if (min != null) return post.height.goe(min);
+        return post.height.loe(max);
     }
 
     private BooleanExpression betweenWeight(Integer min, Integer max) {
         if (min == null && max == null) return null;
-        if (min != null && max != null) return profile.weight.between(min, max);
-        if (min != null) return profile.weight.goe(min);
-        return profile.weight.loe(max);
+        if (min != null && max != null) return post.weight.between(min, max);
+        if (min != null) return post.weight.goe(min);
+        return post.weight.loe(max);
     }
 
     private BooleanExpression inStyles(List<StyleName> styles) {

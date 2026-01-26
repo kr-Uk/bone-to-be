@@ -1,5 +1,6 @@
 package com.bonetobe.backend.post.presentation.dto;
 
+import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.user.domain.Gender;
@@ -97,9 +98,9 @@ public class PostListDto {
     public record Response(
             Long postId,
             String imageUrl,
-            String gender,
-            com.bonetobe.backend.common.SkeletonType skeletonType,
-            List<String> style,
+            Gender gender,
+            SkeletonType skeletonType,
+            List<StyleName> style,
             Integer height,
             Integer weight,
             Boolean isLiked,

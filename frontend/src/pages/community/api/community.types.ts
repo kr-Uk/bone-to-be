@@ -8,34 +8,57 @@ export interface FeedItem {
   bodyType: "Straight" | "Wave" | "Natural";
   height: number; // cm
   weight?: number; // kg (optional)
-  styles: string[]; // 예: ["Casual", "Street"]
-  gender: "men" | "women";
+  styles: string[]; // 예: ["casual", "street", "minimal"]
+  gender: "M" | "F";
   isLiked: boolean;
   likeCount: number;
   createdAt: string; // ISO date
 }
 
 /**
- * 커뮤니티 피드 필터
+ * 커뮤니티 피드 필터 (UI 상태용)
  */
 export interface FeedFilters {
-  gender: "men" | "women" | null;
+  gender: "M" | "F" | null;
   bodyType: "Straight" | "Wave" | "Natural" | null;
-  styles: string[]; // multi-select
+  styles: string[]; // multi-select, lowercase values: ["casual", "street", "minimal"]
   heightRange: { min: number; max: number } | null;
   weightRange: { min: number; max: number } | null;
 }
 
+/**
+ * UI 정렬 타입 (추천순 포함)
+ */
 export type SortBy = "popular" | "recommended" | "latest";
 
 /**
- * 피드 리스트 요청
+ * API 요청용 정렬 타입 (추천순 제외)
+ */
+export type ApiSortBy = "popular" | "latest";
+
+/**
+ * 피드 리스트 요청 (UI 상태용)
  */
 export interface FeedListRequest {
   sortBy: SortBy;
   filters: FeedFilters;
   page: number;
   limit: number;
+}
+
+/**
+ * 피드 리스트 API 파라미터 (평탄화된 구조)
+ */
+export interface FeedListApiParams {
+  sort?: ApiSortBy;
+  gender?: "M" | "F";
+  min_height?: number;
+  max_height?: number;
+  min_weight?: number;
+  max_weight?: number;
+  style?: string; // 쉼표 구분 문자열 (예: "casual,street")
+  page?: number;
+  size?: number;
 }
 
 /**

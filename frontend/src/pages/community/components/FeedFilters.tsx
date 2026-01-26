@@ -65,8 +65,8 @@ const ResetButton = styled.button`
 
 // Filter options
 const genderOptions: FilterOption[] = [
-  { value: "men", label: "남성" },
-  { value: "women", label: "여성" },
+  { value: "M", label: "남성" },
+  { value: "F", label: "여성" },
 ];
 
 const bodyTypeOptions: FilterOption[] = [
@@ -76,9 +76,9 @@ const bodyTypeOptions: FilterOption[] = [
 ];
 
 const styleOptions: FilterOption[] = [
-  { value: "Casual", label: "캐주얼" },
-  { value: "Street", label: "스트릿" },
-  { value: "Minimal", label: "미니멀" },
+  { value: "casual", label: "캐주얼" },
+  { value: "street", label: "스트릿" },
+  { value: "minimal", label: "미니멀" },
 ];
 
 // Height presets (5cm intervals)
@@ -121,7 +121,7 @@ export function FeedFilters({ filters, onFilterChange }: FeedFiltersProps) {
   const handleGenderChange = (value: string | string[] | null) => {
     onFilterChange({
       ...filters,
-      gender: value as "men" | "women" | null,
+      gender: value as "M" | "F" | null,
     });
   };
 

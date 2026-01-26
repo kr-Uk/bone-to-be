@@ -64,7 +64,7 @@ export function SelectedFilters({ filters, onRemoveFilter }: SelectedFiltersProp
 
   if (filters.gender) {
     selectedFilters.push({
-      label: filters.gender === "men" ? "남성" : "여성",
+      label: filters.gender === "M" ? "남성" : "여성",
       key: "gender",
     });
   }
@@ -82,9 +82,9 @@ export function SelectedFilters({ filters, onRemoveFilter }: SelectedFiltersProp
   }
 
   const styleLabels: Record<string, string> = {
-    Casual: "캐주얼",
-    Street: "스트릿",
-    Minimal: "미니멀",
+    casual: "캐주얼",
+    street: "스트릿",
+    minimal: "미니멀",
   };
 
   filters.styles.forEach((style) => {

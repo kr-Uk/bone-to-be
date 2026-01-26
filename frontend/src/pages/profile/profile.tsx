@@ -26,7 +26,7 @@ const Main = styled.main`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding-top: 3.75rem;
+  padding-top: 1.5rem;
   @media (max-width: 1024px) {
     padding: 1.5rem 2rem;
   }

@@ -206,8 +206,6 @@ export const handlers = [
       follower: 4200,
       following: 150,
       bodyType: "Natural",
-      height: 171,
-      weight: 58,
       bio: "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~",
       bodyTypeRatio: {
         natural: 55,

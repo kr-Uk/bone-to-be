@@ -169,7 +169,6 @@ const ProfilePage = () => {
               follower={profile.follower}
               following={profile.following}
               bodyType={profile.bodyType}
-              profileMeta={profile.profileMeta}
               bio={profile.bio}
               isOwner={isOwner}
               onFollowerClick={() => setFollowModalType("follower")}

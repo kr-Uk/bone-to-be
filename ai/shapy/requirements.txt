@@ -8,7 +8,7 @@ matplotlib
 numpy
 omegaconf==2.0.6
 opencv-python
-open3d
+open3d==0.18.0
 Pillow
 PyOpenGL
 pyrender
@@ -16,7 +16,7 @@ pytorch-lightning
 scikit-image
 scikit-learn
 scipy
-sklearn
+scikit-learn
 smplx
 torch
 torchgeometry

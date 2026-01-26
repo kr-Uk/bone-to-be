@@ -5,6 +5,13 @@ echo "🚀 [3/6] Installing PyTorch (CUDA 11.8)..."
 # Using the command from PyTorch website for CUDA 11.8
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
 
+echo "🚀 [3.5/6] Adjusting pip version & installing chumpy..."
+# Downgrade pip to <24.1 to allow installing omegaconf==2.0.6 (which has invalid metadata for newer pip)
+pip install "pip<24.1" setuptools wheel
+
+# Install chumpy without build isolation (fixes 'No module named pip' error)
+pip install chumpy --no-build-isolation
+
 echo "🚀 [4/6] Installing Python Dependencies..."
 pip install -r shapy/requirements.txt
 

@@ -65,8 +65,8 @@ mesh_mesh_intersect_extra_compile_args = {
     'nvcc': ['-DPRINT_TIMINGS=0', '-DDEBUG_PRINT=0',
              '-DERROR_CHECKING=1',
              '-DCOLLISION_ORDERING=1',
-             '-Xcompiler', '-std=c++14'],
-    'cxx': ['-std=c++14']}
+             '-Xcompiler', '-std=c++17'],
+    'cxx': ['-std=c++17']}
 mesh_mesh_intersect_extension = CUDAExtension(
     'mesh_mesh_intersect_cuda', mesh_mesh_intersect_src_files,
     include_dirs=mesh_mesh_intersect_include_dirs,

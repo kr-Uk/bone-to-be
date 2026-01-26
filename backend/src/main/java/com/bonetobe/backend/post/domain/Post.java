@@ -2,15 +2,19 @@ package com.bonetobe.backend.post.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
-import com.bonetobe.backend.file.domain.StoredFile;
-import com.bonetobe.backend.user.domain.Gender;
-import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.file.domain.StoredFile;
+import com.bonetobe.backend.style.domain.Style;
+import com.bonetobe.backend.user.domain.Gender;
+import com.bonetobe.backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,6 +49,41 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private long likeCount = 0L;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<PostStyle> postStyles = new ArrayList<>();
+
+    public static Post create(
+            User user,
+            StoredFile storedFile,
+            String content,
+            Gender gender,
+            SkeletonType skeletonType,
+            Integer height,
+            Integer weight
+    ) {
+        Post post = new Post();
+        post.user = user;
+        post.storedFile = storedFile;
+        post.content = content;
+        post.gender = gender;
+        post.skeletonType = skeletonType;
+        post.height = height;
+        post.weight = weight;
+
+        return post;
+    }
+
+
+    public void applyStyles(List<Style> styles) {
+        if (styles == null || styles.isEmpty()) return;
+
+        for (Style style : styles) {
+            if (style == null) continue;
+            this.postStyles.add(PostStyle.create(this, style));
+        }
+    }
+
 
     public void increaseLike() {
         this.likeCount++;

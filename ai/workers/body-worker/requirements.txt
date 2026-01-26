@@ -4,7 +4,11 @@ ultralytics
 opencv-python
 requests
 torch
+<<<<<<< Updated upstream
 numpy
+=======
+numpy<1.20
+>>>>>>> Stashed changes
 chumpy
 imageio
 jpeg4py

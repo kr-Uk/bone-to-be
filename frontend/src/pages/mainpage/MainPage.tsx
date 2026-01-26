@@ -9,20 +9,7 @@ const Container = styled.div`
 const MainPage = () => {
   return (
     <Container>
-      {/* Header */}
-      <Header>
-        <Logo>LOGO</Logo>
-        <Nav>
-          <NavLink>HOME</NavLink>
-          <NavLink>ABOUT</NavLink>
-          <NavLink>FUNCTION</NavLink>
-          <NavLink>COMMUNITY</NavLink>
-        </Nav>
-        <AuthLinks>
-          <NavLink>LOGIN</NavLink>
-          <NavLink>SIGNUP</NavLink>
-        </AuthLinks>
-      </Header>
+
 
       {/* Hero Section */}
       <HeroSection>
@@ -134,42 +121,7 @@ const MainPage = () => {
   );
 };
 
-const Header = styled.header`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 48px;
-  border-bottom: 1px solid #e5e5e5;
-`;
 
-const Logo = styled.div`
-  font-size: 18px;
-  font-weight: 700;
-  color: #000;
-`;
-
-const Nav = styled.nav`
-  display: flex;
-  gap: 32px;
-`;
-
-const NavLink = styled.a`
-  font-size: 14px;
-  font-weight: 500;
-  color: #000;
-  cursor: pointer;
-  text-decoration: none;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #666;
-  }
-`;
-
-const AuthLinks = styled.div`
-  display: flex;
-  gap: 24px;
-`;
 
 const HeroSection = styled.section`
   padding: 120px 48px;

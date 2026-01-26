@@ -1,4 +1,4 @@
-package com.bonetobe.backend.user.domain;
+package com.bonetobe.backend.auth.application;
 
 public interface EmailService {
     void sendEmailCode(String email);

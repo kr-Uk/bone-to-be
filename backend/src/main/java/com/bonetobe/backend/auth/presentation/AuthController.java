@@ -1,9 +1,9 @@
-package com.bonetobe.backend.user.presentation;
+package com.bonetobe.backend.auth.presentation;
 
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
-import com.bonetobe.backend.user.domain.EmailService;
-import com.bonetobe.backend.user.domain.AuthService;
+import com.bonetobe.backend.auth.application.EmailService;
+import com.bonetobe.backend.auth.application.AuthService;
 import com.bonetobe.backend.user.domain.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

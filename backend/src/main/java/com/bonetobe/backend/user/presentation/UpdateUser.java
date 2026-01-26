@@ -1,12 +1,36 @@
 package com.bonetobe.backend.user.presentation;
 
-import com.bonetobe.backend.user.domain.UserCreateCommand;
+import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.user.domain.UserUpdateCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 public class UpdateUser {
+    @Getter
+    public static class PresignedUrlRequest {
+        @NotBlank
+        private String fileName;
+
+        @NotBlank
+        @Pattern(regexp = "image/(png|jpeg|jpg)")
+        private String contentType;
+    }
+
+    @Getter
+    public static class InfoRequest {
+        private String nickname;
+        private StoredFile profileImage;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class PresignedUrlResponse {
+        private String uploadUrl; // PUT으로 업로드할 URL
+        private String fileUrl;   // 업로드 완료 후 DB에 저장할 URL
+    }
+
     @Getter
     public static class PasswordRequest {
         @NotBlank(message = "현재 비밀번호를 입력해주세요.")

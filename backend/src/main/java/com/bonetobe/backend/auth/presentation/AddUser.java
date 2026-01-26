@@ -1,4 +1,4 @@
-package com.bonetobe.backend.user.presentation;
+package com.bonetobe.backend.auth.presentation;
 
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserCreateCommand;

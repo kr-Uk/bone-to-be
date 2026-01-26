@@ -1,9 +1,10 @@
 package com.bonetobe.backend.user.presentation;
 
+import com.bonetobe.backend.auth.security.UserPrincipal;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.User;
-import com.bonetobe.backend.user.domain.UserService;
+import com.bonetobe.backend.user.application.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +20,20 @@ public class UserController {
     // 프로필 조회
     //@GetMapping("/me")
 
+    // 이미지 업로드
+    @PostMapping("/image/presigned-url")
+    public ResponseEntity<APIResponse<UpdateUser.PresignedUrlResponse>> generatePresignedUrl(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody @Valid UpdateUser.PresignedUrlRequest request
+    ) {
+        UpdateUser.PresignedUrlResponse response =
+                userService.generatePresignedUrl(principal.getUserId(), request);
 
-    // 회원 추가정보 입력
-    @PostMapping("/me")
-
-
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, response));
+    }
 
     // 마이페이지 수정
     //@PutMapping("/me")
-
 
 
     @DeleteMapping("/me")

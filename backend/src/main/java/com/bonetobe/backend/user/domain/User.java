@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class User extends BaseEntity implements UserDetails {
+public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -51,7 +51,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
-    private StoredFile file;
+    private StoredFile profileImage;
 
     // 정적 팩토리 메서드 도입
     public static User createUser(String email, String password, String nickname, String role) {
@@ -61,6 +61,12 @@ public class User extends BaseEntity implements UserDetails {
         user.nickname = nickname;
         user.role = (role == null) ? "USER" : role; // 권한이 입력되지 않으면 기본값 "USER"
         return user;
+    }
+
+    //
+    public void updateProfile(String nickname, StoredFile profileImage) {
+        this.nickname = nickname;
+        this.profileImage = profileImage;
     }
 
     // 비밀번호 업데이트
@@ -73,40 +79,5 @@ public class User extends BaseEntity implements UserDetails {
         if (!isDeleted) {
             isDeleted = true;
         }
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }

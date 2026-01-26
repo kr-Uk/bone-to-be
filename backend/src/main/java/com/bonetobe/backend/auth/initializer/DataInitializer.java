@@ -1,4 +1,4 @@
-package com.bonetobe.backend.user.infrastructure;
+package com.bonetobe.backend.auth.initializer;
 
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserRepository;

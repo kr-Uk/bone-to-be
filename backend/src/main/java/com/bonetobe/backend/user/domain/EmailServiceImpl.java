@@ -13,7 +13,7 @@ import java.time.Duration;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // 기본적으로 읽기 전용으로 설정
+@Transactional(readOnly = true)
 public class EmailServiceImpl implements EmailService{
     private final JavaMailSender mailSender;
     private final StringRedisTemplate redisTemplate;

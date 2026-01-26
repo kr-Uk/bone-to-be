@@ -46,6 +46,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<APIResponse<Void>> handleBusiness(BusinessException e) {
         ErrorCode ec = e.getErrorCode();
 
+        log.warn("[Business Error] 상세 내용: {}", e.getMessage());
         return ResponseEntity
                 .status(ec.getStatus())
                 .body(APIResponse.fail(ec));
@@ -54,6 +55,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<APIResponse<Void>> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         ErrorCode ec = ErrorCode.BAD_REQUEST;
+        log.warn("[TypeMismatch Error] 상세 내용: {}", e.getMessage());
         return ResponseEntity
                 .status(ec.getStatus())
                 .body(APIResponse.fail(ec));
@@ -62,7 +64,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIResponse<Void>> handleUnexpected(Exception e) {
         ErrorCode ec = ErrorCode.INTERNAL_SERVER_ERROR;
-
+        log.warn("[Unknown Error] 상세 내용: {}", e.getMessage());
         return ResponseEntity
                 .status(ec.getStatus())
                 .body(APIResponse.fail(ec));

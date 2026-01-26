@@ -2,7 +2,7 @@ package com.bonetobe.backend.post.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
-import com.bonetobe.backend.common.domain.StoredFile;
+import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;

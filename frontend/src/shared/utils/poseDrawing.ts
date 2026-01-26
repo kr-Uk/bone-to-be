@@ -1,5 +1,5 @@
-import { POSE_CONNECTIONS, type Results } from "@mediapipe/pose";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
+import { POSE_CONNECTIONS, type Results } from "@mediapipe/pose";
 
 type DrawPoseOptions = {
   canvas: HTMLCanvasElement;

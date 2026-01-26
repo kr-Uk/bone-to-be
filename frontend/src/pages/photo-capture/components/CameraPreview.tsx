@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
-import { usePoseDetection } from "@/shared/hooks/usePoseDetection";
 import type { Results } from "@mediapipe/pose";
+
+import { usePoseDetection } from "@/shared/hooks/usePoseDetection";
 
 const Container = styled.div`
   display: flex;

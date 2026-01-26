@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
-import { Pose, POSE_CONNECTIONS, type Results, type Options as PoseOptions } from "@mediapipe/pose";
 import { Camera } from "@mediapipe/camera_utils";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
+import { Pose, POSE_CONNECTIONS, type Results, type Options as PoseOptions } from "@mediapipe/pose";
+import { useEffect, useRef, useState, type RefObject } from "react";
+
 import { size } from "../constants";
 
 export const usePoseDetection = (

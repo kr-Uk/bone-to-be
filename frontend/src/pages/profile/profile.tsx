@@ -5,7 +5,6 @@ import BodyTypeHistorySection from "./components/BodyTypeHistorySection";
 import { FollowListModal } from "./components/FollowListModal";
 import PostsSection from "./components/PostsSection";
 import ProfileHeaderSection from "./components/ProfileHeaderSection";
-import ProfileNavbar from "./components/ProfileNavbar";
 import SkeletalTypeSection from "./components/SkeletalTypeSection";
 import { useFollowListQuery } from "./hooks/useFollowListQuery";
 import { useProfileQuery } from "./hooks/useProfileQuery";
@@ -140,7 +139,6 @@ const ProfilePage = () => {
   if (isLoading) {
     return (
       <Page>
-        <ProfileNavbar />
         <Main>
           <StatusMessage>Loading profile...</StatusMessage>
         </Main>
@@ -151,7 +149,6 @@ const ProfilePage = () => {
   if (isError || !profile) {
     return (
       <Page>
-        <ProfileNavbar />
         <Main>
           <StatusMessage>Failed to load profile.</StatusMessage>
         </Main>
@@ -163,7 +160,6 @@ const ProfilePage = () => {
 
   return (
     <Page>
-      <ProfileNavbar />
       <Main>
         <ContentGrid>
           <Sidebar>

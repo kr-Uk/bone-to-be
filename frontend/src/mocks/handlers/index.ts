@@ -2,6 +2,17 @@ import { http, HttpResponse } from "msw";
 
 import { diagnosisHandlers } from "./diagnosis.handlers";
 
+type MockMe = {
+  email: string;
+  nickname: string;
+  role?: string;
+};
+
+let mockAuthState: { isLoggedIn: boolean; me: MockMe | null } = {
+  isLoggedIn: false,
+  me: null,
+};
+
 export const handlers = [
   ...diagnosisHandlers,
   http.get("/api/health", () => {
@@ -70,6 +81,14 @@ export const handlers = [
     const password = params.get("password") ?? "";
 
     if (email === "user@example.com" && password === "1234") {
+      mockAuthState = {
+        isLoggedIn: true,
+        me: {
+          email,
+          nickname: email.split("@")[0] || "mock-user",
+          role: "USER",
+        },
+      };
       return HttpResponse.json({ message: "로그인 성공" });
     }
 
@@ -80,6 +99,20 @@ export const handlers = [
       },
       { status: 401 },
     );
+  }),
+  http.post("/api/auth/logout", () => {
+    mockAuthState = { isLoggedIn: false, me: null };
+    return HttpResponse.json({ message: "濡쒓렇?꾩썐 ?꾨즺" });
+  }),
+  http.get("/api/auth/me", () => {
+    if (!mockAuthState.isLoggedIn || !mockAuthState.me) {
+      return HttpResponse.json(
+        { code: 401, message: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    return HttpResponse.json(mockAuthState.me);
   }),
   http.post("/api/auth/signup", async ({ request }) => {
     const body = (await request.json()) as {

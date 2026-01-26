@@ -39,24 +39,24 @@ export type SignUpPayload = {
 };
 
 export const checkEmail = async (email: string) => {
-  const { data } = await axiosInstance.get<EmailCheckResponse>("/auth/check/email", {
+  const { data } = await axiosInstance.get<EmailCheckResponse>("/api/auth/check/email", {
     params: { email },
   });
   return data;
 };
 
 export const sendEmailValidation = async (email: string) => {
-  await axiosInstance.post("/auth/email/validate", { email });
+  await axiosInstance.post("/api/auth/email/validate", { email });
 };
 
 export const confirmEmailValidation = async (email: string, code: string) => {
-  await axiosInstance.get("/auth/email/validate", {
+  await axiosInstance.get("/api/auth/email/validate", {
     params: { email, code },
   });
 };
 
 export const checkNickname = async (nickname: string) => {
-  const { data } = await axiosInstance.get<NicknameCheckResponse>("/auth/check/nickname", {
+  const { data } = await axiosInstance.get<NicknameCheckResponse>("/api/auth/check/nickname", {
     params: { nickname },
   });
   return data;
@@ -64,13 +64,13 @@ export const checkNickname = async (nickname: string) => {
 
 export const login = async (email: string, password: string) => {
   const payload = new URLSearchParams({ email, password });
-  const { data } = await axiosInstance.post<LoginResponse>("/auth/login", payload, {
+  const { data } = await axiosInstance.post<LoginResponse>("/api/auth/login", payload, {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
   return data;
 };
 
 export const signup = async (payload: SignUpPayload) => {
-  const { data } = await axiosInstance.post<SignUpResponse>("/auth/signup", payload);
+  const { data } = await axiosInstance.post<SignUpResponse>("/api/auth/signup", payload);
   return data;
 };

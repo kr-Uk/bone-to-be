@@ -2,6 +2,9 @@ import { useRef, useState, useCallback } from "react";
 import styled from "styled-components";
 
 import { useClickOutside } from "@/shared/hooks/useClickOutside";
+import { useDropdownFixedPosition } from "@/shared/hooks/useDropdownPosition";
+import { useBodyScrollLock } from "@/shared/hooks/useBodyScrollLock";
+import { DropdownPortal } from "@/shared/components/DropdownPortal";
 import { FaChevronDown } from "react-icons/fa6";
 
 export interface FilterOption {
@@ -44,8 +47,9 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
 
   /* Mobile */
   @media (max-width: 767px) {
-    padding: 0.25rem 0.75rem;
+    padding: 0.75rem 1rem;
     font-size: 0.875rem;
+    min-height: 48px; /* Ensure minimum touch target size */
   }
 `;
 
@@ -56,19 +60,80 @@ const DropdownIcon = styled.span<{ $isOpen: boolean }>`
   font-size: 0.8em;
 `;
 
-const DropdownMenu = styled.div`
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 0;
-  min-width: 100%;
+interface DropdownMenuProps {
+  $top?: number;
+  $bottom?: number;
+  $left: number;
+  $right?: number;
+  $maxHeight: number;
+  $isMobile: boolean;
+}
+
+const DropdownMenu = styled.div<DropdownMenuProps>`
+  position: fixed;
+  top: ${({ $top }) => ($top !== undefined ? `${$top}px` : "auto")};
+  bottom: ${({ $bottom }) => ($bottom !== undefined ? `${$bottom}px` : "auto")};
+  left: ${({ $left, $isMobile }) => ($isMobile ? `${$left}px` : `${$left}px`)};
+  right: ${({ $right, $isMobile }) =>
+    $isMobile && $right !== undefined ? `${$right}px` : "auto"};
+
+  max-height: ${({ $maxHeight }) => `${$maxHeight}px`};
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  /* Mobile: Full width with padding */
+  width: ${({ $isMobile }) => ($isMobile ? "auto" : "max-content")};
+  min-width: ${({ $isMobile }) => ($isMobile ? "auto" : "200px")};
+
   background-color: ${({ theme }) => theme.colors.gray[800]};
   border: 1px solid ${({ theme }) => theme.colors.gray[600]};
-  border-radius: 0.5rem;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  z-index: 100;
-  overflow: hidden;
+  border-radius: ${({ $isMobile }) => ($isMobile ? "1rem 1rem 0 0" : "0.5rem")};
+
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+
+  /* Mobile: Slide up animation */
+  animation: ${({ $isMobile, $bottom }) =>
+    $isMobile && $bottom !== undefined ? "slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)" : "fadeIn 0.2s ease"};
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: ${({ theme }) => theme.colors.gray[700]};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.gray[600]};
+    border-radius: 3px;
+
+    &:hover {
+      background: ${({ theme }) => theme.colors.gray[500]};
+    }
+  }
 `;
 
 const OptionItem = styled.button<{ $selected: boolean }>`
@@ -131,12 +196,19 @@ export function FilterDropdown({
 }: FilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
   }, []);
 
   useClickOutside(dropdownRef, handleClose);
+
+  // Calculate fixed positioning for portal
+  const position = useDropdownFixedPosition(buttonRef, isOpen, 8, 300);
+
+  // Lock body scroll on mobile when open
+  useBodyScrollLock(isOpen, true);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -178,22 +250,35 @@ export function FilterDropdown({
   };
 
   return (
-    <DropdownContainer ref={dropdownRef} onKeyDown={handleKeyDown}>
-      <DropdownButton
-        type="button"
-        $isOpen={isOpen}
-        onClick={handleToggle}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-      >
-        {label}
-        <DropdownIcon $isOpen={isOpen}>
-          <FaChevronDown />
-        </DropdownIcon>
-      </DropdownButton>
+    <>
+      <DropdownContainer ref={dropdownRef} onKeyDown={handleKeyDown}>
+        <DropdownButton
+          ref={buttonRef}
+          type="button"
+          $isOpen={isOpen}
+          onClick={handleToggle}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+        >
+          {label}
+          <DropdownIcon $isOpen={isOpen}>
+            <FaChevronDown />
+          </DropdownIcon>
+        </DropdownButton>
+      </DropdownContainer>
 
-      {isOpen && (
-        <DropdownMenu role="listbox" aria-label={label}>
+      <DropdownPortal isOpen={isOpen} onBackdropClick={handleClose} showBackdrop={position.isMobile}>
+        <DropdownMenu
+          role="listbox"
+          aria-label={label}
+          aria-modal={position.isMobile}
+          $top={position.top}
+          $bottom={position.bottom}
+          $left={position.left}
+          $right={position.right}
+          $maxHeight={position.maxHeight}
+          $isMobile={position.isMobile}
+        >
           {options.map((option) => (
             <OptionItem
               key={option.value}
@@ -208,7 +293,7 @@ export function FilterDropdown({
             </OptionItem>
           ))}
         </DropdownMenu>
-      )}
-    </DropdownContainer>
+      </DropdownPortal>
+    </>
   );
 }

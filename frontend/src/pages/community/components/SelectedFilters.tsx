@@ -95,6 +95,20 @@ export function SelectedFilters({ filters, onRemoveFilter }: SelectedFiltersProp
     });
   });
 
+  if (filters.heightRange) {
+    selectedFilters.push({
+      label: `키 ${filters.heightRange.min}cm~${filters.heightRange.max}cm`,
+      key: "heightRange",
+    });
+  }
+
+  if (filters.weightRange) {
+    selectedFilters.push({
+      label: `몸무게 ${filters.weightRange.min}kg~${filters.weightRange.max}kg`,
+      key: "weightRange",
+    });
+  }
+
   if (selectedFilters.length === 0) {
     return null;
   }

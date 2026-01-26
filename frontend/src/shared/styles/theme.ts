@@ -8,6 +8,7 @@ export const theme = {
     background: "#FFFFFF",
     backgroundDark: "#000000",
     border: "#E5E5E5",
+    brand: "#9810FA",
     purple: {
       200: "#E9D4FF",
       600: "#9810FA",

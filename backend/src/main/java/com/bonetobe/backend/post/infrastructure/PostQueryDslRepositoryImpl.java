@@ -83,9 +83,11 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                         PostSummaryRaw.class,
                                         post.id,
                                         storedFile.id,
+                                        // TODO: gender 삭제
                                         profile.gender.stringValue(),
                                         post.skeletonType,
                                         GroupBy.list(style.styleName.stringValue()),
+                                        // TODO: height, weight 삭제
                                         profile.height,
                                         profile.weight,
                                         Expressions.FALSE,
@@ -114,17 +116,20 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
         return specifiers;
     }
 
+    // TODO: gender 삭제
     private BooleanExpression eqGender(Gender gender) {
         return gender == null ? null : profile.gender.eq(gender);
     }
 
     private BooleanExpression betweenHeight(Integer min, Integer max) {
         if (min == null && max == null) return null;
+        // TODO: height 삭제
         if (min != null && max != null) return profile.height.between(min, max);
         if (min != null) return profile.height.goe(min);
         return profile.height.loe(max);
     }
 
+    // TODO: weight 삭제
     private BooleanExpression betweenWeight(Integer min, Integer max) {
         if (min == null && max == null) return null;
         if (min != null && max != null) return profile.weight.between(min, max);

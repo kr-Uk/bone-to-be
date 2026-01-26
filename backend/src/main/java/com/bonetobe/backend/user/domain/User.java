@@ -1,6 +1,8 @@
 package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
+import com.bonetobe.backend.common.SkeletonType;
+import com.bonetobe.backend.file.domain.StoredFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,6 +45,13 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
+
+    @Column
+    private SkeletonType skeletonType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id")
+    private StoredFile file;
 
     // 정적 팩토리 메서드 도입
     public static User createUser(String email, String password, String nickname, String role) {

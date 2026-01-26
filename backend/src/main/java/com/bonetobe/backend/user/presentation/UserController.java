@@ -16,20 +16,34 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @PatchMapping("/me/password")
-    public ResponseEntity<APIResponse<Void>> updatePassword(
-            @AuthenticationPrincipal User user,
-            @RequestBody @Valid UpdateUser.PasswordRequest request) {
+    // 프로필 조회
+    //@GetMapping("/me")
 
-        userService.updatePassword(request.toCommand(user.getId()));
-        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
-    }
+
+    // 회원 추가정보 입력
+    @PostMapping("/me")
+
+
+
+    // 마이페이지 수정
+    //@PutMapping("/me")
+
+
 
     @DeleteMapping("/me")
     public ResponseEntity<APIResponse<Void>> deleteAccount(
             @AuthenticationPrincipal User user) {
 
         userService.deleteAccount(user.getId());
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
+    @PatchMapping("/me/password")
+    public ResponseEntity<APIResponse<Void>> updatePassword(
+            @AuthenticationPrincipal User user,
+            @RequestBody @Valid UpdateUser.PasswordRequest request) {
+
+        userService.updatePassword(request.toCommand(user.getId()));
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 }

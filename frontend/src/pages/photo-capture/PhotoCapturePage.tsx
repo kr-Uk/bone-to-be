@@ -1,17 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { IoArrowForward, IoPerson } from "react-icons/io5";
 import { MdMyLocation } from "react-icons/md";
 import { TbBoxAlignBottomRight } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import { AnalysisComplete } from "./components/AnalysisComplete";
+import { AnalysisProgress } from "./components/AnalysisProgress";
+import { CameraCaptureControls } from "./components/CameraCaptureControls";
+import CameraPreview from "./components/CameraPreview";
+import { ModeSelector } from "./components/ModeSelector";
+import { PoseValidationFeedback } from "./components/PoseValidationFeedback";
 import { ProgressSteps } from "./components/ProgressSteps";
 import { ScanningGuideBullet } from "./components/ScanningGuideBullet";
 import { ScanningGuideCard } from "./components/ScanningGuideCard";
 import { UploadArea } from "./components/UploadArea";
 
+import type { CaptureMode, AnalysisStatus } from "@/shared/types/diagnosis";
+import type { PoseValidationResult } from "@/shared/utils/poseValidation";
+import type { Results } from "@mediapipe/pose";
+
+import { usePresignedUrl, useS3Upload, useAnalysisRequest } from "@/pages/diagnosis/api";
 import { useMediaQuery } from "@/shared/hooks";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
+import { dataURLtoBlob, generateFilename, compressImage } from "@/shared/utils/image";
+import { validateFullBodyPose } from "@/shared/utils/poseValidation";
+import { validateImagePose } from "@/shared/utils/validateImagePose";
+
 
 // Layout containers
 const PageContainer = styled.div`
@@ -167,7 +182,11 @@ const ContentArea = styled.div`
   }
 `;
 
-const UploadSection = styled.div`
+const CaptureSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.lg};
+
   @media (min-width: 768px) and (max-width: 1023px) {
     flex-shrink: 0;
     width: 361px;
@@ -289,10 +308,25 @@ const Button = styled.button<{ $variant?: "primary" | "secondary" }>`
 
 const PhotoCapturePage = () => {
   const navigate = useNavigate();
-  const { diagnosisData, setPhotoData } = useDiagnosisStore();
+  const { diagnosisData, setPhotoData, setAnalysisResult } = useDiagnosisStore();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+
+  // State
+  const [mode, setMode] = useState<CaptureMode>("camera");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [poseValidation, setPoseValidation] = useState<PoseValidationResult | null>(null);
+  const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus>("idle");
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [showFlash, setShowFlash] = useState(false);
+  const [cameraActive, setCameraActive] = useState(false);
+  const captureRef = useRef<(() => string | null) | null>(null);
+  const latestLandmarksRef = useRef<Results | null>(null);
+
+  // API hooks
+  const presignedUrlMutation = usePresignedUrl();
+  const s3UploadMutation = useS3Upload();
+  const analysisRequestMutation = useAnalysisRequest();
 
   // Redirect if no basic info
   useEffect(() => {
@@ -301,21 +335,139 @@ const PhotoCapturePage = () => {
     }
   }, [diagnosisData.basicInfo, navigate]);
 
-  const handleImageSelect = (imageData: string) => {
-    setSelectedImage(imageData);
+  // Handle camera capture with countdown
+  const handleCapture = () => {
+    if (!captureRef.current) return;
+
+    let count = 3;
+    setCountdown(count);
+
+    const countdownInterval = setInterval(() => {
+      count--;
+      if (count > 0) {
+        setCountdown(count);
+      } else {
+        clearInterval(countdownInterval);
+        setCountdown(null);
+
+        // Flash effect
+        setShowFlash(true);
+        setTimeout(() => setShowFlash(false), 200);
+
+        // Capture image
+        const imageData = captureRef.current?.();
+        if (imageData) {
+          setSelectedImage(imageData);
+          // Validate pose using latest landmarks
+          if (latestLandmarksRef.current) {
+            const result = validateFullBodyPose(latestLandmarksRef.current);
+            setPoseValidation(result);
+          }
+        }
+      }
+    }, 1000);
   };
 
-  const handleAnalyze = () => {
-    if (selectedImage) {
-      setPhotoData(selectedImage);
-      console.log("Photo saved to store:", {
-        basicInfo: diagnosisData.basicInfo,
-        photo: selectedImage,
-      });
-      // TODO: Navigate to analysis page or send to server
-      alert("이미지가 저장되었습니다! 분석 페이지로 이동합니다.");
-      // navigate('/diagnosis/analysis');
+  // Handle image upload and validation
+  const handleImageUpload = async (imageData: string) => {
+    setSelectedImage(imageData);
+    // Validate pose for static image
+    const result = await validateImagePose(imageData);
+    setPoseValidation(result);
+  };
+
+  // Handle retry (reset state)
+  const handleRetry = () => {
+    setSelectedImage(null);
+    setPoseValidation(null);
+    if (mode === "camera") {
+      setCameraActive(true);
     }
+  };
+
+  // Handle mode change
+  const handleModeChange = (newMode: CaptureMode) => {
+    setMode(newMode);
+    setSelectedImage(null);
+    setPoseValidation(null);
+    setCameraActive(newMode === "camera");
+  };
+
+  // Handle analysis flow
+  const handleAnalyze = async () => {
+    if (!selectedImage || !poseValidation?.isValid || !diagnosisData.basicInfo) {
+      return;
+    }
+
+    try {
+      // Step 1: S3 Upload
+      setAnalysisStatus("s3-upload");
+
+      // Compress image before upload
+      const compressedImage = await compressImage(selectedImage, 1920, 0.8);
+      const imageBlob = dataURLtoBlob(compressedImage);
+      const fileName = generateFilename("diagnosis", "jpg");
+
+      // Get presigned URL
+      const presignedData = await presignedUrlMutation.mutateAsync({
+        fileName,
+        fileType: "image/jpeg",
+      });
+
+      // Upload to S3
+      await s3UploadMutation.mutateAsync({
+        uploadUrl: presignedData.uploadUrl,
+        imageBlob,
+      });
+
+      // Step 2: Analysis Request
+      setAnalysisStatus("analysis-request");
+
+      const analysisResponse = await analysisRequestMutation.mutateAsync({
+        gender: diagnosisData.basicInfo.gender,
+        height: diagnosisData.basicInfo.height,
+        weight: diagnosisData.basicInfo.weight,
+        styles: diagnosisData.basicInfo.styles,
+        imageKey: presignedData.fileKey,
+      });
+
+      // Step 3: Processing (in MSW, it's instant, but in real scenario this would poll)
+      setAnalysisStatus("processing");
+
+      // Simulate processing delay
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Step 4: Complete
+      setAnalysisStatus("complete");
+
+      // Save to store
+      setPhotoData(selectedImage);
+      setAnalysisResult({
+        analysisId: analysisResponse.analysisId,
+        bodyType: "Natural", // This would come from polling getAnalysisResult
+        bodyTypeRatio: { natural: 60, wave: 25, straight: 15 },
+        measurements: { shoulderWidth: 42, waistWidth: 28, hipWidth: 38 },
+        recommendations: [
+          "루즈핏 상의가 잘 어울립니다",
+          "자연스러운 실루엣의 원피스를 추천합니다",
+        ],
+        processedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("Analysis failed:", error);
+      alert("분석에 실패했습니다. 다시 시도해주세요.");
+      setAnalysisStatus("idle");
+    }
+  };
+
+  // Handle landmarks update from camera
+  const handleLandmarksUpdate = (results: Results | null) => {
+    latestLandmarksRef.current = results;
+  };
+
+  // Navigate to results
+  const handleNavigateToResults = () => {
+    navigate("/");
   };
 
   const handleBack = () => {
@@ -375,9 +527,41 @@ const PhotoCapturePage = () => {
 
       {/* Main Content Area */}
       <ContentArea>
-        <UploadSection>
-          <UploadArea onImageSelect={handleImageSelect} selectedImage={selectedImage} />
-        </UploadSection>
+        <CaptureSection>
+          <ModeSelector mode={mode} onModeChange={handleModeChange} />
+
+          {mode === "camera" ? (
+            <>
+              <CameraPreview
+                capturedImage={selectedImage}
+                countdown={countdown}
+                showFlash={showFlash}
+                onCaptureReady={(captureFunc) => {
+                  captureRef.current = captureFunc;
+                }}
+                onCameraActiveChange={(isActive) => {
+                  setCameraActive(isActive);
+                }}
+                onLandmarksUpdate={handleLandmarksUpdate}
+              />
+              <CameraCaptureControls
+                onCapture={handleCapture}
+                onRetake={handleRetry}
+                hasImage={!!selectedImage}
+                isValidPose={poseValidation?.isValid ?? false}
+                cameraActive={cameraActive}
+              />
+            </>
+          ) : (
+            <UploadArea onImageSelect={handleImageUpload} selectedImage={selectedImage} />
+          )}
+
+          <PoseValidationFeedback
+            validationResult={poseValidation}
+            mode={mode}
+            onRetry={handleRetry}
+          />
+        </CaptureSection>
 
         <GuideSection>
           {/* Mobile Guide (Bullet List) */}
@@ -405,7 +589,11 @@ const PhotoCapturePage = () => {
 
           {/* Buttons */}
           <ButtonGroup>
-            <Button $variant="primary" onClick={handleAnalyze} disabled={!selectedImage}>
+            <Button
+              $variant="primary"
+              onClick={handleAnalyze}
+              disabled={!selectedImage || !poseValidation?.isValid}
+            >
               분석하기 <IoArrowForward aria-hidden="true" />
             </Button>
             <Button $variant="secondary" onClick={handleBack}>
@@ -414,6 +602,15 @@ const PhotoCapturePage = () => {
           </ButtonGroup>
         </GuideSection>
       </ContentArea>
+
+      {/* Analysis Progress Modal */}
+      <AnalysisProgress
+        isOpen={["s3-upload", "analysis-request", "processing"].includes(analysisStatus)}
+        currentStep={analysisStatus}
+      />
+
+      {/* Analysis Complete Modal */}
+      <AnalysisComplete isOpen={analysisStatus === "complete"} onNavigateToResults={handleNavigateToResults} />
     </PageContainer>
   );
 };

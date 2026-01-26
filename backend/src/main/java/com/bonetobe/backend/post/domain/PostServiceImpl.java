@@ -1,6 +1,9 @@
 package com.bonetobe.backend.post.domain;
 
+import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
+import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
 import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
@@ -25,8 +28,20 @@ public class PostServiceImpl implements PostService {
         return postReader.findPostDetail(postId);
     }
 
+    @Override
     public void createPost(PostCreateCommand command) {
         postStore.save(command);
+    }
+
+    @Override
+    public void deletePost(PostDeleteCommand command) {
+        Post post = postReader.getById(command.postId());
+
+        if (!post.getUser().getId().equals(command.userId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+
+        postStore.delete(post);
     }
 
 

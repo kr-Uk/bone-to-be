@@ -199,6 +199,27 @@ Examples:
 - Follow React hooks rules (proper cleanup, dependencies)
 - Example: `useMediaQuery()`, `useWebcam()`
 
+### Design System Integration
+
+**For comprehensive Figma-to-React guidelines, see: [`frontend/FIGMA_DESIGN_SYSTEM.md`](frontend/FIGMA_DESIGN_SYSTEM.md)**
+
+When converting Figma designs to React components:
+- Use design tokens from `theme.ts` (no hardcoded colors, spacing, or typography)
+- Prefix all styled-component-only props with `$` (transient props)
+- Follow mobile-first responsive design patterns
+- Include proper accessibility states (hover, focus, active, disabled)
+- Use semantic HTML and ARIA attributes
+- Follow the project's TypeScript and import conventions
+
+The design system doc covers:
+- Design token definitions (colors, typography, spacing)
+- Component styling patterns and best practices
+- Responsive design implementation
+- Common UI patterns (buttons, inputs, cards)
+- Animation and transition standards
+- Accessibility guidelines
+- Form handling patterns
+
 ### Backend Code Style
 
 - **Lombok** annotations for getters/setters/constructors

@@ -3,7 +3,7 @@ package com.bonetobe.backend.post.infrastructure;
 import com.bonetobe.backend.user.domain.Gender;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
-import com.bonetobe.backend.post.domain.query.PostSummary;
+import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import com.bonetobe.backend.style.domain.StyleName;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
@@ -35,9 +35,8 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
     private final JPAQueryFactory qf;
 
     @Override
-    public Page<PostSummary> findPostList(PostListQuery c, Pageable pageable) {
+    public Page<PostSummaryRaw> findPostList(PostListQuery c, Pageable pageable) {
 
-        // Where절 조건들
         BooleanExpression[] conditions = new BooleanExpression[]{
                 eqGender(c.gender()),
                 betweenHeight(c.minHeight(), c.maxHeight()),
@@ -52,10 +51,9 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 .join(post.user.profile, profile)
                 .where(conditions);
 
-        // 정렬 스펙
         List<OrderSpecifier<?>> orderSpecifiers = orderSpecifiers(c.postSort());
 
-        // postId 먼저 조회
+        // id만 뽑기
         List<Long> postIds = qf
                 .select(post.id)
                 .from(post)
@@ -70,8 +68,8 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
             return Page.empty(pageable);
         }
 
-        // 상세조회
-        List<PostSummary> content = qf
+        // id에 따라 상세조회
+        List<PostSummaryRaw> content = qf
                 .from(post)
                 .join(post.user.profile, profile)
                 .join(post.storedFile, storedFile)
@@ -82,12 +80,9 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 .transform(
                         GroupBy.groupBy(post.id).list(
                                 Projections.constructor(
-                                        PostSummary.class,
+                                        PostSummaryRaw.class,
                                         post.id,
-                                        /*
-                                            TODO : 파일 서비스로 presigned 생성하여 삽입
-                                         */
-                                        storedFile.key,
+                                        storedFile.id,
                                         profile.gender.stringValue(),
                                         post.skeletonType,
                                         GroupBy.list(style.styleName.stringValue()),
@@ -104,7 +99,6 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 pageable,
                 countQuery::fetchOne
         );
-
     }
 
     private List<OrderSpecifier<?>> orderSpecifiers(PostSort sort) {

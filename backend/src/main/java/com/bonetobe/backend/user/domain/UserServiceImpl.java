@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
 
         // 3. 삭제 실행
         user.deleteUser();
+        userRepository.update(user); // JPA 방식에 의존하지 않기 위해 코드 추가
         log.info("[회원 탈퇴 완료] userId: {}", userId);
     }
 }

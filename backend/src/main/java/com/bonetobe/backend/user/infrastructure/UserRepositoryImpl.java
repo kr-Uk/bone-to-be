@@ -19,12 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return jpaRepository.findByEmail(email);
-    }
-
-    @Override
-    public Optional<User> findAnyByEmail(String email) {
-        return jpaRepository.findAnyByEmail(email);
+        return jpaRepository.findByEmailAndIsDeleted(email, false);
     }
 
     @Override
@@ -40,5 +35,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User save(User user) {
         return jpaRepository.save(user);
+    }
+
+    @Override
+    public User update(User user) {
+        return user;
     }
 }

@@ -28,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (userRepository.findAnyByEmail(adminEmail).isEmpty()) {
+        if (userRepository.findByEmail(adminEmail).isEmpty()) {
             // 하드코딩 대신 설정파일에서 읽어온 비밀번호 암호화
             String encodedPassword = passwordEncoder.encode(adminPassword);
 

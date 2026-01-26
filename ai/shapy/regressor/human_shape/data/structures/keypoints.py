@@ -265,7 +265,7 @@ class Keypoints2D(AbstractStructure):
             return self
         kp = self.keypoints.copy()
         transf = get_transform(center, scale, (crop_size, crop_size))
-        kp = (np.dot(kp, transf[:2, :2].T) + transf[:2, 2] + 1).astype(np.int)
+        kp = (np.dot(kp, transf[:2, :2].T) + transf[:2, 2] + 1).astype(np.int32)
         conf = self.conf.copy().reshape(-1, 1)
 
         kp = np.concatenate([kp, conf], axis=1).astype(np.float32)

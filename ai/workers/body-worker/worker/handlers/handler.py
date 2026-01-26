@@ -6,12 +6,14 @@ import torch
 from ultralytics import YOLO
 import requests
 
+# YOLO to OpenPose converter (matching temp pipeline)
+from worker.utils.yolo_converter import yolo_to_openpose_body25, create_openpose_json
+
 # ---------------------------------------------------------
 # Path Setup for Shapy
 # ---------------------------------------------------------
 # Prioritize SHAPY_PATH env var (useful for Docker/Production)
 SHAPY_DIR = os.getenv("SHAPY_PATH")
-
 if not SHAPY_DIR:
     # Fallback to local relative path
     # Current: .../ai/workers/body-worker/worker/handlers/handler.py
@@ -23,6 +25,10 @@ if not SHAPY_DIR:
 if SHAPY_DIR not in sys.path:
     sys.path.insert(0, SHAPY_DIR)
     print(f"🔗 Added Shapy to path: {SHAPY_DIR}")
+
+if os.path.isdir(SHAPY_DIR):
+    print(f"📂 Changing working directory to: {SHAPY_DIR}")
+    os.chdir(SHAPY_DIR)
 
 # Add sub-modules that appear to be used as top-level imports in Shapy code
 # e.g. "from body_measurements import ..." requires "mesh-mesh-intersection" in path
@@ -56,12 +62,27 @@ from worker.publisher import publish
 print("⏳ Initializing models...")
 try:
     # 1. YOLO
-    # Using 'yolo11m-pose.pt' as per user's previous script
-    yolo_model = YOLO('yolo11m-pose.pt') 
+    # Using 'yolo11x-pose.pt' to match temp pipeline (most accurate model)
+    yolo_model = YOLO('yolo11x-pose.pt') 
     
     # 2. Shapy
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    shapy_runner = ShapyRunner(device=device)
+    
+    # [CRITICAL] Pass exp_opts to match temp's configuration exactly
+    # These options MUST match temp/run_pipeline.py lines 61-68
+    # IMPORTANT: Use ABSOLUTE path for checkpoint! Relative path fails from worker directory
+    exp_opts = [
+        # CORRECT ABSOLUTE PATH - checkpoint is in shapy/data, not ai/data
+        'output_folder=/home/taekmin/S14P11D210/ai/shapy/data/trained_models/shapy/SHAPY_A',
+        # Match temp's part_key (line 62)
+        'part_key=pose',
+        # Match temp's batch_size (line 67)
+        'datasets.batch_size=1',
+        # Match temp's pose_shape_ratio (line 68)
+        'datasets.pose_shape_ratio=1.0'
+    ]
+    
+    shapy_runner = ShapyRunner(device=device, exp_opts=exp_opts)
     
     print("✅ Models initialized successfully.")
 except Exception as e:
@@ -101,7 +122,7 @@ def handle(message: dict):
                         print(f"⚠️ Warning: URL content-type is not image: {resp.headers.get('Content-Type')}")
 
                     arr = np.asarray(bytearray(resp.content), dtype=np.uint8)
-                    img = cv2.imdecode(arr, -1)
+                    img = cv2.imdecode(arr, cv2.IMREAD_COLOR) # Force BGR (3 channels)
                     
                     if img is None:
                         raise ValueError("Failed to decode image from URL data")
@@ -133,6 +154,7 @@ def handle(message: dict):
 
         # 2. YOLO Inference
         # classes=[0] usually person in COCO
+        print(f"🔍 Running YOLO inference...")
         results = yolo_model(img, verbose=False, classes=[0], conf=0.5)
         
         if not results or not results[0].keypoints or results[0].keypoints.data.shape[1] == 0:
@@ -145,21 +167,55 @@ def handle(message: dict):
 
         # Take the first person detected
         # keypoints shape: (N, 17, 3) -> take [0] -> (17, 3)
-        keypoints = results[0].keypoints.data[0].cpu().numpy()
+        yolo_keypoints = results[0].keypoints.data[0].cpu().numpy()
+        print(f"✅ YOLO detected {yolo_keypoints.shape[0]} keypoints")
 
-        # 3. Shapy Inference
-        output = shapy_runner.run(img, keypoints)
+        # 3. Convert YOLO to OpenPose Body25 format (matching temp/run_pipeline.py)
+        # This is the CRITICAL step that temp does via gen_openpose_yolo11.py
+        print(f"🔄 Converting YOLO → OpenPose Body25...")
+        openpose_json = create_openpose_json(yolo_keypoints)
+        
+        # Parse back to (25, 3) array for Shapy
+        body25_keypoints = np.array(
+            openpose_json["people"][0]["pose_keypoints_2d"], 
+            dtype=np.float32
+        ).reshape(25, 3)
+        print(f"✅ Converted to Body25 format: {body25_keypoints.shape}")
+
+        # 4. Get gender from message (optional, defaults to 'neutral')
+        gender = message.get("gender", "neutral")
+        if gender not in ["male", "female", "neutral"]:
+            print(f"⚠️ Invalid gender '{gender}', defaulting to 'neutral'")
+            gender = "neutral"
+        print(f"👤 Using gender: {gender}")
+
+        # 5. Shapy Inference (using Body25 keypoints like temp does)
+        print(f"🚀 Running Shapy inference...")
+        output = shapy_runner.run(img, body25_keypoints, gender=gender)
+        print(f"✅ Shapy inference completed")
+
 
         # 4. Serialize Output
-        # output is a dict of tensors. Convert to list.
-        serialized_output = {}
-        for k, v in output.items():
-            if hasattr(v, 'detach'): # Tensor
-                serialized_output[k] = v.detach().cpu().numpy().tolist()
-            elif isinstance(v, np.ndarray):
-                serialized_output[k] = v.tolist()
+        def make_serializable(obj):
+            if isinstance(obj, dict) or str(type(obj)) == "<class 'collections.defaultdict'>":
+                return {k: make_serializable(v) for k, v in obj.items() if v is not None}
+            elif isinstance(obj, list):
+                return [make_serializable(x) for x in obj]
+            elif hasattr(obj, 'detach'):  # Tensor -> List
+                return obj.detach().cpu().numpy().tolist()
+            elif isinstance(obj, np.ndarray):  # Appears to be numpy array
+                return obj.tolist()
+            elif hasattr(obj, 'item'):  # Numpy scalar / Tensor scalar
+                return obj.item()
+            elif hasattr(obj, '_asdict'): # NamedTuple / specialized structs
+                return make_serializable(obj._asdict())
+            elif hasattr(obj, '__dict__'): # Generic objects
+                return make_serializable(obj.__dict__)
             else:
-                serialized_output[k] = v
+                return obj
+
+        serialized_output = make_serializable(output)
+
 
         # 5. Publish Result
         publish({

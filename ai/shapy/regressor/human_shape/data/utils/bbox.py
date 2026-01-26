@@ -94,6 +94,7 @@ def bbox_to_center_scale(bbox, dset_scale_factor=1.0, ref_bbox_size=200):
     center = np.stack(
         [(bbox[0] + bbox[2]) * 0.5,
          (bbox[1] + bbox[3]) * 0.5]).astype(np.float32)
+    print(f"[DEBUG_REF] BBox: {bbox}, Size: {bbox_size}, Scale: {scale}")
     return center, scale, bbox_size
 
 

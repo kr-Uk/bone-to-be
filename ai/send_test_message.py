@@ -2,16 +2,21 @@ import pika
 import json
 import os
 import sys
+import uuid
+import time
+from dotenv import load_dotenv
 
-# Load env to get config mostly, or just hardcode for test
-# Assuming localhost:5672 guest/guest
-RABBITMQ_HOST = "localhost"
-RABBITMQ_PORT = 5672
-RABBITMQ_USER = "guest"
-RABBITMQ_PASS = "guest"
-REQUEST_QUEUE = "body-worker.requested"
+# Load env from body-worker/.env if possible, otherwise default
+load_dotenv("workers/body-worker/.env")
 
-def send_test(image_path_or_url):
+RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
+RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT", 5672))
+RABBITMQ_USER = os.getenv("RABBITMQ_USERNAME", "guest")
+RABBITMQ_PASS = os.getenv("RABBITMQ_PASSWORD", "guest")
+REQUEST_QUEUE = os.getenv("REQUEST_QUEUE", "body-worker.requested")
+COMPLETED_QUEUE = os.getenv("COMPLETED_QUEUE", "body-worker.completed")
+
+def test_worker(image_path_or_url):
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
     params = pika.ConnectionParameters(
         host=RABBITMQ_HOST,
@@ -23,21 +28,31 @@ def send_test(image_path_or_url):
         conn = pika.BlockingConnection(params)
     except Exception as e:
         print(f"❌ Connection failed: {e}")
-        print("Ensure RabbitMQ is running on localhost:5672")
+        print(f"Ensure RabbitMQ is running on {RABBITMQ_HOST}:{RABBITMQ_PORT}")
         return
 
-    ch = conn.channel()
-    ch.queue_declare(queue=REQUEST_QUEUE, durable=True)
+    channel = conn.channel()
+    
+    # Declare queues
+    channel.queue_declare(queue=REQUEST_QUEUE, durable=True)
+    channel.queue_declare(queue=COMPLETED_QUEUE, durable=True)
 
+    # Prepare message
     message = {}
     if image_path_or_url.startswith("http"):
         message["image_url"] = image_path_or_url
     else:
         message["image_path"] = os.path.abspath(image_path_or_url)
     
+    correlation_id = str(uuid.uuid4())
+    message["correlation_id"] = correlation_id # Optional tracking
+
     body = json.dumps(message)
     
-    ch.basic_publish(
+    print(f"📤 Sending request to {REQUEST_QUEUE}...")
+    print(f"   Payload: {body}")
+
+    channel.basic_publish(
         exchange="",
         routing_key=REQUEST_QUEUE,
         body=body,
@@ -46,8 +61,40 @@ def send_test(image_path_or_url):
         )
     )
     
-    print(f"✅ Sent message to {REQUEST_QUEUE}: {body}")
-    conn.close()
+    print(f"⏳ Waiting for response on {COMPLETED_QUEUE}...")
+
+    # Wait for response
+    def on_response(ch, method, properties, body):
+        response = json.loads(body)
+        
+        # Check if this response matches our request (simplistic check)
+        # In a real app, match correlation_id
+        req = response.get("request", {})
+        
+        print("\n📥 Received Response!")
+        print(f"   Status: {response.get('status')}")
+        
+        if response.get("status") == "COMPLETED":
+            result = response.get("result", {})
+            print(f"   Result Keys: {list(result.keys())}")
+            print(f"   (Full result hidden for brevity, check 'response_dump.json')")
+            with open("response_dump.json", "w", encoding="utf-8") as f:
+                json.dump(response, f, indent=2, ensure_ascii=False)
+            print("   ✅ Valid output received. Saved to response_dump.json")
+        else:
+            print(f"   ❌ Error: {response.get('error') or response.get('message')}")
+
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        ch.stop_consuming()
+
+    channel.basic_consume(queue=COMPLETED_QUEUE, on_message_callback=on_response)
+    
+    try:
+        channel.start_consuming()
+    except KeyboardInterrupt:
+        print("Interrupted")
+    finally:
+        conn.close()
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -55,4 +102,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     target = sys.argv[1]
-    send_test(target)
+    test_worker(target)

@@ -83,6 +83,23 @@ public class AddUser {
     }
 
     @Getter
+    public static class EmailRequest {
+        @Email
+        @NotBlank
+        private String email;
+    }
+
+    @Getter
+    public static class EmailVerificationRequest {
+        @Email
+        @NotBlank
+        private String email;
+
+        @NotBlank
+        private String code;
+    }
+
+    @Getter
     @AllArgsConstructor
     public static class EmailVerificationResponse {
         private boolean isValid;

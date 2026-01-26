@@ -41,6 +41,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String role; // "USER" 또는 "ADMIN"
 
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
     // 정적 팩토리 메서드 도입
     public static User createUser(String email, String password, String nickname, String role) {
         User user = new User();
@@ -49,6 +52,18 @@ public class User extends BaseEntity implements UserDetails {
         user.nickname = nickname;
         user.role = (role == null) ? "USER" : role; // 권한이 입력되지 않으면 기본값 "USER"
         return user;
+    }
+
+    // 비밀번호 업데이트
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
+    // 계정 삭제
+    public void deleteUser() {
+        if (!isDeleted) {
+            isDeleted = true;
+        }
     }
 
     @Override

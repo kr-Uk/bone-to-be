@@ -15,6 +15,7 @@ public class Style extends BaseEntity {
     private Long id;
 
     @Column(name = "style_name")
+    @Enumerated(value = EnumType.STRING)
     private StyleName styleName;
 
     private String description;

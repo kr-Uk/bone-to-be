@@ -317,17 +317,17 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
             회원가입
           </S.PrimaryButton>
 
-          <S.OrRow style={{ marginTop: "20px" }}>
+          <S.OrRow style={{ marginTop: "10px" }}>
             <S.OrLine />
             <S.OrText
-              style={{ fontSize: "10px", fontWeight: 900, letterSpacing: "0.22em", textTransform: "uppercase" }}
+              style={{ fontSize: "10px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}
             >
-              OR JOIN WITH
+              간편 회원가입
             </S.OrText>
             <S.OrLine />
           </S.OrRow>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "14px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "5px" }}>
             <S.SocialButton type="button">
               <img alt="Google" src={googleIcon} width={16} height={16} />
               <span>Google</span>
@@ -338,7 +338,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
             </S.SocialButtonKakao>
           </div>
 
-          <S.BottomLinks style={{ marginTop: "18px" }}>
+          <S.BottomLinks >
             <S.LinkRow>
               <S.SmallText>이미 계정이 있으신가요?</S.SmallText>
               <S.LinkButton type="button" onClick={onSwitchToLogin}>

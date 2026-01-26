@@ -23,6 +23,8 @@ const CardContainer = styled.div<{ $isActive?: boolean }>`
   transition: all 0.2s ease;
 
   &:hover {
+    z-index: 100;
+
     .overlay {
       opacity: 1;
     }

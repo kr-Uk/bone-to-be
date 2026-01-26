@@ -46,7 +46,6 @@ const Subtitle = styled.p`
 const SortTabs = styled.div`
   display: flex;
   gap: 2rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.gray[600]};
   padding-bottom: 0.75rem;
 
   /* Mobile */

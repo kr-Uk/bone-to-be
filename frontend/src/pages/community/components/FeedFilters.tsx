@@ -3,6 +3,7 @@
 import styled from "styled-components";
 
 import type { FeedFilters } from "../api";
+import { FilterDropdown, type FilterOption } from "./FilterDropdown";
 
 interface FeedFiltersProps {
   filters: FeedFilters;
@@ -44,26 +45,23 @@ const FiltersContainer = styled.div`
   }
 `;
 
-const FilterChip = styled.button<{ $selected?: boolean }>`
+const Divider = styled.div`
+  width: 1px;
+  background-color: ${({ theme }) => theme.colors.gray[600]};
+  margin: 0 0.5rem;
+  flex-shrink: 0;
+`;
+
+const ResetButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 0.5rem;
   padding: 0.625rem 1.625rem;
   border-radius: 9999px;
-  border: 1px solid
-    ${({ $selected, theme }) =>
-      $selected
-        ? theme.colors.purple[600]
-        : theme.colors.gray[600]};
-  background-color: ${({ $selected, theme }) =>
-    $selected
-      ? theme.colors.purple[900]
-      : "transparent"};
-  color: ${({ $selected, theme }) =>
-    $selected
-      ? theme.colors.purple[200]
-      : theme.colors.gray[200]};
-  font-weight: ${({ $selected }) => ($selected ? 700 : 500)};
+  border: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  background-color: transparent;
+  color: ${({ theme }) => theme.colors.gray[200]};
+  font-weight: 500;
   font-size: 1.09375rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -72,6 +70,7 @@ const FilterChip = styled.button<{ $selected?: boolean }>`
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.purple[600]};
+    color: ${({ theme }) => theme.colors.purple[200]};
   }
 
   /* Mobile */
@@ -81,101 +80,100 @@ const FilterChip = styled.button<{ $selected?: boolean }>`
   }
 `;
 
-const FilterLabel = styled.span`
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-`;
+// Filter options
+const genderOptions: FilterOption[] = [
+  { value: "men", label: "남성" },
+  { value: "women", label: "여성" },
+];
 
-const FilterChipX = styled.span`
-  font-size: 1.2em;
-  line-height: 1;
-`;
+const bodyTypeOptions: FilterOption[] = [
+  { value: "Straight", label: "스트레이트" },
+  { value: "Wave", label: "웨이브" },
+  { value: "Natural", label: "내추럴" },
+];
+
+const styleOptions: FilterOption[] = [
+  { value: "Casual", label: "캐주얼" },
+  { value: "Street", label: "스트릿" },
+  { value: "Minimal", label: "미니멀" },
+];
 
 export function FeedFilters({ filters, onFilterChange }: FeedFiltersProps) {
-  const handleGenderChange = (gender: "men" | "women" | null) => {
+  const handleGenderChange = (value: string | string[] | null) => {
     onFilterChange({
       ...filters,
-      gender: filters.gender === gender ? null : gender,
+      gender: value as "men" | "women" | null,
     });
   };
 
-  const handleBodyTypeChange = (bodyType: "Straight" | "Wave" | "Natural" | null) => {
+  const handleBodyTypeChange = (value: string | string[] | null) => {
     onFilterChange({
       ...filters,
-      bodyType: filters.bodyType === bodyType ? null : bodyType,
+      bodyType: value as "Straight" | "Wave" | "Natural" | null,
     });
   };
 
-  const handleStyleChange = (style: string) => {
-    const newStyles = filters.styles.includes(style)
-      ? filters.styles.filter((s) => s !== style)
-      : [...filters.styles, style];
-
+  const handleStylesChange = (value: string | string[] | null) => {
     onFilterChange({
       ...filters,
-      styles: newStyles,
+      styles: Array.isArray(value) ? value : [],
     });
   };
 
-  const genderLabel =
-    filters.gender === "men" ? "남성" : filters.gender === "women" ? "여성" : "성별";
-  const bodyTypeLabels: Record<string, string> = {
-    Straight: "스트레이트",
-    Wave: "웨이브",
-    Natural: "내추럴",
-  };
-  const bodyTypeLabel =
-    filters.bodyType && bodyTypeLabels[filters.bodyType]
-      ? bodyTypeLabels[filters.bodyType]
-      : "골격유형";
-
-  const styleLabels: Record<string, string> = {
-    Casual: "캐주얼",
-    Street: "스트릿",
-    Minimal: "미니멀",
+  const handleReset = () => {
+    onFilterChange({
+      gender: null,
+      bodyType: null,
+      styles: [],
+    });
   };
 
-  const allStyles = ["Casual", "Street", "Minimal"];
+  const hasActiveFilters =
+    filters.gender !== null || filters.bodyType !== null || filters.styles.length > 0;
 
   return (
     <FiltersContainer>
-      <FilterChip
-        $selected={filters.gender !== null}
-        onClick={() => handleGenderChange(filters.gender === "women" ? "men" : "women")}
-      >
-        <FilterLabel>
-          {genderLabel}
-          {filters.gender && <FilterChipX>×</FilterChipX>}
-        </FilterLabel>
-      </FilterChip>
+      <FilterDropdown
+        label="성별"
+        options={genderOptions}
+        value={filters.gender}
+        onChange={handleGenderChange}
+        placeholder="성별 선택"
+      />
 
-      <FilterChip
-        $selected={filters.bodyType !== null}
-        onClick={() =>
-          handleBodyTypeChange(
-            filters.bodyType === "Straight" ? "Wave" : filters.bodyType === "Wave" ? "Natural" : "Straight",
-          )
-        }
-      >
-        <FilterLabel>
-          {bodyTypeLabel}
-          {filters.bodyType && <FilterChipX>×</FilterChipX>}
-        </FilterLabel>
-      </FilterChip>
+      <FilterDropdown
+        label="골격유형"
+        options={bodyTypeOptions}
+        value={filters.bodyType}
+        onChange={handleBodyTypeChange}
+        placeholder="골격유형 선택"
+      />
 
-      {allStyles.map((style) => (
-        <FilterChip
-          key={style}
-          $selected={filters.styles.includes(style)}
-          onClick={() => handleStyleChange(style)}
-        >
-          <FilterLabel>
-            {styleLabels[style]}
-            {filters.styles.includes(style) && <FilterChipX>×</FilterChipX>}
-          </FilterLabel>
-        </FilterChip>
-      ))}
+      <FilterDropdown
+        label="스타일"
+        options={styleOptions}
+        value={filters.styles}
+        onChange={handleStylesChange}
+        multiSelect
+        placeholder="스타일 선택"
+      />
+
+      <FilterDropdown
+        label="키/몸무게"
+        options={[]}
+        value={null}
+        onChange={() => {}}
+        placeholder="준비중"
+      />
+
+      {hasActiveFilters && (
+        <>
+          <Divider />
+          <ResetButton type="button" onClick={handleReset}>
+            초기화
+          </ResetButton>
+        </>
+      )}
     </FiltersContainer>
   );
 }

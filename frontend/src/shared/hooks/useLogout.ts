@@ -1,8 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, type UseMutationResult } from "@tanstack/react-query";
 
 import { logout } from "@/shared/api/auth";
 
-export const useLogout = () => {
+type LogoutResponse = { message?: string };
+
+export const useLogout = (): UseMutationResult<LogoutResponse, Error, void> => {
   const queryClient = useQueryClient();
 
   return useMutation({

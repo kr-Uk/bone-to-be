@@ -6,6 +6,7 @@ type MockMe = {
   email: string;
   nickname: string;
   role?: string;
+  avatarUrl?: string | null;
 };
 
 let mockAuthState: { isLoggedIn: boolean; me: MockMe | null } = {
@@ -87,6 +88,7 @@ export const handlers = [
           email,
           nickname: email.split("@")[0] || "mock-user",
           role: "USER",
+          avatarUrl: null,
         },
       };
       return HttpResponse.json({ message: "로그인 성공" });

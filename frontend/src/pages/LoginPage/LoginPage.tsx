@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 import { LoginModalView } from "./components/LoginModalView";
 import { SignUpModalView } from "./components/SignUpModalView";
@@ -7,10 +7,11 @@ import * as S from "./styles/LoginPage.styles";
 
 import type { AxiosError } from "axios";
 
-import { useLogin } from "@/shared/hooks";
+import { useAuth, useLogin } from "@/shared/hooks";
 
 export const LoginPage = () => {
   const location = useLocation();
+  const { isAuthLoading, isLoggedIn } = useAuth();
   const loginMutation = useLogin();
   const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");
   const [email, setEmail] = useState("");
@@ -69,6 +70,10 @@ export const LoginPage = () => {
     const mode = new URLSearchParams(location.search).get("mode");
     setViewMode(mode === "signup" ? "SIGNUP" : "LOGIN");
   }, [location.search]);
+
+  if (!isAuthLoading && isLoggedIn) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <S.PageWrapper>

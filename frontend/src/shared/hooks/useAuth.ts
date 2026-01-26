@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getMe } from "@/shared/api/auth";
+import { getMe, type Me } from "@/shared/api/auth";
 
-export const useAuth = () => {
-  const meQuery = useQuery({
+type UseAuthResult = {
+  me: Me | undefined;
+  isLoggedIn: boolean;
+  isAuthLoading: boolean;
+};
+
+export const useAuth = (): UseAuthResult => {
+  const meQuery = useQuery<Me, Error>({
     queryKey: ["me"],
     queryFn: getMe,
     retry: false,

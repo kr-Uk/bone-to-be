@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, type UseMutationResult } from "@tanstack/react-query";
 
-import { login } from "@/shared/api/auth";
+import { login, type LoginPayload, type LoginResponse } from "@/shared/api/auth";
 
-export const useLogin = () => {
+export const useLogin = (): UseMutationResult<LoginResponse, Error, LoginPayload> => {
   const queryClient = useQueryClient();
 
   return useMutation({

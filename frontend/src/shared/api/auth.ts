@@ -4,6 +4,7 @@ export type Me = {
   email: string;
   nickname: string;
   role?: string;
+  avatarUrl?: string | null;
 };
 
 export type LoginPayload = {
@@ -13,6 +14,10 @@ export type LoginPayload = {
 
 export type LoginResponse = {
   message: string;
+};
+
+export type LogoutResponse = {
+  message?: string;
 };
 
 export const getMe = async (): Promise<Me> => {
@@ -32,7 +37,7 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   return data;
 };
 
-export const logout = async (): Promise<{ message?: string }> => {
-  const { data } = await axiosInstance.post("/api/auth/logout");
+export const logout = async (): Promise<LogoutResponse> => {
+  const { data } = await axiosInstance.post<LogoutResponse>("/api/auth/logout");
   return data;
 };

@@ -1,16 +1,24 @@
-import { useState } from "react";
-import { FaRegBell } from "react-icons/fa";
-import { IoMenu } from "react-icons/io5";
+import { useEffect, useRef, useState } from "react";
 import { CgProfile } from "react-icons/cg";
+import { FaRegBell } from "react-icons/fa";
+import { GrUserSettings } from "react-icons/gr";
+import { IoMenu } from "react-icons/io5";
+import { MdFavoriteBorder, MdLogout } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 import type { AppTheme } from "@/shared/styles/theme";
 
 import logo from "@/assets/image/MainLogo.svg";
-import { useAuth } from "@/shared/hooks";
+import { useAuth } from "@/shared/hooks/useAuth";
+import { useLogout } from "@/shared/hooks/useLogout";
 
-const baseNavItems = [
+type NavItem = {
+  label: string;
+  path?: string;
+};
+
+const baseNavItems: NavItem[] = [
   { label: "ABOUT" },
   { label: "FUNCTION" },
   { label: "COMMUNITY" },
@@ -35,16 +43,53 @@ const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
 export const MainHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthLoading, isLoggedIn } = useAuth();
+  const { isAuthLoading, isLoggedIn, me } = useAuth();
+  const logoutMutation = useLogout();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navItems = isLoggedIn
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const navItems: NavItem[] = isLoggedIn
     ? [...baseNavItems, { label: "MYPAGE", path: "/profile" }]
     : baseNavItems;
+
+  const displayName = me?.nickname ?? "User";
+  const avatarInitial = displayName.slice(0, 1).toUpperCase();
 
   const handleNavigate = (path: string) => {
     navigate(path);
     setIsMobileMenuOpen(false);
   };
+
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+      setIsProfileMenuOpen(false);
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!isProfileMenuOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!profileMenuRef.current) {
+        return;
+      }
+      if (!profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isProfileMenuOpen]);
+
+  useEffect(() => {
+    setIsProfileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <Header>
@@ -53,16 +98,24 @@ export const MainHeader = () => {
           <LogoImg src={logo} alt="BORN TO BE" />
         </Logo>
         <Nav>
-          {navItems.map((item) => (
-            <NavLink
-              key={item.label}
-              type="button"
-              $isActive={item.path ? location.pathname.startsWith(item.path) : false}
-              onClick={item.path ? () => handleNavigate(item.path) : undefined}
-            >
-              {item.label}
-            </NavLink>
-          ))}
+          {navItems.map((item) => {
+            const isActive = Boolean(item.path && location.pathname.startsWith(item.path));
+            return (
+              <NavLink
+                key={item.label}
+                type="button"
+                $isActive={isActive}
+                onClick={() => {
+                  if (!item.path) {
+                    return;
+                  }
+                  handleNavigate(item.path);
+                }}
+              >
+                {item.label}
+              </NavLink>
+            );
+          })}
         </Nav>
         {isAuthLoading ? (
           <AuthPlaceholder />
@@ -71,13 +124,48 @@ export const MainHeader = () => {
             <AuthIconButton type="button" aria-label="Notifications">
               <FaRegBell size={18} />
             </AuthIconButton>
-            <AuthIconButton
-              type="button"
-              aria-label="Profile"
-              onClick={() => handleNavigate("/profile")}
-            >
-              <CgProfile size={20} />
-            </AuthIconButton>
+            <ProfileMenuWrap ref={profileMenuRef}>
+              <AuthIconButton
+                type="button"
+                aria-label="Profile"
+                aria-expanded={isProfileMenuOpen}
+                onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+              >
+                <CgProfile size={20} />
+              </AuthIconButton>
+              <ProfileMenu $isOpen={isProfileMenuOpen}>
+                <ProfileMenuHeader>
+                  <Avatar>
+                    {me?.avatarUrl ? (
+                      <AvatarImage src={me.avatarUrl} alt={displayName} />
+                    ) : (
+                      <AvatarFallback>{avatarInitial}</AvatarFallback>
+                    )}
+                  </Avatar>
+                  <ProfileMeta>
+                    <ProfileName>{displayName}</ProfileName>
+                    {me?.email && <ProfileEmail>{me.email}</ProfileEmail>}
+                  </ProfileMeta>
+                </ProfileMenuHeader>
+                <ProfileMenuList>
+                  <ProfileMenuItem type="button">
+                    <IconNudge>
+                      <GrUserSettings size={16} />
+                    </IconNudge>
+                    회원정보 수정
+                  </ProfileMenuItem>
+                  <ProfileMenuItem type="button">
+                    <MdFavoriteBorder size={18} />
+                    Like한 게시물
+                  </ProfileMenuItem>
+                </ProfileMenuList>
+                <ProfileMenuDivider />
+                <ProfileMenuLogout type="button" onClick={handleLogout}>
+                  <MdLogout size={18} />
+                  로그아웃
+                </ProfileMenuLogout>
+              </ProfileMenu>
+            </ProfileMenuWrap>
           </AuthIcons>
         ) : (
           <AuthLinks>
@@ -100,22 +188,25 @@ export const MainHeader = () => {
       </HeaderInner>
       <MobileMenu $isOpen={isMobileMenuOpen}>
         <MobileMenuNav>
-          {navItems.map((item) => (
-            <MobileMenuLink
-              key={item.label}
-              type="button"
-              $isActive={item.path ? location.pathname.startsWith(item.path) : false}
-              onClick={() => {
-                if (item.path) {
+          {navItems.map((item) => {
+            const isActive = Boolean(item.path && location.pathname.startsWith(item.path));
+            return (
+              <MobileMenuLink
+                key={item.label}
+                type="button"
+                $isActive={isActive}
+                onClick={() => {
+                  if (!item.path) {
+                    setIsMobileMenuOpen(false);
+                    return;
+                  }
                   handleNavigate(item.path);
-                  return;
-                }
-                setIsMobileMenuOpen(false);
-              }}
-            >
-              {item.label}
-            </MobileMenuLink>
-          ))}
+                }}
+              >
+                {item.label}
+              </MobileMenuLink>
+            );
+          })}
         </MobileMenuNav>
         <MobileMenuDivider />
         {isAuthLoading ? (
@@ -240,6 +331,10 @@ const AuthIcons = styled.div`
   }
 `;
 
+const ProfileMenuWrap = styled.div`
+  position: relative;
+`;
+
 const AuthIconButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -255,6 +350,132 @@ const AuthIconButton = styled.button`
 
   &:hover {
     color: ${({ theme }) => theme.colors.gray[300]};
+  }
+`;
+
+const ProfileMenu = styled.div<{ $isOpen: boolean }>`
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  min-width: 15.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: ${({ theme }) => theme.colors.gray[900]};
+  border: 1px solid ${({ theme }) => theme.colors.gray[800]};
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  display: ${({ $isOpen }) => ($isOpen ? "grid" : "none")};
+  gap: 0.75rem;
+  z-index: 10;
+`;
+
+const ProfileMenuHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`;
+
+const Avatar = styled.div`
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: ${({ theme }) => theme.colors.gray[800]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const AvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const AvatarFallback = styled.span`
+  color: ${({ theme }) => theme.colors.gray[50]};
+  font-weight: 700;
+  font-size: 0.95rem;
+`;
+
+const ProfileMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+`;
+
+const ProfileName = styled.span`
+  color: ${({ theme }) => theme.colors.gray[50]};
+  font-weight: 600;
+  font-size: 0.95rem;
+`;
+
+const ProfileEmail = styled.span`
+  color: ${({ theme }) => theme.colors.gray[400]};
+  font-size: 0.8rem;
+`;
+
+const ProfileMenuList = styled.div`
+  display: grid;
+  gap: 0.35rem;
+`;
+
+const ProfileMenuItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.gray[300]};
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  svg {
+    color: inherit;
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.gray[700]};
+    color: ${({ theme }) => theme.colors.purple[200]};
+  }
+`;
+
+const IconNudge = styled.span`
+  display: inline-flex;
+  margin-left: 1px;
+`;
+
+const ProfileMenuDivider = styled.div`
+  height: 1px;
+  background: ${({ theme }) => theme.colors.gray[800]};
+`;
+
+const ProfileMenuLogout = styled.button`
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--red-400, #ff6467);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: background-color 0.2s ease;
+
+  svg {
+    color: inherit;
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.gray[700]};
   }
 `;
 
@@ -316,7 +537,7 @@ const MobileMenu = styled.div<{ $isOpen: boolean }>`
   display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
   padding: 0.75rem 1.5rem 1rem;
   border-top: 1px solid ${({ theme }) => theme.colors.gray[800]};
-  background-color: ${({ theme }) => theme.colors.gray[900]};
+  background-color: ${({ theme }) => theme.colors.primary};
 
   @media (min-width: 769px) {
     display: none;
@@ -335,10 +556,10 @@ const MobileMenuLink = styled.button<{ $isActive?: boolean }>`
   background: transparent;
   border: none;
   padding: 0.4rem 0;
-  border-bottom: 1px solid
-    ${({ theme, $isActive }) => ($isActive ? theme.colors.brand : "transparent")};
   text-align: left;
   cursor: pointer;
+  border-bottom: 1px solid
+    ${({ theme, $isActive }) => ($isActive ? theme.colors.brand : "transparent")};
 `;
 
 const MobileMenuDivider = styled.div`
@@ -362,3 +583,5 @@ const MobileMenuPlaceholder = styled.div`
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
 `;
+
+

@@ -8,7 +8,9 @@ import { MdFavoriteBorder, MdLogout, MdOutlineClose } from "react-icons/md";
 import { RiShareBoxLine } from "react-icons/ri";
 import { TbLineScan } from "react-icons/tb";
 import { useLocation, useNavigate } from "react-router-dom";
-import styled, { css, type DefaultTheme } from "styled-components";
+import styled, { css } from "styled-components";
+
+import type { AppTheme } from "@/shared/styles/theme";
 
 import logo from "@/assets/image/MainLogo.svg";
 import { useAuth } from "@/shared/hooks/useAuth";
@@ -37,10 +39,8 @@ const applyTypography = (styles: TypographyToken) => css`
   line-height: ${styles.lineHeight};
 `;
 
-const withTypography = (
-  getToken: (theme: DefaultTheme) => TypographyToken,
-) => css`
-  ${({ theme }) => applyTypography(getToken(theme))};
+const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
+  ${({ theme }) => applyTypography(getToken(theme as AppTheme))};
 `;
 
 export const MainHeader = () => {
@@ -65,8 +65,8 @@ export const MainHeader = () => {
   const displayName = me?.nickname ?? "User";
   const avatarInitial = displayName.slice(0, 1).toUpperCase();
   const handleNavigate = (path: string) => {
-    navigate(path);
     setIsMobileMenuOpen(false);
+    navigate(path);
   };
 
   const handleLogout = async () => {
@@ -100,7 +100,7 @@ export const MainHeader = () => {
   useEffect(() => {
     setIsProfileMenuOpen(false);
     setIsMobileMenuOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, location.search, location.hash]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -323,12 +323,12 @@ const Header = styled.header`
   width: 100%;
   position: relative;
   z-index: 900;
-  background-color: ${({ theme }) => theme.colors.primary};
-  border-bottom: 0.0625rem solid ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => (theme as AppTheme).colors.primary};
+  border-bottom: 0.0625rem solid ${({ theme }) => (theme as AppTheme).colors.primary};
   backdrop-filter: blur(2px);
 
   @media (max-width: 1023px) {
-    border-bottom-color: ${({ theme }) => theme.colors.gray[800]};
+    border-bottom-color: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
   }
 `;
 
@@ -384,7 +384,7 @@ const Nav = styled.nav`
 const NavLink = styled.button<{ $isActive?: boolean }>`
   ${withTypography((theme) => theme.typography.body.md.medium)};
   color: ${({ theme, $isActive }) =>
-    $isActive ? theme.colors.brand : theme.colors.gray[50]};
+    $isActive ? (theme as AppTheme).colors.brand : (theme as AppTheme).colors.gray[50]};
   cursor: pointer;
   text-decoration: none;
   background: transparent;
@@ -403,13 +403,13 @@ const NavLink = styled.button<{ $isActive?: boolean }>`
     right: 0;
     height: 1px;
     bottom: -0.2rem;
-    background: ${({ theme }) => theme.colors.brand};
+    background: ${({ theme }) => (theme as AppTheme).colors.brand};
     opacity: ${({ $isActive }) => ($isActive ? 1 : 0)};
     transition: opacity 0.2s ease;
   }
 
   &:hover {
-    color: ${({ theme }) => theme.colors.gray[300]};
+    color: ${({ theme }) => (theme as AppTheme).colors.gray[300]};
   }
 `;
 
@@ -446,20 +446,20 @@ const AuthIconButton = styled.button`
   border: none;
   border-radius: 999px;
   background: transparent;
-  color: ${({ theme }) => theme.colors.gray[50]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[50]};
   cursor: pointer;
   transition: color 0.2s ease;
 
   &[aria-expanded="true"] {
-    color: ${({ theme }) => theme.colors.brand};
+    color: ${({ theme }) => (theme as AppTheme).colors.brand};
   }
 
   &:hover {
-    color: ${({ theme }) => theme.colors.gray[300]};
+    color: ${({ theme }) => (theme as AppTheme).colors.gray[300]};
   }
 
   &[aria-expanded="true"]:hover {
-    color: ${({ theme }) => theme.colors.brand};
+    color: ${({ theme }) => (theme as AppTheme).colors.brand};
   }
 `;
 
@@ -470,8 +470,8 @@ const ProfileMenu = styled.div<{ $isOpen: boolean }>`
   min-width: 15.5rem;
   padding: 0.75rem;
   border-radius: 0.75rem;
-  background: ${({ theme }) => theme.colors.gray[800]};
-  border: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
+  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
   display: ${({ $isOpen }) => ($isOpen ? "grid" : "none")};
   gap: 0.75rem;
@@ -489,8 +489,8 @@ const ProfileMenuAvatar = styled.span`
   height: 2rem;
   border-radius: 999px;
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.gray[700]};
-  color: ${({ theme }) => theme.colors.gray[50]};
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[700]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[50]};
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -508,14 +508,14 @@ const ProfileMenuAvatarFallback = styled.span`
 `;
 
 const ProfileName = styled.span`
-  color: ${({ theme }) => theme.colors.gray[50]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[50]};
   font-weight: 600;
   font-size: 0.95rem;
 `;
 
 const ProfileMenuHeaderDivider = styled.div`
   height: 1px;
-  background: ${({ theme }) => theme.colors.gray[600]};
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[600]};
 `;
 
 const ProfileMenuList = styled.div`
@@ -532,7 +532,7 @@ const ProfileMenuItem = styled.button`
   border-radius: 0.5rem;
   border: none;
   background: transparent;
-  color: ${({ theme }) => theme.colors.gray[300]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[300]};
   text-align: left;
   cursor: pointer;
   transition:
@@ -544,8 +544,8 @@ const ProfileMenuItem = styled.button`
   }
 
   &:hover {
-    background: ${({ theme }) => theme.colors.gray[700]};
-    color: ${({ theme }) => theme.colors.purple[200]};
+    background: ${({ theme }) => (theme as AppTheme).colors.gray[700]};
+    color: ${({ theme }) => (theme as AppTheme).colors.purple[200]};
   }
 `;
 
@@ -556,7 +556,7 @@ const IconNudge = styled.span`
 
 const ProfileMenuDivider = styled.div`
   height: 1px;
-  background: ${({ theme }) => theme.colors.gray[600]};
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[600]};
 `;
 
 const ProfileMenuLogout = styled.button`
@@ -579,7 +579,7 @@ const ProfileMenuLogout = styled.button`
   }
 
   &:hover {
-    background: ${({ theme }) => theme.colors.gray[700]};
+    background: ${({ theme }) => (theme as AppTheme).colors.gray[700]};
   }
 `;
 
@@ -596,7 +596,7 @@ const AuthPlaceholder = styled.div`
 
 const LoginLink = styled.button`
   ${withTypography((theme) => theme.typography.body.md.medium)};
-  color: ${({ theme }) => theme.colors.gray[50]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[50]};
   cursor: pointer;
   text-decoration: none;
   background: none;
@@ -605,7 +605,7 @@ const LoginLink = styled.button`
   transition: color 0.3s ease;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.gray[300]};
+    color: ${({ theme }) => (theme as AppTheme).colors.gray[300]};
   }
 `;
 
@@ -613,8 +613,8 @@ const SignupButton = styled.button`
   border: none;
   border-radius: 0.5rem;
   padding: 0.5rem 0.8rem;
-  background: ${({ theme }) => theme.colors.brand};
-  color: ${({ theme }) => theme.colors.gray[900]};
+  background: ${({ theme }) => (theme as AppTheme).colors.brand};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
   ${withTypography((theme) => theme.typography.body.md.semibold)};
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -629,7 +629,7 @@ const MobileMenuButton = styled.button`
   background: transparent;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.colors.gray[50]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[50]};
   cursor: pointer;
 
   @media (max-width: 1023px) {
@@ -644,7 +644,13 @@ const SideMenuOverlay = styled.div<{ $isOpen: boolean }>`
   height: 100dvh;
   min-height: 100vh;
   z-index: 300;
+  overflow: hidden;
   pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+  visibility: ${({ $isOpen }) => ($isOpen ? "visible" : "hidden")};
+  transition:
+    opacity 0.2s ease,
+    visibility 0s linear ${({ $isOpen }) => ($isOpen ? "0s" : "0.25s")};
 
   @media (min-width: 1024px) {
     display: none;
@@ -675,17 +681,22 @@ const SideMenuPanel = styled.aside<{ $isOpen: boolean }>`
   right: 0;
   z-index: 1;
   padding: 4rem 0.5rem 1.25rem;
-  background: ${({ theme }) => theme.colors.gray[900]};
-  border-left: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
+  border-left: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   box-shadow: ${({ $isOpen }) => ($isOpen ? "-16px 0 32px rgba(0, 0, 0, 0.45)" : "none")};
   transform: translateX(${({ $isOpen }) => ($isOpen ? "0%" : "100%")});
+  opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+  visibility: ${({ $isOpen }) => ($isOpen ? "visible" : "hidden")};
+  pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
   transition:
     transform 0.25s ease,
-    width 0.25s ease;
+    width 0.25s ease,
+    opacity 0.2s ease,
+    visibility 0s linear ${({ $isOpen }) => ($isOpen ? "0s" : "0.25s")};
 
   @media (max-width: 768px) {
     width: 100%;
@@ -713,7 +724,7 @@ const SideMenuList = styled.div`
 const SideMenuAccountSection = styled.div`
   width: 100%;
   padding-top: 4px;
-  border-top: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  border-top: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -751,9 +762,9 @@ const SideMenuIconSlot = styled.span<{ $danger?: boolean; $isActive?: boolean }>
       return "#f87171";
     }
     if ($isActive) {
-      return theme.colors.brand;
+      return (theme as AppTheme).colors.brand;
     }
-    return theme.colors.gray[50];
+    return (theme as AppTheme).colors.gray[50];
   }};
 
   & > svg {
@@ -764,7 +775,7 @@ const SideMenuIconSlot = styled.span<{ $danger?: boolean; $isActive?: boolean }>
 
 const SideMenuRowText = styled.span<{ $isActive?: boolean }>`
   color: ${({ theme, $isActive }) =>
-    $isActive ? theme.colors.brand : theme.colors.gray[50]};
+    $isActive ? (theme as AppTheme).colors.brand : (theme as AppTheme).colors.gray[50]};
   font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   font-size: 18px;
   font-weight: 400;
@@ -776,8 +787,8 @@ const SideMenuLogoutButton = styled.button`
   padding: 12px 12px;
   border: 0;
   cursor: pointer;
-  background: ${({ theme }) => theme.colors.gray[900]};
-  border-top: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
+  border-top: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
@@ -799,8 +810,8 @@ const SideMenuLogoutText = styled.span`
 const SideMenuLoginBar = styled.div`
   width: 100%;
   padding: 12px 12px;
-  background: ${({ theme }) => theme.colors.gray[900]};
-  border-top: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
+  border-top: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
 `;
 
 const SideMenuLoginRow = styled.div`
@@ -812,7 +823,7 @@ const SideMenuLoginRow = styled.div`
 `;
 
 const SideMenuLoginHint = styled.span`
-  color: ${({ theme }) => theme.colors.gray[300]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[300]};
   font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   font-size: 12px;
   font-weight: 400;
@@ -823,12 +834,12 @@ const SideMenuLoginLink = styled.button`
   border: 0;
   background: transparent;
   cursor: pointer;
-  color: ${({ theme }) => theme.colors.brand};
+  color: ${({ theme }) => (theme as AppTheme).colors.brand};
   font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 24px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.brand};
+  border-bottom: 1px solid ${({ theme }) => (theme as AppTheme).colors.brand};
   padding: 0;
 
   &:hover {
@@ -848,7 +859,7 @@ const SideMenuCloseButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.colors.gray[400]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[400]};
 `;
 
 const SideMenuPlaceholder = styled.div`

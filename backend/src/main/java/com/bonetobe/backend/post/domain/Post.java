@@ -3,6 +3,7 @@ package com.bonetobe.backend.post.domain;
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.file.domain.StoredFile;
+import com.bonetobe.backend.user.domain.Gender;
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
@@ -26,6 +27,16 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
     private StoredFile storedFile;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
+
+    @Column(nullable = false)
+    private Integer height;
+
+    @Column(nullable = false)
+    private Integer weight;
 
     @Enumerated(EnumType.STRING)
     private SkeletonType skeletonType;

@@ -69,6 +69,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
             : null;
   const authFeedback = authError ? { text: authError, isError: true } : null;
   const shouldShowAuthBlock = (isTimerRunning && !emailVerified) || Boolean(authFeedback);
+  const isAuthCodeComplete = authCode.trim().length === 6;
   const passwordFeedback = showPasswordMismatch
     ? { text: "비밀번호가 일치하지 않습니다", isError: true }
     : null;
@@ -170,21 +171,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
   };
 
   return (
-    <S.SignUpCard>
-      {/* LEFT: Illustration (Same as Login) */}
-      <S.LeftPanel>
-        <S.Shapes>
-          <S.Hourglass />
-          <S.Trapezoid />
-          <S.TallRect />
-        </S.Shapes>
-      </S.LeftPanel>
-
-      {/* Divider */}
-      <S.Divider />
-
-      {/* RIGHT: Sign Up Form */}
-      <S.RightPanel>
+    <S.RightPanel>
         <S.Brand>
           <S.BrandTitle>BONE:TOBE</S.BrandTitle>
           <S.BrandSub>당신만의 골격을 완성하다</S.BrandSub>
@@ -271,11 +258,16 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
                     <S.Input
                       placeholder="인증번호 6자리"
                       value={authCode}
-                      onChange={(e) => setAuthCode(e.target.value)}
+                      onChange={(e) => setAuthCode(e.target.value.slice(0, 6))}
+                      maxLength={6}
                     />
                     <S.TimerText>{formatTime(timer)}</S.TimerText>
                   </S.TimerWrapper>
-                  <S.InputGroupBtn type="button" onClick={handleConfirmAuth}>
+                  <S.InputGroupBtn
+                    type="button"
+                    onClick={handleConfirmAuth}
+                    disabled={!isAuthCodeComplete}
+                  >
                     확인
                   </S.InputGroupBtn>
                 </S.InputRow>
@@ -322,20 +314,20 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
           </S.Field>
 
           <S.PrimaryButton type="button" onClick={handleSignUp} style={{ marginTop: "8px" }}>
-            회원가입 완료
+            회원가입
           </S.PrimaryButton>
 
-          <S.OrRow style={{ marginTop: "20px" }}>
+          <S.OrRow style={{ marginTop: "10px" }}>
             <S.OrLine />
             <S.OrText
-              style={{ fontSize: "10px", fontWeight: 900, letterSpacing: "0.22em", textTransform: "uppercase" }}
+              style={{ fontSize: "10px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}
             >
-              OR JOIN WITH
+              간편 회원가입
             </S.OrText>
             <S.OrLine />
           </S.OrRow>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "14px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "5px" }}>
             <S.SocialButton type="button">
               <img alt="Google" src={googleIcon} width={16} height={16} />
               <span>Google</span>
@@ -346,7 +338,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
             </S.SocialButtonKakao>
           </div>
 
-          <S.BottomLinks style={{ marginTop: "18px" }}>
+          <S.BottomLinks >
             <S.LinkRow>
               <S.SmallText>이미 계정이 있으신가요?</S.SmallText>
               <S.LinkButton type="button" onClick={onSwitchToLogin}>
@@ -355,7 +347,6 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
             </S.LinkRow>
           </S.BottomLinks>
         </S.Form>
-      </S.RightPanel>
-    </S.SignUpCard>
+    </S.RightPanel>
   );
 };

@@ -4,17 +4,16 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.PaginatedResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.post.application.PostFacade;
+import com.bonetobe.backend.post.domain.query.PostDetailSummary;
 import com.bonetobe.backend.post.domain.query.PostSummary;
+import com.bonetobe.backend.post.presentation.dto.PostDetailDto;
 import com.bonetobe.backend.post.presentation.dto.PostListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,4 +37,17 @@ public class PostController {
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK, paginated));
     }
+
+    @GetMapping("/{feedId}")
+    public ResponseEntity<APIResponse<PostDetailDto.Response>> getPostDetail(
+            @PathVariable Long feedId
+    ) {
+        PostDetailSummary summary = postFacade.getPostDetail(feedId);
+        PostDetailDto.Response response = PostDetailDto.Response.of(summary);
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, response));
+    }
+
 }

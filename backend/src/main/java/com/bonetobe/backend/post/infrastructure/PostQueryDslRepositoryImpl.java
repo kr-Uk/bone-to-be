@@ -3,7 +3,7 @@ package com.bonetobe.backend.post.infrastructure;
 import com.bonetobe.backend.user.domain.Gender;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
-import com.bonetobe.backend.post.domain.query.PostSummary;
+import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import com.bonetobe.backend.style.domain.StyleName;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
-import static com.bonetobe.backend.user.domain.QProfile.profile;
 import static com.bonetobe.backend.post.domain.QPost.post;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
 import static com.bonetobe.backend.style.domain.QStyle.style;
@@ -35,9 +34,8 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
     private final JPAQueryFactory qf;
 
     @Override
-    public Page<PostSummary> findPostList(PostListQuery c, Pageable pageable) {
+    public Page<PostSummaryRaw> findPostList(PostListQuery c, Pageable pageable) {
 
-        // Where절 조건들
         BooleanExpression[] conditions = new BooleanExpression[]{
                 eqGender(c.gender()),
                 betweenHeight(c.minHeight(), c.maxHeight()),
@@ -49,17 +47,14 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
         JPAQuery<Long> countQuery = qf
                 .select(post.id.count())
                 .from(post)
-                .join(post.user.profile, profile)
                 .where(conditions);
 
-        // 정렬 스펙
         List<OrderSpecifier<?>> orderSpecifiers = orderSpecifiers(c.postSort());
 
-        // postId 먼저 조회
+        // id만 뽑기
         List<Long> postIds = qf
                 .select(post.id)
                 .from(post)
-                .join(post.user.profile, profile)
                 .where(conditions)
                 .orderBy(orderSpecifiers.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -70,10 +65,9 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
             return Page.empty(pageable);
         }
 
-        // 상세조회
-        List<PostSummary> content = qf
+        // id에 따라 상세조회
+        List<PostSummaryRaw> content = qf
                 .from(post)
-                .join(post.user.profile, profile)
                 .join(post.storedFile, storedFile)
                 .leftJoin(postStyle).on(postStyle.post.eq(post))
                 .leftJoin(postStyle.style, style)
@@ -82,17 +76,14 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 .transform(
                         GroupBy.groupBy(post.id).list(
                                 Projections.constructor(
-                                        PostSummary.class,
+                                        PostSummaryRaw.class,
                                         post.id,
-                                        /*
-                                            TODO : 파일 서비스로 presigned 생성하여 삽입
-                                         */
-                                        storedFile.key,
-                                        profile.gender.stringValue(),
+                                        storedFile.id,
+                                        post.gender,
                                         post.skeletonType,
-                                        GroupBy.list(style.styleName.stringValue()),
-                                        profile.height,
-                                        profile.weight,
+                                        GroupBy.list(style.styleName),
+                                        post.height,
+                                        post.weight,
                                         Expressions.FALSE,
                                         post.createdAt
                                 )
@@ -104,7 +95,6 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 pageable,
                 countQuery::fetchOne
         );
-
     }
 
     private List<OrderSpecifier<?>> orderSpecifiers(PostSort sort) {
@@ -121,21 +111,21 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
     }
 
     private BooleanExpression eqGender(Gender gender) {
-        return gender == null ? null : profile.gender.eq(gender);
+        return gender == null ? null : post.gender.eq(gender);
     }
 
     private BooleanExpression betweenHeight(Integer min, Integer max) {
         if (min == null && max == null) return null;
-        if (min != null && max != null) return profile.height.between(min, max);
-        if (min != null) return profile.height.goe(min);
-        return profile.height.loe(max);
+        if (min != null && max != null) return post.height.between(min, max);
+        if (min != null) return post.height.goe(min);
+        return post.height.loe(max);
     }
 
     private BooleanExpression betweenWeight(Integer min, Integer max) {
         if (min == null && max == null) return null;
-        if (min != null && max != null) return profile.weight.between(min, max);
-        if (min != null) return profile.weight.goe(min);
-        return profile.weight.loe(max);
+        if (min != null && max != null) return post.weight.between(min, max);
+        if (min != null) return post.weight.goe(min);
+        return post.weight.loe(max);
     }
 
     private BooleanExpression inStyles(List<StyleName> styles) {

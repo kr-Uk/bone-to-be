@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 import { theme } from "@/shared/styles/theme";
 
-const loginPalette = {
+export const loginPalette = {
   primary: "#9810FA",
-  cardDark: "#121212",
+  cardDark: "#171717",
   panelDark: "#0F0F0F",
   slate100: "#F1F5F9",
   slate400: "#94A3B8",
@@ -74,10 +74,13 @@ export const Divider = styled.div`
 
 export const RightPanel = styled.div`
   background: ${loginPalette.cardDark};
+  width: min(520px, 100%);
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 36px 48px;
+  padding: 1.5rem 48px;
   overflow: hidden;
 
   & > * {
@@ -195,7 +198,7 @@ export const Brand = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 `;
 
 export const BrandTitle = styled.div`
@@ -240,7 +243,7 @@ export const Input = styled.input`
   color: ${loginPalette.slate100};
   border: 0;
   padding: 10px 12px;
-  border-radius: 14px;
+  border-radius: 10px;
   font-size: 15px;
   outline: none;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
@@ -271,7 +274,7 @@ export const Input = styled.input`
 export const PrimaryButton = styled.button`
   height: 38px;
   border: 0;
-  border-radius: 14px;
+  border-radius: 10px;
   padding: 12px 16px;
   background: ${loginPalette.primary};
   color: #fff;
@@ -309,10 +312,11 @@ export const OrLine = styled.div`
 export const OrText = styled.div`
   font-size: 11px;
   font-weight: 900;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: ${loginPalette.slate400};
 `;
+
 
 export const SocialButtonKakao = styled.button`
   position: relative;
@@ -320,14 +324,17 @@ export const SocialButtonKakao = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0;
-  border-radius: 14px;
-  padding: 12px 2.5rem;
+  height: 35px;
+  border-radius: 10px;
+  padding: 0 2.5rem;
+  box-sizing: border-box;
   background: #fee500;
   border: 0;
   color: #191919;
   font-weight: 900;
   font-size: 13px;
   cursor: pointer;
+  margin-bottom: 0.5rem;
 
   img {
     position: absolute;
@@ -342,17 +349,20 @@ export const SocialButtonKakao = styled.button`
   }
 `;
 
-export const SocialButton = styled.button`
+
+export const SocialButtonGoogle = styled.button`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0;
-  border-radius: 14px;
-  padding: 12px 2.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: ${loginPalette.slate100};
+  height: 35px;
+  border-radius: 10px;
+  padding: 0 2.5rem;
+  box-sizing: border-box;
+  background: #fff;
+  border: 0;
+  color: ${loginPalette.cardDark};
   font-weight: 900;
   font-size: 13px;
   cursor: pointer;
@@ -364,14 +374,12 @@ export const SocialButton = styled.button`
     transform: translateY(-50%);
   }
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.06);
-  }
-
   &:active {
     transform: scale(0.985);
   }
 `;
+
+export const SocialButton = SocialButtonGoogle;
 
 export const KakaoDot = styled.div`
   width: 16px;
@@ -389,7 +397,7 @@ export const GoogleDot = styled.div`
 `;
 
 export const BottomLinks = styled.div`
-  margin-top: 4px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -431,7 +439,7 @@ export const InputRow = styled.div`
 export const InputGroupBtn = styled.button`
   flex: 0 0 auto;
   padding: 9px 14px;
-  border-radius: 14px;
+  border-radius: 10px;
   background: transparent;
   color: ${loginPalette.slate100};
   font-size: 13px;
@@ -490,7 +498,7 @@ export const TimerText = styled.span`
 export const OutlineBtn = styled.button`
   flex: 0 0 auto;
   padding: 14px 16px;
-  border-radius: 14px; /* Updated radius */
+  border-radius: 10px;
   background: transparent;
   color: ${loginPalette.slate100};
   font-size: 13px;
@@ -510,7 +518,7 @@ export const OutlineBtn = styled.button`
 export const DarkBtn = styled.button`
   flex: 0 0 auto;
   padding: 14px 18px;
-  border-radius: 14px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   color: ${loginPalette.slate100};
   font-size: 13px;

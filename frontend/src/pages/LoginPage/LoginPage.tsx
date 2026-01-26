@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import { login } from "./api/authApi";
 import { LoginModalView } from "./components/LoginModalView";
@@ -9,6 +10,7 @@ import type { AxiosError } from "axios";
 
 
 export const LoginPage = () => {
+  const location = useLocation();
   const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,6 +63,11 @@ export const LoginPage = () => {
   const handleFindPassword = () => {
     console.log("TODO: Go to Find Password");
   };
+
+  useEffect(() => {
+    const mode = new URLSearchParams(location.search).get("mode");
+    setViewMode(mode === "signup" ? "SIGNUP" : "LOGIN");
+  }, [location.search]);
 
   return (
     <S.PageWrapper>

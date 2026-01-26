@@ -41,7 +41,7 @@ public class AddUser {
                     .passwordConfirm(passwordConfirm)
                     .nickname(nickname)
                     .authCode(authCode)
-                    .build();
+                    .build(); // 이 시점에 내부적으로 validate 로직이 실행됨
         }
     }
 

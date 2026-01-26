@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/me")
-public class UserMeController {
+@RequestMapping("/users")
+public class UserController {
     private final UserService userService;
 
-    @PatchMapping("/password")
+    @PatchMapping("/me/password")
     public ResponseEntity<APIResponse<Void>> updatePassword(
             @AuthenticationPrincipal User user,
             @RequestBody @Valid UpdateUser.PasswordRequest request) {
@@ -25,7 +25,7 @@ public class UserMeController {
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/me")
     public ResponseEntity<APIResponse<Void>> deleteAccount(
             @AuthenticationPrincipal User user) {
 

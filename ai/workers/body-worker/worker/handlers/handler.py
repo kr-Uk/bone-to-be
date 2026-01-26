@@ -63,11 +63,11 @@ print("⏳ Initializing models...")
 try:
     # 1. YOLO
     # Using 'yolo11x-pose.pt' to match temp pipeline (most accurate model)
-    yolo_model = YOLO('yolo11x-pose.pt') 
+    yolo_model = YOLO('yolo11x-pose.pt')
     
     # 2. Shapy
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    
+
     # [CRITICAL] Pass exp_opts to match temp's configuration exactly
     # These options MUST match temp/run_pipeline.py lines 61-68
     # IMPORTANT: Use ABSOLUTE path for checkpoint! Relative path fails from worker directory
@@ -81,7 +81,7 @@ try:
         # Match temp's pose_shape_ratio (line 68)
         'datasets.pose_shape_ratio=1.0'
     ]
-    
+
     shapy_runner = ShapyRunner(device=device, exp_opts=exp_opts)
     
     print("✅ Models initialized successfully.")
@@ -154,7 +154,6 @@ def handle(message: dict):
 
         # 2. YOLO Inference
         # classes=[0] usually person in COCO
-        print(f"🔍 Running YOLO inference...")
         results = yolo_model(img, verbose=False, classes=[0], conf=0.5)
         
         if not results or not results[0].keypoints or results[0].keypoints.data.shape[1] == 0:
@@ -174,10 +173,10 @@ def handle(message: dict):
         # This is the CRITICAL step that temp does via gen_openpose_yolo11.py
         print(f"🔄 Converting YOLO → OpenPose Body25...")
         openpose_json = create_openpose_json(yolo_keypoints)
-        
+
         # Parse back to (25, 3) array for Shapy
         body25_keypoints = np.array(
-            openpose_json["people"][0]["pose_keypoints_2d"], 
+            openpose_json["people"][0]["pose_keypoints_2d"],
             dtype=np.float32
         ).reshape(25, 3)
         print(f"✅ Converted to Body25 format: {body25_keypoints.shape}")

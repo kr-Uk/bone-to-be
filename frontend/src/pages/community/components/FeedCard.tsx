@@ -15,15 +15,13 @@ const CardContainer = styled.div<{ $isActive?: boolean }>`
   overflow: hidden;
   background-color: ${({ theme }) => theme.colors.gray[800]};
   border: 1px solid
-    ${({ $isActive, theme }) =>
-      $isActive ? theme.colors.purple[600] : theme.colors.gray[600]};
-  box-shadow: ${({ $isActive }) =>
-    $isActive ? "0 0 30px rgba(124, 58, 237, 0.2)" : "none"};
+    ${({ $isActive, theme }) => ($isActive ? theme.colors.purple[600] : theme.colors.gray[600])};
+  box-shadow: ${({ $isActive }) => ($isActive ? "0 0 30px rgba(124, 58, 237, 0.2)" : "none")};
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    z-index: 100;
+    z-index: 1;
 
     .overlay {
       opacity: 1;
@@ -102,7 +100,7 @@ const LikeButton = styled.button`
   align-items: center;
   justify-content: center;
   transition: transform 0.2s ease;
-  z-index: 10;
+  z-index: 1;
 
   &:hover {
     transform: scale(1.15);

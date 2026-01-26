@@ -12,12 +12,15 @@ import { SelectedFilters } from "./components/SelectedFilters";
 import type { FeedFilters as FeedFiltersType, SortBy } from "./api";
 
 const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   background-color: ${({ theme }) => theme.colors.gray[900]};
   min-height: 100vh;
 `;
 
-const StickyHeader = styled.div`
-  position: sticky;
+const FilterHeader = styled.div`
   top: 0;
   z-index: 10;
   backdrop-filter: blur(8px);
@@ -28,6 +31,8 @@ const StickyHeader = styled.div`
     )}, ${parseInt(theme.colors.gray[900].slice(5, 7), 16)}, 0.95)`};
   border-bottom: 1.333px solid ${({ theme }) => theme.colors.gray[600]};
   padding: ${({ theme }) => theme.spacing.lg};
+  width: 100%;
+  max-width: 1280px;
 
   @media (min-width: 768px) {
     padding: ${({ theme }) => theme.spacing.xl} ${({ theme }) => theme.spacing.lg};
@@ -36,7 +41,7 @@ const StickyHeader = styled.div`
 
 const ContentContainer = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
-  max-width: 100%;
+  max-width: 1280px;
   margin: 0 auto;
 
   @media (min-width: 768px) {
@@ -99,21 +104,18 @@ export default function CommunityPage() {
     setFilters(newFilters);
   }, []);
 
-  const handleRemoveFilter = useCallback(
-    (filterKey: string, value?: string) => {
-      if (filterKey === "gender") {
-        setFilters((prev) => ({ ...prev, gender: null }));
-      } else if (filterKey === "bodyType") {
-        setFilters((prev) => ({ ...prev, bodyType: null }));
-      } else if (filterKey === "styles" && value) {
-        setFilters((prev) => ({
-          ...prev,
-          styles: prev.styles.filter((s) => s !== value),
-        }));
-      }
-    },
-    [],
-  );
+  const handleRemoveFilter = useCallback((filterKey: string, value?: string) => {
+    if (filterKey === "gender") {
+      setFilters((prev) => ({ ...prev, gender: null }));
+    } else if (filterKey === "bodyType") {
+      setFilters((prev) => ({ ...prev, bodyType: null }));
+    } else if (filterKey === "styles" && value) {
+      setFilters((prev) => ({
+        ...prev,
+        styles: prev.styles.filter((s) => s !== value),
+      }));
+    }
+  }, []);
 
   const handleLike = useCallback(
     (feedId: string) => {
@@ -139,11 +141,11 @@ export default function CommunityPage() {
 
   return (
     <PageContainer>
-      <StickyHeader>
+      <FilterHeader>
         <FeedHeader sortBy={sortBy} onSortChange={handleSortChange} />
         <FeedFilters filters={filters} onFilterChange={handleFilterChange} />
         <SelectedFilters filters={filters} onRemoveFilter={handleRemoveFilter} />
-      </StickyHeader>
+      </FilterHeader>
 
       <ContentContainer>
         {isLoading ? (
@@ -153,11 +155,7 @@ export default function CommunityPage() {
         ) : !data?.items || data.items.length === 0 ? (
           <EmptyContainer>선택한 필터에 맞는 피드가 없습니다.</EmptyContainer>
         ) : (
-          <FeedGrid
-            feedItems={data.items}
-            onLike={handleLike}
-            onCardClick={handleCardClick}
-          />
+          <FeedGrid feedItems={data.items} onLike={handleLike} onCardClick={handleCardClick} />
         )}
       </ContentContainer>
 

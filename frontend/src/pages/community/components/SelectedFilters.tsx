@@ -19,7 +19,7 @@ const Container = styled.div`
 
 const Label = styled.span`
   ${({ theme }) => theme.typography.body.md.medium};
-  color: ${({ theme }) => theme.colors.purple[200]};
+  color: ${({ theme }) => theme.colors.purple[600]};
   text-transform: uppercase;
   font-weight: 700;
 `;
@@ -101,7 +101,7 @@ export function SelectedFilters({ filters, onRemoveFilter }: SelectedFiltersProp
 
   return (
     <Container>
-      <Label>선택됨</Label>
+      <Label>선택됨 :</Label>
       <FiltersList>
         {selectedFilters.map((filter, index) => (
           <FilterPill key={`${filter.key}-${filter.value || ""}-${index}`}>

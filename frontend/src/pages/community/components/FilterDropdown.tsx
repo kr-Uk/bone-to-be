@@ -2,6 +2,7 @@ import { useRef, useState, useCallback } from "react";
 import styled from "styled-components";
 
 import { useClickOutside } from "@/shared/hooks/useClickOutside";
+import { FaChevronDown } from "react-icons/fa6";
 
 export interface FilterOption {
   value: string;
@@ -63,7 +64,9 @@ const DropdownMenu = styled.div`
   background-color: ${({ theme }) => theme.colors.gray[800]};
   border: 1px solid ${({ theme }) => theme.colors.gray[600]};
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   z-index: 100;
   overflow: hidden;
 `;
@@ -103,8 +106,7 @@ const SelectionIndicator = styled.span<{ $selected: boolean }>`
   width: 1rem;
   height: 1rem;
   border: 2px solid
-    ${({ $selected, theme }) =>
-      $selected ? theme.colors.purple[600] : theme.colors.gray[600]};
+    ${({ $selected, theme }) => ($selected ? theme.colors.purple[600] : theme.colors.gray[600])};
   border-radius: ${({ $selected }) => ($selected ? "0.25rem" : "50%")};
   background-color: ${({ $selected, theme }) =>
     $selected ? theme.colors.purple[600] : "transparent"};
@@ -185,7 +187,9 @@ export function FilterDropdown({
         aria-haspopup="listbox"
       >
         {label}
-        <DropdownIcon $isOpen={isOpen}>▼</DropdownIcon>
+        <DropdownIcon $isOpen={isOpen}>
+          <FaChevronDown />
+        </DropdownIcon>
       </DropdownButton>
 
       {isOpen && (

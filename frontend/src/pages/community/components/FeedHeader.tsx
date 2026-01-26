@@ -63,11 +63,9 @@ const SortTab = styled.button<{ $active: boolean }>`
   cursor: pointer;
   font-size: 1rem;
   font-weight: ${({ $active }) => ($active ? 700 : 500)};
-  color: ${({ $active, theme }) =>
-    $active ? theme.colors.purple[600] : theme.colors.gray[400]};
+  color: ${({ $active, theme }) => ($active ? theme.colors.purple[600] : theme.colors.gray[400])};
   border-bottom: 2px solid
-    ${({ $active, theme }) =>
-      $active ? theme.colors.purple[600] : "transparent"};
+    ${({ $active, theme }) => ($active ? theme.colors.purple[600] : "transparent")};
   transition: all 0.2s ease;
   white-space: nowrap;
 
@@ -81,7 +79,7 @@ export function FeedHeader({ sortBy, onSortChange }: FeedHeaderProps) {
     <HeaderContainer>
       <TitleSection>
         <Title>Community</Title>
-        <Subtitle>다양한 스타일의 패션 피드를 만나보세요</Subtitle>
+        <Subtitle>나와 같은 체형의 스타일을 찾아보세요.</Subtitle>
       </TitleSection>
       <SortTabs>
         <SortTab $active={sortBy === "popular"} onClick={() => onSortChange("popular")}>

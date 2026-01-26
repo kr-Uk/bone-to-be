@@ -11,7 +11,7 @@ import requests
 # ---------------------------------------------------------
 # Prioritize SHAPY_PATH env var (useful for Docker/Production)
 SHAPY_DIR = os.getenv("SHAPY_PATH")
-
+print(f"--------------------{SHAPY_DIR}---------------")
 if not SHAPY_DIR:
     # Fallback to local relative path
     # Current: .../ai/workers/body-worker/worker/handlers/handler.py
@@ -23,6 +23,10 @@ if not SHAPY_DIR:
 if SHAPY_DIR not in sys.path:
     sys.path.insert(0, SHAPY_DIR)
     print(f"🔗 Added Shapy to path: {SHAPY_DIR}")
+
+if os.path.isdir(SHAPY_DIR):
+    print(f"📂 Changing working directory to: {SHAPY_DIR}")
+    os.chdir(SHAPY_DIR)
 
 # Add sub-modules that appear to be used as top-level imports in Shapy code
 # e.g. "from body_measurements import ..." requires "mesh-mesh-intersection" in path

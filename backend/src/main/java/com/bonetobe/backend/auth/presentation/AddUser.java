@@ -2,6 +2,7 @@ package com.bonetobe.backend.auth.presentation;
 
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserCreateCommand;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -12,6 +13,7 @@ import lombok.Getter;
 public class AddUser {
 
     @Getter
+    @Schema(name = "UserSignupRequest")
     public static class Request {
         @NotBlank(message = "닉네임은 필수 입력 항목입니다.")
         private String nickname;
@@ -47,6 +49,7 @@ public class AddUser {
 
     @Getter
     @Builder
+    @Schema(name = "UserSignupResponse")
     public static class Response {
         private Long id;
         private String email;

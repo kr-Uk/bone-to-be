@@ -6,18 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class UpdateUser {
-    @Getter
-    public static class PresignedUrlRequest {
-        @NotBlank
-        private String fileName;
-
-        @NotBlank
-        @Pattern(regexp = "image/(png|jpeg|jpg)")
-        private String contentType;
-    }
-
     @Getter
     public static class InfoRequest {
         private String nickname;

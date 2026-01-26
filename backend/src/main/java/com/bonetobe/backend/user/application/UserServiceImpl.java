@@ -1,6 +1,8 @@
 package com.bonetobe.backend.user.application;
 
 import com.bonetobe.backend.common.S3Properties;
+import com.bonetobe.backend.file.domain.FileService;
+import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserRepository;
 import com.bonetobe.backend.user.domain.UserUpdateCommand;
@@ -26,38 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private final S3Presigner s3Presigner; // v2 전용 프리사이너
-    private final S3Properties s3Properties; // record 설정값
-
-    @Override
-    public UpdateUser.PresignedUrlResponse generatePresignedUrl(Long userId, UpdateUser.PresignedUrlRequest request) {
-
-        // 1. 파일이 저장될 경로(Key)를 먼저 생성해야 합니다.
-        String key = "users/" + userId + "/profile/" + UUID.randomUUID() + "_" + request.getFileName();
-
-        // 2. S3에 업로드할 정보를 담은 Request 생성
-        PutObjectRequest objectRequest = PutObjectRequest.builder()
-                .bucket(s3Properties.bucket()) // record의 bucket() 사용
-                .key(key)
-                .contentType(request.getContentType())
-                .build();
-
-        // 3. 프리사인 요청 설정 (만료 시간 5분)
-        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(5))
-                .putObjectRequest(objectRequest)
-                .build();
-
-        // 4. Presigned URL 생성
-        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
-
-        String uploadUrl = presignedRequest.url().toString();
-        // 실제 저장된 파일의 URL (S3 표준 URL 형식)
-        String fileUrl = String.format("https://%s.s3.%s.amazonaws.com/%s",
-                s3Properties.bucket(), s3Properties.region(), key);
-
-        return new UpdateUser.PresignedUrlResponse(uploadUrl, fileUrl);
-    }
+    private final FileService fileService;
 
     @Override
     @Transactional

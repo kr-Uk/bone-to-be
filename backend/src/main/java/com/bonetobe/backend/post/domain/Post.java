@@ -84,6 +84,28 @@ public class Post extends BaseEntity {
         }
     }
 
+    public void updateContent(String content) {
+        if (content == null || content.isBlank()) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
+        }
+        this.content = content;
+    }
+
+    public void updateSkeletonType(SkeletonType skeletonType) {
+        if (skeletonType == null) throw new BusinessException(ErrorCode.BAD_REQUEST);
+        this.skeletonType = skeletonType;
+    }
+
+    public void replaceStyles(List<Style> styles) {
+        this.postStyles.clear();
+
+        if (styles == null || styles.isEmpty()) return;
+
+        for (Style style : styles) {
+            if (style == null) continue;
+            this.postStyles.add(PostStyle.create(this, style));
+        }
+    }
 
     public void increaseLike() {
         this.likeCount++;

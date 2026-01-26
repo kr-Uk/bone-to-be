@@ -7,6 +7,7 @@ import com.bonetobe.backend.file.infrastructure.StoredFileJpaRepository;
 import com.bonetobe.backend.post.domain.Post;
 import com.bonetobe.backend.post.domain.PostStore;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
+import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
 import com.bonetobe.backend.style.domain.Style;
 import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.style.infrastructure.StyleJpaRepository;
@@ -65,4 +66,26 @@ public class PostStoreImpl implements PostStore {
         postJpaRepository.delete(post);
     }
 
+    @Override
+    public void update(Post post, PostUpdateCommand command) {
+
+        if (command.content() != null) {
+            post.updateContent(command.content());
+        }
+
+        if (command.skeletonType() != null) {
+            post.updateSkeletonType(command.skeletonType());
+        }
+
+        // null -> 변경 안 함
+        // [] -> 전부 제거
+        if (command.styles() != null) {
+            List<Style> styles = command.styles().stream()
+                    .map(name -> styleJpaRepository.findByStyleName(name)
+                            .orElseThrow(() -> new BusinessException(ErrorCode.BAD_REQUEST)))
+                    .toList();
+
+            post.replaceStyles(styles);
+        }
+    }
 }

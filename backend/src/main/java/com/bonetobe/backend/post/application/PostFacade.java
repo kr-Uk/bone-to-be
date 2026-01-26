@@ -6,8 +6,10 @@ import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.domain.StoredFile;
+import com.bonetobe.backend.post.domain.Post;
 import com.bonetobe.backend.post.domain.PostService;
 import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
+import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
 import com.bonetobe.backend.post.domain.query.*;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
@@ -73,6 +75,11 @@ public class PostFacade {
     @Transactional
     public void deletePost(PostDeleteCommand command) {
         postService.deletePost(command);
+    }
+
+    @Transactional
+    public void updatePost(Long postId, PostUpdateCommand command) {
+        postService.updatePost(postId, command);
     }
 
 

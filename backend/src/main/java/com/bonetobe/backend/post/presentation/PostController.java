@@ -6,10 +6,7 @@ import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.post.application.PostFacade;
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
 import com.bonetobe.backend.post.domain.query.PostSummary;
-import com.bonetobe.backend.post.presentation.dto.PostCreateDto;
-import com.bonetobe.backend.post.presentation.dto.PostDeleteDto;
-import com.bonetobe.backend.post.presentation.dto.PostDetailDto;
-import com.bonetobe.backend.post.presentation.dto.PostListDto;
+import com.bonetobe.backend.post.presentation.dto.*;
 import com.bonetobe.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,5 +74,16 @@ public class PostController {
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK));
     }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<APIResponse<Void>> updatePost(
+            @PathVariable Long postId,
+            @RequestBody PostUpdateDto.Request request,
+            @AuthenticationPrincipal User user
+    ) {
+        postFacade.updatePost(postId, request.toCommand(user.getId()));
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
 
 }

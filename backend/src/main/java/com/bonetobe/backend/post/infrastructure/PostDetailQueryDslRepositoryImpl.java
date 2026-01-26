@@ -14,7 +14,6 @@ import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
 import static com.bonetobe.backend.post.domain.QPost.post;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
 import static com.bonetobe.backend.style.domain.QStyle.style;
-import static com.bonetobe.backend.user.domain.QProfile.profile;
 import static com.bonetobe.backend.user.domain.QUser.user;
 
 @Repository
@@ -26,12 +25,9 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
     @Override
     public PostDetailSummaryRaw findPostDetail(Long postId) {
 
-        var commentCountExpr = Expressions.constant(0L);
-
         List<PostDetailSummaryRaw> results = qf
                 .from(post)
                 .join(post.user, user)
-                .join(user.profile, profile)
                 .join(post.storedFile, storedFile)
                 .leftJoin(postStyle).on(postStyle.post.eq(post))
                 .leftJoin(postStyle.style, style)
@@ -43,13 +39,12 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
                                         post.id,
                                         storedFile.id,
                                         GroupBy.list(style.styleName),
-                                        profile.gender,
-                                        profile.height,
-                                        profile.weight,
+                                        post.gender,
+                                        post.height,
+                                        post.weight,
                                         post.skeletonType,
                                         post.content,
                                         post.likeCount,
-                                        commentCountExpr,
                                         Expressions.FALSE,
                                         Projections.constructor(
                                                 PostDetailSummaryRaw.AuthorSummary.class,

@@ -17,7 +17,6 @@ public record PostDetailSummaryRaw(
         SkeletonType skeletonType,
         String content,
         Long likeCount,
-        Long commentCount,
         Boolean isLiked,
         AuthorSummary author,
         LocalDateTime createdAt
@@ -39,7 +38,6 @@ public record PostDetailSummaryRaw(
                 skeletonType,
                 content,
                 likeCount,
-                commentCount,
                 isLiked,
                 new PostDetailSummary.AuthorSummary(
                         author.userId(),

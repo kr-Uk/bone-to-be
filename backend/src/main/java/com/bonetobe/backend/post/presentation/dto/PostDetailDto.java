@@ -20,7 +20,6 @@ public class PostDetailDto {
             SkeletonType skeletonType,
             String content,
             Long likeCount,
-            Long commentCount,
             Boolean isLiked,
             Author author,
             LocalDateTime createdAt
@@ -36,7 +35,6 @@ public class PostDetailDto {
                     summary.skeletonType(),
                     summary.content(),
                     summary.likeCount(),
-                    summary.commentCount(),
                     summary.isLiked(),
                     Author.of(summary.author()),
                     summary.createdAt()

@@ -1,8 +1,6 @@
 package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -57,10 +54,12 @@ public class User extends BaseEntity implements UserDetails {
         return user;
     }
 
+    // 비밀번호 업데이트
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
 
+    // 계정 삭제
     public void deleteUser() {
         if (!isDeleted) {
             isDeleted = true;

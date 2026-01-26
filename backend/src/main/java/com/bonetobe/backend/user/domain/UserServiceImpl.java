@@ -16,16 +16,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updatePassword(UserUpdateCommand command) {
-        // command.validate(); // <- 생성자에서 이미 검증되었으므로 삭제 가능
-
+        // 1. 유저 조회
         User user = userRepository.findById(command.userId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        // DB 데이터와 대조해야 하는 '비즈니스 검증'만 서비스에서 수행
+        // 2. 비밀번호 일치 비교
         if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
         }
 
+        // 3. 비밀번호 업데이트
         user.updatePassword(passwordEncoder.encode(command.newPassword()));
     }
 
@@ -36,9 +36,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 이미 탈퇴한 사용자입니다."));
 
-        // 2. 삭제 실행
-        user.deleteUser();
+        // 2. 이미 삭제된 유저인지 체크
+        if (user.getIsDeleted()) { // User 엔티티에 @Getter가 있다고 가정
+            throw new IllegalStateException("이미 삭제된 계정입니다.");
+        }
 
+        // 3. 삭제 실행
+        user.deleteUser();
         log.info("[회원 탈퇴 완료] userId: {}", userId);
     }
 }

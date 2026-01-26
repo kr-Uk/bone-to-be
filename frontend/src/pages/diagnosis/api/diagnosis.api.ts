@@ -20,10 +20,7 @@ export async function getPresignedUrl(
     fileType,
   };
 
-  const response = await axios.post<PresignedUrlResponse>(
-    "/api/v1/diagnosis/presigned-url",
-    requestData,
-  );
+  const response = await axios.post<PresignedUrlResponse>("/diagnosis/presigned-url", requestData);
 
   return response.data;
 }
@@ -43,7 +40,7 @@ export async function uploadImageToS3(uploadUrl: string, imageBlob: Blob): Promi
  * 분석 요청 제출
  */
 export async function submitAnalysisRequest(request: AnalysisRequest): Promise<AnalysisResponse> {
-  const response = await axios.post<AnalysisResponse>("/api/v1/diagnosis/analyze", request);
+  const response = await axios.post<AnalysisResponse>("/diagnosis/analyze", request);
 
   return response.data;
 }
@@ -52,7 +49,7 @@ export async function submitAnalysisRequest(request: AnalysisRequest): Promise<A
  * 분석 결과 조회
  */
 export async function getAnalysisResult(analysisId: string): Promise<AnalysisResult> {
-  const response = await axios.get<AnalysisResult>(`/api/v1/diagnosis/analyze/${analysisId}`);
+  const response = await axios.get<AnalysisResult>(`/diagnosis/analyze/${analysisId}`);
 
   return response.data;
 }

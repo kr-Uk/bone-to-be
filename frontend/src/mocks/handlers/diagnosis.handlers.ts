@@ -12,8 +12,8 @@ import type {
  * 진단 관련 MSW 핸들러
  */
 export const diagnosisHandlers = [
-  // POST /api/v1/diagnosis/presigned-url - Presigned URL 생성
-  http.post<never, PresignedUrlRequest>("/api/v1/diagnosis/presigned-url", async ({ request }) => {
+  // POST /api/diagnosis/presigned-url - Presigned URL 생성
+  http.post<never, PresignedUrlRequest>("/api/diagnosis/presigned-url", async ({ request }) => {
     await delay(300); // 네트워크 지연 시뮬레이션
 
     const body = await request.json();
@@ -35,17 +35,14 @@ export const diagnosisHandlers = [
   }),
 
   // POST /api/v1/diagnosis/analyze - 분석 요청
-  http.post<never, AnalysisRequest>("/api/v1/diagnosis/analyze", async ({ request }) => {
+  http.post<never, AnalysisRequest>("/api/diagnosis/analyze", async ({ request }) => {
     await delay(500); // 네트워크 지연 시뮬레이션
 
     const body = await request.json();
 
     // 분석 요청 검증
     if (!body.imageKey || !body.gender || !body.height || !body.weight) {
-      return HttpResponse.json(
-        { error: "필수 파라미터가 누락되었습니다." },
-        { status: 400 },
-      );
+      return HttpResponse.json({ error: "필수 파라미터가 누락되었습니다." }, { status: 400 });
     }
 
     const analysisId = `analysis-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -60,7 +57,7 @@ export const diagnosisHandlers = [
   }),
 
   // GET /api/v1/diagnosis/analyze/:analysisId - 분석 결과 조회
-  http.get<{ analysisId: string }>("/api/v1/diagnosis/analyze/:analysisId", async ({ params }) => {
+  http.get<{ analysisId: string }>("/api/diagnosis/analyze/:analysisId", async ({ params }) => {
     await delay(300); // 네트워크 지연 시뮬레이션
 
     const { analysisId } = params;

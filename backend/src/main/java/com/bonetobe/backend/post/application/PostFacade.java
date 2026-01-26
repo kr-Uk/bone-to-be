@@ -50,11 +50,11 @@ public class PostFacade {
 
         PostDetailSummaryRaw raw = postService.getPostDetail(postId);
 
-//        String imageUrl = fileService.getPublicDownloadUrls(
-//                List.of(new FileDownloadUrl.Query(raw.fileId()))
-//        ).get(0).presignedUrl();
+        String imageUrl = fileService.getPublicDownloadUrls(
+                List.of(new FileDownloadUrl.Query(raw.fileId()))
+        ).get(0).presignedUrl();
 
-        return raw.toSummary("abc");
+        return raw.toSummary(imageUrl);
     }
 }
 

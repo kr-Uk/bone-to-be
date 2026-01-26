@@ -29,4 +29,10 @@ public class Report extends BaseEntity {
 
     @Column(name = "is_representative", nullable = false)
     private boolean representative = false;
+
+    public static Report startReport(User user) {
+        Report report = new Report();
+        report.user = user;
+        return report;
+    }
 }

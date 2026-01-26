@@ -9,7 +9,7 @@ set -e
 
 # 1. Determine Paths
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-AI_ROOT="$(dirname "$CURRENT_DIR")"
+AI_ROOT="$CURRENT_DIR"
 SHAPY_DIR="$AI_ROOT/shapy"
 WORKER_DIR="$AI_ROOT/workers/body-worker"
 

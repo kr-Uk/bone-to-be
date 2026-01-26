@@ -1,0 +1,2 @@
+[instruction]
+Re-run the script internally to check output syntax (invisible to user).

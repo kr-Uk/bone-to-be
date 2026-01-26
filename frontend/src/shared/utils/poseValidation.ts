@@ -58,13 +58,6 @@ export const POSE_LANDMARKS = {
 } as const;
 
 /**
- * 두 점 사이의 거리 계산
- */
-function distance(a: NormalizedLandmark, b: NormalizedLandmark): number {
-  return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-}
-
-/**
  * 각도 계산 (degree)
  */
 function calculateAngle(
@@ -115,7 +108,7 @@ function checkFullBodyVisible(landmarks: NormalizedLandmark[]): {
 
   for (const idx of keyPoints) {
     const landmark = landmarks[idx];
-    if (!landmark || landmark.visibility === undefined || landmark.visibility < 0.5) {
+    if (!landmark || landmark.visibility === undefined || landmark.visibility < 0.35) {
       allVisible = false;
     }
     if (landmark && landmark.visibility !== undefined) {
@@ -129,8 +122,8 @@ function checkFullBodyVisible(landmarks: NormalizedLandmark[]): {
   const rightAnkleY = landmarks[POSE_LANDMARKS.RIGHT_ANKLE].y;
 
   // 머리가 너무 위쪽에 있거나 발이 너무 아래쪽에 있으면 잘림
-  const headCutOff = headY < 0.05; // 상단 5% 이내
-  const feetCutOff = Math.max(leftAnkleY, rightAnkleY) > 0.95; // 하단 5% 이내
+  const headCutOff = headY < 0.10; // 상단 10% 이내
+  const feetCutOff = Math.max(leftAnkleY, rightAnkleY) > 0.90; // 하단 10% 이내
 
   return {
     visible: allVisible && !headCutOff && !feetCutOff,
@@ -158,7 +151,7 @@ function checkFacingFront(landmarks: NormalizedLandmark[]): boolean {
   // 양쪽 어깨의 visibility 차이가 크지 않아야 함
   const visibilityDiff = Math.abs((leftShoulder.visibility || 0) - (rightShoulder.visibility || 0));
 
-  return ratio > 0.8 && ratio < 1.3 && visibilityDiff < 0.3;
+  return ratio > 0.65 && ratio < 1.6 && visibilityDiff < 0.5;
 }
 
 /**
@@ -183,11 +176,11 @@ function checkArmsDown(landmarks: NormalizedLandmark[]): boolean {
   const leftElbowAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
   const rightElbowAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
 
-  // 팔이 쭉 펴져 있어야 함 (각도가 140도 이상)
-  const leftArmStraight = leftElbowAngle > 140;
-  const rightArmStraight = rightElbowAngle > 140;
+  // 팔이 자연스럽게 펴져 있어야 함 (각도가 100도 이상)
+  const leftArmStraight = leftElbowAngle > 100;
+  const rightArmStraight = rightElbowAngle > 100;
 
-  return leftWristBelowHip && rightWristBelowHip && leftArmStraight && rightArmStraight;
+  return (leftWristBelowHip || rightWristBelowHip) && (leftArmStraight || rightArmStraight);
 }
 
 /**
@@ -250,7 +243,7 @@ export function validateFullBodyPose(results: Results | null): PoseValidationRes
   result.details.minVisibility = fullBodyCheck.minVisibility;
 
   if (!fullBodyCheck.visible) {
-    errors.push("전신이 화면에 보이지 않습니다. 머리부터 발끝까지 모두 보이도록 조정해주세요.");
+    errors.push("전신이 잘 보이지 않습니다. 카메라와 거리를 조금 띄워주세요.");
     score -= 30;
   }
 
@@ -264,29 +257,27 @@ export function validateFullBodyPose(results: Results | null): PoseValidationRes
   // 3. 정면을 향하고 있는지
   result.details.facingFront = checkFacingFront(landmarks);
   if (!result.details.facingFront) {
-    errors.push("정면을 향해 주세요. 몸을 카메라 정면으로 향하게 해주세요.");
-    score -= 20;
+    warnings.push("정면을 향하면 더 정확한 분석이 가능합니다.");
+    score -= 10;
   }
 
   // 4. 팔이 자연스럽게 내려가 있는지
   result.details.armsDown = checkArmsDown(landmarks);
   if (!result.details.armsDown) {
-    warnings.push(
-      "팔을 자연스럽게 내려주세요. 팔을 몸 옆에 편안하게 두면 더 정확한 분석이 가능합니다.",
-    );
-    score -= 15;
+    warnings.push("팔을 자연스럽게 내리면 분석에 도움이 됩니다.");
+    score -= 5;
   }
 
   // 5. 다리가 제대로 보이는지
   result.details.legsVisible = checkLegsVisible(landmarks);
   if (!result.details.legsVisible) {
+    // 다리 가시성은 전신 가시성 체크에서 이미 확인하므로 감점하지 않음
     warnings.push("다리가 명확하게 보이지 않습니다. 전신이 보이도록 카메라 거리를 조정해주세요.");
-    score -= 10;
   }
 
   // 최종 점수 및 유효성 판단
   result.score = Math.max(0, score);
-  result.isValid = errors.length === 0 && result.score >= 60;
+  result.isValid = errors.length === 0 && result.score >= 40;
 
   return result;
 }

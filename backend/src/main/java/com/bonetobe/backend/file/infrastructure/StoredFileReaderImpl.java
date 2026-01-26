@@ -4,7 +4,6 @@ import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.file.domain.StoredFileReader;
 import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Component;
 

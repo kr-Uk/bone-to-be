@@ -7,6 +7,7 @@ import com.bonetobe.backend.post.application.PostFacade;
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
 import com.bonetobe.backend.post.domain.query.PostSummary;
 import com.bonetobe.backend.post.presentation.dto.PostCreateDto;
+import com.bonetobe.backend.post.presentation.dto.PostDeleteDto;
 import com.bonetobe.backend.post.presentation.dto.PostDetailDto;
 import com.bonetobe.backend.post.presentation.dto.PostListDto;
 import com.bonetobe.backend.user.domain.User;
@@ -64,4 +65,17 @@ public class PostController {
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK));
     }
+
+    @DeleteMapping("/{feedId}")
+    public ResponseEntity<APIResponse<Void>> deletePost(
+            @PathVariable Long feedId,
+            @AuthenticationPrincipal User user
+    ) {
+        postFacade.deletePost(PostDeleteDto.Request.toCommand(user.getId(), feedId));
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK));
+    }
+
 }

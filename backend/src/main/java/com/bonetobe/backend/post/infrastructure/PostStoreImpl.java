@@ -59,4 +59,10 @@ public class PostStoreImpl implements PostStore {
 
         return postJpaRepository.save(post);
     }
+
+    @Override
+    public void delete(Post post) {
+        postJpaRepository.delete(post);
+    }
+
 }

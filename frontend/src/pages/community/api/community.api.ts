@@ -4,6 +4,8 @@ import type {
   FeedListApiParams,
   LikeToggleRequest,
   LikeToggleResponse,
+  FeedCreateRequest,
+  FeedCreateResponse,
 } from "./community.types";
 
 import axiosInstance from "@/shared/api/axios";
@@ -63,5 +65,29 @@ export async function getFeedList(request: FeedListRequest): Promise<FeedListRes
  */
 export async function toggleLike(request: LikeToggleRequest): Promise<LikeToggleResponse> {
   const { data } = await axiosInstance.post<LikeToggleResponse>(`/feed/${request.feedId}/like`);
+  return data;
+}
+
+/**
+ * 피드 생성
+ */
+export async function createFeed(request: FeedCreateRequest): Promise<FeedCreateResponse> {
+  const formData = new FormData();
+  formData.append("image", request.image);
+  formData.append("content", request.content);
+  formData.append("bodyType", request.bodyType);
+  formData.append("gender", request.gender);
+  formData.append("height", request.height.toString());
+  if (request.weight) {
+    formData.append("weight", request.weight.toString());
+  }
+  formData.append("styles", request.styles.join(","));
+
+  const { data } = await axiosInstance.post<FeedCreateResponse>("/feed", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
   return data;
 }

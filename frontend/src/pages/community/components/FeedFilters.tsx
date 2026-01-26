@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+ 
 
 import styled from "styled-components";
 
-import type { FeedFilters } from "../api";
 import { FilterDropdown, type FilterOption } from "./FilterDropdown";
 import { RangeFilterDropdown, type RangePreset } from "./RangeFilterDropdown";
+
+import type { FeedFilters } from "../api";
 
 interface FeedFiltersProps {
   filters: FeedFilters;

@@ -86,3 +86,25 @@ export interface LikeToggleResponse {
   isLiked: boolean;
   likeCount: number;
 }
+
+/**
+ * 피드 생성 요청
+ */
+export interface FeedCreateRequest {
+  image: File;
+  content: string;
+  bodyType: "Natural" | "Wave" | "Straight";
+  gender: "F" | "M";
+  height: number; // cm
+  weight?: number; // kg (선택)
+  styles: string[];
+}
+
+/**
+ * 피드 생성 응답
+ */
+export interface FeedCreateResponse {
+  success: boolean;
+  feedId: string;
+  message: string;
+}

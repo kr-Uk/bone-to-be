@@ -1,11 +1,11 @@
 import { useRef, useState, useCallback } from "react";
+import { FaChevronDown } from "react-icons/fa6";
 import styled from "styled-components";
 
+import { DropdownPortal } from "@/shared/components/DropdownPortal";
+import { useBodyScrollLock } from "@/shared/hooks/useBodyScrollLock";
 import { useClickOutside } from "@/shared/hooks/useClickOutside";
 import { useDropdownFixedPosition } from "@/shared/hooks/useDropdownPosition";
-import { useBodyScrollLock } from "@/shared/hooks/useBodyScrollLock";
-import { DropdownPortal } from "@/shared/components/DropdownPortal";
-import { FaChevronDown } from "react-icons/fa6";
 
 export interface FilterOption {
   value: string;

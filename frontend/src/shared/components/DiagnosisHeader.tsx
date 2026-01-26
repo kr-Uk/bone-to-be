@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import LogoSvg from "@/assets/logo.svg";
+import LogoSvg from "@/assets/image/logo.svg";
 
 const HeaderContainer = styled.header`
   display: flex;

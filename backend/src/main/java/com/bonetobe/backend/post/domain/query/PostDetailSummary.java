@@ -17,7 +17,6 @@ public record PostDetailSummary(
         SkeletonType skeletonType,
         String content,
         Long likeCount,
-        Long commentCount,
         Boolean isLiked,
         AuthorSummary author,
         LocalDateTime createdAt
@@ -25,7 +24,10 @@ public record PostDetailSummary(
 
     public record AuthorSummary(
             Long userId,
-            // String profileImageUrl, TODO
+            /*
+            TODO: 유저 프로필 이미지
+             */
+            // String profileImageUrl,
             String nickname,
             Boolean isFollowing
     ) {

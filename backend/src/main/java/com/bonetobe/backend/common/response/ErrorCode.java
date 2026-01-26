@@ -21,6 +21,10 @@ public enum ErrorCode {
     POST_NOT_FOUND(2005, HttpStatus.BAD_REQUEST, "게시글을 찾을 수 없습니다."),
     POST_CREATE_FILE_REQUIRED(2006, HttpStatus.BAD_REQUEST, "게시글에는 이미지 파일이 반드시 필요합니다."),
     POST_CREATE_CONTENT_REQUIRED(2007, HttpStatus.BAD_REQUEST, "게시글 내용은 비어 있을 수 없습니다."),
+    POST_CREATE_GENDER_REQUIRED(2008, HttpStatus.BAD_REQUEST, "게시글에는 성별 정보가 반드시 필요합니다."),
+    POST_CREATE_HEIGHT_REQUIRED(2009, HttpStatus.BAD_REQUEST, "게시글에는 키 정보가 반드시 필요합니다."),
+    POST_CREATE_WEIGHT_REQUIRED(2010, HttpStatus.BAD_REQUEST, "게시글에는 몸무게 정보가 반드시 필요합니다."),
+
 
     // 3000번대 코드 : DB 관련
 

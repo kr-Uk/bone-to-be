@@ -1,9 +1,11 @@
 import { http, HttpResponse } from "msw";
 
+import { communityHandlers } from "./community.handlers";
 import { diagnosisHandlers } from "./diagnosis.handlers";
 
 export const handlers = [
   ...diagnosisHandlers,
+  ...communityHandlers,
   http.get("/api/health", () => {
     return HttpResponse.json({ ok: true });
   }),

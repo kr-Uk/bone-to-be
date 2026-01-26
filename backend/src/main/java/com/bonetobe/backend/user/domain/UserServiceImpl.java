@@ -1,6 +1,5 @@
 package com.bonetobe.backend.user.domain;
 
-import com.bonetobe.backend.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,13 +32,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteAccount(Long userId) {
-        // 1. 유저 조회 (@Where 덕분에 삭제된 유저는 여기서 조회가 안 됨)
+        // 1. 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 이미 탈퇴한 사용자입니다."));
 
-        // 2. 삭제 실행 (@SQLDelete 덕분에 실제로는 UPDATE 쿼리가 나감)
-        // Profile 등 연관관계도 CascadeType.ALL 이라면 함께 Soft Delete 되도록 설정 확인 필요
-        userRepository.delete(user);
+        // 2. 삭제 실행
+        user.deleteUser();
 
         log.info("[회원 탈퇴 완료] userId: {}", userId);
     }

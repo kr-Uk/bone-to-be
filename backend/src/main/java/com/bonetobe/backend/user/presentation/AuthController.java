@@ -61,7 +61,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<APIResponse<AddUser.Response>> signup(@RequestBody @Valid AddUser.Request request) {
-        User user = authService.save(request.toCommand());
+        User user = authService.signup(request.toCommand());
         return ResponseEntity.ok(APIResponse.success(SuccessCode.CREATED, AddUser.Response.from(user)));
     }
 }

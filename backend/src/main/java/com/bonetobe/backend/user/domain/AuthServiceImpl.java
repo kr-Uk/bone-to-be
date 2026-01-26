@@ -1,6 +1,5 @@
 package com.bonetobe.backend.user.domain;
 
-import com.bonetobe.backend.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public User save(UserCreateCommand command) {
+    public User signup(UserCreateCommand command) {
         log.info("[회원가입 시작] email: {}, nickname: {}", command.email(), command.nickname());
 
         // 1. 외부 시스템(Redis/DB) 의존 검증만 서비스에서 수행

@@ -1,6 +1,7 @@
 package com.bonetobe.backend.user.infrastructure;
 
 import com.bonetobe.backend.user.domain.User;
+import com.bonetobe.backend.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;

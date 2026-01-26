@@ -11,8 +11,16 @@ export function useClickOutside<T extends HTMLElement = HTMLElement>(
 ): void {
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+
       // Do nothing if clicking ref's element or descendent elements
-      if (!ref.current || ref.current.contains(event.target as Node)) {
+      if (!ref.current || ref.current.contains(target)) {
+        return;
+      }
+
+      // Check if click is inside the dropdown portal
+      const portalRoot = document.getElementById("dropdown-portal-root");
+      if (portalRoot && portalRoot.contains(target)) {
         return;
       }
 

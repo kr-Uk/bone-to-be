@@ -1,2 +1,2 @@
 export { useMediaQuery } from "./useMediaQuery";
-export { useWebcam } from "./useWebcam";
+export { usePoseDetection } from "./usePoseDetection";

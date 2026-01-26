@@ -1,12 +1,17 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-import type { DiagnosisData, BasicInfoApiData } from "@/shared/types/diagnosis";
+import type {
+  DiagnosisData,
+  BasicInfoApiData,
+  AnalysisResultData,
+} from "@/shared/types/diagnosis";
 
 type DiagnosisStore = {
   diagnosisData: DiagnosisData;
   setBasicInfo: (data: BasicInfoApiData) => void;
   setPhotoData: (data: string) => void;
+  setAnalysisResult: (data: AnalysisResultData) => void;
   clearDiagnosisData: () => void;
 };
 
@@ -25,6 +30,10 @@ export const useDiagnosisStore = create<DiagnosisStore>()(
       setPhotoData: (data) =>
         set((state) => ({
           diagnosisData: { ...state.diagnosisData, photoData: data },
+        })),
+      setAnalysisResult: (data) =>
+        set((state) => ({
+          diagnosisData: { ...state.diagnosisData, analysisResult: data },
         })),
       clearDiagnosisData: () =>
         set({

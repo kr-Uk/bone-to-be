@@ -1,6 +1,9 @@
 import { http, HttpResponse } from "msw";
 
+import { diagnosisHandlers } from "./diagnosis.handlers";
+
 export const handlers = [
+  ...diagnosisHandlers,
   http.get("/api/health", () => {
     return HttpResponse.json({ ok: true });
   }),

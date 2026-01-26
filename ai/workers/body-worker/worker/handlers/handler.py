@@ -24,6 +24,21 @@ if SHAPY_DIR not in sys.path:
     sys.path.insert(0, SHAPY_DIR)
     print(f"🔗 Added Shapy to path: {SHAPY_DIR}")
 
+# Add sub-modules that appear to be used as top-level imports in Shapy code
+# e.g. "from body_measurements import ..." requires "mesh-mesh-intersection" in path
+subdirs_to_add = [
+    "measurements", 
+    "attributes", 
+    "preprocess",
+    "mesh-mesh-intersection" 
+]
+
+for subdir in subdirs_to_add:
+    p = os.path.join(SHAPY_DIR, subdir)
+    if os.path.isdir(p) and p not in sys.path:
+        sys.path.insert(0, p)
+        print(f"🔗 Added Shapy submodule to path: {p}")
+
 # Now we can import from shapy
 try:
     from runner import ShapyRunner

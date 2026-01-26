@@ -1,11 +1,19 @@
-FROM python:3.11-slim
+FROM python:3.8-slim
 
-# Install system dependencies for OpenCV and builds
+# Install system dependencies for OpenCV, Pyrender (EGL), and X11 support
 RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+    libgl1 \
+    libegl1 \
+    libopengl0 \
     libglib2.0-0 \
     gcc \
+    libxrender1 \
+    libxtst6 \
+    libxi6 \
     && rm -rf /var/lib/apt/lists/*
+
+# Force Pyrender to use EGL (headless) instead of X11
+ENV PYOPENGL_PLATFORM=egl
 
 WORKDIR /app
 

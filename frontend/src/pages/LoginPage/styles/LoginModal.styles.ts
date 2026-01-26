@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { theme } from "@/shared/styles/theme";
 
-const loginPalette = {
+export const loginPalette = {
   primary: "#9810FA",
   cardDark: "#121212",
   panelDark: "#0F0F0F",
@@ -74,10 +74,13 @@ export const Divider = styled.div`
 
 export const RightPanel = styled.div`
   background: ${loginPalette.cardDark};
+  width: min(520px, 100%);
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 36px 48px;
+  padding: 1.5rem 48px;
   overflow: hidden;
 
   & > * {
@@ -195,7 +198,7 @@ export const Brand = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 `;
 
 export const BrandTitle = styled.div`
@@ -314,6 +317,7 @@ export const OrText = styled.div`
   color: ${loginPalette.slate400};
 `;
 
+
 export const SocialButtonKakao = styled.button`
   position: relative;
   display: flex;
@@ -328,6 +332,7 @@ export const SocialButtonKakao = styled.button`
   font-weight: 900;
   font-size: 13px;
   cursor: pointer;
+  margin-bottom: 0.5rem;
 
   img {
     position: absolute;
@@ -342,7 +347,8 @@ export const SocialButtonKakao = styled.button`
   }
 `;
 
-export const SocialButton = styled.button`
+
+export const SocialButtonGoogle = styled.button`
   position: relative;
   display: flex;
   align-items: center;
@@ -373,6 +379,8 @@ export const SocialButton = styled.button`
   }
 `;
 
+export const SocialButton = SocialButtonGoogle;
+
 export const KakaoDot = styled.div`
   width: 16px;
   height: 16px;
@@ -389,7 +397,7 @@ export const GoogleDot = styled.div`
 `;
 
 export const BottomLinks = styled.div`
-  margin-top: 4px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;

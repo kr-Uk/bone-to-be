@@ -1,12 +1,13 @@
 import styled from "styled-components";
 
+import { loginPalette } from "./LoginModal.styles";
+
 export const PageWrapper = styled.div`
   min-height: calc(100vh - 64px);
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.colors.gray[900]};
-  padding: 16px;
+  background-color: ${loginPalette.cardDark};
 `;
 
 export const LoginCard = styled.div`

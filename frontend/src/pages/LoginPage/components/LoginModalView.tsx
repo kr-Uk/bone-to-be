@@ -29,92 +29,76 @@ export const LoginModalView = ({
   onClickFindPassword,
 }: Props) => {
   return (
-    <S.ModalCard>
-      {/* LEFT: Illustration */}
-      <S.LeftPanel>
-        <S.Shapes>
-          <S.Hourglass />
-          <S.Trapezoid />
-          <S.TallRect />
-        </S.Shapes>
-      </S.LeftPanel>
+    <S.RightPanel>
+      <S.Brand>
+        <S.BrandTitle>BONE:TOBE</S.BrandTitle>
+        <S.BrandSub>당신만의 골격을 완성하다</S.BrandSub>
+      </S.Brand>
 
-      {/* Divider */}
-      <S.Divider />
+      <S.Form>
+        <S.Field>
+          <S.Label>이메일</S.Label>
+          <S.Input
+            value={email}
+            onChange={(e) => onChangeEmail?.(e.target.value)}
+            placeholder=""
+            autoComplete="email"
+          />
+        </S.Field>
+        <S.PasswordSpacer />
 
-      {/* RIGHT: Login Form */}
-      <S.RightPanel>
-        <S.Brand>
-          <S.BrandTitle>BONE:TOBE</S.BrandTitle>
-          <S.BrandSub>당신만의 골격을 완성하다</S.BrandSub>
-        </S.Brand>
+        <S.Field>
+          <S.Label>비밀번호</S.Label>
+          <S.Input
+            type="password"
+            value={password}
+            onChange={(e) => onChangePassword?.(e.target.value)}
+            placeholder=""
+            autoComplete="current-password"
+          />
+        </S.Field>
+        <S.ValidationMessage
+          $isError
+          style={{ visibility: loginError ? "visible" : "hidden" }}
+        >
+          {loginError ?? " "}
+        </S.ValidationMessage>
 
-        <S.Form>
-          <S.Field>
-            <S.Label>이메일</S.Label>
-            <S.Input
-              value={email}
-              onChange={(e) => onChangeEmail?.(e.target.value)}
-              placeholder=""
-              autoComplete="email"
-            />
-          </S.Field>
-          <S.PasswordSpacer />
+        <S.PrimaryButton type="button" onClick={onSubmit}>
+          로그인
+        </S.PrimaryButton>
 
-          <S.Field>
-            <S.Label>비밀번호</S.Label>
-            <S.Input
-              type="password"
-              value={password}
-              onChange={(e) => onChangePassword?.(e.target.value)}
-              placeholder=""
-              autoComplete="current-password"
-            />
-          </S.Field>
-          <S.ValidationMessage
-            $isError
-            style={{ visibility: loginError ? "visible" : "hidden" }}
-          >
-            {loginError ?? " "}
-          </S.ValidationMessage>
-
-          <S.PrimaryButton type="button" onClick={onSubmit}>
-            로그인
-          </S.PrimaryButton>
-
-          <S.OrRow>
-            <S.OrLine />
-            <S.OrText>간편 로그인</S.OrText>
-            <S.OrLine />
-          </S.OrRow>
-
+        <S.OrRow>
+          <S.OrLine />
+          <S.OrText>간편 로그인</S.OrText>
+          <S.OrLine />
+        </S.OrRow>
           <S.SocialButtonKakao type="button" onClick={onClickKakao}>
             <img alt="Kakao" src={kakaoIcon} width={16} height={16} />
             카카오로 시작하기
           </S.SocialButtonKakao>
 
-          <S.SocialButton type="button" onClick={onClickGoogle}>
+          <S.SocialButtonGoogle type="button" onClick={onClickGoogle}>
             <img alt="Google" src={googleIcon} width={16} height={16} />
             구글로 시작하기
-          </S.SocialButton>
+          </S.SocialButtonGoogle>
 
-          <S.BottomLinks>
-            <S.LinkRow>
-              <S.SmallText>아직 회원이 아니신가요?</S.SmallText>
-              <S.LinkButton type="button" onClick={onClickSignUp}>
-                회원가입
-              </S.LinkButton>
-            </S.LinkRow>
+        <S.BottomLinks>
+          <S.LinkRow>
+            <S.SmallText>아직 회원이 아니신가요?</S.SmallText>
+            <S.LinkButton type="button" onClick={onClickSignUp}>
+              회원가입
+            </S.LinkButton>
+          </S.LinkRow>
 
-            <S.LinkRow>
-              <S.SmallText>비밀번호를 잃어버리셨나요?</S.SmallText>
-              <S.LinkButton type="button" onClick={onClickFindPassword}>
-                비밀번호 찾기
-              </S.LinkButton>
-            </S.LinkRow>
-          </S.BottomLinks>
-        </S.Form>
-      </S.RightPanel>
-    </S.ModalCard>
+          <S.LinkRow>
+            <S.SmallText>비밀번호를 잃어버리셨나요?</S.SmallText>
+            <S.LinkButton type="button" onClick={onClickFindPassword}>
+              비밀번호 찾기
+            </S.LinkButton>
+          </S.LinkRow>
+        </S.BottomLinks>
+      </S.Form>
+    </S.RightPanel>
   );
 };

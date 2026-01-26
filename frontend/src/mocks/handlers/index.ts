@@ -1,8 +1,168 @@
 import { http, HttpResponse } from "msw";
 
+import { diagnosisHandlers } from "./diagnosis.handlers";
+
 export const handlers = [
+  ...diagnosisHandlers,
   http.get("/api/health", () => {
     return HttpResponse.json({ ok: true });
+  }),
+  http.get("/api/auth/check/email", ({ request }) => {
+    const url = new URL(request.url);
+    const email = url.searchParams.get("email") ?? "";
+    const hasEmail =
+      email.includes("taken") || email.includes("duplicate") || email.endsWith("@used.com");
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: { hasEmail },
+    });
+  }),
+  http.get("/api/auth/check/nickname", ({ request }) => {
+    const url = new URL(request.url);
+    const nickname = url.searchParams.get("nickname") ?? "";
+    const hasNickname =
+      nickname.includes("taken") ||
+      nickname.includes("duplicate");
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: { hasNickname },
+    });
+  }),
+  http.post("/api/auth/email/validate", async ({ request }) => {
+    const body = (await request.json()) as { email?: string };
+    if (!body?.email) {
+      return HttpResponse.json(
+        { code: 400, message: "요청 실패", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+  http.get("/api/auth/email/validate", ({ request }) => {
+    const url = new URL(request.url);
+    const code = url.searchParams.get("code");
+    if (code !== "123123") {
+      return HttpResponse.json(
+        { code: 400, message: "인증 실패", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+  http.post("/api/auth/login", async ({ request }) => {
+    const bodyText = await request.text();
+    const params = new URLSearchParams(bodyText);
+    const email = params.get("email") ?? "";
+    const password = params.get("password") ?? "";
+
+    if (email === "user@example.com" && password === "1234") {
+      return HttpResponse.json({ message: "로그인 성공" });
+    }
+
+    return HttpResponse.json(
+      {
+        code: 401,
+        message: "이메일 또는 비밀번호가 올바르지 않습니다.",
+      },
+      { status: 401 },
+    );
+  }),
+  http.post("/api/auth/signup", async ({ request }) => {
+    const body = (await request.json()) as {
+      nickname?: string;
+      email?: string;
+      authCode?: string;
+      password?: string;
+      passwordConfirm?: string;
+    };
+
+    const nickname = body?.nickname ?? "";
+    const email = body?.email ?? "";
+    const authCode = body?.authCode ?? "";
+    const password = body?.password ?? "";
+    const passwordConfirm = body?.passwordConfirm ?? "";
+
+    if (!nickname || !email || !authCode || !password || !passwordConfirm) {
+      return HttpResponse.json(
+        { code: 400, message: "\uc694\uccad \uc2e4\ud328", data: null },
+        { status: 400 },
+      );
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/;
+    if (!passwordRegex.test(password)) {
+      return HttpResponse.json(
+        {
+          code: 400,
+          message:
+            "비밀번호는 8~20자의 영문과 숫자를 포함해야 합니다.",
+          data: null,
+        },
+        { status: 400 },
+      );
+    }
+
+    if (password !== passwordConfirm) {
+      return HttpResponse.json(
+        { code: 400, message: "비밀번호가 일치하지 않습니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    if (authCode !== "123123") {
+      return HttpResponse.json(
+        {
+          code: 400,
+          message: "이메일 인증번호가 일치하지 않거나 만료되었습니다.",
+          data: null,
+        },
+        { status: 400 },
+      );
+    }
+
+    const hasEmail =
+      email.includes("already_exists") || email.includes("duplicate") || email.endsWith("@used.com");
+    if (hasEmail) {
+      return HttpResponse.json(
+        { code: 400, message: "이미 가입된 이메일입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    const hasNickname = nickname.includes("taken") || nickname.includes("duplicate");
+    if (hasNickname) {
+      return HttpResponse.json(
+        { code: 400, message: "이미 사용 중인 닉네임입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        code: 201,
+        message: "회원가입 완료",
+        data: {
+          id: 1,
+          email,
+          nickname,
+        },
+      },
+      { status: 201 },
+    );
   }),
   http.get("/api/v1/users", () => {
     return HttpResponse.json({

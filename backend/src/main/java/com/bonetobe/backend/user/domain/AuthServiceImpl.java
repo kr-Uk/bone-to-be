@@ -1,5 +1,7 @@
 package com.bonetobe.backend.user.domain;
 
+import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -69,5 +71,27 @@ public class AuthServiceImpl implements AuthService {
         if (!isVerified) {
             throw new IllegalArgumentException("이메일 인증번호가 일치하지 않거나 만료되었습니다.");
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateUserExists(String email) {
+        if (!userRepository.existsByEmail(email)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        // 기존 비밀번호와 새 비밀번호가 같은지 확인 (선택 사항)
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new BusinessException(ErrorCode.PASSWORD_SAME_AS_OLD); // 에러코드 추가 필요
+        }
+
+        user.updatePassword(passwordEncoder.encode(newPassword));
     }
 }

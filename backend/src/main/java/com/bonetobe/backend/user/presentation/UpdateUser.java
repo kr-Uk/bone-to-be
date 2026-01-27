@@ -1,8 +1,8 @@
 package com.bonetobe.backend.user.presentation;
 
+import com.bonetobe.backend.common.annotation.Password;
 import com.bonetobe.backend.user.domain.UserUpdateCommand;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 public class UpdateUser {
@@ -13,10 +13,7 @@ public class UpdateUser {
         private String currentPassword;
 
         @NotBlank(message = "새 비밀번호는 필수 입력 항목입니다.")
-        @Pattern(
-                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$",
-                message = "비밀번호는 8~20자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다."
-        )
+        @Password
         private String newPassword;
 
         @NotBlank(message = "비밀번호 확인을 입력해주세요.")

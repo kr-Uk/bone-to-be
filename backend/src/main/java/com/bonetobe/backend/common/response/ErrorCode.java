@@ -11,6 +11,8 @@ public enum ErrorCode {
     // 1000번대 코드 : 회원 관련
     UNAUTHORIZED(1000, HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다."),
     FORBIDDEN(1001, HttpStatus.FORBIDDEN, "사용 권한이 없습니다."),
+    USER_NOT_FOUND(1002, HttpStatus.NOT_FOUND, "해당 이메일로 가입된 사용자를 찾을 수 없습니다."),
+    PASSWORD_SAME_AS_OLD(1003, HttpStatus.BAD_REQUEST, "기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."),
 
     // 2000번대 코드 : 게시판 관련
     POST_LIST_INVALID_SORT(2000, HttpStatus.BAD_REQUEST, "유효하지 않은 정렬 조건입니다."),

@@ -47,6 +47,13 @@ const Card = styled.div`
     align-items: flex-start;
     gap: 1.5rem;
   }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+    padding: 1.5rem;
+  }
 `;
 
 const ChartWrap = styled.div`
@@ -58,12 +65,23 @@ const ChartWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 480px) {
+    width: 10.5rem;
+    height: 10.5rem;
+    margin: 0 auto;
+  }
 `;
 
 const ChartInner = styled.div`
   width: 8.75rem;
   height: 8.75rem;
   position: relative;
+
+  @media (max-width: 480px) {
+    width: 7.25rem;
+    height: 7.25rem;
+  }
 `;
 
 const ChartSvg = styled.svg`
@@ -100,6 +118,10 @@ const TriangleStroke = styled.polygon`
 const Details = styled(Stack)`
   flex: 1;
   gap: 1.5rem;
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+  }
 `;
 
 const LatestBadge = styled.span`
@@ -120,6 +142,11 @@ const TypeTitle = styled(Text)`
   font-size: 1.5625rem;
   font-weight: 700;
   line-height: 2.1875rem;
+
+  @media (max-width: 480px) {
+    font-size: 1.375rem;
+    line-height: 1.9rem;
+  }
 `;
 
 const TypeDescription = styled(Text)`
@@ -127,6 +154,11 @@ const TypeDescription = styled(Text)`
   font-size: 1.09375rem;
   font-weight: 400;
   line-height: 1.5625rem;
+
+  @media (max-width: 480px) {
+    font-size: 0.95rem;
+    line-height: 1.45rem;
+  }
 `;
 
 const PrivateBadge = styled.div`
@@ -140,6 +172,19 @@ const PrivateBadge = styled.div`
   outline: 0.0625rem var(--neutral-600, #525252) solid;
   outline-offset: -0.0625rem;
   color: var(--neutral-500, #737373);
+
+  svg {
+    font-size: 1.05rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.55rem 0.8rem;
+    gap: 0.5rem;
+
+    svg {
+      font-size: 1.25rem;
+    }
+  }
 `;
 
 const PrivateText = styled(Text)`

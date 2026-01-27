@@ -1,12 +1,12 @@
 package com.bonetobe.backend.user.presentation;
 
-import com.bonetobe.backend.user.domain.UserCreateCommand;
 import com.bonetobe.backend.user.domain.UserUpdateCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 public class UpdateUser {
+
     @Getter
     public static class PasswordRequest {
         @NotBlank(message = "현재 비밀번호를 입력해주세요.")

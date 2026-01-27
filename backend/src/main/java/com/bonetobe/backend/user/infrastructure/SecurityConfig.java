@@ -1,6 +1,5 @@
-package com.bonetobe.backend.common;
+package com.bonetobe.backend.user.infrastructure;
 
-import com.bonetobe.backend.user.domain.UserDetailService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailService userService;
+    private final CustomUserDetailsService userService;
 
     // 패스워드 인코더로 사용할 빈 등록
     @Bean
@@ -95,14 +94,14 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http,
                                                        PasswordEncoder passwordEncoder,
-                                                       UserDetailService userDetailService)
+                                                       CustomUserDetailsService customUserDetailsService)
             throws Exception {
         // 1. 데이터베이스의 정보를 기반으로 인증을 처리하는 DaoAuthenticationProvider 생성
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
         // 2. 사용자 세부 정보 서비스 설정 (DB에서 사용자 정보를 가져오는 역할)
         // 매개변수로 받은 userDetailService를 사용하여 DB와 연결
-        authProvider.setUserDetailsService(userDetailService);
+        authProvider.setUserDetailsService(customUserDetailsService);
 
         // 3. 비밀번호 검증을 위한 인코더 설정 (BCrypt 등을 사용하여 암호화된 비번 비교)
         authProvider.setPasswordEncoder(passwordEncoder);

@@ -1,7 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-
-import DiagnosisLayout from "../layouts/DiagnosisLayout";
-
 import ErrorLayout from "@/app/layouts/ErrorLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import CommunityPage from "@/pages/community/CommunityPage";
@@ -28,7 +25,6 @@ export const router = createBrowserRouter([
       },
       {
         path: "diagnosis",
-        element: <DiagnosisLayout />,
         children: [
           {
             path: "basic-info",

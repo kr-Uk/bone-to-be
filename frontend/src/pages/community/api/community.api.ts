@@ -2,6 +2,9 @@ import type {
   FeedListRequest,
   FeedListResponse,
   FeedListApiParams,
+  FeedDetail,
+  FeedCommentListRequest,
+  FeedCommentListResponse,
   LikeToggleRequest,
   LikeToggleResponse,
 } from "./community.types";
@@ -55,6 +58,32 @@ export async function getFeedList(request: FeedListRequest): Promise<FeedListRes
   const { data } = await axiosInstance.get<FeedListResponse>(`/feed`, {
     params: apiParams,
   });
+  return data;
+}
+
+/**
+ * 피드 상세 조회
+ */
+export async function getFeedDetail(feedId: string): Promise<FeedDetail> {
+  const { data } = await axiosInstance.get<FeedDetail>(`/feed/${feedId}`);
+  return data;
+}
+
+/**
+ * 댓글 리스트 조회
+ */
+export async function getFeedComments(
+  request: FeedCommentListRequest
+): Promise<FeedCommentListResponse> {
+  const { data } = await axiosInstance.get<FeedCommentListResponse>(
+    `/feed/${request.feedId}/comments`,
+    {
+      params: {
+        page: request.page,
+        size: request.limit,
+      },
+    },
+  );
   return data;
 }
 

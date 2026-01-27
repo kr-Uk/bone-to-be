@@ -159,6 +159,7 @@ export default function CommunityPage() {
       {selectedFeedId && (
         <FeedDetailModal
           onClose={() => setSelectedFeedId(null)}
+          feedId={selectedFeedId}
         />
       )}
     </PageContainer>

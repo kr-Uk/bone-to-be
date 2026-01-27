@@ -1,17 +1,63 @@
 import styled from "styled-components";
-import { CommentItem } from "./CommentItem";
 import { CommentInput } from "./CommentInput";
 import { IoIosMore } from "react-icons/io";
 import { CommentRow } from "./CommentRow";
 
-import { FaRegHeart, FaHeart, FaRegPaperPlane, FaRegComment, FaRegBookmark, FaBookmark } from "react-icons/fa";
-import { useState, useRef } from "react";
+import {
+  FaRegHeart,
+  FaHeart,
+  FaRegPaperPlane,
+  FaRegComment,
+  FaRegBookmark,
+  FaBookmark,
+} from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
+import { useLikeToggle } from "../api";
 
-export function FeedDetailRight() {
+import type { FeedComment, FeedDetail } from "../api";
+
+interface Props {
+  detail: FeedDetail | null;
+  comments: FeedComment[];
+  isLoading?: boolean;
+  hasError?: boolean;
+}
+
+function formatTimeAgo(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const diffMs = Date.now() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+  if (diffMinutes < 1) return "just now";
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays}d ago`;
+}
+
+export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [likeCount, setLikeCount] = useState(245);
+  const [likeCount, setLikeCount] = useState(0);
   const commentInputRef = useRef<HTMLInputElement | null>(null);
+  const likeToggleMutation = useLikeToggle();
+
+  useEffect(() => {
+    if (!detail) return;
+    setLiked(detail.isLiked);
+    setSaved(detail.isSaved);
+    setLikeCount(detail.likeCount);
+  }, [detail]);
+
+  const handleLikeToggle = () => {
+    if (!detail) return;
+    const nextLiked = !liked;
+    setLiked(nextLiked);
+    setLikeCount((count) => (nextLiked ? count + 1 : count - 1));
+    likeToggleMutation.mutate({ feedId: detail.id });
+  };
 
   return (
     <RightContainer>
@@ -19,61 +65,69 @@ export function FeedDetailRight() {
         <UserInfo>
           <Avatar />
           <div>
-            <Username>strong_ssong</Username>
-            <SubInfo>Natural · Gumi, Korea</SubInfo>
+            <Username>{detail?.author.username ?? "Loading..."}</Username>
+            <SubInfo>
+              {detail
+                ? `${detail.author.bodyType} · ${detail.author.location}`
+                : "Loading..."}
+            </SubInfo>
           </div>
         </UserInfo>
-        <IoIosMore color="#FAFAFA" size={25}/>
+        <IoIosMore color="#FAFAFA" size={25} />
       </Header>
 
       <PostContent>
         <Avatar />
         <div>
-          <Username>strong_ssong</Username>
-          <Text>내추럴 체형에 딱 맞는 오버핏 자켓 스타일링!</Text>
-          <Text>저랑 체형 비슷하신 분 이런 스탈 완전 추천</Text>
-          <Tags>#Natural #OOTD #좋댓구알</Tags>
-          <Time>2h ago</Time>
+          <Username>{detail?.author.username ?? "Loading..."}</Username>
+          {(detail?.content ?? []).map((line, index) => (
+            <Text key={`content-${index}`}>{line}</Text>
+          ))}
+          <Tags>
+            {(detail?.tags ?? []).map((tag) => `#${tag}`).join(" ")}
+          </Tags>
+          <Time>{detail?.createdAt ? formatTimeAgo(detail.createdAt) : ""}</Time>
         </div>
       </PostContent>
 
       <CommentsSection>
-        <CommentRow username="handsome_hojung" text="자켓 정보 알 수 있을까요?" time="1h ago" />
-        <CommentRow username="junyong_cute" text="대박 너무 이뻐요 진심;;" time="1h ago" />
-        <CommentRow username="junyong_cute" text="대박 너무 이뻐요 진심;;" time="1h ago" />
-        <CommentRow username="junyong_cute" text="대박 너무 이뻐요 진심;;" time="1h ago" />
-        <CommentRow username="junyong_cute" text="대박 너무 이뻐요 진심;;" time="1h ago" />
-        <CommentRow username="junyong_cute" text="대박 너무 이뻐요 진심;;" time="1h ago" />
-        <CommentRow username="junyong_cute" text="대박 너무 이뻐요 진심;;" time="1h ago" />
-        <CommentRow username="junyong_cute" text="대박 너무 이뻐요 진심;;" time="1h ago" />
-        <CommentRow username="junyong_cute" text="대박 너무 이뻐요 진심;;" time="1h ago" />
+        {hasError ? (
+          <CommentStatus>댓글을 불러올 수 없습니다.</CommentStatus>
+        ) : isLoading && comments.length === 0 ? (
+          <CommentStatus>댓글 로딩 중...</CommentStatus>
+        ) : comments.length === 0 ? (
+          <CommentStatus>첫 댓글을 남겨보세요.</CommentStatus>
+        ) : (
+          comments.map((comment) => (
+            <CommentRow
+              key={comment.id}
+              username={comment.username}
+              text={comment.text}
+              time={formatTimeAgo(comment.createdAt)}
+            />
+          ))
+        )}
       </CommentsSection>
 
       <Footer>
         <ActionRow>
-            <LeftActions>
-            <HeartButton
-            liked={liked}
-              onClick={() => {
-                setLiked(v => !v);
-                setLikeCount(c => liked ? c - 1 : c + 1);
-              }}
-              >
+          <LeftActions>
+            <HeartButton liked={liked} onClick={handleLikeToggle}>
               {liked ? <FaHeart /> : <FaRegHeart />}
             </HeartButton>
 
             <IconButton onClick={() => commentInputRef.current?.focus()}>
-                <FaRegComment />
+              <FaRegComment />
             </IconButton>
 
             <IconButton>
-                <FaRegPaperPlane size={18}/>
+              <FaRegPaperPlane size={18} />
             </IconButton>
-            </LeftActions>
+          </LeftActions>
 
-            <IconButton onClick={() => setSaved(v => !v)}>
+          <IconButton onClick={() => setSaved((v) => !v)}>
             {saved ? <FaBookmark /> : <FaRegBookmark />}
-            </IconButton>
+          </IconButton>
         </ActionRow>
 
         <Likes>{likeCount} likes</Likes>
@@ -192,6 +246,10 @@ const CommentsSection = styled.div`
   }
 `;
 
+const CommentStatus = styled.div`
+  color: #a1a1a1;
+  font-size: 14px;
+`;
 
 
 const Footer = styled.div`

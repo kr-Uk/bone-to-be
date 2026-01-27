@@ -86,3 +86,59 @@ export interface LikeToggleResponse {
   isLiked: boolean;
   likeCount: number;
 }
+
+/**
+ * 피드 상세 작성자 정보
+ */
+export interface FeedAuthor {
+  username: string;
+  bodyType: "Straight" | "Wave" | "Natural";
+  location: string;
+  avatarUrl?: string | null;
+}
+
+/**
+ * 피드 상세 정보
+ */
+export interface FeedDetail {
+  id: string;
+  imageUrl: string;
+  author: FeedAuthor;
+  content: string[];
+  tags: string[];
+  createdAt: string;
+  isLiked: boolean;
+  likeCount: number;
+  commentCount: number;
+  isSaved: boolean;
+}
+
+/**
+ * 댓글 아이템
+ */
+export interface FeedComment {
+  id: string;
+  username: string;
+  text: string;
+  createdAt: string;
+  isLiked: boolean;
+}
+
+/**
+ * 댓글 리스트 요청
+ */
+export interface FeedCommentListRequest {
+  feedId: string;
+  page: number;
+  limit: number;
+}
+
+/**
+ * 댓글 리스트 응답
+ */
+export interface FeedCommentListResponse {
+  items: FeedComment[];
+  total: number;
+  page: number;
+  hasMore: boolean;
+}

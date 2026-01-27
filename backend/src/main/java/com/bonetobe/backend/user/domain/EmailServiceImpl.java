@@ -4,7 +4,6 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -74,34 +73,37 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Transactional
     public boolean verifyCode(String email, String code) {
-        // [1] 메서드 진입 확인 로그
         log.info(">>>> [EmailService.verifyCode 진입] 이메일: {}, 입력코드: {}", email, code);
 
-        if (email == null || code == null) {
-            log.warn("!!!! [EmailService] 이메일 또는 코드가 null입니다.");
-            return false;
-        }
+        if (email == null || code == null) return false;
 
         String cleanEmail = email.trim();
         String cleanCode = code.trim();
 
-        // [2] 회원가입 코드 확인 (순서 변경 및 로그 상세화)
-        boolean isSignupValid = checkAndDelete(SIGNUP_PREFIX + cleanEmail, cleanCode);
-        if (isSignupValid) {
-            log.info(">>>> [EmailService] 회원가입 인증 성공!");
+        // 1. 회원가입 코드 확인
+        if (checkAndDelete(SIGNUP_PREFIX + cleanEmail, cleanCode)) {
+            // [중요] 인증에 성공하면 Redis에 "인증 완료" 상태를 5분간 저장합니다.
+            // 이 기록이 있어야 AuthServiceImpl의 signup에서 가입을 허용합니다.
+            saveToRedis(VERIFIED_PREFIX + cleanEmail, Boolean.TRUE.toString(), CODE_LIMIT_TIME);
+            log.info(">>>> [EmailService] 회원가입 인증 성공 및 상태 저장 완료: {}", cleanEmail);
             return true;
         }
 
-        // [3] 비밀번호 재설정 코드 확인
-        boolean isResetValid = checkAndDelete(RESET_CODE_PREFIX + cleanEmail, cleanCode);
-        if (isResetValid) {
+        // 2. 비밀번호 재설정 코드 확인 (비번 재설정은 바로 로직이 이어지므로 상태 저장 생략 가능)
+        if (checkAndDelete(RESET_CODE_PREFIX + cleanEmail, cleanCode)) {
             log.info(">>>> [EmailService] 비밀번호 재설정 인증 성공!");
             return true;
         }
 
-        log.warn(">>>> [EmailService] 모든 인증 키 조회 실패: {}", cleanEmail);
         return false;
+    }
+
+    // 가입 완료 후 인증 마크를 삭제하기 위한 메서드 추가 (AuthServiceImpl에서 호출)
+    public void deleteAuthStatus(String email) {
+        redisTemplate.delete(VERIFIED_PREFIX + email);
+        log.info(">>>> [Redis] 가입 완료로 인한 인증 상태 삭제: {}", email);
     }
 
     public boolean isEmailVerified(String email) {

@@ -30,20 +30,19 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public User signup(UserCreateCommand command) {
-        // [1] 회원가입 프로세스 진입 로그
         log.info(">>>> [회원가입 프로세스 시작] 이메일: {}, 닉네임: {}", command.email(), command.nickname());
 
         try {
-            // [2] 이메일 인증 번호 검증 단계
-            validateEmailVerification(command.email(), command.authCode());
-            log.info(">>>> [회원가입 검증 완료] 1. 이메일 인증 성공: {}", command.email());
+            // [1] Redis 인증 완료 상태 검증 (수정된 로직)
+            // 더 이상 authCode를 직접 대조하지 않고, 이전에 성공하여 저장된 플래그를 확인합니다.
+            validateEmailVerificationStatus(command.email());
+            log.info(">>>> [회원가입 검증 완료] 1. 이메일 최종 인증 확인: {}", command.email());
 
-            // [3] 중복 가입(이메일, 닉네임) 검증 단계
+            // [2] 중복 가입 검증
             validateDuplication(command.email(), command.nickname());
             log.info(">>>> [회원가입 검증 완료] 2. 중복 체크 통과: {}", command.email());
 
-            // [4] 엔티티 생성 및 비밀번호 암호화
-            log.info(">>>> [회원가입 엔티티 생성 중] 비밀번호 암호화 시작...");
+            // [3] 엔티티 생성 및 암호화
             User user = User.createUser(
                     command.email(),
                     passwordEncoder.encode(command.password()),
@@ -51,16 +50,31 @@ public class AuthServiceImpl implements AuthService {
                     "USER"
             );
 
-            // [5] DB 최종 저장
+            // [4] DB 저장
             User savedUser = userRepository.save(user);
             log.info(">>>> [회원가입 최종 성공] DB ID: {}, 이메일: {}", savedUser.getId(), savedUser.getEmail());
+
+            // [5] 인증 상태 데이터 정리 (deleteAuthStatus 사용)
+            // 가입이 완료되었으므로 Redis에 남은 인증 완료 플래그를 삭제합니다.
+            emailService.deleteAuthStatus(command.email());
+            log.info(">>>> [인증 데이터 정리] Redis 인증 완료 마크 삭제: {}", command.email());
 
             return savedUser;
 
         } catch (Exception e) {
-            // 예외 발생 시 어떤 단계에서 문제가 생겼는지 추적하기 위한 에러 로그
             log.error("!!!! [회원가입 프로세스 실패] 이메일: {}, 이유: {}", command.email(), e.getMessage());
-            throw e; // 발생한 예외는 그대로 다시 던져서 GlobalExceptionHandler가 처리하게 함
+            throw e;
+        }
+    }
+
+    /**
+     * Redis에 저장된 이메일 인증 성공 여부 확인
+     */
+    private void validateEmailVerificationStatus(String email) {
+        // EmailService의 isEmailVerified를 호출하여 "true" 상태인지 확인합니다.
+        if (!emailService.isEmailVerified(email)) {
+            // 적절한 에러 코드로 예외를 던집니다. (예: 인증되지 않은 이메일)
+            throw new BusinessException(ErrorCode.EMAIL_NOT_VERIFIED);
         }
     }
 

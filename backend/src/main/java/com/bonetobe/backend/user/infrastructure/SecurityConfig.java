@@ -50,7 +50,10 @@ public class SecurityConfig {
                                 "/auth/oauth/**",
                                 "/users/profile/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/api/auth/**",
+                                "/api/swagger-ui/**",
+                                "/api/v3/api-docs/**"
                         ).permitAll()
 
                         // 2. 유저용 (User (Lv.1)) - 로그아웃 포함
@@ -108,7 +111,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // 허용할 프론트엔드 주소
+
+        configuration.addAllowedOrigin("https://bonetobe.site");
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://localhost:5174");
+
         configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용 (GET, POST 등)
         configuration.addAllowedHeader("*"); // 모든 헤더 허용
         configuration.setAllowCredentials(true); // 쿠키/인증 정보를 포함한 요청 허용

@@ -3,16 +3,10 @@ package com.bonetobe.backend.user.domain;
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.file.domain.StoredFile;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "users")

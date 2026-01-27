@@ -31,6 +31,7 @@ class ShapyRunner:
         image_bgr: np.ndarray,
         body25_keypoints: np.ndarray,
         gender: str = "neutral",
+        height: float = None, # [NEW]
     ):
         """
         Run Shapy inference on an image with Body25 keypoints.
@@ -53,7 +54,9 @@ class ShapyRunner:
         body_imgs, body_targets, full_imgs_list, bbox_metadata = preprocess_image(
             image_bgr, 
             body25_keypoints,  # Direct use, no conversion needed
-            device=self.device
+            device=self.device,
+            gender=gender,  # [NEW] Pass gender for B2A module
+            height=height   # [NEW] Pass height for Scale Ambiguity
         )
         
         # Wrap full images

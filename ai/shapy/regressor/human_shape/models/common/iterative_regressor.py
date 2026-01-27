@@ -18,6 +18,15 @@ import torch.nn.functional as F
 import torch.nn.init as nninit
 from omegaconf import DictConfig
 
+# PyTorch 2.6+ fix: Allow PyTorch Lightning classes in checkpoints
+# This fixes "Unsupported global: GLOBAL pytorch_lightning.callbacks.model_checkpoint.ModelCheckpoint"
+try:
+    import pytorch_lightning.callbacks.model_checkpoint
+    torch.serialization.add_safe_globals([pytorch_lightning.callbacks.model_checkpoint.ModelCheckpoint])
+except (ImportError, AttributeError):
+    # Older PyTorch versions or PyTorch Lightning not installed
+    pass
+
 from body_measurements import BodyMeasurements
 
 from .pose_utils import PoseParameterization
@@ -152,7 +161,7 @@ class HMRLikeRegressor(nn.Module):
             b2a_females_checkpoint_path)
         if self.use_b2a:
             logger.info(f'Loading B2A regressors ...')
-            male_hparams = torch.load(b2a_males_checkpoint_path)['hyper_parameters']
+            male_hparams = torch.load(b2a_males_checkpoint_path, weights_only=False)['hyper_parameters']
             male_cfg = male_hparams.get('cfg', {})
             #male_cfg.update(male_hparams)
             # load regressor for males
@@ -162,7 +171,7 @@ class HMRLikeRegressor(nn.Module):
             for name, params in self.b2a_males.named_parameters():
                 params.requires_grad = False
             # load regressor for males
-            female_hparams = torch.load(b2a_females_checkpoint_path)['hyper_parameters']
+            female_hparams = torch.load(b2a_females_checkpoint_path, weights_only=False)['hyper_parameters']
             female_cfg = female_hparams.get('cfg', {})
             #female_cfg.update(female_hparams)
             self.b2a_females = B2A.load_from_checkpoint(

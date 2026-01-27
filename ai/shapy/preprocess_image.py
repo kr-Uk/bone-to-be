@@ -22,7 +22,9 @@ from regressor.human_shape.data.utils.bbox import bbox_to_center_scale, keyps_to
 def preprocess_image(
     image_bgr: np.ndarray,
     body25_kps: np.ndarray,
-    device: str = "cuda"
+    device: str = "cuda",
+    gender: str = "neutral",
+    height: float = None # [NEW] Accept height
 ):
     """
     image_bgr : (H,W,3)
@@ -137,6 +139,11 @@ def preprocess_image(
         scale=torch.tensor(scale, dtype=torch.float32),
         image_size=torch.tensor([H, W], dtype=torch.float32),
     )
+    # [NEW] Add gender field so B2A module can use it
+    target.add_field("gender", gender)
+    # [NEW] Add height if provided
+    if height is not None:
+        target.add_field("height", float(height))
 
     # -----------------------------------------------------
     # 5. Full Image (Global Context)

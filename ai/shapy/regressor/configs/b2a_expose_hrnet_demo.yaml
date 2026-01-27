@@ -187,8 +187,8 @@ network:
         use_b2a: True
         use_a2b: False
         num_attributes: 15
-        b2a_males_checkpoint: 'data/b2a/polynomial/caesar-male_smplx-neutral-10betas/last.ckpt'
-        b2a_females_checkpoint: 'data/b2a/polynomial/caesar-female_smplx-neutral-10betas/last.ckpt'
+        b2a_males_checkpoint: 'data/trained_models/b2a/polynomial/caesar-male_smplx-neutral-10betas/last.ckpt'
+        b2a_females_checkpoint: 'data/trained_models/b2a/polynomial/caesar-female_smplx-neutral-10betas/last.ckpt'
         a2b_males_checkpoint: ''
         a2b_females_checkpoint: ''
 

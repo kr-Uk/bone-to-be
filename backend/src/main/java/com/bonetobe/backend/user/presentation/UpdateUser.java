@@ -1,26 +1,11 @@
 package com.bonetobe.backend.user.presentation;
 
-import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.user.domain.UserUpdateCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 public class UpdateUser {
-    @Getter
-    public static class InfoRequest {
-        private String nickname;
-        private StoredFile profileImage;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class PresignedUrlResponse {
-        private String uploadUrl; // PUT으로 업로드할 URL
-        private String fileUrl;   // 업로드 완료 후 DB에 저장할 URL
-    }
 
     @Getter
     public static class PasswordRequest {

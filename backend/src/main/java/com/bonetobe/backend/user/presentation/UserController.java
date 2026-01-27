@@ -24,16 +24,6 @@ public class UserController {
     //@GetMapping("/me")
 
     // 이미지 업로드
-//    @PostMapping("/image/presigned-url")
-//    public ResponseEntity<APIResponse<UpdateUser.PresignedUrlResponse>> generatePresignedUrl(
-//            @AuthenticationPrincipal UserPrincipal principal,
-//            @RequestBody @Valid UpdateUser.PresignedUrlRequest request
-//    ) {
-//        UpdateUser.PresignedUrlResponse response =
-//                userService.generatePresignedUrl(principal.getUserId(), request);
-//
-//        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, response));
-//    }
 
     // 마이페이지 수정
     //@PutMapping("/me")

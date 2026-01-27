@@ -1,7 +1,5 @@
 package com.bonetobe.backend.user.domain;
 
-import com.bonetobe.backend.file.domain.FileService;
-import com.bonetobe.backend.user.presentation.UpdateUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,20 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    private final FileService fileService;
-
-    @Override
-    @Transactional
-    public void updateInfo(Long userId, UpdateUser.InfoRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        user.updateProfile(
-                request.getNickname(),
-                request.getProfileImage()
-        );
-    }
 
     @Override
     @Transactional

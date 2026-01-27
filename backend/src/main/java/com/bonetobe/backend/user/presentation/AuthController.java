@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +26,14 @@ public class AuthController {
 
     @GetMapping("/check/nickname")
     public ResponseEntity<APIResponse<AddUser.NicknameCheckResponse>> checkNickname(@RequestParam String nickname) {
-        boolean isDuplicated = authService.existsByNickname(nickname);
-        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, AddUser.NicknameCheckResponse.from(isDuplicated)));
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, AddUser.NicknameCheckResponse.from(
+                authService.existsByNickname(nickname))));
     }
 
     @GetMapping("/check/email")
     public ResponseEntity<APIResponse<AddUser.EmailCheckResponse>> checkEmail(@RequestParam String email) {
-        boolean isDuplicated = authService.existsByEmail(email);
-        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, AddUser.EmailCheckResponse.from(isDuplicated)));
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, AddUser.EmailCheckResponse.from(
+                authService.existsByEmail(email))));
     }
 
     @PostMapping("/email/verification")
@@ -46,14 +45,15 @@ public class AuthController {
     @PostMapping("/email/verification/check")
     public ResponseEntity<APIResponse<AddUser.EmailVerificationResponse>> verifyEmailCode(
             @RequestBody @Valid AddUser.EmailVerificationRequest request) {
-        boolean isValid = emailService.verifyCode(request.getEmail(), request.getCode());
-        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, AddUser.EmailVerificationResponse.from(isValid)));
+        return ResponseEntity
+                .ok(
+                        APIResponse.success(SuccessCode.OK,
+                                AddUser.EmailVerificationResponse.from(emailService.verifyCode(request.getEmail(), request.getCode()))));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<APIResponse<AddUser.Response>> signup(@RequestBody @Valid AddUser.Request request) {
-        User user = authService.signup(request.toCommand());
-        return ResponseEntity.ok(APIResponse.success(SuccessCode.CREATED, AddUser.Response.from(user)));
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.CREATED, AddUser.Response.from(authService.signup(request.toCommand()))));
     }
 
     // --- 로그인 및 로그아웃 (Security 필터 처리용 명세) ---

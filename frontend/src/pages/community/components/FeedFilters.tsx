@@ -178,7 +178,6 @@ export function FeedFilters({ filters, onFilterChange }: FeedFiltersProps) {
         options={genderOptions}
         value={filters.gender}
         onChange={handleGenderChange}
-        placeholder="성별 선택"
       />
 
       <FilterDropdown
@@ -186,7 +185,6 @@ export function FeedFilters({ filters, onFilterChange }: FeedFiltersProps) {
         options={bodyTypeOptions}
         value={filters.bodyType}
         onChange={handleBodyTypeChange}
-        placeholder="골격유형 선택"
       />
 
       <FilterDropdown
@@ -195,7 +193,6 @@ export function FeedFilters({ filters, onFilterChange }: FeedFiltersProps) {
         value={filters.styles}
         onChange={handleStylesChange}
         multiSelect
-        placeholder="스타일 선택"
       />
 
       <RangeFilterDropdown

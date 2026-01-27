@@ -79,11 +79,11 @@ const PostGrid = styled.div`
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `;
 

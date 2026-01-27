@@ -270,22 +270,6 @@ const QuoteText = styled(Text)`
   text-align: inherit;
 `;
 
-const MetaBadge = styled.div`
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.5rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const MetaBadgeText = styled(Text)`
-  color: var(--color-brand-primary-200, #e9d4ff);
-  font-size: 0.9375rem;
-  font-weight: 400;
-  line-height: 1.25rem;
-  font-family: Consolas;
-`;
-
 const Actions = styled(Stack).attrs({
   $direction: "row",
   $gap: "0.625rem",
@@ -385,7 +369,6 @@ interface ProfileHeaderSectionProps {
   follower: number;
   following: number;
   bodyType?: string;
-  profileMeta?: string;
   isOwner?: boolean;
   bio?: string;
   onFollowerClick?: () => void;
@@ -424,17 +407,12 @@ const ProfileHeaderSection = ({
   follower,
   following,
   bodyType,
-  profileMeta,
   isOwner = false,
   bio,
   onFollowerClick,
   onFollowingClick,
 }: ProfileHeaderSectionProps) => {
   const bodyTypeLabel = formatBodyType(bodyType);
-  const metaParts = profileMeta
-    ? profileMeta.split(/[•/]/).map((part) => part.trim()).filter(Boolean)
-    : [];
-  const metaLabel = metaParts.length ? metaParts.join(" • ") : "171cm • 58kg";
   const quoteText = bio?.trim() ? bio : "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~";
 
   return (
@@ -467,9 +445,6 @@ const ProfileHeaderSection = ({
           </StatButton>
         </StatsRow>
         <QuoteText as="p">{quoteText}</QuoteText>
-        <MetaBadge>
-          <MetaBadgeText as="span">{metaLabel}</MetaBadgeText>
-        </MetaBadge>
         <Actions>
           {isOwner ? (
             <>

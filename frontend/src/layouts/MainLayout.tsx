@@ -1,12 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { MainHeader } from "@/shared/components/MainHeader";
 
 export const MainLayout = () => {
+  const location = useLocation();
+
   return (
     <Wrapper>
-      <MainHeader />
+      <MainHeader key={location.key} />
       <Main>
         <Outlet />
       </Main>

@@ -1,14 +1,13 @@
 import { useState } from "react";
 
 
-import { login } from "../api/authApi";
-
 import { LoginModalView } from "./LoginModalView";
 import { SignUpModalView } from "./SignUpModalView";
 
 import type { AxiosError } from "axios";
 
 import { Modal } from "@/shared/components/Modal/Modal";
+import { useLogin } from "@/shared/hooks";
 import { useAuthStore } from "@/shared/stores/authStore";
 
 
@@ -16,6 +15,7 @@ import { useAuthStore } from "@/shared/stores/authStore";
 
 export const LoginModalContainer = () => {
   const { isLoginModalOpen, closeLoginModal } = useAuthStore();
+  const loginMutation = useLogin();
   const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");
 
   const [email, setEmail] = useState("");
@@ -25,7 +25,7 @@ export const LoginModalContainer = () => {
   const handleSubmit = async () => {
     setLoginError("");
     try {
-      await login(email, password);
+      await loginMutation.mutateAsync({ email, password });
       closeLoginModal();
     } catch (error) {
       const status = (error as AxiosError).response?.status;

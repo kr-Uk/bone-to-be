@@ -18,7 +18,6 @@ interface FilterDropdownProps {
   value: string | string[] | null;
   onChange: (value: string | string[] | null) => void;
   multiSelect?: boolean;
-  placeholder?: string;
 }
 
 const DropdownContainer = styled.div`
@@ -192,7 +191,6 @@ export function FilterDropdown({
   value,
   onChange,
   multiSelect = false,
-  placeholder = "선택",
 }: FilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

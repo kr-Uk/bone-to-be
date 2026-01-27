@@ -16,7 +16,9 @@ RABBITMQ_PASS = os.getenv("RABBITMQ_PASSWORD", "guest")
 REQUEST_QUEUE = os.getenv("REQUEST_QUEUE", "body-worker.requested")
 COMPLETED_QUEUE = os.getenv("COMPLETED_QUEUE", "body-worker.completed")
 
-def test_worker(image_path_or_url):
+def test_worker(image_path_or_url, gender, height=None):
+    print(f"[INFO] Connecting to RabbitMQ at {RABBITMQ_HOST}:{RABBITMQ_PORT}...")
+    
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
     params = pika.ConnectionParameters(
         host=RABBITMQ_HOST,
@@ -27,7 +29,6 @@ def test_worker(image_path_or_url):
     try:
         conn = pika.BlockingConnection(params)
     except Exception as e:
-        print(f"❌ Connection failed: {e}")
         print(f"Ensure RabbitMQ is running on {RABBITMQ_HOST}:{RABBITMQ_PORT}")
         return
 
@@ -36,6 +37,7 @@ def test_worker(image_path_or_url):
     # Declare queues
     channel.queue_declare(queue=REQUEST_QUEUE, durable=True)
     channel.queue_declare(queue=COMPLETED_QUEUE, durable=True)
+    print(f"[OK] Queues declared: {REQUEST_QUEUE}, {COMPLETED_QUEUE}")
 
     # Prepare message
     message = {}
@@ -46,11 +48,14 @@ def test_worker(image_path_or_url):
     
     correlation_id = str(uuid.uuid4())
     message["correlation_id"] = correlation_id # Optional tracking
+    message["gender"] = gender
+    if height:
+        message["height"] = height
 
     body = json.dumps(message)
     
-    print(f"📤 Sending request to {REQUEST_QUEUE}...")
-    print(f"   Payload: {body}")
+    print(f"   Gender: {gender}, Height: {height}")
+    print(f"   Image: {image_path_or_url[:80]}...")
 
     channel.basic_publish(
         exchange="",
@@ -60,8 +65,8 @@ def test_worker(image_path_or_url):
             delivery_mode=2,  # persistent
         )
     )
-    
-    print(f"⏳ Waiting for response on {COMPLETED_QUEUE}...")
+
+
 
     # Wait for response
     def on_response(ch, method, properties, body):
@@ -98,8 +103,12 @@ def test_worker(image_path_or_url):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python send_test_message.py <image_path_or_url>")
+        print("Usage: python send_test_message.py <image_path_or_url> [gender=neutral] [height=None]")
         sys.exit(1)
     
     target = sys.argv[1]
-    test_worker(target)
+    gender_arg = sys.argv[2] if len(sys.argv) > 2 else "neutral"
+    height_arg = float(sys.argv[3]) if len(sys.argv) > 3 else None
+    
+
+    test_worker(target, gender_arg, height_arg)

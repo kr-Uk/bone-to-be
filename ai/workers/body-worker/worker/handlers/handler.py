@@ -63,11 +63,11 @@ print("⏳ Initializing models...")
 try:
     # 1. YOLO
     # Using 'yolo11x-pose.pt' to match temp pipeline (most accurate model)
-    yolo_model = YOLO('yolo11x-pose.pt') 
+    yolo_model = YOLO('yolo11x-pose.pt')
     
     # 2. Shapy
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    
+
     # [CRITICAL] Pass exp_opts to match temp's configuration exactly
     # These options MUST match temp/run_pipeline.py lines 61-68
     # IMPORTANT: Use ABSOLUTE path for checkpoint! Relative path fails from worker directory
@@ -81,7 +81,7 @@ try:
         # Match temp's pose_shape_ratio (line 68)
         'datasets.pose_shape_ratio=1.0'
     ]
-    
+
     shapy_runner = ShapyRunner(device=device, exp_opts=exp_opts)
     
     print("✅ Models initialized successfully.")
@@ -154,7 +154,6 @@ def handle(message: dict):
 
         # 2. YOLO Inference
         # classes=[0] usually person in COCO
-        print(f"🔍 Running YOLO inference...")
         results = yolo_model(img, verbose=False, classes=[0], conf=0.5)
         
         if not results or not results[0].keypoints or results[0].keypoints.data.shape[1] == 0:
@@ -174,10 +173,10 @@ def handle(message: dict):
         # This is the CRITICAL step that temp does via gen_openpose_yolo11.py
         print(f"🔄 Converting YOLO → OpenPose Body25...")
         openpose_json = create_openpose_json(yolo_keypoints)
-        
+
         # Parse back to (25, 3) array for Shapy
         body25_keypoints = np.array(
-            openpose_json["people"][0]["pose_keypoints_2d"], 
+            openpose_json["people"][0]["pose_keypoints_2d"],
             dtype=np.float32
         ).reshape(25, 3)
         print(f"✅ Converted to Body25 format: {body25_keypoints.shape}")
@@ -190,12 +189,36 @@ def handle(message: dict):
         print(f"👤 Using gender: {gender}")
 
         # 5. Shapy Inference (using Body25 keypoints like temp does)
+        # [NEW] Get height from message
+        height = message.get("height")
+        print(f"📏 Using height: {height} m")
+
         print(f"🚀 Running Shapy inference...")
-        output = shapy_runner.run(img, body25_keypoints, gender=gender)
+        output = shapy_runner.run(img, body25_keypoints, gender=gender, height=height)
         print(f"✅ Shapy inference completed")
 
+        # 6. Body Type Analysis - Calculate 10 metrics
+        print(f"📊 Calculating body type metrics...")
+        from body_type_analyzer import BodyTypeAnalyzer
+        
+        try:
+            analyzer = BodyTypeAnalyzer(
+                vertices=output['stage_02']['vertices'][0],  # (10475, 3)
+                joints=output['stage_02']['joints'][0],      # (127, 3)
+                measurements=output['measurements']
+            )
+            body_type_metrics = analyzer.calculate_all_metrics()
+            print(f"✅ Body type metrics calculated")
+            
+            # Add metrics to output
+            output['body_type_metrics'] = body_type_metrics
+        except Exception as e:
+            print(f"⚠️ Warning: Body type analysis failed: {e}")
+            # Continue without metrics if analysis fails
+            output['body_type_metrics'] = None
 
-        # 4. Serialize Output
+
+        # 8. Serialize Output
         def make_serializable(obj):
             if isinstance(obj, dict) or str(type(obj)) == "<class 'collections.defaultdict'>":
                 return {k: make_serializable(v) for k, v in obj.items() if v is not None}
@@ -213,14 +236,26 @@ def handle(message: dict):
                 return make_serializable(obj.__dict__)
             else:
                 return obj
+    
 
-        serialized_output = make_serializable(output)
+        # 9. Prepare minimal response for backend
+        backend_result = {
+            'body_type_metrics': output.get('body_type_metrics'),
+            'measurements': {
+                'chest': output.get('measurements', {}).get('chest'),
+                'waist': output.get('measurements', {}).get('waist'),
+                'hips': output.get('measurements', {}).get('hips')
+            },
+            'attributes': {
+                'height': height,
+                'gender': gender
+            }
+        }
 
-
-        # 5. Publish Result
+        # 10. Publish Result (only essentials)
         publish({
             "status": "COMPLETED",
-            "result": serialized_output,
+            "result": backend_result,
             "request": message
         })
         print("✅ Processing completed and published.")

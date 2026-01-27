@@ -97,7 +97,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
     }
 
     try {
-      await axiosInstance.post("/api/auth/email/validate", { email: trimmedEmail });
+      await axiosInstance.post("/auth/email/validate", { email: trimmedEmail });
       setEmailCheckStatus("available");
       setIsTimerRunning(true);
       setTimer(180);
@@ -109,7 +109,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
   const handleConfirmAuth = async () => {
     try {
-      await axiosInstance.get("/api/auth/email/validate", {
+      await axiosInstance.get("/auth/email/validate", {
         params: {
           email: trimmedEmail,
           code: authCode,

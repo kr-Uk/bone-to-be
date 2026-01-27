@@ -323,8 +323,8 @@ const Header = styled.header`
   width: 100%;
   position: relative;
   z-index: 900;
-  background-color: ${({ theme }) => (theme as AppTheme).colors.primary};
-  border-bottom: 0.0625rem solid ${({ theme }) => (theme as AppTheme).colors.primary};
+  background-color: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
+  border-bottom: 0.0625rem solid ${({ theme }) => (theme as AppTheme).colors.gray[700]};
   backdrop-filter: blur(2px);
 
   @media (max-width: 1023px) {
@@ -336,7 +336,7 @@ const HeaderInner = styled.div`
   width: 100%;
   max-width: 80rem;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 0.75rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;

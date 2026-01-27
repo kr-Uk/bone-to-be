@@ -26,7 +26,7 @@ export interface DropdownFixedPosition {
  * @returns Position styles and flip direction flag
  */
 export function useDropdownPosition(
-  buttonRef: RefObject<HTMLElement>,
+  buttonRef: RefObject<HTMLElement | null>,
   isOpen: boolean,
   offset: number = 8,
   menuHeight: number = 300,
@@ -83,13 +83,13 @@ export function useDropdownPosition(
 }
 
 // Debounce helper
-function debounce<T extends (...args: any[]) => void>(
+function debounce<T extends (...args: unknown[]) => void>(
   func: T,
   wait: number,
 ): T & { cancel: () => void } {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  const debounced = function (this: any, ...args: Parameters<T>) {
+  const debounced = function (this: unknown, ...args: Parameters<T>) {
     if (timeoutId !== null) {
       clearTimeout(timeoutId);
     }
@@ -117,7 +117,7 @@ function debounce<T extends (...args: any[]) => void>(
  * @returns Fixed position styles optimized for viewport
  */
 export function useDropdownFixedPosition(
-  buttonRef: RefObject<HTMLElement>,
+  buttonRef: RefObject<HTMLElement | null>,
   isOpen: boolean,
   offset: number = 8,
   menuHeight: number = 300,

@@ -25,6 +25,7 @@ const Wrap = styled.section`
   width: 100%;
   background: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.gray[50]};
+  position: relative;
 `;
 
 const PinnedSectionWrap = styled.section`
@@ -71,21 +72,29 @@ const Frame = styled.div`
   }
 `;
 
-const FloatingNav = styled.nav`
-  position: fixed;
-  top: 50%;
-  right: 0.75rem;
-  transform: translateY(-50%);
+const NavRail = styled.div`
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: flex-end;
-  text-align: right;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: none;
   z-index: 20;
 
   @media (max-width: 900px) {
     display: none;
   }
+`;
+
+const FloatingNav = styled.nav`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-end;
+  text-align: right;
+  margin-right: 0.75rem;
+  pointer-events: auto;
 `;
 
 const NavItem = styled.button<{ $active: boolean }>`
@@ -637,30 +646,32 @@ export function BodyTypeScrollShowcase() {
 
   return (
     <Wrap>
-      <FloatingNav aria-label="Body type sections">
-        {sections.map((section) => {
-          const isActive = activeKey === section.key;
-          return (
-          <NavItem
-            key={section.key}
-            $active={isActive}
-            onClick={() => {
-              const target = document.getElementById(`body-type-${section.key.toLowerCase()}`);
-              if (!target) return;
-              const top = target.getBoundingClientRect().top + window.scrollY;
-              const bottom = top + target.offsetHeight - window.innerHeight;
-              window.scrollTo({ top: Math.max(bottom, 0), behavior: "smooth" });
-            }}
-          >
-            <NavText>
-              <NavKo>{section.labelKo}</NavKo>
-              <NavEn>{section.labelEn}</NavEn>
-            </NavText>
-            <NavDot $active={isActive} />
-          </NavItem>
-        );
-        })}
-      </FloatingNav>
+      <NavRail>
+        <FloatingNav aria-label="Body type sections">
+          {sections.map((section) => {
+            const isActive = activeKey === section.key;
+            return (
+              <NavItem
+                key={section.key}
+                $active={isActive}
+                onClick={() => {
+                  const target = document.getElementById(`body-type-${section.key.toLowerCase()}`);
+                  if (!target) return;
+                  const top = target.getBoundingClientRect().top + window.scrollY;
+                  const bottom = top + target.offsetHeight - window.innerHeight;
+                  window.scrollTo({ top: Math.max(bottom, 0), behavior: "smooth" });
+                }}
+              >
+                <NavText>
+                  <NavKo>{section.labelKo}</NavKo>
+                  <NavEn>{section.labelEn}</NavEn>
+                </NavText>
+                <NavDot $active={isActive} />
+              </NavItem>
+            );
+          })}
+        </FloatingNav>
+      </NavRail>
       {sections.map((section, index) => (
         <PinnedSection key={section.key} section={section} index={index} />
       ))}

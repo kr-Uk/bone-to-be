@@ -1,23 +1,25 @@
 package com.bonetobe.backend.post.application;
 
+import com.bonetobe.backend.file.domain.FileService;
+import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.file.domain.FileService;
-import com.bonetobe.backend.file.presentation.FileDownloadUrl;
+import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.post.domain.PostService;
+import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
+import com.bonetobe.backend.post.domain.query.*;
+import com.bonetobe.backend.post.domain.command.PostCreateCommand;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;
-import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,5 +52,29 @@ public class PostFacade {
         // raw -> summary 변환
         return rawPage.map(r -> r.toSummary(urlMap.get(r.fileId())));
     }
+
+    @Transactional(readOnly = true)
+    public PostDetailSummary getPostDetail(Long postId) {
+
+        PostDetailSummaryRaw raw = postService.getPostDetail(postId);
+
+        String imageUrl = fileService.getPublicDownloadUrls(
+                List.of(new FileDownloadUrl.Query(raw.fileId()))
+        ).get(0).presignedUrl();
+
+        return raw.toSummary(imageUrl);
+    }
+
+    @Transactional
+    public void createPost(PostCreateCommand command) {
+        postService.createPost(command);
+    }
+
+    @Transactional
+    public void deletePost(PostDeleteCommand command) {
+        postService.deletePost(command);
+    }
+
+
 }
 

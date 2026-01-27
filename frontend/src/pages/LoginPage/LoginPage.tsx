@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 
-import { login } from "./api/authApi";
 import { LoginModalView } from "./components/LoginModalView";
 import { SignUpModalView } from "./components/SignUpModalView";
 import * as S from "./styles/LoginPage.styles";
 
 import type { AxiosError } from "axios";
 
+import { useAuth, useLogin } from "@/shared/hooks";
 
 export const LoginPage = () => {
+  const location = useLocation();
+  const { isAuthLoading, isLoggedIn } = useAuth();
+  const loginMutation = useLogin();
   const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,7 +21,7 @@ export const LoginPage = () => {
   const handleSubmit = async () => {
     setLoginError("");
     try {
-      await login(email, password);
+      await loginMutation.mutateAsync({ email, password });
     } catch (error) {
       const status = (error as AxiosError).response?.status;
       if (status === 401) {
@@ -61,6 +65,15 @@ export const LoginPage = () => {
   const handleFindPassword = () => {
     console.log("TODO: Go to Find Password");
   };
+
+  useEffect(() => {
+    const mode = new URLSearchParams(location.search).get("mode");
+    setViewMode(mode === "signup" ? "SIGNUP" : "LOGIN");
+  }, [location.search]);
+
+  if (!isAuthLoading && isLoggedIn) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <S.PageWrapper>

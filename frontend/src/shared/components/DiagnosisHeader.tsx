@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import LogoSvg from "@/assets/logo.svg";
+import LogoSvg from "@/assets/image/logo.svg";
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -10,7 +10,7 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 2rem;
-  background-color: ${({ theme }) => theme.colors.gray[900]};
+  background-color: ${({ theme }) => theme.colors.primary};
   width: 100%;
   z-index: 10;
   // position: relative;

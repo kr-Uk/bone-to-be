@@ -5,7 +5,6 @@ import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.report.application.ReportFacade;
-import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

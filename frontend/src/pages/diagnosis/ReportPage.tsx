@@ -17,7 +17,8 @@ import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(90deg, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 100%),
+  background:
+    linear-gradient(90deg, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 100%),
     linear-gradient(90deg, rgb(250, 250, 250) 0%, rgb(250, 250, 250) 100%);
   padding-bottom: 80px;
 `;
@@ -25,17 +26,17 @@ const PageContainer = styled.div`
 const MainContent = styled.main`
   max-width: 1280px;
   margin: 0 auto;
-  padding: 128px 24px 0;
+  /* padding: 128px 24px 0; */
   display: flex;
   flex-direction: column;
   gap: 48px;
 
   @media (min-width: 768px) {
-    padding: 100px 32px 0;
+    padding: 0 1.5rem;
   }
 
   @media (min-width: 1024px) {
-    padding: 128px 320px 0;
+    /* padding: 128px 320px 0; */
     flex-direction: row;
     gap: 32px;
   }
@@ -74,23 +75,46 @@ const ReportPage = () => {
   const analysisResult = diagnosisData.analysisResult;
   const [virtualFittingIndex, setVirtualFittingIndex] = useState(0);
 
-  // Redirect if no analysis result
+  // Development mock data
+  const mockAnalysisResult = import.meta.env.DEV
+    ? {
+        analysisId: "mock-id",
+        bodyType: "natural",
+        bodyTypeRatio: {
+          straight: 25,
+          wave: 30,
+          natural: 45,
+        },
+        measurements: {
+          shoulderWidth: 42,
+          waistWidth: 30,
+          hipWidth: 38,
+        },
+        recommendations: [],
+        processedAt: new Date().toISOString(),
+      }
+    : null;
+
+  // Use mock data in development if no real data
+  const currentAnalysisResult = analysisResult || mockAnalysisResult;
+
+  // Redirect if no analysis result (only in production)
   useEffect(() => {
-    if (!analysisResult) {
+    if (!currentAnalysisResult) {
       navigate("/diagnosis/basic-info");
     }
-  }, [analysisResult, navigate]);
+  }, [currentAnalysisResult, navigate]);
 
-  if (!analysisResult) {
+  if (!currentAnalysisResult) {
     return null;
   }
 
   // Get body type metadata
-  const bodyTypeKey = analysisResult.bodyType.toLowerCase() as BodyTypeKey;
+  const bodyTypeKey = currentAnalysisResult.bodyType.toLowerCase() as BodyTypeKey;
   const metadata = BODY_TYPE_METADATA[bodyTypeKey] || BODY_TYPE_METADATA.natural;
 
   // Get ratios
-  const { straight, wave, natural } = analysisResult.bodyTypeRatio;
+  const { straight, wave, natural } = currentAnalysisResult.bodyTypeRatio;
 
   // Get current virtual fitting data
   const currentVirtualFitting = VIRTUAL_FITTING_OPTIONS[virtualFittingIndex];

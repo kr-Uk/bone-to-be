@@ -17,8 +17,8 @@ const Card = styled(motion.div)`
   align-items: center;
 
   @media (min-width: 1024px) {
-    position: sticky;
-    top: 0;
+    /* position: sticky;
+    top: 100px; */
     align-self: flex-start;
   }
 `;
@@ -150,10 +150,7 @@ const AnalysisResultCard = ({
         </PercentageLabels>
       </ChartSection>
 
-      <SkeletonStrengthBar
-        percentage={dominantPercentage}
-        description={strengthDescription}
-      />
+      <SkeletonStrengthBar percentage={dominantPercentage} description={strengthDescription} />
     </Card>
   );
 };

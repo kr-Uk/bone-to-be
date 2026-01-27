@@ -81,7 +81,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
     try {
       setEmailCheckStatus("checking");
-      const { data } = await axiosInstance.get<EmailCheckResponse>("/auth/check/email", {
+      const { data } = await axiosInstance.get<EmailCheckResponse>("/api/auth/check/email", {
         params: { email: trimmedEmail },
       });
       const hasEmail = data?.data?.hasEmail;
@@ -97,7 +97,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
     }
 
     try {
-      await axiosInstance.post("/auth/email/validate", { email: trimmedEmail });
+      await axiosInstance.post("/api/auth/email/validate", { email: trimmedEmail });
       setEmailCheckStatus("available");
       setIsTimerRunning(true);
       setTimer(180);
@@ -109,7 +109,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
   const handleConfirmAuth = async () => {
     try {
-      await axiosInstance.get("/auth/email/validate", {
+      await axiosInstance.get("/api/auth/email/validate", {
         params: {
           email: trimmedEmail,
           code: authCode,
@@ -131,7 +131,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
     try {
       setNicknameCheckStatus("checking");
-      const { data } = await axiosInstance.get<NicknameCheckResponse>("/auth/check/nickname", {
+      const { data } = await axiosInstance.get<NicknameCheckResponse>("/api/auth/check/nickname", {
         params: { nickname: trimmedNickname },
       });
       const hasNickname = data?.data?.hasNickname;

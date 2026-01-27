@@ -11,4 +11,7 @@ public interface PostReader {
     Page<PostSummaryRaw> findPostList(PostListQuery query, Pageable pageable);
 
     PostDetailSummaryRaw findPostDetail(Long postId);
+
+    Post getById(Long postId);
+
 }

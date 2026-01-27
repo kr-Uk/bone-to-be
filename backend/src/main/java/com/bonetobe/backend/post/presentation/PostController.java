@@ -6,13 +6,17 @@ import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.post.application.PostFacade;
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
 import com.bonetobe.backend.post.domain.query.PostSummary;
+import com.bonetobe.backend.post.presentation.dto.PostCreateDto;
+import com.bonetobe.backend.post.presentation.dto.PostDeleteDto;
 import com.bonetobe.backend.post.presentation.dto.PostDetailDto;
 import com.bonetobe.backend.post.presentation.dto.PostListDto;
+import com.bonetobe.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,6 +52,30 @@ public class PostController {
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK, response));
+    }
+
+    @PostMapping
+    public ResponseEntity<APIResponse<Void>> createPost(
+            @RequestBody PostCreateDto.Request request,
+            @AuthenticationPrincipal User user
+    ) {
+        postFacade.createPost(request.toCommand(user.getId()));
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK));
+    }
+
+    @DeleteMapping("/{feedId}")
+    public ResponseEntity<APIResponse<Void>> deletePost(
+            @PathVariable Long feedId,
+            @AuthenticationPrincipal User user
+    ) {
+        postFacade.deletePost(PostDeleteDto.Request.toCommand(user.getId(), feedId));
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK));
     }
 
 }

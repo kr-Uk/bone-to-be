@@ -42,6 +42,9 @@ export default [
       "@typescript-eslint/no-floating-promises": "off",
       "@typescript-eslint/no-misused-promises": "off",
 
+      "@typescript-eslint/no-empty-object-type": ["error", { allowInterfaces: "with-single-extends" }],
+
+
       // import 정리
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [

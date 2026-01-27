@@ -4,6 +4,7 @@ import DiagnosisLayout from "../layouts/DiagnosisLayout";
 
 import ErrorLayout from "@/app/layouts/ErrorLayout";
 import { MainLayout } from "@/layouts/MainLayout";
+import CommunityPage from "@/pages/community/CommunityPage";
 import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
 import { LoginPage } from "@/pages/LoginPage";
 import MainPage from "@/pages/mainpage/MainPage";
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "community",
+        element: <CommunityPage />,
       },
     ],
   },

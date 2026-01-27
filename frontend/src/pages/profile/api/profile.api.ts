@@ -37,9 +37,6 @@ export interface UserProfileDto {
   bodyType: string;
   bodyTypeRatio?: BodyTypeRatioDto;
   bodyTypeRatios?: BodyTypeRatioDto;
-  height?: number;
-  weight?: number;
-  profileMeta?: string;
   bio?: string;
   isOwner?: boolean;
   bodyTypeHistory?: BodyTypeHistoryItemDto[];
@@ -111,18 +108,6 @@ const normalizeRatio = (
   };
 };
 
-const getProfileMeta = (data: UserProfileDto): string | undefined => {
-  if (data.profileMeta) {
-    return data.profileMeta;
-  }
-
-  if (data.height && data.weight) {
-    return `${data.height}cm / ${data.weight}kg`;
-  }
-
-  return undefined;
-};
-
 const mapHistoryItem = (item: BodyTypeHistoryItemDto, index: number): BodyTypeHistoryItem => {
   const ratioSource = item.ratio ?? item.bodyTypeRatio;
 
@@ -166,7 +151,6 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
     following: data.following,
     bodyType: data.bodyType,
     bodyTypeRatio,
-    profileMeta: getProfileMeta(data),
     bio: data.bio ?? "소개글이 없습니다.",
     isOwner: data.isOwner ?? false,
     bodyTypeHistory,

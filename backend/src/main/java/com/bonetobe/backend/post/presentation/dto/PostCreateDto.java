@@ -6,11 +6,13 @@ import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.user.domain.Gender;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
 public class PostCreateDto {
 
+    @Schema(name = "PostCreateRequest")
     public record Request(
             Long fileId,
             String content,

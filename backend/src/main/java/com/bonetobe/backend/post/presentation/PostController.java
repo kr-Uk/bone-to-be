@@ -11,6 +11,7 @@ import com.bonetobe.backend.post.presentation.dto.PostDeleteDto;
 import com.bonetobe.backend.post.presentation.dto.PostDetailDto;
 import com.bonetobe.backend.post.presentation.dto.PostListDto;
 import com.bonetobe.backend.user.domain.User;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +55,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK, response));
     }
 
+    @SecurityRequirement(name = "CookieAuth")
     @PostMapping
     public ResponseEntity<APIResponse<Void>> createPost(
             @RequestBody PostCreateDto.Request request,
@@ -66,6 +68,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK));
     }
 
+    @SecurityRequirement(name = "CookieAuth")
     @DeleteMapping("/{feedId}")
     public ResponseEntity<APIResponse<Void>> deletePost(
             @PathVariable Long feedId,

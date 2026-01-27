@@ -1,5 +1,7 @@
 package com.bonetobe.backend.user.domain;
 
+import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.ErrorCode;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,19 +58,31 @@ public class EmailServiceImpl implements EmailService {
     }
 
     /**
+     * [추가] 토큰 존재 여부만 확인 (삭제 X)
+     * 프론트엔드 진입 시점에 호출됩니다.
+     */
+    @Override
+    public void validateTokenOnly(String token) {
+        getValidEmailFromToken(token); // 존재 여부만 확인
+    }
+
+    /**
      * [링크 방식 전용] 토큰으로 이메일 조회 및 검증
      */
     @Override
     public String getEmailByResetToken(String token) {
-        String key = RESET_LINK_PREFIX + token;
-        String email = redisTemplate.opsForValue().get(key);
+        String email = getValidEmailFromToken(token); // 1. 조회
+        redisTemplate.delete(RESET_LINK_PREFIX + token); // 2. 삭제 (일회용 보장)
+        return email;
+    }
 
+    // 공통 헬퍼 메서드
+    private String getValidEmailFromToken(String token) {
+        String email = redisTemplate.opsForValue().get(RESET_LINK_PREFIX + token);
         if (email == null) {
-            // ErrorCode.BAD_REQUEST 등을 활용해 예외 처리
-            throw new RuntimeException("유효하지 않거나 만료된 링크입니다.");
+            log.warn(">>>> [토큰 오류] 유효하지 않은 토큰: {}", token);
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
         }
-
-        redisTemplate.delete(key); // 일회용성이므로 사용 후 즉시 삭제
         return email;
     }
 
@@ -135,12 +149,13 @@ public class EmailServiceImpl implements EmailService {
         return String.valueOf((int)(Math.random() * 899999) + 100000);
     }
 
+    // TODO: MimeMessage 코드 좀 정리
     // SimpleMailMessage 대신 MimeMessage를 사용하도록 변경
     private void sendEmail(String to, String subject, String text) {
-        MimeMessage message = mailSender.createMimeMessage(); //
+        MimeMessage message = mailSender.createMimeMessage();
 
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8"); //
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(to);
             helper.setSubject(subject);
 

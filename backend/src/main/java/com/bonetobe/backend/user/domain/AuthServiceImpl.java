@@ -30,41 +30,27 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public User signup(UserCreateCommand command) {
-        log.info(">>>> [회원가입 프로세스 시작] 이메일: {}, 닉네임: {}", command.email(), command.nickname());
+        log.info(">>>> [회원가입 시작] 이메일: {}", command.email());
 
-        try {
-            // [1] Redis 인증 완료 상태 검증 (수정된 로직)
-            // 더 이상 authCode를 직접 대조하지 않고, 이전에 성공하여 저장된 플래그를 확인합니다.
-            validateEmailVerificationStatus(command.email());
-            log.info(">>>> [회원가입 검증 완료] 1. 이메일 최종 인증 확인: {}", command.email());
+        // 1. Redis 인증 상태 확인 (완료 마크가 있는지)
+        validateEmailVerificationStatus(command.email());
 
-            // [2] 중복 가입 검증
-            validateDuplication(command.email(), command.nickname());
-            log.info(">>>> [회원가입 검증 완료] 2. 중복 체크 통과: {}", command.email());
+        // 2. 중복 검증 (BusinessException으로 통일)
+        validateDuplication(command.email(), command.nickname());
 
-            // [3] 엔티티 생성 및 암호화
-            User user = User.createUser(
-                    command.email(),
-                    passwordEncoder.encode(command.password()),
-                    command.nickname(),
-                    "USER"
-            );
+        // 3. 생성 및 저장
+        User user = User.createUser(
+                command.email(),
+                passwordEncoder.encode(command.password()),
+                command.nickname(),
+                "USER"
+        );
+        User savedUser = userRepository.save(user);
 
-            // [4] DB 저장
-            User savedUser = userRepository.save(user);
-            log.info(">>>> [회원가입 최종 성공] DB ID: {}, 이메일: {}", savedUser.getId(), savedUser.getEmail());
+        // 4. 뒷정리: Redis 인증 완료 마크 삭제
+        emailService.deleteAuthStatus(command.email());
 
-            // [5] 인증 상태 데이터 정리 (deleteAuthStatus 사용)
-            // 가입이 완료되었으므로 Redis에 남은 인증 완료 플래그를 삭제합니다.
-            emailService.deleteAuthStatus(command.email());
-            log.info(">>>> [인증 데이터 정리] Redis 인증 완료 마크 삭제: {}", command.email());
-
-            return savedUser;
-
-        } catch (Exception e) {
-            log.error("!!!! [회원가입 프로세스 실패] 이메일: {}, 이유: {}", command.email(), e.getMessage());
-            throw e;
-        }
+        return savedUser;
     }
 
     /**
@@ -84,24 +70,13 @@ public class AuthServiceImpl implements AuthService {
      */
     private void validateDuplication(String email, String nickname) {
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL); // 이메일 중복 에러코드 활용
         }
         if (userRepository.existsByNickname(nickname)) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME); // 닉네임 중복 에러코드 활용
         }
     }
 
-    /**
-     * 이메일 인증번호 검증 로직
-     */
-    private void validateEmailVerification(String email, String authCode) {
-        // isEmailVerified 대신 다시 '번호 대조' 방식인 verifyCode를 호출합니다.
-        boolean isVerified = emailService.verifyCode(email, authCode);
-
-        if (!isVerified) {
-            throw new IllegalArgumentException("이메일 인증번호가 일치하지 않거나 만료되었습니다.");
-        }
-    }
 
     @Override
     @Transactional(readOnly = true)

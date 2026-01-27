@@ -93,6 +93,19 @@ public class AuthController {
     }
 
     /**
+     * 비밀번호 재설정 토큰 유효성 검증
+     * 명세서의 '토큰 유효 검증' 항목에 해당합니다.
+     */
+    @GetMapping("/password/reset/verify")
+    public ResponseEntity<APIResponse<Void>> verifyResetToken(@RequestParam String token) {
+        // 1. Redis에 토큰이 살아있는지 확인 (삭제 X)
+        emailService.validateTokenOnly(token);
+
+        // 2. 유효하다면 200 OK 반환 -> 프론트에서 입력 폼 노출
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
+    /**
      * 새 비밀번호 설정 확정
      */
     @PostMapping("/password/reset/confirm")

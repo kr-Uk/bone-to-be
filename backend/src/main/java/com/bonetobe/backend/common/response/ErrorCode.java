@@ -14,6 +14,9 @@ public enum ErrorCode {
     USER_NOT_FOUND(1002, HttpStatus.NOT_FOUND, "해당 이메일로 가입된 사용자를 찾을 수 없습니다."),
     PASSWORD_SAME_AS_OLD(1003, HttpStatus.BAD_REQUEST, "기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."),
     EMAIL_NOT_VERIFIED(1004, HttpStatus.BAD_REQUEST, "이메일 인증이 완료되지 않았습니다."),
+    DUPLICATE_EMAIL(1005, HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다."),
+    DUPLICATE_NICKNAME(1006, HttpStatus.BAD_REQUEST, "이미 사용 중인 닉네임입니다."),
+    INVALID_EMAIL_OR_PASSWORD(1007, HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 일치하지 않습니다."),
 
     // 2000번대 코드 : 게시판 관련
     POST_LIST_INVALID_SORT(2000, HttpStatus.BAD_REQUEST, "유효하지 않은 정렬 조건입니다."),

@@ -1,7 +1,7 @@
 import { FaArrowRightLong } from "react-icons/fa6"
 import { motion, useScroll, useTransform } from "framer-motion";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import styled, { css } from "styled-components";
 
@@ -59,12 +59,83 @@ const Frame = styled.div`
   position: relative;
   z-index: 1;
 
+  @media (min-width: 901px) {
+    padding-right: calc(${({ theme }) => theme.spacing.lg} + 6.5rem);
+  }
+
   @media (max-width: 900px) {
     flex-direction: column;
     align-items: stretch;
     padding-top: 4rem;
     padding-bottom: 4rem;
   }
+`;
+
+const FloatingNav = styled.nav`
+  position: fixed;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-end;
+  text-align: right;
+  z-index: 20;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+
+const NavItem = styled.button<{ $active: boolean }>`
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: fit-content;
+  text-align: right;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  gap: 0.45rem;
+  align-items: center;
+  justify-content: flex-end;
+  color: ${({ theme, $active }) => ($active ? theme.colors.brand : theme.colors.gray[400])};
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.gray[50]};
+  }
+`;
+
+const NavText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  align-items: flex-end;
+  text-align: right;
+`;
+
+const NavKo = styled.span`
+  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
+  line-height: ${({ theme }) => theme.typography.body.md.semibold.lineHeight};
+`;
+
+const NavEn = styled.span`
+  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.sm.regular.fontWeight};
+  line-height: ${({ theme }) => theme.typography.body.sm.regular.lineHeight};
+`;
+
+const NavDot = styled.span<{ $active: boolean }>`
+  width: 0.32rem;
+  height: ${({ $active }) => ($active ? "2.4rem" : "0.35rem")};
+  border-radius: 9999px;
+  background: currentColor;
+  flex: 0 0 auto;
+  opacity: ${({ $active }) => ($active ? 1 : 0.7)};
+  transition: height 0.25s ease, opacity 0.25s ease;
 `;
 
  
@@ -471,7 +542,7 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
   const sectionId = `body-type-${section.key.toLowerCase()}`;
 
   return (
-    <PinnedSectionWrap ref={sectionRef} id={sectionId}>
+    <PinnedSectionWrap ref={sectionRef} id={sectionId} data-key={section.key}>
       <PinnedSticky>
         <ScrollWash style={{ y: washY }} />
         <PinnedContent style={{ opacity, y }}>
@@ -538,8 +609,58 @@ export function BodyTypeScrollShowcase() {
     [],
   );
 
+  const [activeKey, setActiveKey] = useState<BodyTypeKey>("STRAIGHT");
+
+  useEffect(() => {
+    const elements = sections
+      .map((section) => document.getElementById(`body-type-${section.key.toLowerCase()}`))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (visible.length === 0) return;
+        const topEntry = visible.sort(
+          (a, b) => b.intersectionRatio - a.intersectionRatio,
+        )[0];
+        const key = (topEntry.target as HTMLElement).dataset.key as BodyTypeKey | undefined;
+        if (key) setActiveKey(key);
+      },
+      { threshold: [0.2, 0.4, 0.6, 0.8] },
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [sections]);
+
   return (
     <Wrap>
+      <FloatingNav aria-label="Body type sections">
+        {sections.map((section) => {
+          const isActive = activeKey === section.key;
+          return (
+          <NavItem
+            key={section.key}
+            $active={isActive}
+            onClick={() => {
+              const target = document.getElementById(`body-type-${section.key.toLowerCase()}`);
+              if (!target) return;
+              const top = target.getBoundingClientRect().top + window.scrollY;
+              const bottom = top + target.offsetHeight - window.innerHeight;
+              window.scrollTo({ top: Math.max(bottom, 0), behavior: "smooth" });
+            }}
+          >
+            <NavText>
+              <NavKo>{section.labelKo}</NavKo>
+              <NavEn>{section.labelEn}</NavEn>
+            </NavText>
+            <NavDot $active={isActive} />
+          </NavItem>
+        );
+        })}
+      </FloatingNav>
       {sections.map((section, index) => (
         <PinnedSection key={section.key} section={section} index={index} />
       ))}

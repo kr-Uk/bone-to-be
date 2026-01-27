@@ -82,11 +82,10 @@ spring:
         access-key: ${AWS_ACCESS_KEY_ID}
         secret-key: ${AWS_SECRET_ACCESS_KEY}
       region:
-        static: ${AWS_REGION:ap-northeast-2} # 중복 제거 및 기본값 적용
+        static:
+          ${AWS_REGION}
       s3:
         enabled: false
-      stack:
-        auto: false
 s3:
   bucket : ${AWS_S3_BUCKET}
   region : ${AWS_REGION}

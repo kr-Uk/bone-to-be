@@ -35,7 +35,6 @@ export type UserProfile = {
   following: number;
   bodyType: string;
   bodyTypeRatio: BodyTypeRatio;
-  profileMeta?: string;
   bio?: string;
   isOwner: boolean;
   bodyTypeHistory: BodyTypeHistoryItem[];

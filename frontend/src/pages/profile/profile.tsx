@@ -5,7 +5,6 @@ import BodyTypeHistorySection from "./components/BodyTypeHistorySection";
 import { FollowListModal } from "./components/FollowListModal";
 import PostsSection from "./components/PostsSection";
 import ProfileHeaderSection from "./components/ProfileHeaderSection";
-import ProfileNavbar from "./components/ProfileNavbar";
 import SkeletalTypeSection from "./components/SkeletalTypeSection";
 import { useFollowListQuery } from "./hooks/useFollowListQuery";
 import { useProfileQuery } from "./hooks/useProfileQuery";
@@ -27,7 +26,7 @@ const Main = styled.main`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding-top: 3.75rem;
+  padding-top: 1.5rem;
   @media (max-width: 1024px) {
     padding: 1.5rem 2rem;
   }
@@ -140,7 +139,6 @@ const ProfilePage = () => {
   if (isLoading) {
     return (
       <Page>
-        <ProfileNavbar />
         <Main>
           <StatusMessage>Loading profile...</StatusMessage>
         </Main>
@@ -151,7 +149,6 @@ const ProfilePage = () => {
   if (isError || !profile) {
     return (
       <Page>
-        <ProfileNavbar />
         <Main>
           <StatusMessage>Failed to load profile.</StatusMessage>
         </Main>
@@ -163,7 +160,6 @@ const ProfilePage = () => {
 
   return (
     <Page>
-      <ProfileNavbar />
       <Main>
         <ContentGrid>
           <Sidebar>
@@ -173,7 +169,6 @@ const ProfilePage = () => {
               follower={profile.follower}
               following={profile.following}
               bodyType={profile.bodyType}
-              profileMeta={profile.profileMeta}
               bio={profile.bio}
               isOwner={isOwner}
               onFollowerClick={() => setFollowModalType("follower")}

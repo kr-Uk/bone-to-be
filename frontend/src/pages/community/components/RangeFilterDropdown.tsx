@@ -1,12 +1,12 @@
 import { useCallback, useRef, useState } from "react";
-import styled from "styled-components";
 import { FaChevronDown } from "react-icons/fa6";
+import styled from "styled-components";
 
-import { useClickOutside } from "@/shared/hooks/useClickOutside";
-import { useDropdownFixedPosition } from "@/shared/hooks/useDropdownPosition";
-import { useBodyScrollLock } from "@/shared/hooks/useBodyScrollLock";
 import { DropdownPortal } from "@/shared/components/DropdownPortal";
 import { DualRangeSlider } from "@/shared/components/DualRangeSlider";
+import { useBodyScrollLock } from "@/shared/hooks/useBodyScrollLock";
+import { useClickOutside } from "@/shared/hooks/useClickOutside";
+import { useDropdownFixedPosition } from "@/shared/hooks/useDropdownPosition";
 
 export interface RangePreset {
   label: string;

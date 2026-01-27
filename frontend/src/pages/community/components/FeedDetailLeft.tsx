@@ -21,22 +21,30 @@ export function FeedDetailLeft({ imageUrl, isLoading, hasError }: Props) {
 }
 
 const LeftContainer = styled.div`
-  flex: 1.5;
+  flex: 0 0 auto;
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  width: auto;
+  max-width: 60%;
+  min-width: 240px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: black;
 
-  @media (max-width: 768px) {
-    flex: none;
+  @media (max-width: 1024px) {
+    max-width: 100%;
     width: 100%;
+    height: min(60vh, 60%);
+    min-width: 0;
   }
 `;
 
 const Image = styled.img`
   width: 100%;
+  height: 100%;
   aspect-ratio: 3 / 4;
-  object-fit: cover;
+  object-fit: contain;
 `;
 
 const Placeholder = styled.div`

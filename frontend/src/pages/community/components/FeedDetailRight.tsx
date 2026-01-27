@@ -140,6 +140,7 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
 
 const RightContainer = styled.div`
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   background: #050505;

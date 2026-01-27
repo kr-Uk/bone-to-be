@@ -62,14 +62,15 @@ const Overlay = styled.div`
 `;
 
 const ModalWrapper = styled.div`
-  width: 1200px;
+  width: min(95vw, 1200px);
   height: 85vh;
   background: black;
   border-radius: 16px;
   display: flex;
+  min-width: 0;
   overflow: hidden;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     flex-direction: column;
     width: 95%;
     height: 90vh;

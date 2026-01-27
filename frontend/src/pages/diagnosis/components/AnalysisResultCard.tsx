@@ -41,30 +41,6 @@ const ChartSection = styled.div`
   width: 100%;
 `;
 
-const ChartLabel = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-`;
-
-const LabelTitle = styled.p`
-  font-size: 20px;
-  font-weight: ${({ theme }) => theme.typography.heading.sm.fontWeight};
-  color: ${({ theme }) => theme.colors.gray[400]};
-  line-height: 16px;
-  margin: 0;
-  text-align: center;
-`;
-
-const LabelValue = styled.p`
-  font-size: ${({ theme }) => theme.typography.body.lg.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.lg.regular.fontWeight};
-  color: ${({ theme }) => theme.colors.gray[600]};
-  line-height: 15px;
-  margin: 0;
-`;
-
 const PercentageLabels = styled.div`
   display: flex;
   justify-content: space-between;
@@ -131,11 +107,6 @@ const AnalysisResultCard = ({
       <Heading>AI 분석결과</Heading>
 
       <ChartSection>
-        <ChartLabel>
-          <LabelTitle>STRAIGHT</LabelTitle>
-          <LabelValue>{straight}%</LabelValue>
-        </ChartLabel>
-
         <TriangleChart straight={straight} wave={wave} natural={natural} />
 
         <PercentageLabels>

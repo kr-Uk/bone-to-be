@@ -1,5 +1,6 @@
 package com.bonetobe.backend.report.presentation;
 
+import com.bonetobe.backend.common.DomainCategory;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.file.domain.FileService;
@@ -28,7 +29,7 @@ public class ReportController {
                 .body(APIResponse
                     .success(
                         SuccessCode.CREATED,
-                        fileService.createUploadUrl(request.toUrlRequest(), user.getUserId())));
+                        fileService.createUploadUrl(request.toUrlRequest(), user.getUserId(), DomainCategory.DIAGNOSE_PICTURE)));
     }
 
     @PostMapping

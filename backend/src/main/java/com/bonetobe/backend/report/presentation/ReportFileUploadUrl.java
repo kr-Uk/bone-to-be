@@ -1,6 +1,5 @@
 package com.bonetobe.backend.report.presentation;
 
-import com.bonetobe.backend.common.DomainCategory;
 import com.bonetobe.backend.file.presentation.FileUploadUrl;
 
 public record ReportFileUploadUrl(
@@ -12,7 +11,6 @@ public record ReportFileUploadUrl(
         return new FileUploadUrl.Request(
             originalFileName,
             contentType,
-            DomainCategory.DIAGNOSE_PICTURE,
             fileSize
         );
     }

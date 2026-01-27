@@ -31,7 +31,7 @@ public class ReportController {
     }
 
     @PutMapping("/uploaded/{fileId}")
-    public ResponseEntity<APIResponse<Void>> alertFileUploaded(
+    public ResponseEntity<APIResponse<Void>> startReport(
         @PathVariable Long fileId,
         @AuthenticationPrincipal User user
     ) {

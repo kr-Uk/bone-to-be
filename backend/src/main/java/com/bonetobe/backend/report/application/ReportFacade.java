@@ -20,8 +20,7 @@ public class ReportFacade {
         StoredFile file = fileService.getFile(fileId);
 
         fileService.completeUpload(file, user.getId());
-        FileDownloadUrl.Result result = fileService
-                .getPrivateDownloadUrls(List.of(new FileDownloadUrl.Query(fileId)), user.getId()).get(0);
+        FileDownloadUrl.Result result = fileService.getPrivateDownloadUrls(List.of(new FileDownloadUrl.Query(fileId)), user.getId()).get(0);
         reportService.generateReport(user, result.presignedUrl());
     }
 }

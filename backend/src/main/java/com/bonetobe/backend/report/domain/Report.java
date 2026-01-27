@@ -33,6 +33,7 @@ public class Report extends BaseEntity {
     public static Report startReport(User user) {
         Report report = new Report();
         report.user = user;
+        report.pending = true;
         return report;
     }
 }

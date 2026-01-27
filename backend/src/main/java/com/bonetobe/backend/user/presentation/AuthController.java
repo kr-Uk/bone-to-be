@@ -37,25 +37,30 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/email/validate")
-    public ResponseEntity<APIResponse<Void>> sendEmailCode(@RequestParam String email) {
-        emailService.sendEmailCode(email);
+    @PostMapping("/email/verification")
+    public ResponseEntity<APIResponse<Void>> sendEmailCode(@RequestBody @Valid AddUser.EmailRequest request) {
+        emailService.sendEmailCode(request.getEmail());
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 
-    @GetMapping("/email/validate")
+    @PostMapping("/email/verification/check")
     public ResponseEntity<APIResponse<AddUser.EmailVerificationResponse>> verifyEmailCode(
-            @RequestParam String email,
-            @RequestParam String code) {
+            @RequestBody @Valid AddUser.EmailVerificationRequest request) {
 
-        log.info("[이메일 검증 요청] email: {}, code: {}", email, code); // 요청 데이터 확인
+        log.info("[이메일 검증 요청] email: {}", request.getEmail());
 
-        boolean isValid = emailService.verifyCode(email, code);
+        boolean isValid = emailService.verifyCode(
+                request.getEmail(),
+                request.getCode()
+        );
 
-        log.info("[이메일 검증 결과] email: {}, isValid: {}", email, isValid); // 서비스 결과 확인
+        log.info("[이메일 검증 결과] email: {}, isValid: {}", request.getEmail(), isValid);
 
         return ResponseEntity.ok(
-                APIResponse.success(SuccessCode.OK, AddUser.EmailVerificationResponse.from(isValid))
+                APIResponse.success(
+                        SuccessCode.OK,
+                        AddUser.EmailVerificationResponse.from(isValid)
+                )
         );
     }
 

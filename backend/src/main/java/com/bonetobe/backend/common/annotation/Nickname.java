@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Size(max = 10, message = "닉네임은 10자 이하로 입력해주세요.")
 @Pattern(
         regexp = "^[a-zA-Z0-9가-힣]*$",
-        message = "닉네임은 한글, 영문, 숫자만 가능하며 공백이나 특수문자, 자음/모음은 사용할 수 없습니다."
+        message = "닉네임은 한글(완성형), 영문, 숫자만 가능하며 공백, 특수문자, 자음/모음 단독 입력은 사용할 수 없습니다."
 )
 @Documented
 public @interface Nickname {

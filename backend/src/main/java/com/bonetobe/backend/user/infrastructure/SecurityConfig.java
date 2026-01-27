@@ -35,14 +35,24 @@ public class SecurityConfig {
 
                 // 2. HTTP 요청에 대한 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(
-                        "/auth/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-resources/**",
-                        "/webjars/**"
-                    ).permitAll()
-                    .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
+                        // 1. 게스트용 (None (Guest))
+                        .requestMatchers(
+                                "/auth/login",
+                                "/auth/signup",
+                                "/auth/check/**",
+                                "/auth/email/**",
+                                "/auth/password/reset/**",
+                                "/auth/oauth/**",
+                                "/users/profile/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
+                        // 2. 유저용 (User (Lv.1)) - 로그아웃 포함
+                        .requestMatchers("/auth/logout").authenticated()
+
+                        // 3. 나머지 모든 /users/me/** 요청들
+                        .anyRequest().authenticated()
                 )
 
                 // 3. 폼 로그인 설정

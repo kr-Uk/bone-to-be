@@ -10,7 +10,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {})
 @Pattern(
-        // 8~12자, 영문, 숫자, 특수문자(@$!%*?&) 포함
         regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,12}$",
         message = "비밀번호는 8~12자의 영문, 숫자, 특수문자를 포함해야 합니다."
 )

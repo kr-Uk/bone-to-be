@@ -1,15 +1,17 @@
 package com.bonetobe.backend.user.presentation;
 
 import com.bonetobe.backend.common.response.APIResponse;
-import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.EmailService;
 import com.bonetobe.backend.user.domain.AuthService;
 import com.bonetobe.backend.user.domain.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,22 +23,18 @@ public class AuthController {
     private final AuthService authService;
     private final EmailService emailService;
 
+    // --- 중복 체크 및 이메일 인증 ---
+
     @GetMapping("/check/nickname")
     public ResponseEntity<APIResponse<AddUser.NicknameCheckResponse>> checkNickname(@RequestParam String nickname) {
         boolean isDuplicated = authService.existsByNickname(nickname);
-
-        return ResponseEntity.ok(
-                APIResponse.success(SuccessCode.OK, AddUser.NicknameCheckResponse.from(isDuplicated))
-        );
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, AddUser.NicknameCheckResponse.from(isDuplicated)));
     }
 
     @GetMapping("/check/email")
     public ResponseEntity<APIResponse<AddUser.EmailCheckResponse>> checkEmail(@RequestParam String email) {
         boolean isDuplicated = authService.existsByEmail(email);
-
-        return ResponseEntity.ok(
-                APIResponse.success(SuccessCode.OK, AddUser.EmailCheckResponse.from(isDuplicated))
-        );
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, AddUser.EmailCheckResponse.from(isDuplicated)));
     }
 
     @PostMapping("/email/verification")
@@ -48,22 +46,8 @@ public class AuthController {
     @PostMapping("/email/verification/check")
     public ResponseEntity<APIResponse<AddUser.EmailVerificationResponse>> verifyEmailCode(
             @RequestBody @Valid AddUser.EmailVerificationRequest request) {
-
-        log.info("[이메일 검증 요청] email: {}", request.getEmail());
-
-        boolean isValid = emailService.verifyCode(
-                request.getEmail(),
-                request.getCode()
-        );
-
-        log.info("[이메일 검증 결과] email: {}, isValid: {}", request.getEmail(), isValid);
-
-        return ResponseEntity.ok(
-                APIResponse.success(
-                        SuccessCode.OK,
-                        AddUser.EmailVerificationResponse.from(isValid)
-                )
-        );
+        boolean isValid = emailService.verifyCode(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, AddUser.EmailVerificationResponse.from(isValid)));
     }
 
     @PostMapping("/signup")
@@ -72,36 +56,55 @@ public class AuthController {
         return ResponseEntity.ok(APIResponse.success(SuccessCode.CREATED, AddUser.Response.from(user)));
     }
 
-    // 비밀번호 찾기 메일 발송
+    // --- 로그인 및 로그아웃 (Security 필터 처리용 명세) ---
+
+    @Operation(summary = "로그인", description = "이메일과 비밀번호를 사용하여 세션을 생성합니다.")
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE) // 형식을 Form-data로 고정
+    public ResponseEntity<APIResponse<Void>> login(@ModelAttribute @Valid LoginUser.Request request) {
+        // 실제 로직은 필터에서 처리하므로 여기는 비워둬도 됩니다.
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
+    @Operation(summary = "로그아웃", description = "현재 세션을 무효화하고 로그아웃합니다.")
+    @SecurityRequirement(name = "CookieAuth")
+    @PostMapping("/logout")
+    public ResponseEntity<APIResponse<Void>> logout() {
+        // 실제 로직은 Spring Security Filter(LogoutFilter)에서 처리됩니다.
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
+
+    // --- 비밀번호 재설정 ---
+
+    /**
+     * 비밀번호 찾기 메일 발송 (UUID 링크 방식)
+     */
     @PostMapping("/password/reset/request")
     public ResponseEntity<APIResponse<Void>> requestPasswordReset(
             @RequestBody @Valid PasswordReset.Request request) {
 
-        // 1. 가입된 유저인지 확인
+        // 1. 유저 존재 여부 확인 (AuthService 담당)
         authService.validateUserExists(request.getEmail());
 
-        // 2. 재설정 인증 코드 메일 발송
-        emailService.sendPasswordResetCode(request.getEmail());
+        // 2. UUID 포함된 재설정 링크 발송 (EmailService 담당)
+        emailService.sendPasswordResetLink(request.getEmail());
 
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 
-    // 새 비밀번호 설정
+    /**
+     * 새 비밀번호 설정 확정
+     */
     @PostMapping("/password/reset/confirm")
     public ResponseEntity<APIResponse<Void>> confirmPasswordReset(
             @RequestBody @Valid PasswordReset.ConfirmRequest request) {
 
-        // 1. 이메일 인증 코드 검증
-        boolean isValid = emailService.verifyCode(request.getEmail(), request.getCode());
+        // 1. 토큰 검증 및 이메일 추출 로직을 Service로 위임하여 캡슐화
+        String email = emailService.getEmailByResetToken(request.getToken());
+        log.info("[비밀번호 재설정 확인] 요청 이메일: {}", email);
 
-        if (!isValid) {
-            // ErrorCode.java에 적절한 코드가 없다면 BAD_REQUEST 등을 활용하거나 새로 정의하세요.
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(APIResponse.fail(ErrorCode.BAD_REQUEST, "인증 코드가 유효하지 않습니다."));
-        }
-
-        // 2. 비밀번호 변경 실행 (AuthService 내부에서 암호화 처리)
-        authService.updatePassword(request.getEmail(), request.getNewPassword());
+        // 2. 비밀번호 업데이트 실행
+        authService.updatePassword(email, request.getNewPassword());
 
         return ResponseEntity.ok(APIResponse.success(SuccessCode.UPDATED));
     }

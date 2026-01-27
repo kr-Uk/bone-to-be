@@ -6,6 +6,7 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "CookieAuth")
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+
+    // 타인 프로필 조회
+    // @SecurityRequirements(value = {})
 
     // 프로필 조회
     //@GetMapping("/me")

@@ -16,17 +16,11 @@ public class PasswordReset {
         private String email;
     }
 
-    @Getter
-    @NoArgsConstructor
+    @Getter @NoArgsConstructor
     public static class ConfirmRequest {
-        @Email
         @NotBlank
-        private String email;
+        private String token; // 이메일 링크에서 받아온 UUID 토큰
 
-        @NotBlank
-        private String code; // 메일로 받은 인증코드
-
-        @NotBlank
         @Password
         private String newPassword;
     }

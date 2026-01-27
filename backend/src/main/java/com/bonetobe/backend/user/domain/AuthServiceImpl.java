@@ -30,24 +30,38 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public User signup(UserCreateCommand command) {
-        log.info("[회원가입 시작] email: {}, nickname: {}", command.email(), command.nickname());
+        // [1] 회원가입 프로세스 진입 로그
+        log.info(">>>> [회원가입 프로세스 시작] 이메일: {}, 닉네임: {}", command.email(), command.nickname());
 
-        // 1. 외부 시스템(Redis/DB) 의존 검증만 서비스에서 수행
-        validateEmailVerification(command.email(), command.authCode());
-        validateDuplication(command.email(), command.nickname());
+        try {
+            // [2] 이메일 인증 번호 검증 단계
+            validateEmailVerification(command.email(), command.authCode());
+            log.info(">>>> [회원가입 검증 완료] 1. 이메일 인증 성공: {}", command.email());
 
-        // 2. 엔티티 생성 (passwordEncoder를 사용하는 것은 서비스의 책임)
-        User user = User.createUser(
-                command.email(),
-                passwordEncoder.encode(command.password()),
-                command.nickname(),
-                "USER"
-        );
+            // [3] 중복 가입(이메일, 닉네임) 검증 단계
+            validateDuplication(command.email(), command.nickname());
+            log.info(">>>> [회원가입 검증 완료] 2. 중복 체크 통과: {}", command.email());
 
-        User savedUser = userRepository.save(user);
-        log.info("[회원가입 완료] 성공 ID: {}, email: {}", savedUser.getId(), savedUser.getEmail());
+            // [4] 엔티티 생성 및 비밀번호 암호화
+            log.info(">>>> [회원가입 엔티티 생성 중] 비밀번호 암호화 시작...");
+            User user = User.createUser(
+                    command.email(),
+                    passwordEncoder.encode(command.password()),
+                    command.nickname(),
+                    "USER"
+            );
 
-        return savedUser;
+            // [5] DB 최종 저장
+            User savedUser = userRepository.save(user);
+            log.info(">>>> [회원가입 최종 성공] DB ID: {}, 이메일: {}", savedUser.getId(), savedUser.getEmail());
+
+            return savedUser;
+
+        } catch (Exception e) {
+            // 예외 발생 시 어떤 단계에서 문제가 생겼는지 추적하기 위한 에러 로그
+            log.error("!!!! [회원가입 프로세스 실패] 이메일: {}, 이유: {}", command.email(), e.getMessage());
+            throw e; // 발생한 예외는 그대로 다시 던져서 GlobalExceptionHandler가 처리하게 함
+        }
     }
 
     /**
@@ -67,7 +81,9 @@ public class AuthServiceImpl implements AuthService {
      * 이메일 인증번호 검증 로직
      */
     private void validateEmailVerification(String email, String authCode) {
+        // isEmailVerified 대신 다시 '번호 대조' 방식인 verifyCode를 호출합니다.
         boolean isVerified = emailService.verifyCode(email, authCode);
+
         if (!isVerified) {
             throw new IllegalArgumentException("이메일 인증번호가 일치하지 않거나 만료되었습니다.");
         }
@@ -76,7 +92,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public void validateUserExists(String email) {
-        if (!userRepository.existsByEmail(email)) {
+        // '존재하는지'만 체크하는 게 아니라 '활동 중인지'까지 체크해야 함
+        if (!userRepository.existsActiveUserByEmail(email)) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         }
     }
@@ -84,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void updatePassword(String email, String newPassword) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email.trim())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         // 기존 비밀번호와 새 비밀번호가 같은지 확인 (선택 사항)

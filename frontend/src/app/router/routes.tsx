@@ -6,6 +6,7 @@ import ErrorLayout from "@/app/layouts/ErrorLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import CommunityPage from "@/pages/community/CommunityPage";
 import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
+import ReportPage from "@/pages/diagnosis/ReportPage";
 import { LoginPage } from "@/pages/LoginPage";
 import MainPage from "@/pages/mainpage/MainPage";
 import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
           {
             path: "photo-capture",
             element: <PhotoCapturePage />,
+          },
+          {
+            path: "report",
+            element: <ReportPage />,
           },
         ],
       },

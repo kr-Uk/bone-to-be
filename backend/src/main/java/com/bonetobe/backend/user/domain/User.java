@@ -72,4 +72,10 @@ public class User extends BaseEntity{
             isDeleted = true;
         }
     }
+
+    public static User makeReferencedUser(Long userId) {
+        User user = new User();
+        user.id = userId;
+        return user;
+    }
 }

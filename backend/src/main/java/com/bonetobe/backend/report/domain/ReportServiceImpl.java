@@ -1,19 +1,17 @@
 package com.bonetobe.backend.report.domain;
 
-import com.bonetobe.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
-    private final ReportPublisher reportPublisher;
     private final ReportStore reportStore;
 
     @Override
-    public void generateReport(User user, String presignedUrl) {
-        Report report = Report.startReport(user);
-        reportPublisher.publish(user.getId(), presignedUrl);
-        reportStore.save(report);
+    @Transactional
+    public Report saveReport(ReportCommand command) {
+        return reportStore.save(Report.startReport(command.user(), command.bodyInfo()));
     }
 }

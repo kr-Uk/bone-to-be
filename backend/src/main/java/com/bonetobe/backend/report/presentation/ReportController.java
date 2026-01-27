@@ -6,7 +6,9 @@ import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.report.application.ReportFacade;
 import com.bonetobe.backend.user.domain.User;
+import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,27 +22,24 @@ public class ReportController {
     @PostMapping("/createUrl")
     public ResponseEntity<APIResponse<FileUploadUrl.Response>> createReportPresignedUrl(
         @RequestBody ReportFileUploadUrl request,
-        @AuthenticationPrincipal User user
+        @AuthenticationPrincipal UserPrincipal user
     ) {
         return ResponseEntity
-                .ok()
+                .status(HttpStatus.CREATED)
                 .body(APIResponse
                     .success(
                         SuccessCode.CREATED,
-                        fileService.createUploadUrl(request.toUrlRequest(), user.getId())));
+                        fileService.createUploadUrl(request.toUrlRequest(), user.getUserId())));
     }
 
-    @PutMapping("/uploaded/{fileId}")
+    @PostMapping
     public ResponseEntity<APIResponse<Void>> startReport(
-        @PathVariable Long fileId,
-        @AuthenticationPrincipal User user
+        @RequestBody PostBodyReport.Request request,
+        @AuthenticationPrincipal UserPrincipal user
     ) {
-        reportFacade.createReport(fileId, user);
+        reportFacade.createReport(request.toCommand(user.getUserId()));
         return ResponseEntity
-            .ok()
-            .body(APIResponse
-                .success(
-                    SuccessCode.UPDATED
-                ));
+            .status(HttpStatus.CREATED)
+            .body(APIResponse.success(SuccessCode.UPDATED));
     }
 }

@@ -1,9 +1,11 @@
 package com.bonetobe.backend.report.presentation;
 
+import com.bonetobe.backend.report.domain.BodyInfo;
 import com.bonetobe.backend.report.domain.ReportCommand;
 import com.bonetobe.backend.user.domain.Gender;
+import com.bonetobe.backend.user.domain.User;
 
-public class BodyReport {
+public class PostBodyReport {
     public record Request(
         Long fileId,
         Integer height,
@@ -12,17 +14,14 @@ public class BodyReport {
     ) {
         public ReportCommand toCommand(Long userId) {
             return new ReportCommand(
-                userId,
-                height,
-                weight,
-                gender,
+                User.makeReferencedUser(userId),
+                BodyInfo.createBodyInfo(
+                    height,
+                    weight,
+                    gender
+                ),
                 fileId
             );
         }
-    }
-
-    public record Response(
-
-    ) {
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties({RabbitConnectionProperties.class, RabbitExchangeProperties.class})
-public class RabbitAnalysisConfiguration {
+public class RabbitReportConfiguration {
     @Bean
     TopicExchange exchange(RabbitExchangeProperties exchangeProperties) {
         return new TopicExchange(exchangeProperties.analysis().exchange());

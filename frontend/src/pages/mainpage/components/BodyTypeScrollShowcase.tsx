@@ -3,10 +3,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 
 import { useMemo, useRef, useState } from "react";
 
-import styled, { css, useTheme } from "styled-components";
+import styled, { css } from "styled-components";
 
-
-import type { AppTheme } from "@/shared/styles/theme";
 
 type BodyTypeKey = "STRAIGHT" | "WAVE" | "NATURAL";
 
@@ -29,16 +27,24 @@ const Wrap = styled.section`
   color: ${({ theme }) => theme.colors.gray[50]};
 `;
 
-const Tall = styled.section`
-  height: 320vh;
+const PinnedSectionWrap = styled.section`
+  position: relative;
+  height: 220vh;
+  min-height: 200vh;
 `;
 
-const Sticky = styled.div`
+const PinnedSticky = styled.div`
   position: sticky;
   top: 0;
   height: 100vh;
   overflow: hidden;
   isolation: isolate;
+  display: flex;
+  align-items: center;
+`;
+
+const PinnedContent = styled(motion.div)`
+  width: 100%;
 `;
 
 const Frame = styled.div`
@@ -61,107 +67,7 @@ const Frame = styled.div`
   }
 `;
 
-const Nav = styled.div`
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  align-items: flex-end;
-  text-align: center;
-  width: 6rem;
-  padding-right: 0.75rem;
-  z-index: 2;
-`;
-
-const NavItem = styled(motion.button)`
-  border: 0;
-  background: transparent;
-  padding: 0;
-  width: fit-content;
-  text-align: right;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  gap: 0.45rem;
-  align-items: center;
-  justify-content: flex-end;
-  margin-left: auto;
-  color: ${({ theme }) => theme.colors.gray[400]};
-
-`;
-
-const Dot = styled(motion.span)`
-  width: 0.32rem;
-  height: 0.32rem;
-  border-radius: 9999px;
-  flex: 0 0 auto;
-`;
-
-const NavText = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  align-items: flex-end;
-  text-align: right;
-
-  @media (max-width: 900px) {
-    align-items: flex-start;
-    text-align: left;
-  }
-`;
-
-const NavKo = styled.span`
-  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
-  line-height: ${({ theme }) => theme.typography.body.md.semibold.lineHeight};
-`;
-
-const NavEn = styled.span`
-  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.sm.regular.fontWeight};
-  line-height: ${({ theme }) => theme.typography.body.sm.regular.lineHeight};
-`;
-
-const Stage = styled.div`
-  flex: 1 1 0;
-  position: relative;
-  height: 74vh;
-  min-height: 40rem;
-  order: 1;
-
-  @media (max-width: 900px) {
-    height: 68vh;
-    min-height: 34rem;
-    order: 2;
-  }
-
-  @media (max-width: 600px) {
-    height: 64vh;
-    min-height: 30rem;
-  }
-`;
-
-const Layer = styled(motion.div)`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-`;
-
-const LayerInner = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 47rem);
-  align-items: center;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    padding-bottom: 1.5rem;
-  }
-`;
+ 
 
 const CopyBlock = styled(motion.div)`
   display: flex;
@@ -541,6 +447,60 @@ const ModelPhotos = ({ section }: ModelPhotosProps) => {
   );
 };
 
+const ctaHrefMap: Record<BodyTypeKey, string> = {
+  STRAIGHT: "/types/straight",
+  WAVE: "/types/wave",
+  NATURAL: "/types/natural",
+};
+
+type PinnedSectionProps = {
+  section: BodyTypeSection;
+  index: number;
+};
+
+const PinnedSection = ({ section, index }: PinnedSectionProps) => {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.4, 1], [0, 1, 1]);
+  const y = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [40, 0, 0, -40]);
+  const washY = useTransform(scrollYProgress, [0, 1], [-120, 120]);
+  const sectionId = `body-type-${section.key.toLowerCase()}`;
+
+  return (
+    <PinnedSectionWrap ref={sectionRef} id={sectionId}>
+      <PinnedSticky>
+        <ScrollWash style={{ y: washY }} />
+        <PinnedContent style={{ opacity, y }}>
+          <Frame>
+            <CopyBlock>
+              <Kicker initial={false} animate={{ opacity: 1 }}>
+                BODY TYPE {String(index + 1).padStart(2, "0")}
+              </Kicker>
+              <Title initial={false} animate={{ opacity: 1 }}>
+                {section.labelKo}
+              </Title>
+              <Desc initial={false} animate={{ opacity: 1 }}>
+                {section.headline} <hr />
+                {section.desc}
+              </Desc>
+              <Cta href={ctaHrefMap[section.key]}>
+                {section.cta} <FaArrowRightLong />
+              </Cta>
+            </CopyBlock>
+            <VisualBlock>
+              <ModelPhotos section={section} />
+            </VisualBlock>
+          </Frame>
+        </PinnedContent>
+      </PinnedSticky>
+    </PinnedSectionWrap>
+  );
+};
+
 export function BodyTypeScrollShowcase() {
   const sections: BodyTypeSection[] = useMemo(
     () => [
@@ -578,243 +538,11 @@ export function BodyTypeScrollShowcase() {
     [],
   );
 
-  const theme = useTheme() as AppTheme;
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
-
-  const p = scrollYProgress;
-
-  const aOpacity = useTransform(p, [0, 0.28, 0.38], [1, 1, 0]);
-  const bOpacity = useTransform(p, [0.25, 0.42, 0.62], [0, 1, 0]);
-  const cOpacity = useTransform(p, [0.56, 0.72, 1], [0, 1, 1]);
-
-  const aY = useTransform(p, [0, 0.35], [0, -18]);
-  const bY = useTransform(p, [0.25, 0.62], [18, -18]);
-  const cY = useTransform(p, [0.56, 1], [18, 0]);
-
-  const aTitleY = useTransform(p, [0, 0.2, 0.35], [24, 0, -8]);
-  const aDescY = useTransform(p, [0.05, 0.24, 0.38], [28, 0, -6]);
-  const bTitleY = useTransform(p, [0.25, 0.42, 0.62], [24, 0, -8]);
-  const bDescY = useTransform(p, [0.3, 0.46, 0.62], [28, 0, -6]);
-  const cTitleY = useTransform(p, [0.56, 0.72, 1], [24, 0, -8]);
-  const cDescY = useTransform(p, [0.6, 0.76, 1], [28, 0, -6]);
-  const bImageOpacity = useTransform(p, [0.22, 0.46, 0.7], [0, 1, 0]);
-
-  const washY = useTransform(p, [0, 1], [-140, 140]);
-  // const aOrbitOpacity = useTransform(p, [0.02, 0.2], [0, 1]);
-  // const bOrbitOpacity = useTransform(p, [0.3, 0.5], [0, 1]);
-  // const cOrbitOpacity = useTransform(p, [0.62, 0.84], [0, 1]);
-
-  // const aOrbit1X = useTransform(p, [0.02, 0.2], [0, 0]);
-  // const aOrbit1Y = useTransform(p, [0.02, 0.2], [-140, 0]);
-  // const aOrbit2X = useTransform(p, [0.02, 0.2], [140, 0]);
-  // const aOrbit2Y = useTransform(p, [0.02, 0.2], [0, 0]);
-  // const aOrbit3X = useTransform(p, [0.02, 0.2], [-140, 0]);
-  // const aOrbit3Y = useTransform(p, [0.02, 0.2], [140, 0]);
-
-  // const bOrbit1X = useTransform(p, [0.3, 0.5], [0, 0]);
-  // const bOrbit1Y = useTransform(p, [0.3, 0.5], [-140, 0]);
-  // const bOrbit2X = useTransform(p, [0.3, 0.5], [140, 0]);
-  // const bOrbit2Y = useTransform(p, [0.3, 0.5], [0, 0]);
-  // const bOrbit3X = useTransform(p, [0.3, 0.5], [-140, 0]);
-  // const bOrbit3Y = useTransform(p, [0.3, 0.5], [140, 0]);
-
-  // const cOrbit1X = useTransform(p, [0.62, 0.84], [0, 0]);
-  // const cOrbit1Y = useTransform(p, [0.62, 0.84], [-140, 0]);
-  // const cOrbit2X = useTransform(p, [0.62, 0.84], [140, 0]);
-  // const cOrbit2Y = useTransform(p, [0.62, 0.84], [0, 0]);
-  // const cOrbit3X = useTransform(p, [0.62, 0.84], [-140, 0]);
-  // const cOrbit3Y = useTransform(p, [0.62, 0.84], [140, 0]);
-
   return (
     <Wrap>
-      <Tall ref={ref} as="section">
-        <Sticky>
-          <ScrollWash style={{ y: washY }} />
-          <Nav>
-            {sections.map((s, idx) => {
-              const navRange =
-                idx === 0 ? [0, 0.28, 0.38] : idx === 1 ? [0.25, 0.42, 0.62] : [0.56, 0.72, 1];
-              const navColors =
-                idx === 2
-                  ? [theme.colors.gray[500], theme.colors.brand, theme.colors.brand]
-                  : [theme.colors.gray[500], theme.colors.brand, theme.colors.gray[500]];
-              const navColor = useTransform(p, navRange, navColors);
-              const navOpacity =
-                idx === 2
-                  ? useTransform(p, navRange, [0.55, 1, 1])
-                  : useTransform(p, navRange, [0.55, 1, 0.55]);
-              const dotColor = useTransform(p, navRange, navColors);
-              const dotHeight =
-                idx === 2
-                  ? useTransform(p, navRange, ["0.35rem", "2.4rem", "2.4rem"])
-                  : useTransform(p, navRange, ["0.35rem", "2.4rem", "0.35rem"]);
-
-              return (
-                <NavItem
-                  key={s.key}
-                  style={{ color: navColor, opacity: navOpacity }}
-                  onClick={() => {
-                    const target = idx === 0 ? 0.12 : idx === 1 ? 0.42 : 0.8;
-                    const el = ref.current;
-                    if (!el) return;
-                    const top = el.getBoundingClientRect().top + window.scrollY;
-                    const h = el.offsetHeight - window.innerHeight;
-                    window.scrollTo({ top: top + h * target, behavior: "smooth" });
-                  }}
-                  aria-label={`${s.labelKo} 섹션으로 이동`}
-                >
-                  <NavText>
-                    <NavKo>{s.labelKo}</NavKo>
-                    <NavEn>{s.labelEn}</NavEn>
-                  </NavText>
-                  <Dot style={{ backgroundColor: dotColor, height: dotHeight }} />
-                </NavItem>
-              );
-            })}
-          </Nav>
-          <Frame>
-            <Stage>
-              <Layer style={{ opacity: aOpacity }}>
-                <LayerInner>
-                  <CopyBlock style={{ y: aY }}>
-                    <Kicker initial={false} animate={{ opacity: 1 }}>
-                      BODY TYPE 01
-                    </Kicker>
-                    <Title initial={false} animate={{ opacity: 1 }} style={{ y: aTitleY }}>
-                      {sections[0].labelKo}
-                    </Title>
-                    <Desc initial={false} animate={{ opacity: 1 }} style={{ y: aDescY }}>
-                      {sections[0].headline} <hr/>
-                      {sections[0].desc}
-                    </Desc>
-                    <Cta href="/types/straight">
-                      {sections[0].cta} <FaArrowRightLong/>
-                    </Cta>
-                  </CopyBlock>
-                  <VisualBlock style={{ y: aY }}>
-                    {/* Orbit shapes hidden for now. */}
-                    {/* <OrbitGroup>
-                      <OrbitShape
-                        $tone="STRAIGHT"
-                        $shape="rect"
-                        $variant={1}
-                        style={{ x: aOrbit1X, y: aOrbit1Y, opacity: aOrbitOpacity }}
-                      />
-                      <OrbitShape
-                        $tone="STRAIGHT"
-                        $shape="rect"
-                        $variant={2}
-                        style={{ x: aOrbit2X, y: aOrbit2Y, opacity: aOrbitOpacity }}
-                      />
-                      <OrbitShape
-                        $tone="STRAIGHT"
-                        $shape="rect"
-                        $variant={3}
-                        style={{ x: aOrbit3X, y: aOrbit3Y, opacity: aOrbitOpacity }}
-                      />
-                    </OrbitGroup> */}
-                    <ModelPhotos section={sections[0]} />
-                  </VisualBlock>
-                </LayerInner>
-              </Layer>
-
-              <Layer>
-                <LayerInner>
-                  <CopyBlock style={{ y: bY, opacity: bOpacity }}>
-                    <Kicker initial={false} animate={{ opacity: 1 }}>
-                      BODY TYPE 02
-                    </Kicker>
-                    <Title initial={false} animate={{ opacity: 1 }} style={{ y: bTitleY }}>
-                      {sections[1].labelKo}
-                    </Title>
-                    <Desc initial={false} animate={{ opacity: 1 }} style={{ y: bDescY }}>
-                      {sections[1].headline} <hr/>
-                      {sections[1].desc}
-                    </Desc>
-                    <Cta href="/types/wave">
-                      {sections[1].cta} <FaArrowRightLong/>
-
-                    </Cta>
-                  </CopyBlock>
-                  <VisualBlock style={{ opacity: bImageOpacity }}>
-                    {/* Orbit shapes hidden for now. */}
-                    {/* <OrbitGroup>
-                      <OrbitShape
-                        $tone="WAVE"
-                        $shape="wave"
-                        $variant={1}
-                        style={{ x: bOrbit1X, y: bOrbit1Y, opacity: bOrbitOpacity }}
-                      />
-                      <OrbitShape
-                        $tone="WAVE"
-                        $shape="wave"
-                        $variant={2}
-                        style={{ x: bOrbit2X, y: bOrbit2Y, opacity: bOrbitOpacity }}
-                      />
-                      <OrbitShape
-                        $tone="WAVE"
-                        $shape="wave"
-                        $variant={3}
-                        style={{ x: bOrbit3X, y: bOrbit3Y, opacity: bOrbitOpacity }}
-                      />
-                    </OrbitGroup> */}
-                    <ModelPhotos section={sections[1]} />
-                  </VisualBlock>
-                </LayerInner>
-              </Layer>
-
-              <Layer style={{ opacity: cOpacity }}>
-                <LayerInner>
-                  <CopyBlock style={{ y: cY }}>
-                    <Kicker initial={false} animate={{ opacity: 1 }}>
-                      BODY TYPE 03
-                    </Kicker>
-                    <Title initial={false} animate={{ opacity: 1 }} style={{ y: cTitleY }}>
-                      {sections[2].labelKo}
-                    </Title>
-                    <Desc initial={false} animate={{ opacity: 1 }} style={{ y: cDescY }}>
-                      {sections[2].headline} <hr/>
-                      {sections[2].desc}
-                    </Desc>
-                    <Cta href="/types/natural">
-                      {sections[2].cta} <FaArrowRightLong/>
-
-                    </Cta>
-                  </CopyBlock>
-                  <VisualBlock style={{ y: cY }}>
-                    {/* Orbit shapes hidden for now. */}
-                    {/* <OrbitGroup>
-                      <OrbitShape
-                        $tone="NATURAL"
-                        $shape="tri"
-                        $variant={1}
-                        style={{ x: cOrbit1X, y: cOrbit1Y, opacity: cOrbitOpacity }}
-                      />
-                      <OrbitShape
-                        $tone="NATURAL"
-                        $shape="tri"
-                        $variant={2}
-                        style={{ x: cOrbit2X, y: cOrbit2Y, opacity: cOrbitOpacity }}
-                      />
-                      <OrbitShape
-                        $tone="NATURAL"
-                        $shape="tri"
-                        $variant={3}
-                        style={{ x: cOrbit3X, y: cOrbit3Y, opacity: cOrbitOpacity }}
-                      />
-                    </OrbitGroup> */}
-                    <ModelPhotos section={sections[2]} />
-                  </VisualBlock>
-                </LayerInner>
-              </Layer>
-            </Stage>
-          </Frame>
-        </Sticky>
-      </Tall>
+      {sections.map((section, index) => (
+        <PinnedSection key={section.key} section={section} index={index} />
+      ))}
     </Wrap>
   );
 }

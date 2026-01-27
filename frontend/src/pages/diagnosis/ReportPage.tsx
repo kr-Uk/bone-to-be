@@ -13,6 +13,7 @@ import {
   VIRTUAL_FITTING_OPTIONS,
   type BodyTypeKey,
 } from "@/shared/constants/reportMockData";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
 const PageContainer = styled.div`
@@ -23,32 +24,22 @@ const PageContainer = styled.div`
   padding-bottom: 80px;
 `;
 
-const MainContent = styled.main`
+const MainContent = styled.main<{ $isDesktop: boolean }>`
   max-width: 1280px;
   margin: 0 auto;
   /* padding: 128px 24px 0; */
   display: flex;
-  flex-direction: column;
-  gap: 48px;
+  flex-direction: ${({ $isDesktop }) => ($isDesktop ? "row" : "column")};
+  gap: ${({ $isDesktop }) => ($isDesktop ? "32px" : "48px")};
 
   @media (min-width: 768px) {
     padding: 0 1.5rem;
   }
-
-  @media (min-width: 1024px) {
-    /* padding: 128px 320px 0; */
-    flex-direction: row;
-    gap: 32px;
-  }
 `;
 
 const LeftSection = styled.aside`
-  width: 100%;
-
-  @media (min-width: 1024px) {
-    width: 389.33px;
-    flex-shrink: 0;
-  }
+  width: 389.33px;
+  flex-shrink: 0;
 `;
 
 const RightSection = styled.div`
@@ -56,11 +47,15 @@ const RightSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 40px;
-  width: 100%;
+  width: 810.67px;
+`;
 
-  @media (min-width: 1024px) {
-    width: 810.67px;
-  }
+const MobileHeroSection = styled.div`
+  width: 100%;
+`;
+
+const MobileChartSection = styled.div`
+  width: 100%;
 `;
 
 const ContentSection = styled.div`
@@ -74,6 +69,7 @@ const ReportPage = () => {
   const diagnosisData = useDiagnosisStore((state) => state.diagnosisData);
   const analysisResult = diagnosisData.analysisResult;
   const [virtualFittingIndex, setVirtualFittingIndex] = useState(0);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   // Development mock data
   const mockAnalysisResult = import.meta.env.DEV
@@ -126,43 +122,86 @@ const ReportPage = () => {
 
   return (
     <PageContainer>
-      <MainContent>
-        <LeftSection>
-          <AnalysisResultCard
-            straight={straight}
-            wave={wave}
-            natural={natural}
-            dominantType={bodyTypeKey}
-            strengthDescription={metadata.strengthDescription}
-          />
-        </LeftSection>
+      <MainContent $isDesktop={isDesktop}>
+        {isDesktop ? (
+          <>
+            <LeftSection>
+              <AnalysisResultCard
+                straight={straight}
+                wave={wave}
+                natural={natural}
+                dominantType={bodyTypeKey}
+                strengthDescription={metadata.strengthDescription}
+              />
+            </LeftSection>
 
-        <RightSection>
-          <ReportHeroSection
-            bodyTypeKey={bodyTypeKey}
-            korean={metadata.korean}
-            tagline={metadata.tagline}
-            description={metadata.description}
-          />
+            <RightSection>
+              <ReportHeroSection
+                bodyTypeKey={bodyTypeKey}
+                korean={metadata.korean}
+                tagline={metadata.tagline}
+                description={metadata.description}
+              />
 
-          <ContentSection>
-            <FitReferenceSection fitReferences={metadata.fitReferences} />
+              <ContentSection>
+                <FitReferenceSection fitReferences={metadata.fitReferences} />
 
-            <RecommendationSection
-              doRecommendations={metadata.doRecommendations}
-              dontRecommendations={metadata.dontRecommendations}
-            />
+                <RecommendationSection
+                  doRecommendations={metadata.doRecommendations}
+                  dontRecommendations={metadata.dontRecommendations}
+                />
 
-            <VirtualFittingSection
-              key={virtualFittingIndex}
-              imageUrl={currentVirtualFitting.imageUrl}
-              title={currentVirtualFitting.title}
-              description={currentVirtualFitting.description}
-              tags={currentVirtualFitting.tags}
-              onTryAnother={handleTryAnotherStyle}
-            />
-          </ContentSection>
-        </RightSection>
+                <VirtualFittingSection
+                  key={virtualFittingIndex}
+                  imageUrl={currentVirtualFitting.imageUrl}
+                  title={currentVirtualFitting.title}
+                  description={currentVirtualFitting.description}
+                  tags={currentVirtualFitting.tags}
+                  onTryAnother={handleTryAnotherStyle}
+                />
+              </ContentSection>
+            </RightSection>
+          </>
+        ) : (
+          <>
+            <MobileHeroSection>
+              <ReportHeroSection
+                bodyTypeKey={bodyTypeKey}
+                korean={metadata.korean}
+                tagline={metadata.tagline}
+                description={metadata.description}
+              />
+            </MobileHeroSection>
+
+            <MobileChartSection>
+              <AnalysisResultCard
+                straight={straight}
+                wave={wave}
+                natural={natural}
+                dominantType={bodyTypeKey}
+                strengthDescription={metadata.strengthDescription}
+              />
+            </MobileChartSection>
+
+            <ContentSection>
+              <FitReferenceSection fitReferences={metadata.fitReferences} />
+
+              <RecommendationSection
+                doRecommendations={metadata.doRecommendations}
+                dontRecommendations={metadata.dontRecommendations}
+              />
+
+              <VirtualFittingSection
+                key={virtualFittingIndex}
+                imageUrl={currentVirtualFitting.imageUrl}
+                title={currentVirtualFitting.title}
+                description={currentVirtualFitting.description}
+                tags={currentVirtualFitting.tags}
+                onTryAnother={handleTryAnotherStyle}
+              />
+            </ContentSection>
+          </>
+        )}
       </MainContent>
     </PageContainer>
   );

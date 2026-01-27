@@ -74,7 +74,6 @@ public class Post extends BaseEntity {
         return post;
     }
 
-
     public void applyStyles(List<Style> styles) {
         if (styles == null || styles.isEmpty()) return;
 
@@ -84,27 +83,25 @@ public class Post extends BaseEntity {
         }
     }
 
-    public void updateContent(String content) {
-        if (content == null || content.isBlank()) {
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
-        }
+    public void update(
+            String content,
+            Gender gender,
+            SkeletonType skeletonType,
+            List<Style> styles,
+            Integer height,
+            Integer weight
+    ) {
         this.content = content;
-    }
-
-    public void updateSkeletonType(SkeletonType skeletonType) {
-        if (skeletonType == null) throw new BusinessException(ErrorCode.BAD_REQUEST);
+        this.gender = gender;
         this.skeletonType = skeletonType;
+        this.height = height;
+        this.weight = weight;
+        updateStyles(styles);
     }
 
-    public void replaceStyles(List<Style> styles) {
+    public void updateStyles(List<Style> styles) {
         this.postStyles.clear();
-
-        if (styles == null || styles.isEmpty()) return;
-
-        for (Style style : styles) {
-            if (style == null) continue;
-            this.postStyles.add(PostStyle.create(this, style));
-        }
+        applyStyles(styles);
     }
 
     public void increaseLike() {

@@ -3,11 +3,11 @@ package com.bonetobe.backend.post.presentation.dto;
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
-import com.bonetobe.backend.user.domain.Gender;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;
 import com.bonetobe.backend.style.domain.StyleName;
+import com.bonetobe.backend.user.domain.Gender;
 
 import java.time.LocalDateTime;
 import java.util.List;

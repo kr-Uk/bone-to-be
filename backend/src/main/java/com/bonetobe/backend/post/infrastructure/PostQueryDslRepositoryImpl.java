@@ -1,10 +1,10 @@
 package com.bonetobe.backend.post.infrastructure;
 
-import com.bonetobe.backend.user.domain.Gender;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import com.bonetobe.backend.style.domain.StyleName;
+import com.bonetobe.backend.user.domain.Gender;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;

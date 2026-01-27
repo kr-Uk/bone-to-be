@@ -1,10 +1,10 @@
 package com.bonetobe.backend.post.presentation.dto;
 
 import com.bonetobe.backend.common.SkeletonType;
-import com.bonetobe.backend.post.domain.command.PostCreateCommand;
-import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.post.domain.command.PostCreateCommand;
+import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.user.domain.Gender;
 
 import java.util.List;
@@ -32,14 +32,6 @@ public class PostCreateDto {
 
             if (gender == null) {
                 throw new BusinessException(ErrorCode.POST_CREATE_GENDER_REQUIRED);
-            }
-
-            if (height == null) {
-                throw new BusinessException(ErrorCode.POST_CREATE_HEIGHT_REQUIRED);
-            }
-
-            if (weight == null) {
-                throw new BusinessException(ErrorCode.POST_CREATE_WEIGHT_REQUIRED);
             }
 
             return new PostCreateCommand(

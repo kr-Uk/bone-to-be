@@ -14,7 +14,7 @@ public class ReportMessage {
         public static Request of(Report report, String presignedUrl) {
             return new Request(
                 report.getId(),
-                report.getBodyInfo().getHeight(),
+                report.getBodyInfo().getWeight(),
                 report.getBodyInfo().getHeight(),
                 report.getBodyInfo().getGender(),
                 presignedUrl

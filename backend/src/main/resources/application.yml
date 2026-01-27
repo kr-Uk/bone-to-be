@@ -85,7 +85,7 @@ spring:
         static:
           ${AWS_REGION}
       s3:
-        enabled: false
+        enabled: true
 s3:
   bucket : ${AWS_S3_BUCKET}
   region : ${AWS_REGION}

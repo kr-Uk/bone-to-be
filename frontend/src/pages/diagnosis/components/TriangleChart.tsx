@@ -7,13 +7,26 @@ import {
   Tooltip,
   Legend,
   type ChartOptions,
+  type TooltipItem,
 } from "chart.js";
 import { motion } from "framer-motion";
 import { Radar } from "react-chartjs-2";
 import styled from "styled-components";
 
-// Register Chart.js components
-ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
+import triangleLabelsPlugin, {
+  type TriangleLabelsOptions,
+} from "@/shared/plugins/triangleLabelsPlugin";
+
+// Register Chart.js components and custom plugin
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+  triangleLabelsPlugin,
+);
 
 const ChartContainer = styled(motion.div)`
   position: relative;
@@ -51,7 +64,9 @@ const TriangleChart = ({ straight, wave, natural }: TriangleChartProps) => {
     ],
   };
 
-  const options: ChartOptions<"radar"> = {
+  const options: ChartOptions<"radar"> & {
+    plugins?: { triangleLabels?: TriangleLabelsOptions };
+  } = {
     responsive: true,
     maintainAspectRatio: true,
     scales: {
@@ -71,13 +86,7 @@ const TriangleChart = ({ straight, wave, natural }: TriangleChartProps) => {
           lineWidth: 1,
         },
         pointLabels: {
-          font: {
-            size: 16,
-            weight: "bold",
-            family: "Pretendard",
-          },
-          color: "#A1A1A1", // gray[400]
-          padding: 15,
+          display: false, // Hide default labels - using custom plugin instead
         },
       },
     },
@@ -95,10 +104,20 @@ const TriangleChart = ({ straight, wave, natural }: TriangleChartProps) => {
         padding: 12,
         displayColors: false,
         callbacks: {
-          label: (context) => {
+          label: (context: TooltipItem<"radar">) => {
             return `${context.parsed.r}%`;
           },
         },
+      },
+      triangleLabels: {
+        font: {
+          size: 12,
+          weight: "bold",
+          family: "Pretendard",
+        },
+        color: "#A1A1A1", // gray[400]
+        padding: 16,
+        alignments: ["center", "right", "left"], // Straight (center), wave (right), natural (left)
       },
     },
   };

@@ -1,6 +1,10 @@
+import { FaArrowRightLong } from "react-icons/fa6"
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useMemo, useRef } from "react";
+
+import { useMemo, useRef, useState } from "react";
+
 import styled, { css, useTheme } from "styled-components";
+
 
 import type { AppTheme } from "@/shared/styles/theme";
 
@@ -52,7 +56,7 @@ const Frame = styled.div`
   @media (max-width: 900px) {
     flex-direction: column;
     align-items: stretch;
-    padding-top: 6rem;
+    padding-top: 4rem;
     padding-bottom: 4rem;
   }
 `;
@@ -67,23 +71,9 @@ const Nav = styled.div`
   gap: 1.25rem;
   align-items: flex-end;
   text-align: center;
-  width: 16rem;
+  width: 6rem;
   padding-right: 0.75rem;
   z-index: 2;
-
-  @media (max-width: 900px) {
-    position: static;
-    transform: none;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    align-items: flex-start;
-    text-align: left;
-    width: 100%;
-    order: 1;
-    padding-right: 0;
-    margin: 0 0 2rem;
-  }
 `;
 
 const NavItem = styled(motion.button)`
@@ -101,13 +91,6 @@ const NavItem = styled(motion.button)`
   margin-left: auto;
   color: ${({ theme }) => theme.colors.gray[400]};
 
-  @media (max-width: 900px) {
-    width: auto;
-    text-align: left;
-    gap: 0.4rem;
-    justify-content: flex-start;
-    margin-left: 0;
-  }
 `;
 
 const Dot = styled(motion.span)`
@@ -172,13 +155,10 @@ const LayerInner = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 47rem);
-  gap: ${({ theme }) => theme.spacing.xxxl};
   align-items: center;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing.lg};
-    padding-top: 2rem;
     padding-bottom: 1.5rem;
   }
 `;
@@ -191,6 +171,10 @@ const CopyBlock = styled(motion.div)`
   max-width: 36rem;
   padding-left: 0.5rem;
   padding-top: 4rem;
+  @media (max-width: 1024px){
+      padding-top: 0.5rem;
+      gap: 0.5rem;
+  }
 `;
 
 const VisualBlock = styled(motion.div)`
@@ -198,7 +182,7 @@ const VisualBlock = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
-  align-items: stretch;
+  align-items: center;
   margin-top: clamp(2rem, 4vw, 4.5rem);
 
   @media (max-width: 1024px) {
@@ -222,13 +206,19 @@ const GenderGrid = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: 100%;
+    width: 26rem;
+  }
+
+  @media (max-width: 500px) {
+    width: min(100%, 22rem);
+    margin: 0 auto;
     transform: none;
     grid-template-columns: 1fr;
+    justify-items: center;
   }
 `;
 
-const GenderCard = styled.div`
+const GenderCard = styled.div<{ $active?: boolean }>`
   background: ${({ theme }) => theme.colors.gray[800]};
   border: 0.0625rem solid ${({ theme }) => theme.colors.gray[700]};
   border-radius: 0.9rem;
@@ -245,6 +235,10 @@ const GenderCard = styled.div`
 
   @media (max-width: 768px) {
     height: 20rem;
+  }
+
+  @media (max-width: 500px) {
+    display: ${({ $active }) => ($active ? "flex" : "none")};
   }
 `;
 
@@ -274,6 +268,39 @@ const GenderLabel = styled.span`
   font-weight: ${({ theme }) => theme.typography.body.sm.semibold.fontWeight};
   letter-spacing: 0.08em;
   text-transform: uppercase;
+`;
+
+const GenderSwitch = styled.div`
+  display: none;
+  gap: ${({ theme }) => theme.spacing.sm};
+  align-items: center;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing.sm};
+
+  @media (max-width: 500px) {
+    display: inline-flex;
+  }
+`;
+
+const GenderSwitchButton = styled.button<{ $active: boolean }>`
+  border-radius: 9999px;
+  border: 0.0625rem solid
+    ${({ theme, $active }) => ($active ? theme.colors.brand : theme.colors.gray[700])};
+  background: ${({ theme, $active }) => ($active ? theme.colors.brand : "transparent")};
+  color: ${({ theme, $active }) => ($active ? theme.colors.gray[50] : theme.colors.gray[300])};
+  padding: 0.35rem 0.75rem;
+  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.sm.semibold.fontWeight};
+  line-height: ${({ theme }) => theme.typography.body.sm.semibold.lineHeight};
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.brand};
+    color: ${({ theme, $active }) => ($active ? theme.colors.gray[50] : theme.colors.gray[50])};
+  }
 `;
 
 const ScrollWash = styled(motion.div)`
@@ -428,14 +455,14 @@ const Desc = styled(motion.p)`
 `;
 
 const Cta = styled(motion.a)`
-  margin-top: 2.2rem;
+  margin-top: 1.5rem;
   width: fit-content;
   display: inline-flex;
   gap: 0.75rem;
   align-items: center;
   text-decoration: none;
-  padding: 0.9rem 1.1rem;
-  border-radius: 9999px;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
   font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
   font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
   line-height: ${({ theme }) => theme.typography.body.md.semibold.lineHeight};
@@ -453,50 +480,66 @@ const Cta = styled(motion.a)`
     transform: translateY(-0.125rem);
     box-shadow: 0 0.75rem 1.5rem rgba(152, 16, 250, 0.35);
   }
-`;
+  @media (max-width: 1024px){
+    padding: 0.5rem 0.9rem;
+    margin-top: 0.75rem;
 
-const CtaIcon = styled.span`
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 9999px;
-  background: ${({ theme }) => theme.colors.gray[50]};
-  color: ${({ theme }) => theme.colors.brand};
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 0.95rem;
-    height: 0.95rem;
   }
 `;
+
 
 type ModelPhotosProps = {
   section: BodyTypeSection;
 };
 
-const ModelPhotos = ({ section }: ModelPhotosProps) => (
-  <GenderGrid>
-    <GenderCard>
-      <GenderImageFrame>
-        {section.maleImageSrc ? (
-          <GenderImage src={section.maleImageSrc} alt={section.maleLabel} />
-        ) : (
-          <GenderLabel>{section.maleLabel}</GenderLabel>
-        )}
-      </GenderImageFrame>
-    </GenderCard>
-    <GenderCard>
-      <GenderImageFrame>
-        {section.femaleImageSrc ? (
-          <GenderImage src={section.femaleImageSrc} alt={section.femaleLabel} />
-        ) : (
-          <GenderLabel>{section.femaleLabel}</GenderLabel>
-        )}
-      </GenderImageFrame>
-    </GenderCard>
-  </GenderGrid>
-);
+type ActiveGender = "male" | "female";
+
+const ModelPhotos = ({ section }: ModelPhotosProps) => {
+  const [activeGender, setActiveGender] = useState<ActiveGender>("female");
+
+  return (
+    <>
+      <GenderGrid>
+        <GenderCard $active={activeGender === "male"}>
+          <GenderImageFrame>
+            {section.maleImageSrc ? (
+              <GenderImage src={section.maleImageSrc} alt={section.maleLabel} />
+            ) : (
+              <GenderLabel>{section.maleLabel}</GenderLabel>
+            )}
+          </GenderImageFrame>
+        </GenderCard>
+        <GenderCard $active={activeGender === "female"}>
+          <GenderImageFrame>
+            {section.femaleImageSrc ? (
+              <GenderImage src={section.femaleImageSrc} alt={section.femaleLabel} />
+            ) : (
+              <GenderLabel>{section.femaleLabel}</GenderLabel>
+            )}
+          </GenderImageFrame>
+        </GenderCard>
+      </GenderGrid>
+      <GenderSwitch>
+        <GenderSwitchButton
+          type="button"
+          $active={activeGender === "female"}
+          aria-pressed={activeGender === "female"}
+          onClick={() => setActiveGender("female")}
+        >
+          Female
+        </GenderSwitchButton>
+        <GenderSwitchButton
+          type="button"
+          $active={activeGender === "male"}
+          aria-pressed={activeGender === "male"}
+          onClick={() => setActiveGender("male")}
+        >
+          Male
+        </GenderSwitchButton>
+      </GenderSwitch>
+    </>
+  );
+};
 
 export function BodyTypeScrollShowcase() {
   const sections: BodyTypeSection[] = useMemo(
@@ -645,21 +688,11 @@ export function BodyTypeScrollShowcase() {
                       {sections[0].labelKo}
                     </Title>
                     <Desc initial={false} animate={{ opacity: 1 }} style={{ y: aDescY }}>
-                      {sections[0].headline}
+                      {sections[0].headline} <hr/>
+                      {sections[0].desc}
                     </Desc>
                     <Cta href="/types/straight">
-                      {sections[0].cta}
-                      <CtaIcon aria-hidden="true">
-                        <svg viewBox="0 0 16 16" fill="none">
-                          <path
-                            d="M3.5 8h8.5M8.5 3.5l3 4.5-3 4.5"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </CtaIcon>
+                      {sections[0].cta} <FaArrowRightLong/>
                     </Cta>
                   </CopyBlock>
                   <VisualBlock style={{ y: aY }}>
@@ -699,21 +732,12 @@ export function BodyTypeScrollShowcase() {
                       {sections[1].labelKo}
                     </Title>
                     <Desc initial={false} animate={{ opacity: 1 }} style={{ y: bDescY }}>
-                      {sections[1].headline}
+                      {sections[1].headline} <hr/>
+                      {sections[1].desc}
                     </Desc>
                     <Cta href="/types/wave">
-                      {sections[1].cta}
-                      <CtaIcon aria-hidden="true">
-                        <svg viewBox="0 0 16 16" fill="none">
-                          <path
-                            d="M3.5 8h8.5M8.5 3.5l3 4.5-3 4.5"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </CtaIcon>
+                      {sections[1].cta} <FaArrowRightLong/>
+
                     </Cta>
                   </CopyBlock>
                   <VisualBlock style={{ opacity: bImageOpacity }}>
@@ -753,21 +777,12 @@ export function BodyTypeScrollShowcase() {
                       {sections[2].labelKo}
                     </Title>
                     <Desc initial={false} animate={{ opacity: 1 }} style={{ y: cDescY }}>
-                      {sections[2].headline}
+                      {sections[2].headline} <hr/>
+                      {sections[2].desc}
                     </Desc>
                     <Cta href="/types/natural">
-                      {sections[2].cta}
-                      <CtaIcon aria-hidden="true">
-                        <svg viewBox="0 0 16 16" fill="none">
-                          <path
-                            d="M3.5 8h8.5M8.5 3.5l3 4.5-3 4.5"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </CtaIcon>
+                      {sections[2].cta} <FaArrowRightLong/>
+
                     </Cta>
                   </CopyBlock>
                   <VisualBlock style={{ y: cY }}>

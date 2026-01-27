@@ -17,6 +17,8 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(1005, HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다."),
     DUPLICATE_NICKNAME(1006, HttpStatus.BAD_REQUEST, "이미 사용 중인 닉네임입니다."),
     INVALID_EMAIL_OR_PASSWORD(1007, HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 일치하지 않습니다."),
+    PASSWORD_MISMATCH(1008, HttpStatus.BAD_REQUEST, "비밀번호 확인이 일치하지 않습니다."),
+    INVALID_RESET_TOKEN(1009, HttpStatus.BAD_REQUEST, "유효하지 않거나 만료된 비밀번호 재설정 토큰입니다."),
 
     // 2000번대 코드 : 게시판 관련
     POST_LIST_INVALID_SORT(2000, HttpStatus.BAD_REQUEST, "유효하지 않은 정렬 조건입니다."),

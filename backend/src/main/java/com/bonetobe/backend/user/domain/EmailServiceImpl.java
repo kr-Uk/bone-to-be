@@ -71,9 +71,14 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public String getEmailByResetToken(String token) {
-        String email = getValidEmailFromToken(token); // 1. 조회
-        redisTemplate.delete(RESET_LINK_PREFIX + token); // 2. 삭제 (일회용 보장)
-        return email;
+        return getValidEmailFromToken(token);
+    }
+
+    @Override
+    @Transactional
+    public void deleteResetToken(String token) {
+        redisTemplate.delete(RESET_LINK_PREFIX + token);
+        log.info(">>>> [Redis] 비밀번호 재설정 토큰 사용 완료 및 삭제: {}", token);
     }
 
     // 공통 헬퍼 메서드

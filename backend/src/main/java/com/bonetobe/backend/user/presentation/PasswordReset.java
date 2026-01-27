@@ -23,5 +23,8 @@ public class PasswordReset {
 
         @Password
         private String newPassword;
+
+        @NotBlank
+        private String confirmPassword;
     }
 }

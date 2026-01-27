@@ -6,6 +6,7 @@ public interface EmailService {
     boolean isEmailVerified(String email);
     void sendPasswordResetLink(String email);
     void validateTokenOnly(String token);
+    void deleteResetToken(String token);
     String getEmailByResetToken(String token);
     void deleteAuthStatus(String email);
 }

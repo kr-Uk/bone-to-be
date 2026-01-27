@@ -112,12 +112,12 @@ public class AuthController {
     public ResponseEntity<APIResponse<Void>> confirmPasswordReset(
             @RequestBody @Valid PasswordReset.ConfirmRequest request) {
 
-        // 1. 토큰 검증 및 이메일 추출 로직을 Service로 위임하여 캡슐화
+        // 1. 토큰 검증 및 이메일 추출 로직 (기존 유지)
         String email = emailService.getEmailByResetToken(request.getToken());
         log.info("[비밀번호 재설정 확인] 요청 이메일: {}", email);
 
-        // 2. 비밀번호 업데이트 실행
-        authService.updatePassword(email, request.getNewPassword());
+        // 2. 비밀번호 업데이트 실행 (request 객체를 통째로 전달하도록 변경)
+        authService.updatePassword(email, request);
 
         return ResponseEntity.ok(APIResponse.success(SuccessCode.UPDATED));
     }

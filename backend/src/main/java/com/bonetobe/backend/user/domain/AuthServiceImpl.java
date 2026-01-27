@@ -2,6 +2,7 @@ package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.user.presentation.PasswordReset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -89,15 +90,23 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void updatePassword(String email, String newPassword) {
+    public void updatePassword(String email, PasswordReset.ConfirmRequest request) {
+        // [추가] 1. 사용자가 입력한 두 비밀번호가 같은지 확인 (오타 방지)
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH); // 1008 에러
+        }
+
         User user = userRepository.findByEmail(email.trim())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // 기존 비밀번호와 새 비밀번호가 같은지 확인 (선택 사항)
-        if (passwordEncoder.matches(newPassword, user.getPassword())) {
-            throw new BusinessException(ErrorCode.PASSWORD_SAME_AS_OLD); // 에러코드 추가 필요
+        // [기존 로직] 2. DB에 저장된 예전 비밀번호와 같은지 확인 (보안)
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new BusinessException(ErrorCode.PASSWORD_SAME_AS_OLD); // 1003 에러
         }
 
-        user.updatePassword(passwordEncoder.encode(newPassword));
+        // 3. 암호화 및 업데이트
+        user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+
+        emailService.deleteResetToken(request.getToken());
     }
 }

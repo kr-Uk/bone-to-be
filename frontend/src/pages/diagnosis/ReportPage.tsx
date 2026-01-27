@@ -3,9 +3,16 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import AnalysisResultCard from "./components/AnalysisResultCard";
+import FitReferenceSection from "./components/FitReferenceSection";
+import RecommendationSection from "./components/RecommendationSection";
 import ReportHeroSection from "./components/ReportHeroSection";
+import VirtualFittingSection from "./components/VirtualFittingSection";
 
-import { BODY_TYPE_METADATA, type BodyTypeKey } from "@/shared/constants/reportMockData";
+import {
+  BODY_TYPE_METADATA,
+  VIRTUAL_FITTING_MOCK,
+  type BodyTypeKey,
+} from "@/shared/constants/reportMockData";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
 const PageContainer = styled.div`
@@ -55,23 +62,10 @@ const RightSection = styled.div`
   }
 `;
 
-const PlaceholderSection = styled.div`
-  backdrop-filter: blur(10px);
-  background: ${({ theme }) => theme.colors.gray[900]};
-  border: 1px solid ${({ theme }) => theme.colors.gray[600]};
-  border-radius: 16px;
-  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.5);
-  padding: ${({ theme }) => theme.spacing.xxl};
+const ContentSection = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-`;
-
-const PlaceholderText = styled.p`
-  font-size: ${({ theme }) => theme.typography.body.lg.medium.fontSize};
-  color: ${({ theme }) => theme.colors.gray[400]};
-  text-align: center;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const ReportPage = () => {
@@ -97,6 +91,11 @@ const ReportPage = () => {
   // Get ratios
   const { straight, wave, natural } = analysisResult.bodyTypeRatio;
 
+  const handleTryAnotherStyle = () => {
+    // TODO: Implement virtual fitting regeneration
+    console.log("Try another style clicked");
+  };
+
   return (
     <PageContainer>
       <MainContent>
@@ -118,12 +117,22 @@ const ReportPage = () => {
             description={metadata.description}
           />
 
-          <PlaceholderSection>
-            <PlaceholderText>
-              Standard Fit Reference, Recommendations, Virtual Fitting 섹션은 Phase 2에서
-              구현됩니다.
-            </PlaceholderText>
-          </PlaceholderSection>
+          <ContentSection>
+            <FitReferenceSection fitReferences={metadata.fitReferences} />
+
+            <RecommendationSection
+              doRecommendations={metadata.doRecommendations}
+              dontRecommendations={metadata.dontRecommendations}
+            />
+
+            <VirtualFittingSection
+              imageUrl={VIRTUAL_FITTING_MOCK.imageUrl}
+              title={VIRTUAL_FITTING_MOCK.title}
+              description={VIRTUAL_FITTING_MOCK.description}
+              tags={VIRTUAL_FITTING_MOCK.tags}
+              onTryAnother={handleTryAnotherStyle}
+            />
+          </ContentSection>
         </RightSection>
       </MainContent>
     </PageContainer>

@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +33,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // 0. CORS 설정
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 1. CSRF 필터 disable (임시)
                 .csrf(csrf -> csrf.disable())
 
@@ -88,6 +93,19 @@ public class SecurityConfig {
                     }));
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000"); // 허용할 프론트엔드 주소
+        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용 (GET, POST 등)
+        configuration.addAllowedHeader("*"); // 모든 헤더 허용
+        configuration.setAllowCredentials(true); // 쿠키/인증 정보를 포함한 요청 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     // 인증 관리자 관련 설정

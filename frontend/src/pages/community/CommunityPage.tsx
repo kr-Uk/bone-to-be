@@ -8,6 +8,7 @@ import { FeedFilters } from "./components/FeedFilters";
 import { FeedGrid } from "./components/FeedGrid";
 import { FeedHeader } from "./components/FeedHeader";
 import { SelectedFilters } from "./components/SelectedFilters";
+import { FeedDetailModal } from "./components/FeedDetailModal";
 
 import type { FeedFilters as FeedFiltersType, SortBy } from "./api";
 
@@ -86,7 +87,7 @@ export default function CommunityPage() {
     heightRange: null,
     weightRange: null,
   });
-
+  const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
   const { data, isLoading, error } = useFeedList({
     sortBy,
     filters,
@@ -124,14 +125,9 @@ export default function CommunityPage() {
     [likeToggleMutation],
   );
 
-  const handleCardClick = useCallback(
-    (feedId: string) => {
-      console.log(`Navigating to feed detail: ${feedId}`);
-      // TODO: Navigate to feed detail page when implemented
-      // navigate(`/community/feed/${feedId}`);
-    },
-    [navigate],
-  );
+  const handleCardClick = useCallback((feedId: string) => {
+    setSelectedFeedId(feedId);
+  }, []);
 
   const handleFABClick = useCallback(() => {
     console.log("Navigating to create feed page");
@@ -160,6 +156,11 @@ export default function CommunityPage() {
       </ContentContainer>
 
       <FeedFAB onClick={handleFABClick} />
+      {selectedFeedId && (
+        <FeedDetailModal
+          onClose={() => setSelectedFeedId(null)}
+        />
+      )}
     </PageContainer>
   );
 }

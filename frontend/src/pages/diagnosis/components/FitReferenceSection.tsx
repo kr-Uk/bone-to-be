@@ -92,12 +92,13 @@ const FitReferenceSection = ({ fitReferences }: FitReferenceSectionProps) => {
         <BestBadge>BEST</BestBadge>
       </Header>
       <CardsContainer>
-        {fitReferences.map((ref) => (
+        {fitReferences.map((ref, index) => (
           <ModelCard
             key={ref.name}
             name={ref.name}
             imageUrl={ref.imageUrl}
             isBest={ref.isBest}
+            index={index}
           />
         ))}
       </CardsContainer>

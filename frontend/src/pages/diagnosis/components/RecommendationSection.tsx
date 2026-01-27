@@ -1,6 +1,7 @@
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
-const Section = styled.section`
+const Section = styled(motion.section)`
   backdrop-filter: blur(10px);
   background: ${({ theme }) => theme.colors.gray[900]};
   border: 1px solid ${({ theme }) => theme.colors.gray[600]};
@@ -132,7 +133,12 @@ const RecommendationSection = ({
   dontRecommendations,
 }: RecommendationSectionProps) => {
   return (
-    <Section>
+    <Section
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <Column>
         <Header>
           <Icon>

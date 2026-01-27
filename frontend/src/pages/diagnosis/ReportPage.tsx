@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -10,7 +10,7 @@ import VirtualFittingSection from "./components/VirtualFittingSection";
 
 import {
   BODY_TYPE_METADATA,
-  VIRTUAL_FITTING_MOCK,
+  VIRTUAL_FITTING_OPTIONS,
   type BodyTypeKey,
 } from "@/shared/constants/reportMockData";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
@@ -72,6 +72,7 @@ const ReportPage = () => {
   const navigate = useNavigate();
   const diagnosisData = useDiagnosisStore((state) => state.diagnosisData);
   const analysisResult = diagnosisData.analysisResult;
+  const [virtualFittingIndex, setVirtualFittingIndex] = useState(0);
 
   // Redirect if no analysis result
   useEffect(() => {
@@ -91,9 +92,12 @@ const ReportPage = () => {
   // Get ratios
   const { straight, wave, natural } = analysisResult.bodyTypeRatio;
 
+  // Get current virtual fitting data
+  const currentVirtualFitting = VIRTUAL_FITTING_OPTIONS[virtualFittingIndex];
+
   const handleTryAnotherStyle = () => {
-    // TODO: Implement virtual fitting regeneration
-    console.log("Try another style clicked");
+    // Cycle through virtual fitting options
+    setVirtualFittingIndex((prev) => (prev + 1) % VIRTUAL_FITTING_OPTIONS.length);
   };
 
   return (
@@ -126,10 +130,11 @@ const ReportPage = () => {
             />
 
             <VirtualFittingSection
-              imageUrl={VIRTUAL_FITTING_MOCK.imageUrl}
-              title={VIRTUAL_FITTING_MOCK.title}
-              description={VIRTUAL_FITTING_MOCK.description}
-              tags={VIRTUAL_FITTING_MOCK.tags}
+              key={virtualFittingIndex}
+              imageUrl={currentVirtualFitting.imageUrl}
+              title={currentVirtualFitting.title}
+              description={currentVirtualFitting.description}
+              tags={currentVirtualFitting.tags}
               onTryAnother={handleTryAnotherStyle}
             />
           </ContentSection>

@@ -8,13 +8,14 @@ import {
   Legend,
   type ChartOptions,
 } from "chart.js";
+import { motion } from "framer-motion";
 import { Radar } from "react-chartjs-2";
 import styled from "styled-components";
 
 // Register Chart.js components
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
-const ChartContainer = styled.div`
+const ChartContainer = styled(motion.div)`
   position: relative;
   width: 100%;
   max-width: 323px;
@@ -100,7 +101,11 @@ const TriangleChart = ({ straight, wave, natural }: TriangleChartProps) => {
   };
 
   return (
-    <ChartContainer>
+    <ChartContainer
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
       <Radar data={data} options={options} />
     </ChartContainer>
   );

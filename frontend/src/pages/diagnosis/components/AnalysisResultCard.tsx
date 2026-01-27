@@ -1,9 +1,10 @@
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
 import SkeletonStrengthBar from "./SkeletonStrengthBar";
 import TriangleChart from "./TriangleChart";
 
-const Card = styled.div`
+const Card = styled(motion.div)`
   backdrop-filter: blur(10px);
   background: ${({ theme }) => theme.colors.gray[900]};
   border: 1px solid ${({ theme }) => theme.colors.gray[600]};
@@ -121,7 +122,12 @@ const AnalysisResultCard = ({
     dominantType === "straight" ? straight : dominantType === "wave" ? wave : natural;
 
   return (
-    <Card>
+    <Card
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <Heading>AI 분석결과</Heading>
 
       <ChartSection>

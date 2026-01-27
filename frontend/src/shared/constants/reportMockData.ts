@@ -126,10 +126,26 @@ export interface VirtualFittingData {
   tags: string[];
 }
 
-export const VIRTUAL_FITTING_MOCK: VirtualFittingData = {
-  imageUrl: "/images/placeholder-virtual-fitting.jpg",
-  title: "Casual Linen Mood",
-  description:
-    "고객님의 넓은 어깨 라인을 장점으로 승화시키는 루즈핏 린넨 셋업입니다.",
-  tags: ["#Oversized", "#Natural", "#Summer"],
-};
+export const VIRTUAL_FITTING_OPTIONS: VirtualFittingData[] = [
+  {
+    imageUrl: "/images/placeholder-virtual-fitting-1.jpg",
+    title: "Casual Linen Mood",
+    description: "고객님의 넓은 어깨 라인을 장점으로 승화시키는 루즈핏 린넨 셋업입니다.",
+    tags: ["#Oversized", "#Natural", "#Summer"],
+  },
+  {
+    imageUrl: "/images/placeholder-virtual-fitting-2.jpg",
+    title: "Urban Street Vibe",
+    description: "자유로운 실루엣에 강렬한 포인트를 더한 도시적인 스트릿 룩입니다.",
+    tags: ["#Oversized", "#Street", "#Casual"],
+  },
+  {
+    imageUrl: "/images/placeholder-virtual-fitting-3.jpg",
+    title: "Minimal Chic",
+    description: "심플한 디자인으로 당신의 골격 라인을 자연스럽게 살린 미니멀 스타일입니다.",
+    tags: ["#Minimal", "#Clean", "#Modern"],
+  },
+];
+
+// Legacy export for backward compatibility
+export const VIRTUAL_FITTING_MOCK: VirtualFittingData = VIRTUAL_FITTING_OPTIONS[0];

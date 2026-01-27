@@ -1,8 +1,9 @@
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
 import StyleTag from "./StyleTag";
 
-const Section = styled.section`
+const Section = styled(motion.section)`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
@@ -190,7 +191,12 @@ const VirtualFittingSection = ({
   const isPlaceholder = imageUrl.includes("placeholder");
 
   return (
-    <Section>
+    <Section
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <SectionHeader>
         <Heading>AI Virtual Fitting</Heading>
         <Description>고객님의 사진에 어울리는 스타일을 가상으로 입혀봅니다.</Description>

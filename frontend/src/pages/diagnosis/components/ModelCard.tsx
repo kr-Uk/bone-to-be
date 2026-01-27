@@ -1,6 +1,7 @@
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
-const Card = styled.div<{ $isBest: boolean }>`
+const Card = styled(motion.div)<{ $isBest: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.sm};
@@ -64,13 +65,20 @@ interface ModelCardProps {
   name: string;
   imageUrl: string;
   isBest: boolean;
+  index?: number;
 }
 
-const ModelCard = ({ name, imageUrl, isBest }: ModelCardProps) => {
+const ModelCard = ({ name, imageUrl, isBest, index = 0 }: ModelCardProps) => {
   const isPlaceholder = imageUrl.includes("placeholder");
 
   return (
-    <Card $isBest={isBest}>
+    <Card
+      $isBest={isBest}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
+    >
       <ImageContainer $isBest={isBest}>
         {isPlaceholder ? (
           <PlaceholderText>[Model Image]</PlaceholderText>

@@ -16,8 +16,8 @@ public class PostBodyReport {
             return new ReportCommand(
                 User.makeReferencedUser(userId),
                 BodyInfo.createBodyInfo(
-                    height,
                     weight,
+                    height,
                     gender
                 ),
                 fileId

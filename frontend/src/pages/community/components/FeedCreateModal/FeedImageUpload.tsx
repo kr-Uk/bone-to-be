@@ -129,8 +129,8 @@ export function FeedImageUpload({ imagePreview, onImageChange }: FeedImageUpload
         </S.UploadIconWrapper>
 
         <S.UploadTextWrapper>
-          <S.UploadTitle>Drag and drop your image here</S.UploadTitle>
-          <S.UploadSubtitle>SVG, PNG, JPG (max. 10MB)</S.UploadSubtitle>
+          <S.UploadTitle>사진을 업로드 해주세요</S.UploadTitle>
+          <S.UploadSubtitle>SVG, PNG, JPG (최대 10MB)</S.UploadSubtitle>
         </S.UploadTextWrapper>
 
         <S.SelectButton type="button">Select from gallery</S.SelectButton>

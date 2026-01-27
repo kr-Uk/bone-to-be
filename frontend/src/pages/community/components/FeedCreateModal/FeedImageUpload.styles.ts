@@ -5,8 +5,7 @@ export const UploadContainer = styled.div<{ $isDragOver: boolean }>`
   width: 100%;
   height: 100%;
   border: ${({ $isDragOver }) => ($isDragOver ? "3px" : "2px")} dashed
-    ${({ theme, $isDragOver }) =>
-      $isDragOver ? theme.colors.purple[600] : theme.colors.gray[600]};
+    ${({ theme, $isDragOver }) => ($isDragOver ? theme.colors.purple[600] : theme.colors.gray[600])};
   border-radius: 8px;
   background-color: ${({ $isDragOver }) =>
     $isDragOver ? "rgba(152, 16, 250, 0.15)" : "rgba(152, 16, 250, 0.05)"};
@@ -42,10 +41,10 @@ export const UploadContainer = styled.div<{ $isDragOver: boolean }>`
 `;
 
 export const UploadIconWrapper = styled.div`
-  width: 48px;
-  height: 48px;
+  width: 105px;
+  height: 105px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.purple[600]};
+  background-color: ${({ theme }) => theme.colors.purple[900]};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,8 +56,8 @@ export const UploadIconWrapper = styled.div`
 `;
 
 export const UploadIcon = styled.svg`
-  width: 24px;
-  height: 24px;
+  width: 42px;
+  height: 42px;
   color: white;
 
   @media (min-width: 768px) {
@@ -75,9 +74,9 @@ export const UploadTextWrapper = styled.div`
 `;
 
 export const UploadTitle = styled.p`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.gray[300]};
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.gray[50]};
   margin: 0;
 
   @media (min-width: 768px) {
@@ -86,7 +85,7 @@ export const UploadTitle = styled.p`
 `;
 
 export const UploadSubtitle = styled.p`
-  font-size: 12px;
+  font-size: 1rem;
   font-weight: 400;
   color: ${({ theme }) => theme.colors.gray[500]};
   margin: 0;
@@ -97,13 +96,12 @@ export const UploadSubtitle = styled.p`
 `;
 
 export const SelectButton = styled.button`
-  padding: 12px 24px;
-  min-height: 44px;
-  background-color: ${({ theme }) => theme.colors.purple[600]};
-  color: white;
+  padding: 0.75rem 1.5rem;
+  background-color: ${({ theme }) => theme.colors.gray[200]};
+  color: black;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 9999px;
+  font-size: 1.125rem;
   font-weight: 600;
   cursor: pointer;
   transform: scale(1);

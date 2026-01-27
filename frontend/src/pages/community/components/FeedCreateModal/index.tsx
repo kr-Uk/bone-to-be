@@ -22,26 +22,28 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
   const { mutate: createFeed, isPending: isSubmitting } = useFeedCreate();
 
   // Handle image change
-  const handleImageChange = useCallback((file: File | null) => {
-    setImage(file);
+  const handleImageChange = useCallback(
+    (file: File | null) => {
+      setImage(file);
 
-    // Clean up previous preview URL
-    if (imagePreview) {
-      URL.revokeObjectURL(imagePreview);
-    }
+      // Clean up previous preview URL
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
 
-    // Create new preview URL
-    if (file) {
-      const preview = URL.createObjectURL(file);
-      setImagePreview(preview);
-    } else {
-      setImagePreview(null);
-    }
-  }, [imagePreview]);
+      // Create new preview URL
+      if (file) {
+        const preview = URL.createObjectURL(file);
+        setImagePreview(preview);
+      } else {
+        setImagePreview(null);
+      }
+    },
+    [imagePreview],
+  );
 
   // Validate form
-  const isValid =
-    image !== null && bodyType !== null && gender !== null && styles.length > 0;
+  const isValid = image !== null && bodyType !== null && gender !== null && styles.length > 0;
 
   // Handle submit
   const handleSubmit = useCallback(() => {
@@ -169,7 +171,13 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
 
   return (
     <S.ModalOverlay $isOpen={isOpen} onClick={handleOverlayClick}>
-      <S.ModalContainer ref={modalRef} $isOpen={isOpen} role="dialog" aria-labelledby="modal-title" aria-modal="true">
+      <S.ModalContainer
+        ref={modalRef}
+        $isOpen={isOpen}
+        role="dialog"
+        aria-labelledby="modal-title"
+        aria-modal="true"
+      >
         <S.ModalHeader>
           <S.ModalTitle id="modal-title">새 게시글 작성하기</S.ModalTitle>
           <S.CloseButton onClick={handleClose} aria-label="Close modal">

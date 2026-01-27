@@ -128,9 +128,10 @@ export const ImageSection = styled.div`
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => theme.colors.gray[800]};
+  aspect-ratio: 1 / 1;
 
   /* Mobile */
-  padding: 24px 24px 0 24px;
+  padding: 1.5rem;
   min-height: 270px;
 
   @media (min-width: 768px) {

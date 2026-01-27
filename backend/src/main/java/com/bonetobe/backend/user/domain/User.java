@@ -72,4 +72,9 @@ public class User extends BaseEntity{
             isDeleted = true;
         }
     }
+
+    public User update(String name) {
+        this.nickname = name;
+        return this;
+    }
 }

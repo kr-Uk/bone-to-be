@@ -22,6 +22,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userService;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     // 패스워드 인코더로 사용할 빈 등록
     @Bean
@@ -42,18 +44,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 1. 게스트용 (None (Guest))
                         .requestMatchers(
-                                "/auth/login",
-                                "/auth/signup",
-                                "/auth/check/**",
-                                "/auth/email/**",
-                                "/auth/password/reset/**",
-                                "/auth/oauth/**",
-                                "/users/profile/**",
+                                "/auth/**",
+                                "/api/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/auth/**",
                                 "/api/swagger-ui/**",
-                                "/api/v3/api-docs/**"
+                                "/api/v3/api-docs/**",
+
+                                // [수정] OAuth2 관련 모든 경로 및 기본 로그인/에러 경로 개방
+                                "/oauth2/**",
+                                "/login/**",           // 에러 페이지(/login?error) 대응
+                                "/api/oauth2/**",
+                                "/api/login/**"        // context-path 반영 에러 페이지 대응
                         ).permitAll()
 
                         // 2. 유저용 (User (Lv.1)) - 로그아웃 포함
@@ -96,6 +98,13 @@ public class SecurityConfig {
                             response.getWriter().write("{\"message\": \"로그아웃 성공\"}");
                         })
                         .invalidateHttpSession(true)
+                )
+
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        // [수정] 에러 발생 시 리다이렉트될 경로를 명시 (존재하는 경로로!)
+                        .failureUrl("/auth/login?error")
                 )
 
                 .exceptionHandling(exception -> exception

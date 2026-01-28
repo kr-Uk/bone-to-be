@@ -202,9 +202,12 @@ export const Brand = styled.div`
 `;
 
 export const BrandTitle = styled.div`
-  font-size: clamp(30px, 3.3vw, 42px);
-  font-weight: 900;
-  letter-spacing: -0.05em;
+  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  letter-spacing: -0.6px;
+  vertical-align: middle;
   color: ${loginPalette.slate100};
 `;
 
@@ -216,7 +219,7 @@ export const BrandSub = styled.div`
 export const Form = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 9px;
 `;
 
 export const Field = styled.div`

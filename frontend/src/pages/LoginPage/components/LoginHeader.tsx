@@ -12,6 +12,7 @@ const Container = styled.header`
   justify-content: center;
 
   background-color: ${({ theme }) => theme.colors.gray[900]};
+  border-bottom: 1px solid ${({theme}) => theme.colors.gray[700]};
 `;
 
 const ContentWrap = styled.div`
@@ -21,7 +22,7 @@ const ContentWrap = styled.div`
 `;
 
 const LogoImg = styled.img`
-  width: 11rem;
+  width: 9.5rem;
   height: auto;
   margin-bottom: 0.25rem;
   cursor: pointer;
@@ -39,12 +40,21 @@ const LoginHeader = () => {
   const navigate = useNavigate();
   return (
     <Container>
-      <ContentWrap>
-        <LogoImg src={logo} alt="BONE:TOBE" onClick={() => navigate("/")} />
-        <Description>Find Your Originality</Description>
-      </ContentWrap>
+      <HomeButton type="button" onClick={() => navigate("/")}>
+        <ContentWrap>
+          <LogoImg src={logo} alt="BONE:TOBE" />
+          <Description>Find Your Originality</Description>
+        </ContentWrap>
+      </HomeButton>
     </Container>
   );
 };
+
+const HomeButton = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+`;
 
 export default LoginHeader;

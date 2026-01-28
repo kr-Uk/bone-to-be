@@ -1,14 +1,17 @@
-import styled, { css, type Keyframes } from "styled-components";
+import styled, { css } from "styled-components";
 
 type ShapeAnimationProps = {
-  $floatAnimation: Keyframes;
-  $duration: string;
+  $floatAnimation?: { toString(): string };
+  $duration?: string;
   $timingFunction?: string;
 };
 
-const applyFloatAnimation = ({ $floatAnimation, $duration, $timingFunction }: ShapeAnimationProps) => css`
-  animation: ${$floatAnimation} ${$duration} ${$timingFunction ?? "ease-in-out"} infinite;
-`;
+const applyFloatAnimation = ({ $floatAnimation, $duration, $timingFunction }: ShapeAnimationProps) =>
+  $floatAnimation && $duration
+    ? css`
+        animation: ${$floatAnimation} ${$duration} ${$timingFunction ?? "ease-in-out"} infinite;
+      `
+    : undefined;
 
 const BoneShape = styled.div`
   position: absolute;

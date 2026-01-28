@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import styled, { css, keyframes, useTheme } from "styled-components";
 
 import type { AppTheme } from "@/shared/styles/theme";
+
 import { NaturalShape, StraightShape, WaveShape } from "@/shared/components/BoneShapes";
 
 type TypographyToken = {
@@ -141,7 +142,7 @@ export const MainSection = ({ categoryItems }: Props) => {
 
 const HeroSection = styled.section`
   position: relative;
-  padding: 5.3rem 3rem;
+  padding: 7.6rem 3rem;
   text-align: center;
   min-height: 37.5rem;
   display: flex;

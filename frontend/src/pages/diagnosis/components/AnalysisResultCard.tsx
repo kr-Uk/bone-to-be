@@ -13,7 +13,7 @@ const Card = styled(motion.div)`
   padding: 33px;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.xxl};
+  gap: 2rem;
   align-items: center;
 
   @media (min-width: 1024px) {
@@ -39,43 +39,6 @@ const ChartSection = styled.div`
   gap: 7px;
   align-items: center;
   width: 100%;
-`;
-
-const PercentageLabels = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 291.34px;
-  padding-bottom: 2.5px;
-`;
-
-const PercentageItem = styled.div<{ $isHighlighted?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 6.5px;
-  align-items: flex-start;
-
-  &:last-child {
-    align-items: flex-end;
-  }
-
-  p:first-child {
-    font-size: 20px;
-    font-weight: ${({ theme }) => theme.typography.heading.sm.fontWeight};
-    color: ${({ theme, $isHighlighted }) =>
-      $isHighlighted ? theme.colors.brand : theme.colors.gray[400]};
-    line-height: 16px;
-    margin: 0;
-  }
-
-  p:last-child {
-    font-size: ${({ theme }) => theme.typography.body.lg.regular.fontSize};
-    font-weight: ${({ theme }) => theme.typography.body.lg.regular.fontWeight};
-    color: ${({ theme, $isHighlighted }) =>
-      $isHighlighted ? theme.colors.brand : theme.colors.gray[600]};
-    line-height: 15px;
-    margin: 0;
-  }
 `;
 
 interface AnalysisResultCardProps {
@@ -108,17 +71,6 @@ const AnalysisResultCard = ({
 
       <ChartSection>
         <TriangleChart straight={straight} wave={wave} natural={natural} />
-
-        <PercentageLabels>
-          <PercentageItem $isHighlighted={dominantType === "wave"}>
-            <p>WAVE</p>
-            <p>{wave}%</p>
-          </PercentageItem>
-          <PercentageItem $isHighlighted={dominantType === "natural"}>
-            <p>NATURAL</p>
-            <p>{natural}%</p>
-          </PercentageItem>
-        </PercentageLabels>
       </ChartSection>
 
       <SkeletonStrengthBar percentage={dominantPercentage} description={strengthDescription} />

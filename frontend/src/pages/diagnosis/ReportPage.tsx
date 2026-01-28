@@ -22,12 +22,21 @@ const PageContainer = styled.div`
     linear-gradient(90deg, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 100%),
     linear-gradient(90deg, rgb(250, 250, 250) 0%, rgb(250, 250, 250) 100%);
   padding-bottom: 80px;
+  padding: 1.25rem 1.5rem;
+`;
+
+const HeroWrapper = styled.div`
+  max-width: 1280px;
+  margin: 0 auto;
+
+  @media (min-width: 768px) {
+    padding: 128px 1.5rem 48px;
+  }
 `;
 
 const MainContent = styled.main<{ $isDesktop: boolean }>`
   max-width: 1280px;
   margin: 0 auto;
-  /* padding: 128px 24px 0; */
   display: flex;
   flex-direction: ${({ $isDesktop }) => ($isDesktop ? "row" : "column")};
   gap: ${({ $isDesktop }) => ($isDesktop ? "32px" : "48px")};
@@ -42,26 +51,12 @@ const LeftSection = styled.aside`
   flex-shrink: 0;
 `;
 
-const RightSection = styled.div`
+const ContentWrapper = styled.div<{ $isDesktop: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 40px;
-  width: 810.67px;
-`;
-
-const MobileHeroSection = styled.div`
-  width: 100%;
-`;
-
-const MobileChartSection = styled.div`
-  width: 100%;
-`;
-
-const ContentSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.lg};
+  width: ${({ $isDesktop }) => ($isDesktop ? "810.67px" : "100%")};
 `;
 
 const ReportPage = () => {
@@ -122,86 +117,60 @@ const ReportPage = () => {
 
   return (
     <PageContainer>
+      {/* Hero Section at the top, independent of layout */}
+      <HeroWrapper>
+        <ReportHeroSection
+          bodyTypeKey={bodyTypeKey}
+          korean={metadata.korean}
+          tagline={metadata.tagline}
+          description={metadata.description}
+        />
+      </HeroWrapper>
+
+      {/* Main content area with responsive layout */}
       <MainContent $isDesktop={isDesktop}>
-        {isDesktop ? (
-          <>
-            <LeftSection>
-              <AnalysisResultCard
-                straight={straight}
-                wave={wave}
-                natural={natural}
-                dominantType={bodyTypeKey}
-                strengthDescription={metadata.strengthDescription}
-              />
-            </LeftSection>
-
-            <RightSection>
-              <ReportHeroSection
-                bodyTypeKey={bodyTypeKey}
-                korean={metadata.korean}
-                tagline={metadata.tagline}
-                description={metadata.description}
-              />
-
-              <ContentSection>
-                <FitReferenceSection fitReferences={metadata.fitReferences} />
-
-                <RecommendationSection
-                  doRecommendations={metadata.doRecommendations}
-                  dontRecommendations={metadata.dontRecommendations}
-                />
-
-                <VirtualFittingSection
-                  key={virtualFittingIndex}
-                  imageUrl={currentVirtualFitting.imageUrl}
-                  title={currentVirtualFitting.title}
-                  description={currentVirtualFitting.description}
-                  tags={currentVirtualFitting.tags}
-                  onTryAnother={handleTryAnotherStyle}
-                />
-              </ContentSection>
-            </RightSection>
-          </>
-        ) : (
-          <>
-            <MobileHeroSection>
-              <ReportHeroSection
-                bodyTypeKey={bodyTypeKey}
-                korean={metadata.korean}
-                tagline={metadata.tagline}
-                description={metadata.description}
-              />
-            </MobileHeroSection>
-
-            <MobileChartSection>
-              <AnalysisResultCard
-                straight={straight}
-                wave={wave}
-                natural={natural}
-                dominantType={bodyTypeKey}
-                strengthDescription={metadata.strengthDescription}
-              />
-            </MobileChartSection>
-
-            <ContentSection>
-              <FitReferenceSection fitReferences={metadata.fitReferences} />
-
-              <RecommendationSection
-                doRecommendations={metadata.doRecommendations}
-                dontRecommendations={metadata.dontRecommendations}
-              />
-
-              <VirtualFittingSection
-                key={virtualFittingIndex}
-                imageUrl={currentVirtualFitting.imageUrl}
-                title={currentVirtualFitting.title}
-                description={currentVirtualFitting.description}
-                tags={currentVirtualFitting.tags}
-                onTryAnother={handleTryAnotherStyle}
-              />
-            </ContentSection>
-          </>
+        {/* Desktop: Chart in left sidebar */}
+        {isDesktop && (
+          <LeftSection>
+            <AnalysisResultCard
+              straight={straight}
+              wave={wave}
+              natural={natural}
+              dominantType={bodyTypeKey}
+              strengthDescription={metadata.strengthDescription}
+            />
+          </LeftSection>
         )}
+
+        {/* Content wrapper for both desktop and mobile */}
+        <ContentWrapper $isDesktop={isDesktop}>
+          {/* Mobile: Chart appears before content sections */}
+          {!isDesktop && (
+            <AnalysisResultCard
+              straight={straight}
+              wave={wave}
+              natural={natural}
+              dominantType={bodyTypeKey}
+              strengthDescription={metadata.strengthDescription}
+            />
+          )}
+
+          <FitReferenceSection fitReferences={metadata.fitReferences} />
+
+          <RecommendationSection
+            doRecommendations={metadata.doRecommendations}
+            dontRecommendations={metadata.dontRecommendations}
+          />
+
+          <VirtualFittingSection
+            key={virtualFittingIndex}
+            imageUrl={currentVirtualFitting.imageUrl}
+            title={currentVirtualFitting.title}
+            description={currentVirtualFitting.description}
+            tags={currentVirtualFitting.tags}
+            onTryAnother={handleTryAnotherStyle}
+          />
+        </ContentWrapper>
       </MainContent>
     </PageContainer>
   );

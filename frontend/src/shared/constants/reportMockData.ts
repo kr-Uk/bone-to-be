@@ -3,7 +3,11 @@ export type BodyTypeKey = "natural" | "wave" | "straight";
 export interface BodyTypeMetadata {
   korean: string;
   tagline: string;
-  description: string;
+  description: {
+    mobile: string;
+    tablet: string;
+    desktop: string;
+  };
   strengthDescription: string;
   doRecommendations: string[];
   dontRecommendations: string[];
@@ -18,8 +22,14 @@ export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
   natural: {
     korean: "내추럴",
     tagline: "Free Spirit, Natural Chic",
-    description:
-      "당신은 뼈대가 뚜렷하고 프레임이 단단한 내추럴 골격입니다. 인위적인 핏보다는 루즈하게 흐르는 실루엣이 본연의 멋을 극대화합니다.",
+    description: {
+      mobile:
+        "당신은 뼈대가 뚜렷하고 프레임이 단단한 내추럴 골격입니다.\n인위적인 핏보다는 루즈하게 흐르는 실루엣이\n본연의 멋을 극대화합니다.",
+      tablet:
+        "당신은 뼈대가 뚜렷하고 프레임이 단단한 내추럴 골격입니다.\n인위적인 핏보다는 루즈하게 흐르는 실루엣이 본연의 멋을 극대화합니다.",
+      desktop:
+        "당신은 뼈대가 뚜렷하고 프레임이 단단한 내추럴 골격입니다.\n인위적인 핏보다는 루즈하게 흐르는 실루엣이 본연의 멋을 극대화합니다.",
+    },
     strengthDescription: "어깨와 관절의 뼈대가 도드라짐",
     doRecommendations: [
       "어깨선이 내려간 드롭 숄더 (Drop Shoulder)",
@@ -52,8 +62,14 @@ export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
   wave: {
     korean: "웨이브",
     tagline: "Elegant Curves, Feminine Grace",
-    description:
-      "당신은 부드러운 곡선과 균형 잡힌 웨이브 골격입니다. 몸의 곡선을 살리는 핏이 우아함을 극대화합니다.",
+    description: {
+      mobile:
+        "당신은 부드러운 곡선과\n균형 잡힌\n웨이브 골격입니다.\n몸의 곡선을 살리는 핏이\n우아함을 극대화합니다.",
+      tablet:
+        "당신은 부드러운 곡선과\n균형 잡힌 웨이브 골격입니다.\n몸의 곡선을 살리는 핏이\n우아함을 극대화합니다.",
+      desktop:
+        "당신은 부드러운 곡선과 균형 잡힌\n웨이브 골격입니다.\n몸의 곡선을 살리는 핏이 우아함을 극대화합니다.",
+    },
     strengthDescription: "허리 라인과 힙의 곡선이 부드러움",
     doRecommendations: [
       "허리 라인을 강조하는 벨티드 디자인",
@@ -86,8 +102,14 @@ export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
   straight: {
     korean: "스트레이트",
     tagline: "Sharp Lines, Modern Chic",
-    description:
-      "당신은 직선적이고 균형 잡힌 스트레이트 골격입니다. 깔끔하고 단정한 실루엣이 세련미를 극대화합니다.",
+    description: {
+      mobile:
+        "당신은 직선적이고\n균형 잡힌\n스트레이트 골격입니다.\n깔끔하고 단정한\n실루엣이 세련미를\n극대화합니다.",
+      tablet:
+        "당신은 직선적이고\n균형 잡힌 스트레이트 골격입니다.\n깔끔하고 단정한 실루엣이\n세련미를 극대화합니다.",
+      desktop:
+        "당신은 직선적이고 균형 잡힌\n스트레이트 골격입니다.\n깔끔하고 단정한 실루엣이 세련미를 극대화합니다.",
+    },
     strengthDescription: "어깨와 허리, 힙이 일직선으로 균형잡힘",
     doRecommendations: [
       "허리를 살짝 강조하는 세미 테일러드 핏",

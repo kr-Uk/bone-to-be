@@ -111,7 +111,7 @@ const TriangleChart = ({ straight, wave, natural }: TriangleChartProps) => {
       },
       triangleLabels: {
         font: {
-          size: 12,
+          size: 16,
           weight: "bold",
           family: "Pretendard",
         },

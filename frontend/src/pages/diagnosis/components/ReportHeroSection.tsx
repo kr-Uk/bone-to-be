@@ -2,23 +2,20 @@ import styled from "styled-components";
 
 import type { BodyTypeKey } from "@/shared/constants/reportMockData";
 
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
+
 const HeroContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.md};
-  padding: ${({ theme }) => theme.spacing.lg} 0;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray[600]};
-
-  @media (min-width: 768px) {
-    gap: ${({ theme }) => theme.spacing.lg};
-  }
+  margin-bottom: 0.75rem;
 `;
 
 const Badge = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 13px;
+  padding: 0.25rem 0.5rem;
   border: 1px solid ${({ theme }) => theme.colors.brand};
   border-radius: 4px;
   font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
@@ -27,18 +24,18 @@ const Badge = styled.div`
   text-transform: uppercase;
   letter-spacing: 1px;
   width: fit-content;
+  margin-bottom: 0.5rem;
 
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     border-radius: 6px;
-    padding: 4.625px 12.625px;
     font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
     letter-spacing: 1.2px;
   }
 `;
 
 const Title = styled.h1`
-  font-size: 42px;
-  font-weight: ${({ theme }) => theme.typography.heading["4xl"].fontWeight};
+  font-size: 2.625rem;
+  font-weight: 800;
   color: ${({ theme }) => theme.colors.gray[50]};
   letter-spacing: -2.4px;
   line-height: 40px;
@@ -58,8 +55,18 @@ const Title = styled.h1`
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 7.375px;
-  max-width: 512px;
+  justify-content: space-between;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
+`;
+
+const DescriptionWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 446px;
+  margin-bottom: 0.75rem;
 `;
 
 const Tagline = styled.p`
@@ -69,6 +76,7 @@ const Tagline = styled.p`
   line-height: 32px;
   margin: 0;
   text-align: left;
+  margin-bottom: 0.5rem;
 
   @media (min-width: 768px) {
     font-size: 32px;
@@ -101,7 +109,11 @@ interface ReportHeroSectionProps {
   bodyTypeKey: BodyTypeKey;
   korean: string;
   tagline: string;
-  description: string;
+  description: {
+    mobile: string;
+    tablet: string;
+    desktop: string;
+  };
 }
 
 const ReportHeroSection = ({
@@ -110,15 +122,25 @@ const ReportHeroSection = ({
   tagline,
   description,
 }: ReportHeroSectionProps) => {
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isTablet = useMediaQuery("(min-width: 768px)");
+
+  const displayDescription = isDesktop
+    ? description.desktop
+    : isTablet
+      ? description.tablet
+      : description.mobile;
+
   return (
     <HeroContainer>
-      <div>
-        <Badge>{korean}</Badge>
-        <Title>{bodyTypeKey.toUpperCase()}</Title>
-      </div>
+      <Badge>{korean}</Badge>
       <ContentWrapper>
-        <Tagline>"{tagline}"</Tagline>
-        <Description>{description}</Description>
+        <Title>{bodyTypeKey.toUpperCase()}</Title>
+
+        <DescriptionWrapper>
+          <Tagline>"{tagline}"</Tagline>
+          <Description>{displayDescription}</Description>
+        </DescriptionWrapper>
       </ContentWrapper>
     </HeroContainer>
   );

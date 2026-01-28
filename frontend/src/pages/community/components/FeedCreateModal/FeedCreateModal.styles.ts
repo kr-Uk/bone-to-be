@@ -130,6 +130,7 @@ const ImageSectionBase = css`
   background-color: ${({ theme }) => theme.colors.gray[800]};
   aspect-ratio: 1 / 1;
   width: 100%;
+  box-sizing: border-box; /* padding을 width 내부에 포함 */
 `;
 
 export const DesktopImageSection = styled.div`
@@ -156,6 +157,7 @@ export const MobileTabletImageSection = styled.div`
   /* Mobile/Tablet: ScrollableContent 내부에서 scroll 가능 */
   padding: 1.5rem;
   flex-shrink: 0; /* 1:1 비율 유지 */
+  box-sizing: border-box; /* padding을 width 내부에 포함 */
 
   @media (min-width: 768px) and (max-width: 1023px) {
     /* Tablet */
@@ -192,6 +194,7 @@ export const ScrollableContent = styled.div`
   flex: 1;
   min-height: 0; /* flex 아이템이 overflow를 제대로 처리하도록 */
   overflow-y: auto;
+  overflow-x: hidden; /* 가로 스크롤 차단 */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   display: flex;

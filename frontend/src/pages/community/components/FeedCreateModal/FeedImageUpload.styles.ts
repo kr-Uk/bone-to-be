@@ -4,6 +4,7 @@ export const UploadContainer = styled.div<{ $isDragOver: boolean }>`
   position: relative;
   width: 100%;
   height: 100%;
+  box-sizing: border-box; /* padding을 width 내부에 포함 */
   border: ${({ $isDragOver }) => ($isDragOver ? "3px" : "2px")} dashed
     ${({ theme, $isDragOver }) => ($isDragOver ? theme.colors.purple[600] : theme.colors.gray[600])};
   border-radius: 8px;
@@ -129,6 +130,7 @@ export const PreviewContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  box-sizing: border-box; /* padding을 width 내부에 포함 */
   border-radius: 8px;
   overflow: hidden;
 

@@ -5,18 +5,26 @@ import type { FeedOptionGroupProps } from "./types";
 const GroupContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 2vw, 15px);
+  gap: 0.25rem;
+
+  @media (min-width: 768px) {
+    gap: 1rem;
+  }
 `;
 
 const Label = styled.label`
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: clamp(12px, 3vw, 20px);
+  gap: 0.25px;
+  font-size: 0.75rem;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.gray[300]};
-  text-transform: uppercase;
+  line-height: 20px;
   letter-spacing: 0.75px;
+
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const IconWrapper = styled.span`
@@ -31,15 +39,14 @@ const OptionsWrapper = styled.div`
 `;
 
 const OptionButton = styled.button<{ $selected: boolean }>`
-  min-width: 44px;
-  min-height: 44px;
-  padding: clamp(12px, 2vw, 15.625px) clamp(12px, 1.5vw, 8.125px);
+  padding: 0.25rem 0.5rem;
   background-color: ${({ theme, $selected }) =>
     $selected ? theme.colors.purple[600] : theme.colors.gray[700]};
   color: ${({ theme, $selected }) => ($selected ? "white" : theme.colors.gray[400])};
-  border: none;
-  border-radius: 10px;
-  font-size: clamp(12px, 2.5vw, 15px);
+  border: 1px solid
+    ${({ theme, $selected }) => ($selected ? theme.colors.purple[600] : theme.colors.gray[600])};
+  border-radius: 0.625rem;
+  font-size: 0.75rem;
   font-weight: ${({ $selected }) => ($selected ? 700 : 500)};
   cursor: pointer;
   transform: scale(1);
@@ -51,7 +58,6 @@ const OptionButton = styled.button<{ $selected: boolean }>`
   &:hover {
     background-color: ${({ theme, $selected }) =>
       $selected ? theme.colors.purple[900] : theme.colors.gray[600]};
-    transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
@@ -59,6 +65,11 @@ const OptionButton = styled.button<{ $selected: boolean }>`
     transform: translateY(0) scale(0.98);
     background-color: ${({ theme, $selected }) =>
       $selected ? theme.colors.purple[900] : theme.colors.gray[600]};
+  }
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
   }
 `;
 

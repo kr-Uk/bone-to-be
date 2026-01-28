@@ -71,14 +71,19 @@ export function FeedFormSection({
 
         {/* Body Type Selection */}
         <FeedOptionGroup
-          label="Body Type"
+          label="골격 유형"
           options={BODY_TYPE_OPTIONS}
           value={bodyType}
           onChange={onBodyTypeChange}
         />
 
         {/* Gender Selection */}
-        <FeedOptionGroup label="Gender" options={GENDER_OPTIONS} value={gender} onChange={onGenderChange} />
+        <FeedOptionGroup
+          label="성별"
+          options={GENDER_OPTIONS}
+          value={gender}
+          onChange={onGenderChange}
+        />
 
         {/* Height & Weight Input */}
         <FeedInputGroup
@@ -90,37 +95,21 @@ export function FeedFormSection({
 
         {/* Style Selection */}
         <FeedOptionGroup
-          label="Style"
+          label="스타일"
           options={STYLE_OPTIONS}
           value={styles}
           onChange={onStylesChange}
           multiSelect
         />
-      </S.FormContainer>
-
-      {/* Submit Button */}
-      <S.SubmitButtonContainer>
-        {!isValid && !isSubmitting && (
-          <div
-            role="alert"
-            aria-live="polite"
-            aria-atomic="true"
-            style={{
-              position: "absolute",
-              bottom: "50px",
-              right: "0",
-              fontSize: "12px",
-              color: "#A1A1A1",
-              whiteSpace: "nowrap",
-            }}
-          >
-            필수 항목을 입력해주세요
-          </div>
-        )}
-        <S.SubmitButton type="button" onClick={handleSubmit} $disabled={!isValid || isSubmitting} disabled={!isValid || isSubmitting}>
-          {isSubmitting ? "등록 중..." : "등록"}
+        <S.SubmitButton
+          type="button"
+          onClick={handleSubmit}
+          $disabled={!isValid || isSubmitting}
+          disabled={!isValid || isSubmitting}
+        >
+          게시하기
         </S.SubmitButton>
-      </S.SubmitButtonContainer>
+      </S.FormContainer>
     </>
   );
 }

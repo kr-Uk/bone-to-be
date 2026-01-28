@@ -178,13 +178,6 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
         aria-labelledby="modal-title"
         aria-modal="true"
       >
-        {/* <S.ModalHeader>
-          <S.ModalTitle id="modal-title">새 게시글 작성하기</S.ModalTitle>
-          <S.CloseButton onClick={handleClose} aria-label="Close modal">
-            ×
-          </S.CloseButton>
-        </S.ModalHeader> */}
-
         <S.ModalContent>
           {/* Desktop: ImageSection outside FormSection (Left) */}
           <S.DesktopImageSection>

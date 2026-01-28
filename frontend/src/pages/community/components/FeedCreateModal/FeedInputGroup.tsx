@@ -5,21 +5,36 @@ import type { FeedInputGroupProps } from "./types";
 const GroupContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: clamp(12px, 3vw, 24px);
+  gap: 0.25rem;
+
+  @media (min-width: 768px) {
+    gap: 1rem;
+  }
 `;
 
 const Label = styled.label`
-  font-size: clamp(12px, 3vw, 20px);
+  display: flex;
+  align-items: center;
+  gap: 0.25px;
+  font-size: 0.75rem;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.gray[300]};
-  text-transform: uppercase;
+  line-height: 20px;
   letter-spacing: 0.75px;
+
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const InputsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(12px, 3vw, 24px);
+  gap: 0.75rem;
+
+  @media (min-width: 768px) {
+    gap: 2rem;
+  }
 `;
 
 const InputContainer = styled.div`
@@ -31,7 +46,7 @@ const StyledInput = styled.input`
   background: transparent;
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray[600]};
-  color: ${({ theme }) => theme.colors.purple[600]};
+  color: ${({ theme }) => theme.colors.gray[50]};
   font-size: clamp(10px, 2.5vw, 16px);
   font-weight: 400;
   padding: 8px 0;
@@ -85,7 +100,7 @@ export function FeedInputGroup({
 
   return (
     <GroupContainer>
-      <Label>Height & Weight</Label>
+      <Label>키 / 몸무게</Label>
       <InputsWrapper>
         <InputContainer>
           <StyledInput

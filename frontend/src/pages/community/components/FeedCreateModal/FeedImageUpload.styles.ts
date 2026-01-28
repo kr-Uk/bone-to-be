@@ -14,16 +14,16 @@ export const UploadContainer = styled.div<{ $isDragOver: boolean }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 0.125rem;
   cursor: pointer;
   transform: ${({ $isDragOver }) => ($isDragOver ? "scale(1.02)" : "scale(1)")};
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* min-height 제거 - 부모의 aspect-ratio에 의존 */
-  padding: 24px;
-
   @media (min-width: 768px) {
-    padding: 48px;
+    /* padding: 48px; */
+    max-width: 390px;
+    max-height: 390px;
+    gap: 1.25rem;
   }
 
   @media (min-width: 1024px) {
@@ -37,8 +37,8 @@ export const UploadContainer = styled.div<{ $isDragOver: boolean }>`
 `;
 
 export const UploadIconWrapper = styled.div`
-  width: 105px;
-  height: 105px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.colors.purple[900]};
   display: flex;
@@ -52,13 +52,13 @@ export const UploadIconWrapper = styled.div`
 `;
 
 export const UploadIcon = styled.svg`
-  width: 42px;
-  height: 42px;
+  width: 1.5rem;
+  height: 1.5rem;
   color: white;
 
   @media (min-width: 768px) {
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
   }
 `;
 
@@ -70,46 +70,42 @@ export const UploadTextWrapper = styled.div`
 `;
 
 export const UploadTitle = styled.p`
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.gray[50]};
   margin: 0;
+  line-height: 36.75px;
 
   @media (min-width: 768px) {
-    font-size: 16px;
+    font-size: 1.5rem;
   }
 `;
 
 export const UploadSubtitle = styled.p`
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: 400;
   color: ${({ theme }) => theme.colors.gray[500]};
   margin: 0;
+  line-height: 21px;
 
   @media (min-width: 768px) {
-    font-size: 14px;
+    font-size: 1rem;
   }
 `;
 
 export const SelectButton = styled.button`
-  padding: 0.75rem 1.5rem;
   background-color: ${({ theme }) => theme.colors.gray[200]};
   color: black;
   border: none;
   border-radius: 9999px;
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   cursor: pointer;
   transform: scale(1);
   transition: all 0.2s ease;
+  padding: 0 0.5rem;
   -webkit-tap-highlight-color: rgba(152, 16, 250, 0.2);
   touch-action: manipulation;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.purple[900]};
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(152, 16, 250, 0.3);
-  }
 
   &:active {
     transform: scale(0.98);

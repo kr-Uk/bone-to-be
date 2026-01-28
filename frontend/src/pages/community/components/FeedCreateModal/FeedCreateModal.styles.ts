@@ -19,10 +19,11 @@ export const ModalOverlay = styled.div<{ $isOpen: boolean }>`
 
 export const ModalContainer = styled.div<{ $isOpen: boolean }>`
   background-color: ${({ theme }) => theme.colors.gray[800]};
-  border-radius: 8px;
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.gray[600]};
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  max-height: 85vh;
   position: relative;
   transform: ${({ $isOpen }) => ($isOpen ? "scale(1)" : "scale(0.95)")};
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
@@ -32,9 +33,6 @@ export const ModalContainer = styled.div<{ $isOpen: boolean }>`
 
   /* Mobile */
   width: 80%;
-  height: 80%;
-  max-height: 100vh;
-  border-radius: 0;
 
   @media (min-width: 768px) {
     /* Tablet */
@@ -112,6 +110,7 @@ export const ModalContent = styled.div`
   display: flex;
   flex: 1;
   overflow: hidden;
+  border-radius: inherit;
 
   /* Mobile & Tablet: vertical layout */
   flex-direction: column;

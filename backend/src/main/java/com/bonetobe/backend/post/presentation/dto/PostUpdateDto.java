@@ -5,10 +5,12 @@ import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
 import com.bonetobe.backend.post.presentation.parser.PostRequestParser;
 import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.user.domain.Gender;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
 public class PostUpdateDto {
+    @Schema(name = "PostUpdateRequest")
     public record Request(
             String content,
             String gender,

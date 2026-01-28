@@ -1,5 +1,9 @@
 package com.bonetobe.backend.user.domain;
 
+import com.bonetobe.backend.file.domain.FileService;
+import com.bonetobe.backend.file.presentation.FileUploadUrl;
+import com.bonetobe.backend.user.domain.command.UserFileCommand;
+import com.bonetobe.backend.user.domain.query.UserFileSummary;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +16,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileService fileService;
+
+    @Transactional
+    public UserFileSummary issueProfilePresignedUrl(UserFileCommand command) {
+        FileUploadUrl.Request req = new FileUploadUrl.Request(
+                command.originalFileName(),
+                command.contentType(),
+                command.fileSize()
+        );
+
+        FileUploadUrl.Response res = fileService.createUploadUrl(req, command.userId(), command.fileDomainCategory());
+
+        return new UserFileSummary(
+                res.fileId(),
+                res.uploadUrl()
+        );
+    }
 
     @Override
     @Transactional

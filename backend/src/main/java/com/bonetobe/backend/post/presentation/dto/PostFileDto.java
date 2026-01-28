@@ -3,8 +3,10 @@ package com.bonetobe.backend.post.presentation.dto;
 import com.bonetobe.backend.common.DomainCategory;
 import com.bonetobe.backend.post.domain.command.PostFileCommand;
 import com.bonetobe.backend.post.domain.query.PostFileSummary;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class PostFileDto {
+    @Schema(name = "PostFileRequest")
     public record Request(
             String originalFileName,
             String contentType,
@@ -22,6 +24,7 @@ public class PostFileDto {
         }
     }
 
+    @Schema(name = "PostFileResponse")
     public record Response(
             Long fileId,
             String uploadUrl

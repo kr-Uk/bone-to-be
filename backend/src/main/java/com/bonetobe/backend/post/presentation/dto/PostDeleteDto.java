@@ -3,9 +3,11 @@ package com.bonetobe.backend.post.presentation.dto;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class PostDeleteDto {
 
+    @Schema(name = "PostDeleteRequest")
     public record Request() {
         public static PostDeleteCommand toCommand(Long userId, Long postId) {
             if (userId == null || postId == null) {

@@ -24,12 +24,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean existsByEmail(String email) {
-        return jpaRepository.existsByEmail(email);
+        // 탈퇴 여부 상관없이 이메일 존재 여부만 체크 (재가입 방지)
+        return jpaRepository.existsByEmail(email.trim());
+    }
+
+    @Override
+    // 비밀번호 재설정 등에서 사용할 '활성 유저' 체크 메서드 추가
+    public boolean existsActiveUserByEmail(String email) {
+        return jpaRepository.existsByEmailAndIsDeleted(email.trim(), false);
     }
 
     @Override
     public boolean existsByNickname(String nickname) {
-        return jpaRepository.existsByNickname(nickname);
+        // 탈퇴한 유저의 닉네임은 재사용할 수 없게 함
+        return jpaRepository.existsByNicknameAndIsDeleted(nickname.trim(), false);
     }
 
     @Override

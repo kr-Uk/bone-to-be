@@ -7,7 +7,7 @@ export const baseURL =
 
 const axiosInstance = axios.create({
   baseURL,
-  withCredentials: true,
+  // withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(

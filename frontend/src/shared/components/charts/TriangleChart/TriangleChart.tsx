@@ -105,12 +105,16 @@ const TriangleChart = ({
     enabled: customLabels?.enabled ?? DEFAULT_CUSTOM_LABELS.enabled,
   };
 
+  const numericData = data.map((value) => Number(value));
+  const maxValue = Math.max(...numericData);
+  const normalizedData = maxValue > 0 && maxValue <= 1 ? numericData.map((value) => value * 100) : numericData;
+
   const chartData = {
     labels,
     datasets: [
       {
         label: "Analysis",
-        data,
+        data: normalizedData,
         backgroundColor: mergedChartOptions.backgroundColor,
         borderColor: mergedChartOptions.borderColor,
         borderWidth: mergedChartOptions.borderWidth,

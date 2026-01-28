@@ -98,6 +98,18 @@ export interface FeedAuthor {
 }
 
 /**
+ * 좋아요 유저 프로필
+ */
+export interface FeedLikeUser {
+  id: string;
+  username: string;
+  displayName?: string;
+  bodyType?: "Straight" | "Wave" | "Natural";
+  location?: string;
+  avatarUrl?: string | null;
+}
+
+/**
  * 피드 상세 정보
  */
 export interface FeedDetail {
@@ -109,6 +121,7 @@ export interface FeedDetail {
   createdAt: string;
   isLiked: boolean;
   likeCount: number;
+  likeUsers: FeedLikeUser[];
   commentCount: number;
   isSaved: boolean;
 }

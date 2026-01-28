@@ -13,7 +13,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCreateFeedComment, useLikeToggle } from "../api";
 
-import type { FeedComment, FeedDetail } from "../api";
+import type { FeedComment, FeedDetail, FeedLikeUser } from "../api";
 
 interface Props {
   detail: FeedDetail | null;
@@ -49,6 +49,8 @@ export function FeedDetailRight({
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [likeUsers, setLikeUsers] = useState<FeedLikeUser[]>([]);
+  const [isLikesOpen, setIsLikesOpen] = useState(false);
   const [commentInput, setCommentInput] = useState("");
   const commentInputRef = useRef<HTMLInputElement | null>(null);
   const likeToggleMutation = useLikeToggle();
@@ -59,6 +61,7 @@ export function FeedDetailRight({
     setLiked(detail.isLiked);
     setSaved(detail.isSaved);
     setLikeCount(detail.likeCount);
+    setLikeUsers(detail.likeUsers ?? []);
   }, [detail]);
 
   useEffect(() => {
@@ -78,6 +81,25 @@ export function FeedDetailRight({
     const nextLiked = !liked;
     setLiked(nextLiked);
     setLikeCount((count) => (nextLiked ? count + 1 : count - 1));
+    setLikeUsers((users) => {
+      const exists = users.some((user) => user.id === "me");
+      if (nextLiked && !exists) {
+        return [
+          {
+            id: "me",
+            username: "me",
+            bodyType: "Wave",
+            location: "Seoul, Korea",
+            avatarUrl: null,
+          },
+          ...users,
+        ];
+      }
+      if (!nextLiked && exists) {
+        return users.filter((user) => user.id !== "me");
+      }
+      return users;
+    });
     likeToggleMutation.mutate({ feedId: detail.id });
   };
 
@@ -201,7 +223,43 @@ export function FeedDetailRight({
           </IconButton>
         </ActionRow>
 
-        <Likes>{likeCount} likes</Likes>
+        <LikesButton type="button" onClick={() => setIsLikesOpen(true)}>
+          {likeCount} likes
+        </LikesButton>
+
+        {isLikesOpen && (
+          <LikesOverlay onClick={() => setIsLikesOpen(false)}>
+            <LikesPanel onClick={(event) => event.stopPropagation()}>
+              <LikesHeader>
+                <LikesTitle>좋아요</LikesTitle>
+                <LikesCloseButton type="button" onClick={() => setIsLikesOpen(false)}>
+                  ✕
+                </LikesCloseButton>
+              </LikesHeader>
+              {likeUsers.length === 0 ? (
+                <LikesEmpty>아직 좋아요가 없어요.</LikesEmpty>
+              ) : (
+                <LikesList>
+                  {likeUsers.map((user) => {
+                    const secondary = user.displayName ?? [user.bodyType, user.location].filter(Boolean).join(" · ");
+                    return (
+                      <LikeItem key={user.id}>
+                        <LikeLeft>
+                          <LikeAvatar />
+                          <div>
+                            <LikeName>{user.username}</LikeName>
+                            {secondary ? <LikeMeta>{secondary}</LikeMeta> : null}
+                          </div>
+                        </LikeLeft>
+                        <FollowButton type="button">팔로우</FollowButton>
+                      </LikeItem>
+                    );
+                  })}
+                </LikesList>
+              )}
+            </LikesPanel>
+          </LikesOverlay>
+        )}
 
         <CommentInput
           ref={commentInputRef}
@@ -383,11 +441,18 @@ const HeartButton = styled.button<{ liked: boolean }>`
 `;
 
 
-const Likes = styled.div`
+const LikesButton = styled.button`
   color: #fafafa;
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #e5e5e5;
+  }
 
   @media (max-width: 768px) {
     font-size: 16px;
@@ -395,6 +460,124 @@ const Likes = styled.div`
 
   @media (max-width: 390px) {
     font-size: 14px;
+  }
+`;
+
+const LikesOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+`;
+
+const LikesPanel = styled.div`
+  width: min(640px, 92vw);
+  max-height: 82vh;
+  background: #202124;
+  border: 1px solid #2f3033;
+  border-radius: 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
+const LikesHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 14px 18px;
+  border-bottom: 1px solid #2f3033;
+`;
+
+const LikesTitle = styled.div`
+  color: #fafafa;
+  font-size: 18px;
+  font-weight: 700;
+`;
+
+const LikesCloseButton = styled.button`
+  color: #a1a1a1;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: absolute;
+  right: 16px;
+  top: 8px;
+
+  &:hover {
+    color: #fafafa;
+  }
+`;
+
+const LikesList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  padding: 6px 0;
+  max-height: 504px;
+`;
+
+const LikeItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  min-height: 72px;
+`;
+
+const LikeLeft = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+`;
+
+const LikeAvatar = styled.div`
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #525252;
+  flex-shrink: 0;
+`;
+
+const LikeName = styled.div`
+  color: #fafafa;
+  font-weight: 600;
+  font-size: 15px;
+`;
+
+const LikeMeta = styled.div`
+  color: #a1a1a1;
+  font-size: 14px;
+`;
+
+const LikesEmpty = styled.div`
+  color: #a1a1a1;
+  font-size: 15px;
+  padding: 16px 18px;
+`;
+
+const FollowButton = styled.button`
+  background: #6366f1;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 

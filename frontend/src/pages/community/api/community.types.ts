@@ -160,6 +160,7 @@ export interface FeedDetail {
   createdAt: string;
   isLiked: boolean;
   likeCount: number;
+  likeUsers: FeedLikeUser[];
   commentCount: number;
   isSaved: boolean;
 }

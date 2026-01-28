@@ -28,7 +28,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["casual", "minimal"],
     gender: "F",
     isLiked: false,
-    likeCount: 42,
+    likeCount: 6,
     createdAt: "2026-01-20T10:00:00Z",
   },
   {
@@ -41,7 +41,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["street"],
     gender: "F",
     isLiked: false,
-    likeCount: 28,
+    likeCount: 4,
     createdAt: "2026-01-19T15:30:00Z",
   },
   {
@@ -54,7 +54,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["minimal"],
     gender: "M",
     isLiked: false,
-    likeCount: 89,
+    likeCount: 7,
     createdAt: "2026-01-21T08:15:00Z",
   },
   {
@@ -67,7 +67,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["street", "casual"],
     gender: "F",
     isLiked: false,
-    likeCount: 156,
+    likeCount: 9,
     createdAt: "2026-01-22T12:45:00Z",
   },
   {
@@ -80,7 +80,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["casual", "minimal"],
     gender: "F",
     isLiked: false,
-    likeCount: 63,
+    likeCount: 5,
     createdAt: "2026-01-18T14:20:00Z",
   },
   {
@@ -93,7 +93,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["street"],
     gender: "M",
     isLiked: false,
-    likeCount: 112,
+    likeCount: 6,
     createdAt: "2026-01-17T09:30:00Z",
   },
   {
@@ -106,7 +106,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["minimal"],
     gender: "F",
     isLiked: false,
-    likeCount: 78,
+    likeCount: 4,
     createdAt: "2026-01-21T16:00:00Z",
   },
   {
@@ -119,7 +119,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["casual"],
     gender: "M",
     isLiked: false,
-    likeCount: 45,
+    likeCount: 6,
     createdAt: "2026-01-20T11:10:00Z",
   },
   {
@@ -132,7 +132,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["street", "minimal"],
     gender: "F",
     isLiked: false,
-    likeCount: 134,
+    likeCount: 7,
     createdAt: "2026-01-22T13:25:00Z",
   },
   {
@@ -145,7 +145,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["casual", "street"],
     gender: "F",
     isLiked: false,
-    likeCount: 201,
+    likeCount: 10,
     createdAt: "2026-01-23T10:00:00Z",
   },
   {
@@ -158,7 +158,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["minimal"],
     gender: "M",
     isLiked: false,
-    likeCount: 87,
+    likeCount: 5,
     createdAt: "2026-01-16T15:40:00Z",
   },
   {
@@ -171,7 +171,7 @@ const mockFeedItems: FeedItem[] = [
     styles: ["casual"],
     gender: "F",
     isLiked: false,
-    likeCount: 99,
+    likeCount: 4,
     createdAt: "2026-01-19T07:50:00Z",
   },
 ];
@@ -300,7 +300,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Natural", "OOTD", "좋댓구알"],
     createdAt: "2026-01-20T10:00:00Z",
     isLiked: false,
-    likeCount: 42,
+    likeCount: 6,
+    likeUsers: pickLikeUsers([0, 1, 2, 3, 4, 22]),
     commentCount: 9,
     isSaved: false,
   },
@@ -317,7 +318,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Winter", "Minimal"],
     createdAt: "2026-01-19T15:30:00Z",
     isLiked: false,
-    likeCount: 28,
+    likeCount: 4,
+    likeUsers: pickLikeUsers([5, 6, 7, 11]),
     commentCount: 4,
     isSaved: false,
   },
@@ -334,7 +336,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Minimal", "Office"],
     createdAt: "2026-01-21T08:15:00Z",
     isLiked: false,
-    likeCount: 89,
+    likeCount: 7,
+    likeUsers: pickLikeUsers([6, 7, 8, 9, 10, 21, 23]),
     commentCount: 2,
     isSaved: false,
   },
@@ -351,7 +354,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Street", "Casual"],
     createdAt: "2026-01-22T12:45:00Z",
     isLiked: false,
-    likeCount: 156,
+    likeCount: 9,
+    likeUsers: pickLikeUsers([0, 3, 4, 5, 14, 15, 16, 17, 18]),
     commentCount: 3,
     isSaved: false,
   },
@@ -368,7 +372,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Casual", "Natural"],
     createdAt: "2026-01-18T14:20:00Z",
     isLiked: false,
-    likeCount: 63,
+    likeCount: 5,
+    likeUsers: pickLikeUsers([1, 2, 6, 12, 19]),
     commentCount: 1,
     isSaved: false,
   },
@@ -385,7 +390,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Street", "Urban"],
     createdAt: "2026-01-17T09:30:00Z",
     isLiked: false,
-    likeCount: 112,
+    likeCount: 6,
+    likeUsers: pickLikeUsers([13, 14, 18, 19, 20, 21]),
     commentCount: 2,
     isSaved: false,
   },
@@ -402,7 +408,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Minimal", "Daily"],
     createdAt: "2026-01-21T16:00:00Z",
     isLiked: false,
-    likeCount: 78,
+    likeCount: 4,
+    likeUsers: pickLikeUsers([2, 5, 6, 9]),
     commentCount: 2,
     isSaved: false,
   },
@@ -419,7 +426,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Casual", "Athleisure"],
     createdAt: "2026-01-20T11:10:00Z",
     isLiked: false,
-    likeCount: 45,
+    likeCount: 6,
+    likeUsers: pickLikeUsers([7, 8, 9, 10, 16, 17]),
     commentCount: 1,
     isSaved: false,
   },
@@ -436,7 +444,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Street", "Leather"],
     createdAt: "2026-01-22T13:25:00Z",
     isLiked: false,
-    likeCount: 134,
+    likeCount: 7,
+    likeUsers: pickLikeUsers([3, 4, 10, 14, 20, 21, 23]),
     commentCount: 3,
     isSaved: false,
   },
@@ -453,7 +462,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Casual", "Layered"],
     createdAt: "2026-01-23T10:00:00Z",
     isLiked: false,
-    likeCount: 201,
+    likeCount: 10,
+    likeUsers: pickLikeUsers([0, 1, 2, 7, 8, 11, 15, 16, 17, 18]),
     commentCount: 5,
     isSaved: false,
   },
@@ -470,7 +480,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Classic", "Minimal"],
     createdAt: "2026-01-16T15:40:00Z",
     isLiked: false,
-    likeCount: 87,
+    likeCount: 5,
+    likeUsers: pickLikeUsers([12, 13, 19, 20, 22]),
     commentCount: 2,
     isSaved: false,
   },
@@ -487,7 +498,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     tags: ["Casual", "Sneakers"],
     createdAt: "2026-01-19T07:50:00Z",
     isLiked: false,
-    likeCount: 99,
+    likeCount: 4,
+    likeUsers: pickLikeUsers([10, 11, 14, 15]),
     commentCount: 1,
     isSaved: false,
   },
@@ -874,6 +886,7 @@ export const communityHandlers = [
 
     const { feedId } = params;
     const mockItem = mockFeedItems.find((item) => item.id === feedId);
+    const mockDetail = mockFeedDetails[String(feedId)];
 
     if (!mockItem) {
       return HttpResponse.json(
@@ -886,12 +899,28 @@ export const communityHandlers = [
     mockItem.isLiked = !mockItem.isLiked;
     mockItem.likeCount += mockItem.isLiked ? 1 : -1;
 
-    const response: LikeToggleResponseDto = {
-      postId: Number(feedId),
+    if (mockDetail) {
+      mockDetail.isLiked = mockItem.isLiked;
+      if (mockItem.isLiked) {
+        const exists = mockDetail.likeUsers.some((user) => user.id === viewerLikeUser.id);
+        if (!exists) {
+          mockDetail.likeUsers.unshift(viewerLikeUser);
+        }
+      } else {
+        mockDetail.likeUsers = mockDetail.likeUsers.filter(
+          (user) => user.id !== viewerLikeUser.id
+        );
+      }
+      mockDetail.likeCount = mockDetail.likeUsers.length;
+      mockItem.likeCount = mockDetail.likeCount;
+    }
+
+    return HttpResponse.json({
+      feedId,
       isLiked: mockItem.isLiked,
       likeCount: mockItem.likeCount,
-    };
-    return HttpResponse.json(response);
+    });
+
   }),
 
   // GET /api/feed/:feedId (피드 상세)

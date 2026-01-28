@@ -122,6 +122,16 @@ export interface FeedComment {
   text: string;
   createdAt: string;
   isLiked: boolean;
+  parentCommentId?: string | null;
+}
+
+/**
+ * 댓글 작성 요청
+ */
+export interface FeedCommentCreateRequest {
+  feedId: string;
+  text: string;
+  parentCommentId?: string | null;
 }
 
 /**

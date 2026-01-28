@@ -792,4 +792,45 @@ export const communityHandlers = [
       hasMore: end < source.items.length,
     });
   }),
+
+  // POST /api/feed/:feedId/comments (댓글 작성)
+  http.post("/api/feed/:feedId/comments", async ({ params, request }) => {
+    await delay(200);
+
+    const { feedId } = params;
+    const source = mockFeedComments[String(feedId)];
+
+    if (!source) {
+      return HttpResponse.json(
+        { error: "댓글을 찾을 수 없습니다." },
+        { status: 404 }
+      );
+    }
+
+    const body = (await request.json()) as {
+      text?: string;
+      parentCommentId?: string | null;
+    };
+
+    const text = (body.text ?? "").trim();
+    if (!text) {
+      return HttpResponse.json(
+        { error: "댓글 내용을 입력해주세요." },
+        { status: 400 }
+      );
+    }
+
+    const newComment = {
+      id: `c-${Date.now()}`,
+      username: "me",
+      text,
+      createdAt: new Date().toISOString(),
+      isLiked: false,
+      parentCommentId: body.parentCommentId ?? null,
+    };
+
+    source.items.push(newComment);
+
+    return HttpResponse.json(newComment);
+  }),
 ];

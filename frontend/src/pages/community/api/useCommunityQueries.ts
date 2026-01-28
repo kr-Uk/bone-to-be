@@ -1,10 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { getFeedComments, getFeedDetail, getFeedList, toggleLike } from "./community.api";
+import {
+  createFeedComment,
+  getFeedComments,
+  getFeedDetail,
+  getFeedList,
+  toggleLike,
+} from "./community.api";
 
 import type {
   FeedCommentListRequest,
   FeedCommentListResponse,
+  FeedCommentCreateRequest,
   FeedDetail,
   FeedListRequest,
   FeedListResponse,
@@ -43,6 +50,21 @@ export function useFeedComments(request: FeedCommentListRequest) {
     queryFn: () => getFeedComments(request),
     enabled: Boolean(request.feedId),
     staleTime: 1000 * 30, // 30초
+  });
+}
+
+/**
+ * 댓글 작성 뮤테이션
+ */
+export function useCreateFeedComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (request: FeedCommentCreateRequest) => createFeedComment(request),
+    onSuccess: (_, request) => {
+      queryClient.invalidateQueries({ queryKey: ["feedComments", request.feedId] });
+      queryClient.invalidateQueries({ queryKey: ["feedDetail", request.feedId] });
+    },
   });
 }
 

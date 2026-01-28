@@ -1,21 +1,41 @@
 import styled from "styled-components";
-import { useState, forwardRef } from "react";
+import type { KeyboardEvent } from "react";
+import { forwardRef } from "react";
 
-export const CommentInput = forwardRef<HTMLInputElement>((_, ref) => {
-  const [text, setText] = useState("");
+interface Props {
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
+  placeholder?: string;
+  disabled?: boolean;
+}
 
-  return (
-    <Wrapper>
-      <Input
-        ref = {ref}
-        placeholder="댓글 달기 ..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <PostButton>게시</PostButton>
-    </Wrapper>
-  );
-});
+export const CommentInput = forwardRef<HTMLInputElement, Props>(
+  ({ value, onChange, onSubmit, placeholder = "댓글 달기 ...", disabled }, ref) => {
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onSubmit();
+      }
+    };
+
+    return (
+      <Wrapper>
+        <Input
+          ref={ref}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+        />
+        <PostButton type="button" onClick={onSubmit} disabled={disabled || !value.trim()}>
+          게시
+        </PostButton>
+      </Wrapper>
+    );
+  },
+);
 
 const Wrapper = styled.div`
   display: flex;

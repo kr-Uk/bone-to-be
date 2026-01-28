@@ -6,13 +6,12 @@ import { CommentRow } from "./CommentRow";
 import {
   FaRegHeart,
   FaHeart,
-  FaRegPaperPlane,
   FaRegComment,
   FaRegBookmark,
   FaBookmark,
 } from "react-icons/fa";
-import { useEffect, useRef, useState } from "react";
-import { useLikeToggle } from "../api";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useCreateFeedComment, useLikeToggle } from "../api";
 
 import type { FeedComment, FeedDetail } from "../api";
 
@@ -41,8 +40,13 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [commentInput, setCommentInput] = useState("");
+  const [replyTarget, setReplyTarget] = useState<{ id: string; username: string } | null>(
+    null,
+  );
   const commentInputRef = useRef<HTMLInputElement | null>(null);
   const likeToggleMutation = useLikeToggle();
+  const createCommentMutation = useCreateFeedComment();
 
   useEffect(() => {
     if (!detail) return;
@@ -58,6 +62,70 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
     setLikeCount((count) => (nextLiked ? count + 1 : count - 1));
     likeToggleMutation.mutate({ feedId: detail.id });
   };
+
+  const handleReplyClick = (username: string, commentId: string) => {
+    const mention = `@${username} `;
+    setReplyTarget({ id: commentId, username });
+    setCommentInput((prev) => {
+      if (prev.startsWith(mention)) return prev;
+      const stripped = prev.replace(/^@\S+\s+/, "");
+      return `${mention}${stripped}`;
+    });
+    commentInputRef.current?.focus();
+  };
+
+  const handleSubmitComment = () => {
+    if (!detail) return;
+    const trimmed = commentInput.trim();
+    if (!trimmed) return;
+
+    createCommentMutation.mutate({
+      feedId: detail.id,
+      text: trimmed,
+      parentCommentId: replyTarget?.id ?? null,
+    });
+
+    setCommentInput("");
+    setReplyTarget(null);
+  };
+
+  const orderedComments = useMemo(() => {
+    const byId = new Map<string, FeedComment>();
+    const children = new Map<string, FeedComment[]>();
+
+    for (const comment of comments) {
+      byId.set(comment.id, comment);
+    }
+
+    for (const comment of comments) {
+      const parentId = comment.parentCommentId ?? null;
+      if (!parentId) continue;
+      const list = children.get(parentId) ?? [];
+      list.push(comment);
+      children.set(parentId, list);
+    }
+
+    const topLevel = comments.filter(
+      (comment) => !comment.parentCommentId || !byId.has(comment.parentCommentId),
+    );
+
+    const ordered: Array<{ comment: FeedComment; depth: number }> = [];
+
+    const visit = (comment: FeedComment, depth: number) => {
+      ordered.push({ comment, depth });
+      const kids = children.get(comment.id);
+      if (!kids) return;
+      for (const child of kids) {
+        visit(child, depth + 1);
+      }
+    };
+
+    for (const comment of topLevel) {
+      visit(comment, 0);
+    }
+
+    return ordered;
+  }, [comments]);
 
   return (
     <RightContainer>
@@ -98,13 +166,15 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
         ) : comments.length === 0 ? (
           <CommentStatus>첫 댓글을 남겨보세요.</CommentStatus>
         ) : (
-          comments.map((comment) => (
-            <CommentRow
-              key={comment.id}
-              username={comment.username}
-              text={comment.text}
-              time={formatTimeAgo(comment.createdAt)}
-            />
+          orderedComments.map(({ comment, depth }) => (
+            <CommentRowWrapper key={comment.id} $depth={depth}>
+              <CommentRow
+                username={comment.username}
+                text={comment.text}
+                time={formatTimeAgo(comment.createdAt)}
+                onReply={() => handleReplyClick(comment.username, comment.id)}
+              />
+            </CommentRowWrapper>
           ))
         )}
       </CommentsSection>
@@ -113,26 +183,32 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
         <ActionRow>
           <LeftActions>
             <HeartButton liked={liked} onClick={handleLikeToggle}>
-              {liked ? <FaHeart /> : <FaRegHeart />}
+              {liked ? <FaHeart size={32}/> : <FaRegHeart size={32}/>}
             </HeartButton>
 
             <IconButton onClick={() => commentInputRef.current?.focus()}>
-              <FaRegComment />
+              <FaRegComment size={32}/>
             </IconButton>
 
-            <IconButton>
-              <FaRegPaperPlane size={18} />
-            </IconButton>
           </LeftActions>
 
           <IconButton onClick={() => setSaved((v) => !v)}>
-            {saved ? <FaBookmark /> : <FaRegBookmark />}
+            {saved ? <FaBookmark size={32}/> : <FaRegBookmark size={32}/>}
           </IconButton>
         </ActionRow>
 
         <Likes>{likeCount} likes</Likes>
 
-        <CommentInput ref={commentInputRef} />
+        <CommentInput
+          ref={commentInputRef}
+          value={commentInput}
+          onChange={setCommentInput}
+          onSubmit={handleSubmitComment}
+          placeholder={
+            replyTarget ? `@${replyTarget.username} 님에게 답글 달기...` : "댓글 달기 ..."
+          }
+          disabled={createCommentMutation.isPending}
+        />
       </Footer>
     </RightContainer>
   );
@@ -250,6 +326,10 @@ const CommentsSection = styled.div`
 const CommentStatus = styled.div`
   color: #a1a1a1;
   font-size: 14px;
+`;
+
+const CommentRowWrapper = styled.div<{ $depth: number }>`
+  padding-left: ${({ $depth }) => ($depth > 0 ? "24px" : "0")};
 `;
 
 

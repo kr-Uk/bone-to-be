@@ -7,6 +7,7 @@ interface Props {
   username: string;
   text: string;
   time: string;
+  onReply?: () => void;
 }
 
 export function CommentRow(props: Props) {

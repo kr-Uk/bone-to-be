@@ -5,6 +5,8 @@ import type {
   FeedDetail,
   FeedCommentListRequest,
   FeedCommentListResponse,
+  FeedCommentCreateRequest,
+  FeedComment,
   LikeToggleRequest,
   LikeToggleResponse,
 } from "./community.types";
@@ -82,6 +84,22 @@ export async function getFeedComments(
         page: request.page,
         size: request.limit,
       },
+    },
+  );
+  return data;
+}
+
+/**
+ * 댓글 작성
+ */
+export async function createFeedComment(
+  request: FeedCommentCreateRequest
+): Promise<FeedComment> {
+  const { data } = await axiosInstance.post<FeedComment>(
+    `/feed/${request.feedId}/comments`,
+    {
+      text: request.text,
+      parentCommentId: request.parentCommentId ?? null,
     },
   );
   return data;

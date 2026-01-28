@@ -195,6 +195,7 @@ export const ScrollableContent = styled.div`
   min-height: 0; /* flex 아이템이 overflow를 제대로 처리하도록 */
   overflow-y: auto;
   overflow-x: hidden; /* 가로 스크롤 차단 */
+  scrollbar-gutter: stable; /* 스크롤바 공간 예약으로 레이아웃 안정성 확보 */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   display: flex;

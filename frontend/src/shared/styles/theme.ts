@@ -9,12 +9,17 @@ export const theme = {
     backgroundDark: "#000000",
     border: "#E5E5E5",
     brand: "#9810FA",
+    brandDisable: "#C27AFF",
+    disable: "A1A1A1",
     purple: {
+      50: "#FAF5FF",
       200: "#E9D4FF",
       600: "#9810FA",
+      700: "#7E22CE",
+      800: "#6E11B0",
       900: "#59168B",
     },
-  gray: {
+    gray: {
       50: "#FAFAFA",
       100: "#F5F5F5",
       200: "#E5E5E5",
@@ -26,7 +31,6 @@ export const theme = {
       800: "#262626",
       900: "#171717",
     },
-
   },
 
   typography: {

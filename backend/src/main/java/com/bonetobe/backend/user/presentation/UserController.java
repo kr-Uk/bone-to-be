@@ -6,6 +6,7 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "CookieAuth")
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+
+    // 타인 프로필 조회
+    // @SecurityRequirements(value = {})
 
     // 프로필 조회
     //@GetMapping("/me")
@@ -38,8 +43,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        // principal.getUserId()를 사용하여 요청 처리
-        userService.updatePassword(request.toCommand(principal.getUserId()));
+        userService.updatePassword(request.toCommand(principal.getId()));
 
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
@@ -53,7 +57,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        userService.deleteAccount(principal.getUserId()); // principal.getUserId() 호출
+        userService.deleteAccount(principal.getId());
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 }

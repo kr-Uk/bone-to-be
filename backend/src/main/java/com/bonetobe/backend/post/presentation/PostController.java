@@ -5,12 +5,10 @@ import com.bonetobe.backend.common.response.PaginatedResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.post.application.PostFacade;
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
+import com.bonetobe.backend.post.domain.query.PostFileSummary;
 import com.bonetobe.backend.post.domain.query.PostSummary;
-import com.bonetobe.backend.post.presentation.dto.PostCreateDto;
-import com.bonetobe.backend.post.presentation.dto.PostDeleteDto;
-import com.bonetobe.backend.post.presentation.dto.PostDetailDto;
-import com.bonetobe.backend.post.presentation.dto.PostListDto;
-import com.bonetobe.backend.user.domain.User;
+import com.bonetobe.backend.post.presentation.dto.*;
+import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,25 +55,47 @@ public class PostController {
     @PostMapping
     public ResponseEntity<APIResponse<Void>> createPost(
             @RequestBody PostCreateDto.Request request,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal UserPrincipal user
     ) {
         postFacade.createPost(request.toCommand(user.getId()));
-
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK));
     }
 
-    @DeleteMapping("/{feedId}")
+    @DeleteMapping("/{postId}")
     public ResponseEntity<APIResponse<Void>> deletePost(
-            @PathVariable Long feedId,
-            @AuthenticationPrincipal User user
+            @PathVariable Long postId,
+            @AuthenticationPrincipal UserPrincipal user
     ) {
-        postFacade.deletePost(PostDeleteDto.Request.toCommand(user.getId(), feedId));
+        postFacade.deletePost(PostDeleteDto.Request.toCommand(user.getId(), postId));
 
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK));
     }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<APIResponse<Void>> updatePost(
+            @PathVariable Long postId,
+            @RequestBody PostUpdateDto.Request request,
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        postFacade.updatePost(postId, request.toCommand(user.getId()));
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
+    @PostMapping("/presigned-url")
+    public ResponseEntity<APIResponse<PostFileDto.Response>> issuePresignedUrl(
+            @RequestBody PostFileDto.Request request,
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        PostFileSummary summary = postFacade.issuePresignedUrl(request.toCommand(user.getId()));
+        PostFileDto.Response response = PostFileDto.Response.of(summary);
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, response));
+    }
+
 
 }

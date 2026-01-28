@@ -1,17 +1,18 @@
 package com.bonetobe.backend.post.application;
 
 import com.bonetobe.backend.file.domain.FileService;
-import com.bonetobe.backend.file.presentation.FileDownloadUrl;
-import com.bonetobe.backend.common.exception.BusinessException;
-import com.bonetobe.backend.common.response.ErrorCode;
-import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.domain.StoredFile;
+import com.bonetobe.backend.file.presentation.FileDownloadUrl;
+import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.post.domain.PostService;
-import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
-import com.bonetobe.backend.post.domain.query.*;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
-import com.bonetobe.backend.post.domain.query.PostListQuery;
-import com.bonetobe.backend.post.domain.query.PostSummary;
+import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
+import com.bonetobe.backend.post.domain.command.PostFileCommand;
+import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
+import com.bonetobe.backend.post.domain.query.*;
+import com.bonetobe.backend.style.domain.Style;
+import com.bonetobe.backend.style.domain.StyleService;
+import com.bonetobe.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Transactional
 @Component
 @RequiredArgsConstructor
 public class PostFacade {
 
     private final PostService postService;
     private final FileService fileService;
+    private final StyleService styleService;
 
     @Transactional(readOnly = true)
     public Page<PostSummary> getPostList(PostListQuery query, Pageable pageable) {
@@ -65,16 +68,42 @@ public class PostFacade {
         return raw.toSummary(imageUrl);
     }
 
-    @Transactional
     public void createPost(PostCreateCommand command) {
-        postService.createPost(command);
+        User user = User.of(command.userId());
+        StoredFile file = fileService.getFile(command.fileId());
+        List<Style> styles = styleService.getStylesByNames(command.styles());
+
+        postService.createPost(command, user, file, styles);
+
+        fileService.completeUpload(file, command.userId());
     }
 
-    @Transactional
     public void deletePost(PostDeleteCommand command) {
         postService.deletePost(command);
     }
 
+    @Transactional
+    public void updatePost(Long postId, PostUpdateCommand command) {
 
+        List<Style> styles = styleService.getStylesByNames(command.styles());
+
+        postService.updatePost(postId, command, styles);
+    }
+
+    @Transactional
+    public PostFileSummary issuePresignedUrl(PostFileCommand command) {
+        FileUploadUrl.Request req = new FileUploadUrl.Request(
+                command.originalFileName(),
+                command.contentType(),
+                command.fileSize()
+        );
+
+        FileUploadUrl.Response res = fileService.createUploadUrl(req, command.userId(), command.fileDomainCategory());
+
+        return new PostFileSummary(
+                res.fileId(),
+                res.uploadUrl()
+        );
+    }
 }
 

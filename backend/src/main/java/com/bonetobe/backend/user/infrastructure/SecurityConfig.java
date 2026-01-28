@@ -9,9 +9,13 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -19,6 +23,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userService;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     // 패스워드 인코더로 사용할 빈 등록
     @Bean
@@ -30,19 +36,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // 0. CORS 설정
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 1. CSRF 필터 disable (임시)
                 .csrf(csrf -> csrf.disable())
 
                 // 2. HTTP 요청에 대한 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(
-                        "/auth/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-resources/**",
-                        "/webjars/**"
-                    ).permitAll()
-                    .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
+                        // 1. 게스트용 (None (Guest))
+                        .requestMatchers(
+                                "/auth/**",
+                                "/api/auth/**",
+
+                                "/swagger-ui/**",
+                                "/swagger-resources/**",
+                                "/v3/api-docs/**",
+
+                                "/oauth2/**",
+                                "/login/**",
+                                "/api/oauth2/**",
+                                "/api/login/**"
+                        ).permitAll()
+
+                        // 2. 유저용 (User (Lv.1)) - 로그아웃 포함
+                        .requestMatchers("api/auth/logout","/auth/logout").authenticated()
+
+                        // 3. 나머지 모든 /users/me/** 요청들
+                        .anyRequest().authenticated()
                 )
 
                 // 3. 폼 로그인 설정
@@ -80,14 +100,41 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                 )
 
+                // 7. OAuth 로그인 설정
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .failureUrl("/auth/login?error")
+                )
+
                 .exceptionHandling(exception -> exception
                     .authenticationEntryPoint((request, response, authException) -> {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.setContentType("application/json;charset=UTF-8");
                         response.getWriter().write("{\"code\": 401, \"message\": \"인증이 필요합니다. (또는 잘못된 접근입니다.)\"}");
-                    }));
+                    }))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 필요할 때 세션 생성
+                );
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("https://bonetobe.site");
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://localhost:5174");
+
+        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용 (GET, POST 등)
+        configuration.addAllowedHeader("*"); // 모든 헤더 허용
+        configuration.setAllowCredentials(true); // 쿠키/인증 정보를 포함한 요청 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     // 인증 관리자 관련 설정

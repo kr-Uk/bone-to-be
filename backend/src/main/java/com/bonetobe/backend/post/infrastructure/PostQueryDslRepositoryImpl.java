@@ -1,10 +1,11 @@
 package com.bonetobe.backend.post.infrastructure;
 
-import com.bonetobe.backend.user.domain.Gender;
+import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import com.bonetobe.backend.style.domain.StyleName;
+import com.bonetobe.backend.user.domain.Gender;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -38,6 +39,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
 
         BooleanExpression[] conditions = new BooleanExpression[]{
                 eqGender(c.gender()),
+                eqSkeletonType(c.skeletonType()),
                 betweenHeight(c.minHeight(), c.maxHeight()),
                 betweenWeight(c.minWeight(), c.maxWeight()),
                 inStyles(c.style())
@@ -113,6 +115,11 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
     private BooleanExpression eqGender(Gender gender) {
         return gender == null ? null : post.gender.eq(gender);
     }
+
+    private BooleanExpression eqSkeletonType(SkeletonType skeletonType) {
+        return skeletonType == null ? null : post.skeletonType.eq(skeletonType);
+    }
+
 
     private BooleanExpression betweenHeight(Integer min, Integer max) {
         if (min == null && max == null) return null;

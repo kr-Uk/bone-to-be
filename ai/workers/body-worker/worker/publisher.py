@@ -14,7 +14,7 @@ def publish(message: dict):
     # Determine routing key based on message status
     status = message.get('status', 'COMPLETED')
     
-    if status == 'ERROR' or status == 'FAILED':
+    if status == 'FAILED':
         # Declare failed queue
         ch.queue_declare(queue=Config.FAILED_QUEUE, durable=True)
         ch.queue_bind(

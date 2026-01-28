@@ -93,7 +93,7 @@ def handle(message: dict):
     
     if yolo_model is None or shapy_runner is None:
         publish({
-            "status": "ERROR",
+            "status": "FAILED",
             "reportId": message.get("reportId"),
             "error": "Models not initialized on worker"
         })
@@ -110,7 +110,7 @@ def handle(message: dict):
         # Validate required fields
         if not presigned_url:
             publish({
-                "status": "ERROR",
+                "status": "FAILED",
                 "reportId": report_id,
                 "error": "Missing required field: presignedUrl"
             })
@@ -118,7 +118,7 @@ def handle(message: dict):
         
         if not height_cm or height_cm <= 0:
             publish({
-                "status": "ERROR",
+                "status": "FAILED",
                 "reportId": report_id,
                 "error": "Missing or invalid required field: height (must be > 0)"
             })
@@ -152,7 +152,7 @@ def handle(message: dict):
         except Exception as e:
             print(f"❌ Download failed: {e}")
             publish({
-                "status": "ERROR",
+                "status": "FAILED",
                 "reportId": report_id,
                 "error": f"Failed to download image from presignedUrl: {str(e)}"
             })
@@ -160,7 +160,7 @@ def handle(message: dict):
 
         if img is None:
             publish({
-                "status": "ERROR",
+                "status": "FAILED",
                 "reportId": report_id,
                 "error": "Failed to load image from presignedUrl"
             })
@@ -172,7 +172,7 @@ def handle(message: dict):
         
         if not results or not results[0].keypoints or results[0].keypoints.data.shape[1] == 0:
             publish({
-                "status": "ERROR",
+                "status": "FAILED",
                 "reportId": report_id,
                 "error": "No person detected or no keypoints found"
             })
@@ -258,7 +258,7 @@ def handle(message: dict):
         import traceback
         traceback.print_exc()
         publish({
-            "status": "ERROR",
+            "status": "FAILED",
             "reportId": report_id if 'report_id' in locals() else None,
             "error": str(e)
         })

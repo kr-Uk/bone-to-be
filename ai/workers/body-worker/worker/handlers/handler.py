@@ -243,7 +243,7 @@ def handle(message: dict):
         # 9. Publish Result (flat structure for backend ReportResult)
         publish({
             "report_id": report_id,
-            "bodyMetrics": output.get('body_type_metrics'),
+            "body_metrics": output.get('body_type_metrics'),
             "status": "COMPLETED"
         })
         print("✅ Processing completed and published.")

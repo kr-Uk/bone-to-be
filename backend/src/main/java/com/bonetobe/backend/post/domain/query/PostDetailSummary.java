@@ -24,10 +24,7 @@ public record PostDetailSummary(
 
     public record AuthorSummary(
             Long userId,
-            /*
-            TODO: 유저 프로필 이미지
-             */
-            // String profileImageUrl,
+            String profileImageUrl,
             String nickname,
             Boolean isFollowing
     ) {

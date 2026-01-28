@@ -8,6 +8,7 @@ import com.bonetobe.backend.style.domain.StyleName;
 import java.util.List;
 
 public record PostListQuery(
+        Long viewerId,
         PostSort postSort,
         Gender gender,
         SkeletonType skeletonType,

@@ -2,7 +2,6 @@ package com.bonetobe.backend.post.infrastructure;
 
 import com.bonetobe.backend.post.domain.query.PostLikeUserSummaryRaw;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,25 +21,21 @@ public class PostLikeQueryDslRepositoryImpl implements PostLikeQueryDslRepositor
     @Override
     public List<PostLikeUserSummaryRaw> findPostLikeUsers(Long postId, Long viewerId) {
 
-        var isFollowingExpr =
-                JPAExpressions.selectOne()
-                        .from(follow)
-                        .where(
-                                follow.follower.id.eq(viewerId),
-                                follow.following.id.eq(user.id)
-                        )
-                        .exists();
-
         return qf
                 .select(Projections.constructor(
                         PostLikeUserSummaryRaw.class,
                         user.id,
                         user.nickname,
                         user.profileImage.id,
-                        isFollowingExpr
+                        follow.id.isNotNull()
                 ))
                 .from(postLike)
                 .join(postLike.user, user)
+                .leftJoin(follow)
+                .on(
+                        follow.follower.id.eq(viewerId),
+                        follow.following.id.eq(user.id)
+                )
                 .where(postLike.post.id.eq(postId))
                 .orderBy(postLike.createdAt.desc())
                 .fetch();

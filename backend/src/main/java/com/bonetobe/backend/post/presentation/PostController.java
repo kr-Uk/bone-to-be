@@ -27,10 +27,11 @@ public class PostController {
     @GetMapping
     public ResponseEntity<APIResponse<PaginatedResponse<PostListDto.Response>>> getPostList(
             @ModelAttribute PostListDto.Request request,
+            @AuthenticationPrincipal UserPrincipal user,
             @PageableDefault(size = 20) Pageable pageable
     ) {
 
-        Page<PostSummary> summaryPage = postFacade.getPostList(request.toQuery(), pageable);
+        Page<PostSummary> summaryPage = postFacade.getPostList(request.toQuery(user.getUserId()), pageable);
         Page<PostListDto.Response> dtoPage = summaryPage.map(PostListDto.Response::of);
 
         PaginatedResponse<PostListDto.Response> paginated = PaginatedResponse.createPaginatedResponse(dtoPage);
@@ -42,9 +43,10 @@ public class PostController {
 
     @GetMapping("/{feedId}")
     public ResponseEntity<APIResponse<PostDetailDto.Response>> getPostDetail(
-            @PathVariable Long feedId
+            @PathVariable Long feedId,
+            @AuthenticationPrincipal UserPrincipal user
     ) {
-        PostDetailSummary summary = postFacade.getPostDetail(feedId);
+        PostDetailSummary summary = postFacade.getPostDetail(feedId, user.getUserId());
         PostDetailDto.Response response = PostDetailDto.Response.of(summary);
 
         return ResponseEntity

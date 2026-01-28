@@ -25,7 +25,7 @@ public class PostListDto {
             Integer maxWeight,
             List<String> style
     ) {
-        public PostListQuery toQuery() {
+        public PostListQuery toQuery(Long viewerId) {
             validateRange(minHeight, maxHeight, minWeight, maxWeight);
 
             PostSort parsedPostSort = parseSort(sort);
@@ -34,6 +34,7 @@ public class PostListDto {
             SkeletonType parsedSkeletonType = PostRequestParser.parseSkeletonType(skeletonType);
 
             return new PostListQuery(
+                    viewerId,
                     parsedPostSort,
                     parsedGender,
                     parsedSkeletonType,

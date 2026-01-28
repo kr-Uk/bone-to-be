@@ -19,8 +19,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -57,15 +59,32 @@ public class PostFacade {
     }
 
     @Transactional(readOnly = true)
-    public PostDetailSummary getPostDetail(Long postId) {
+    public PostDetailSummary getPostDetail(Long postId, Long viewerId) {
 
-        PostDetailSummaryRaw raw = postService.getPostDetail(postId);
+        PostDetailSummaryRaw raw = postService.getPostDetail(postId, viewerId);
 
-        String imageUrl = fileService.getPublicDownloadUrls(
-                List.of(new FileDownloadUrl.Query(raw.fileId()))
-        ).get(0).presignedUrl();
+        // 게시글 사진과 프로필 사진 fileId들
+        List<Long> fileIds = Arrays.asList(
+                raw.fileId(),
+                raw.author().profileId()
+        );
 
-        return raw.toSummary(imageUrl);
+        // presigned url 한번에 발급하기
+        Map<Long, String> urlMap = fileService.getPublicDownloadUrls(
+                fileIds.stream()
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .map(FileDownloadUrl.Query::new)
+                        .toList()
+        ).stream().collect(Collectors.toMap(
+                FileDownloadUrl.Result::fileId,
+                FileDownloadUrl.Result::presignedUrl
+        ));
+
+        return raw.toSummary(
+                urlMap.get(raw.fileId()),
+                urlMap.get(raw.author().profileId())
+        );
     }
 
     public void createPost(PostCreateCommand command) {

@@ -4,6 +4,16 @@ import type {
   FeedCommentListResponse,
   FeedDetail,
   FeedItem,
+  FeedLikeUser,
+  FeedListResponseDto,
+  FeedDetailDto,
+  FeedAuthorDto,
+  FeedListItemDto,
+  FeedLikesResponseDto,
+  FeedLikeUserDto,
+  FeedCommentListResponseDto,
+  FeedCommentDto,
+  LikeToggleResponseDto,
   FeedListResponse,
 } from "@/pages/community/api";
 
@@ -165,6 +175,113 @@ const mockFeedItems: FeedItem[] = [
     createdAt: "2026-01-19T07:50:00Z",
   },
 ];
+
+const mockLikeUsersPool: FeedLikeUser[] = [
+  { id: "u-1", username: "daily_urban", displayName: "데일리어반", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-2", username: "cozy_fan", displayName: "코지팬", bodyType: "Natural", location: "Daejeon, Korea", avatarUrl: null },
+  { id: "u-3", username: "tone_fit", displayName: "톤핏", bodyType: "Wave", location: "Gwangju, Korea", avatarUrl: null },
+  { id: "u-4", username: "street_lover", displayName: "스트릿러버", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-5", username: "cap_fan", displayName: "캡러버", bodyType: "Natural", location: "Daegu, Korea", avatarUrl: null },
+  { id: "u-6", username: "minimal_daily", displayName: "미니멀데일리", bodyType: "Wave", location: "Gwangju, Korea", avatarUrl: null },
+  { id: "u-7", username: "office_daily", displayName: "오피스데일리", bodyType: "Straight", location: "Incheon, Korea", avatarUrl: null },
+  { id: "u-8", username: "layered_look", displayName: "레이어드룩", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-9", username: "winter_style", displayName: "윈터스타일", bodyType: "Natural", location: "Suwon, Korea", avatarUrl: null },
+  { id: "u-10", username: "chic_vibe", displayName: "시크바이브", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-11", username: "sneaker_daily", displayName: "스니커데일리", bodyType: "Wave", location: "Jeju, Korea", avatarUrl: null },
+  { id: "u-12", username: "muffler_fan", displayName: "머플러러버", bodyType: "Natural", location: "Busan, Korea", avatarUrl: null },
+  { id: "u-13", username: "classic_fit", displayName: "클래식핏", bodyType: "Natural", location: "Ulsan, Korea", avatarUrl: null },
+  { id: "u-14", username: "city_walk", displayName: "시티워크", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-15", username: "street_mode", displayName: "스트릿모드", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-16", username: "daily_fit", displayName: "데일리핏", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-17", username: "comfort_first", displayName: "컴포트퍼스트", bodyType: "Natural", location: "Suwon, Korea", avatarUrl: null },
+  { id: "u-18", username: "scarf_mood", displayName: "스카프무드", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-19", username: "simple_style", displayName: "심플스타일", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-20", username: "pocket_detail", displayName: "포켓디테일", bodyType: "Natural", location: "Ulsan, Korea", avatarUrl: null },
+  { id: "u-21", username: "leather_fan", displayName: "레더팬", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-22", username: "tone_down", displayName: "톤다운", bodyType: "Wave", location: "Incheon, Korea", avatarUrl: null },
+  { id: "u-23", username: "handsome_hojung", displayName: "호정", bodyType: "Natural", location: "Seoul, Korea", avatarUrl: null },
+  { id: "u-24", username: "junyong_cute", displayName: "준영", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: null },
+];
+
+const pickLikeUsers = (indexes: number[]) =>
+  indexes
+    .map((index) => mockLikeUsersPool[index])
+    .filter((user): user is FeedLikeUser => Boolean(user));
+
+const mapGenderToDto = (gender: "M" | "F") => (gender === "F" ? "female" : "male");
+
+const toAuthorDto = (item: FeedItem, detail?: FeedDetail): FeedAuthorDto => ({
+  memberId: Number(item.id),
+  profileImageUrl: detail?.author.avatarUrl ?? null,
+  nickname: detail?.author.username ?? item.username,
+  isFollowing: false,
+});
+
+const toFeedListItemDto = (item: FeedItem, detail?: FeedDetail): FeedListItemDto => ({
+  postId: Number(item.id),
+  imageUrl: item.imageUrl,
+  style: item.styles,
+  gender: mapGenderToDto(item.gender),
+  height: item.height,
+  weight: item.weight,
+  skeletonType: item.bodyType,
+  likeCount: item.likeCount,
+  commentCount: detail?.commentCount ?? 0,
+  isLiked: item.isLiked,
+  author: toAuthorDto(item, detail),
+  createdAt: item.createdAt,
+});
+
+const toFeedDetailDto = (item: FeedItem, detail: FeedDetail): FeedDetailDto => ({
+  postId: Number(detail.id),
+  imageUrl: detail.imageUrl,
+  style: item.styles,
+  gender: mapGenderToDto(item.gender),
+  height: item.height,
+  weight: item.weight,
+  skeletonType: detail.author.bodyType,
+  content: detail.content.join("\n"),
+  likeCount: detail.likeCount,
+  commentCount: detail.commentCount,
+  isLiked: detail.isLiked,
+  author: toAuthorDto(item, detail),
+  createdAt: detail.createdAt,
+});
+
+const toLikeUserDto = (user: FeedLikeUser): FeedLikeUserDto => ({
+  memberId: Number(user.id.replace(/\D/g, "")) || 0,
+  nickname: user.username,
+  profileImageUrl: user.avatarUrl ?? null,
+  isFollowing: Boolean(user.isFollowing),
+});
+
+const toCommentDto = (comment: {
+  id: string;
+  username: string;
+  text: string;
+  createdAt: string;
+  isLiked: boolean;
+}): FeedCommentDto => ({
+  replyId: Number(comment.id.replace(/\D/g, "")) || Date.now(),
+  replyContent: comment.text,
+  likeCount: 0,
+  isLiked: comment.isLiked,
+  createdAt: comment.createdAt,
+  author: {
+    memberId: Number(comment.id.replace(/\D/g, "")) || 0,
+    nickname: comment.username,
+    profileImageUrl: null,
+  },
+});
+
+const viewerLikeUser: FeedLikeUser = {
+  id: "me",
+  username: "me",
+  displayName: "나",
+  bodyType: "Wave",
+  location: "Seoul, Korea",
+  avatarUrl: null,
+};
 
 const mockFeedDetails: Record<string, FeedDetail> = {
   "1": {
@@ -385,6 +502,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "자켓 정보 알 수 있을까요?",
         createdAt: "2026-01-20T12:10:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-2",
@@ -392,6 +510,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "대박 너무 이뻐요 진심;;",
         createdAt: "2026-01-20T12:40:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-3",
@@ -399,6 +518,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "핏이 정말 좋네요! :)",
         createdAt: "2026-01-20T13:05:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 3,
@@ -413,6 +533,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "코트 어디 제품인가요?",
         createdAt: "2026-01-19T16:10:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 1,
@@ -427,6 +548,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "셋업 컬러 너무 좋아요!",
         createdAt: "2026-01-21T09:05:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-6",
@@ -434,6 +556,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "로퍼 정보 궁금합니다.",
         createdAt: "2026-01-21T09:40:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 2,
@@ -448,6 +571,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "패딩 핏 좋네요!",
         createdAt: "2026-01-22T13:30:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-8",
@@ -455,6 +579,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "볼캡 어디 브랜드인가요?",
         createdAt: "2026-01-22T13:55:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-9",
@@ -462,6 +587,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "스트릿 감성 제대로!",
         createdAt: "2026-01-22T14:10:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 3,
@@ -476,6 +602,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "톤온톤 예쁩니다.",
         createdAt: "2026-01-18T15:10:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 1,
@@ -490,6 +617,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "블랙 코트 멋져요!",
         createdAt: "2026-01-17T10:05:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-12",
@@ -497,6 +625,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "도시 감성 뿜뿜입니다.",
         createdAt: "2026-01-17T10:22:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 2,
@@ -511,6 +640,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "액세서리 포인트 굿!",
         createdAt: "2026-01-21T16:30:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-14",
@@ -518,6 +648,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "색감 너무 잘 맞네요.",
         createdAt: "2026-01-21T16:50:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 2,
@@ -532,6 +663,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "편한 룩 최고죠!",
         createdAt: "2026-01-20T11:40:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 1,
@@ -546,6 +678,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "레더 재킷 멋져요.",
         createdAt: "2026-01-22T13:50:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-17",
@@ -553,6 +686,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "스트릿 느낌 완전 좋아요!",
         createdAt: "2026-01-22T14:05:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-18",
@@ -560,6 +694,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "색감 조합 최고.",
         createdAt: "2026-01-22T14:30:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 3,
@@ -574,6 +709,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "레이어드 잘하셨네요!",
         createdAt: "2026-01-23T10:30:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-20",
@@ -581,6 +717,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "머플러 색감 궁금해요.",
         createdAt: "2026-01-23T10:55:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-21",
@@ -588,6 +725,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "겨울 코디 참고할게요!",
         createdAt: "2026-01-23T11:10:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-22",
@@ -595,6 +733,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "핏 너무 예뻐요.",
         createdAt: "2026-01-23T11:25:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-23",
@@ -602,6 +741,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "색 조합 최고네요.",
         createdAt: "2026-01-23T11:40:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 5,
@@ -616,6 +756,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "클래식 무드 최고!",
         createdAt: "2026-01-16T16:10:00Z",
         isLiked: false,
+        likeCount: 0
       },
       {
         id: "c-25",
@@ -623,6 +764,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "포켓치프 포인트 좋네요.",
         createdAt: "2026-01-16T16:35:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 2,
@@ -637,6 +779,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "스니커즈 매치 굿!",
         createdAt: "2026-01-19T08:15:00Z",
         isLiked: false,
+        likeCount: 0
       },
     ],
     total: 1,
@@ -668,7 +811,8 @@ export const communityHandlers = [
 
     // 성별 필터
     if (gender) {
-      filteredItems = filteredItems.filter((item) => item.gender === gender);
+      const mappedGender = gender === "female" ? "F" : "M";
+      filteredItems = filteredItems.filter((item) => item.gender === mappedGender);
     }
 
     // 키 범위 필터
@@ -712,8 +856,10 @@ export const communityHandlers = [
     const end = start + size;
     const paginatedItems = filteredItems.slice(start, end);
 
-    const response: FeedListResponse = {
-      items: paginatedItems,
+    const response: FeedListResponseDto = {
+      items: paginatedItems.map((item) =>
+        toFeedListItemDto(item, mockFeedDetails[item.id])
+      ),
       total: filteredItems.length,
       page,
       hasMore: end < filteredItems.length,
@@ -740,11 +886,12 @@ export const communityHandlers = [
     mockItem.isLiked = !mockItem.isLiked;
     mockItem.likeCount += mockItem.isLiked ? 1 : -1;
 
-    return HttpResponse.json({
-      feedId,
+    const response: LikeToggleResponseDto = {
+      postId: Number(feedId),
       isLiked: mockItem.isLiked,
       likeCount: mockItem.likeCount,
-    });
+    };
+    return HttpResponse.json(response);
   }),
 
   // GET /api/feed/:feedId (피드 상세)
@@ -761,7 +908,46 @@ export const communityHandlers = [
       );
     }
 
-    return HttpResponse.json(detail);
+    const item = mockFeedItems.find((feed) => feed.id === String(feedId));
+    if (!item) {
+      return HttpResponse.json(
+        { error: "피드를 찾을 수 없습니다." },
+        { status: 404 }
+      );
+    }
+
+    const response: FeedDetailDto = toFeedDetailDto(item, detail);
+    return HttpResponse.json(response);
+  }),
+
+  // GET /api/feed/:feedId/likes (좋아요 유저 목록)
+  http.get("/api/feed/:feedId/likes", async ({ params, request }) => {
+    await delay(250);
+
+    const { feedId } = params;
+    const detail = mockFeedDetails[String(feedId)];
+    if (!detail) {
+      return HttpResponse.json(
+        { error: "피드를 찾을 수 없습니다." },
+        { status: 404 }
+      );
+    }
+
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get("page") || "1");
+    const size = parseInt(url.searchParams.get("size") || "50");
+    const start = (page - 1) * size;
+    const end = start + size;
+    const likes = detail.likeUsers.slice(start, end);
+
+    const response: FeedLikesResponseDto = {
+      postId: Number(feedId),
+      likeCount: detail.likeCount,
+      hasNext: end < detail.likeUsers.length,
+      likes: likes.map(toLikeUserDto),
+    };
+
+    return HttpResponse.json(response);
   }),
 
   // GET /api/feed/:feedId/comments (댓글 리스트)
@@ -785,12 +971,14 @@ export const communityHandlers = [
     const end = start + size;
     const items = source.items.slice(start, end);
 
-    return HttpResponse.json({
-      items,
-      total: source.items.length,
-      page,
-      hasMore: end < source.items.length,
-    });
+    const response: FeedCommentListResponseDto = {
+      postId: Number(feedId),
+      commentCount: source.items.length,
+      hasNext: end < source.items.length,
+      comments: items.map(toCommentDto),
+    };
+
+    return HttpResponse.json(response);
   }),
 
   // POST /api/feed/:feedId/comments (댓글 작성)
@@ -826,11 +1014,13 @@ export const communityHandlers = [
       text,
       createdAt: new Date().toISOString(),
       isLiked: false,
+      likeCount: 0,
       parentCommentId: body.parentCommentId ?? null,
     };
 
     source.items.push(newComment);
 
-    return HttpResponse.json(newComment);
+    const response: FeedCommentDto = toCommentDto(newComment);
+    return HttpResponse.json(response);
   }),
 ];

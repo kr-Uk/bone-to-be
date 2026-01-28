@@ -4,10 +4,12 @@ interface Props {
   username: string;
   text: string;
   time: string;
-  onReply?: () => void;
+  likeCount: number;
 }
 
-export function CommentItem({ username, text, time, onReply }: Props) {
+const formatCount = (count: number) => count.toLocaleString();
+
+export function CommentItem({ username, text, time, likeCount }: Props) {
   return (
     <Wrapper>
       <Avatar />
@@ -16,9 +18,9 @@ export function CommentItem({ username, text, time, onReply }: Props) {
         <CommentText>{text}</CommentText>
         <MetaRow>
           <Time>{time}</Time>
-          <ReplyButton type="button" onClick={onReply ?? (() => {})}>
-            답글달기
-          </ReplyButton>
+          {likeCount > 0 ? (
+            <LikeCount>좋아요 {formatCount(likeCount)}개</LikeCount>
+          ) : null}
         </MetaRow>
       </TextArea>
     </Wrapper>
@@ -45,7 +47,7 @@ const TextArea = styled.div`
 `;
 
 const Username = styled.div`
-  font-weight: 700;
+  font-weight: 600;
   color: #fafafa;
 `;
 
@@ -64,8 +66,8 @@ const Time = styled.div`
   color: #a1a1a1;
 `;
 
-const ReplyButton = styled.button`
+const LikeCount = styled.div`
   font-size: 12px;
   color: #a1a1a1;
-  cursor: pointer;
+  font-weight: 600;
 `;

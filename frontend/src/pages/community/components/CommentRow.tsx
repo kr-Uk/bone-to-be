@@ -7,16 +7,22 @@ interface Props {
   username: string;
   text: string;
   time: string;
-  onReply?: () => void;
+  likeCount: number;
 }
 
 export function CommentRow(props: Props) {
   const [liked, setLiked] = useState(false);
+  const [count, setCount] = useState(props.likeCount);
+
+  const handleLikeClick = () => {
+    setLiked((prev) => !prev);
+    setCount((prev) => (liked ? Math.max(0, prev - 1) : prev + 1));
+  };
 
   return (
     <Row>
-      <CommentItem {...props} />
-      <LikeButton liked={liked} onClick={() => setLiked(v => !v)}>
+      <CommentItem {...props} likeCount={count} />
+      <LikeButton liked={liked} onClick={handleLikeClick}>
         {liked ? <FaHeart /> : <FaRegHeart />}
       </LikeButton>
     </Row>

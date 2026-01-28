@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -94,6 +94,10 @@ export default function CommunityPage() {
     page: 1,
     limit: 12,
   });
+  const feedIds = useMemo(() => data?.items.map((item) => item.id) ?? [], [data?.items]);
+  const selectedIndex = selectedFeedId ? feedIds.indexOf(selectedFeedId) : -1;
+  const hasPrev = selectedIndex > 0;
+  const hasNext = selectedIndex >= 0 && selectedIndex < feedIds.length - 1;
 
   const likeToggleMutation = useLikeToggle();
 
@@ -128,6 +132,18 @@ export default function CommunityPage() {
   const handleCardClick = useCallback((feedId: string) => {
     setSelectedFeedId(feedId);
   }, []);
+  const handlePrev = useCallback(() => {
+    if (!hasPrev) {
+      return;
+    }
+    setSelectedFeedId(feedIds[selectedIndex - 1]);
+  }, [feedIds, hasPrev, selectedIndex]);
+  const handleNext = useCallback(() => {
+    if (!hasNext) {
+      return;
+    }
+    setSelectedFeedId(feedIds[selectedIndex + 1]);
+  }, [feedIds, hasNext, selectedIndex]);
 
   const handleFABClick = useCallback(() => {
     console.log("Navigating to create feed page");
@@ -160,6 +176,10 @@ export default function CommunityPage() {
         <FeedDetailModal
           onClose={() => setSelectedFeedId(null)}
           feedId={selectedFeedId}
+          onPrev={handlePrev}
+          onNext={handleNext}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
         />
       )}
     </PageContainer>

@@ -18,6 +18,8 @@ import type { FeedComment, FeedDetail } from "../api";
 interface Props {
   detail: FeedDetail | null;
   comments: FeedComment[];
+  likeUsers?: FeedLikeUser[];
+  likeCount?: number;
   isLoading?: boolean;
   hasError?: boolean;
 }
@@ -36,14 +38,18 @@ function formatTimeAgo(iso: string) {
   return `${diffDays}d ago`;
 }
 
-export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props) {
+export function FeedDetailRight({
+  detail,
+  comments,
+  likeUsers: likeUsersProp,
+  likeCount: likeCountProp,
+  isLoading,
+  hasError,
+}: Props) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [commentInput, setCommentInput] = useState("");
-  const [replyTarget, setReplyTarget] = useState<{ id: string; username: string } | null>(
-    null,
-  );
   const commentInputRef = useRef<HTMLInputElement | null>(null);
   const likeToggleMutation = useLikeToggle();
   const createCommentMutation = useCreateFeedComment();
@@ -55,23 +61,24 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
     setLikeCount(detail.likeCount);
   }, [detail]);
 
+  useEffect(() => {
+    if (typeof likeCountProp === "number") {
+      setLikeCount(likeCountProp);
+    }
+  }, [likeCountProp]);
+
+  useEffect(() => {
+    if (likeUsersProp) {
+      setLikeUsers(likeUsersProp);
+    }
+  }, [likeUsersProp]);
+
   const handleLikeToggle = () => {
     if (!detail) return;
     const nextLiked = !liked;
     setLiked(nextLiked);
     setLikeCount((count) => (nextLiked ? count + 1 : count - 1));
     likeToggleMutation.mutate({ feedId: detail.id });
-  };
-
-  const handleReplyClick = (username: string, commentId: string) => {
-    const mention = `@${username} `;
-    setReplyTarget({ id: commentId, username });
-    setCommentInput((prev) => {
-      if (prev.startsWith(mention)) return prev;
-      const stripped = prev.replace(/^@\S+\s+/, "");
-      return `${mention}${stripped}`;
-    });
-    commentInputRef.current?.focus();
   };
 
   const handleSubmitComment = () => {
@@ -82,11 +89,9 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
     createCommentMutation.mutate({
       feedId: detail.id,
       text: trimmed,
-      parentCommentId: replyTarget?.id ?? null,
     });
 
     setCommentInput("");
-    setReplyTarget(null);
   };
 
   const orderedComments = useMemo(() => {
@@ -172,7 +177,6 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
                 username={comment.username}
                 text={comment.text}
                 time={formatTimeAgo(comment.createdAt)}
-                onReply={() => handleReplyClick(comment.username, comment.id)}
               />
             </CommentRowWrapper>
           ))
@@ -204,9 +208,7 @@ export function FeedDetailRight({ detail, comments, isLoading, hasError }: Props
           value={commentInput}
           onChange={setCommentInput}
           onSubmit={handleSubmitComment}
-          placeholder={
-            replyTarget ? `@${replyTarget.username} 님에게 답글 달기...` : "댓글 달기 ..."
-          }
+          placeholder={"댓글 달기 ..."}
           disabled={createCommentMutation.isPending}
         />
       </Footer>
@@ -269,8 +271,7 @@ const Avatar = styled.div`
 
 const Username = styled.div`
   color: #fafafa;
-  font-weight: 700;
-
+  font-weight: 600;
   @media (max-width: 390px) {
     font-size: 14px;
   }
@@ -278,7 +279,6 @@ const Username = styled.div`
 
 const SubInfo = styled.div`
   color: #a1a1a1;
-  font-size: 14px;
 `;
 
 const PostContent = styled.div`

@@ -37,6 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new UserPrincipal(
                 user.getId(),
                 user.getEmail(),
+                user.getNickname(),
                 user.getPassword(),
                 // user.getRole().getKey()는 "ROLE_USER" 또는 "ROLE_ADMIN" 등을 반환합니다.
                 List.of(new SimpleGrantedAuthority(user.getRole().getKey()))

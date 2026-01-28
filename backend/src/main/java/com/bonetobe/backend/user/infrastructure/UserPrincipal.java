@@ -13,21 +13,23 @@ public class UserPrincipal implements UserDetails, OAuth2User {
 
     private final Long id; // 기존 userId를 id로 통일 (선택)
     private final String email;
+    private final String nickname;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes; // 소셜 로그인 속성들
 
     // 1. 일반 로그인용 생성자 (인자 4개)
-    public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String email, String nickname, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
+        this.nickname = nickname;
         this.password = password;
         this.authorities = authorities;
     }
 
     // 2. 소셜 로그인용 생성자 (인자 5개) - CustomOAuth2UserService에서 사용
-    public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes) {
-        this(id, email, password, authorities);
+    public UserPrincipal(Long id, String email, String nickname, String password, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes) {
+        this(id, email, nickname, password, authorities);
         this.attributes = attributes;
     }
 

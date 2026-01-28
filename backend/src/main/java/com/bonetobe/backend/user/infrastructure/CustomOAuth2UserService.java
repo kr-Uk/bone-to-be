@@ -44,6 +44,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return new UserPrincipal(
                     user.getId(),
                     user.getEmail(),
+                    user.getNickname(),
                     user.getPassword(), // UUID로 생성된 패스워드
                     Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())), // Enum의 key 사용
                     attributes.getAttributes() // OAuth2User 인터페이스 구현을 위해 속성값 전달

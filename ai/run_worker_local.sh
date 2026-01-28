@@ -22,8 +22,15 @@ export RABBITMQ_HOST="localhost"
 export RABBITMQ_PORT=5672
 export RABBITMQ_USERNAME="guest"
 export RABBITMQ_PASSWORD="guest"
-export REQUEST_QUEUE="body-worker.requested"
-export COMPLETED_QUEUE="body-worker.completed"
+export REQUEST_QUEUE="analysis.request.queue"
+export COMPLETED_QUEUE="analysis.completed.queue"
+export FAILED_QUEUE="analysis.failed.queue"
+
+# Exchange and routing keys
+export EXCHANGE="analysis.exchange"
+export REQUEST_ROUTING_KEY="analysis.requested"
+export COMPLETED_ROUTING_KEY="analysis.completed"
+export FAILED_ROUTING_KEY="analysis.failed"
 
 # CRITICAL: Point to Shapy directory so handler.py can import it
 export SHAPY_PATH="$SHAPY_DIR"

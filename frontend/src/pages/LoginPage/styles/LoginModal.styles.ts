@@ -147,7 +147,7 @@ export const Trapezoid = styled.div`
   top: 34%;
   width: clamp(80px, 10vw, 120px);
   height: clamp(92px, 12vw, 140px);
-  background: #ded8ff; 
+  background: ${({theme}) => theme.colors.purple[200]}; 
   /* #ded8ff is distinct, keeping closest match or hex if no theme var fits perfectly.
      Theme has purple[200]=#E9D4FF which is lighter.
      To be safe with design, I will keep hex if specific tone needed, or use purple 200.

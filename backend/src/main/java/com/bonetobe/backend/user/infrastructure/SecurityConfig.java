@@ -9,6 +9,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,6 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userService;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     // 패스워드 인코더로 사용할 빈 등록
     @Bean
@@ -42,22 +45,21 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 1. 게스트용 (None (Guest))
                         .requestMatchers(
-                                "/auth/login",
-                                "/auth/signup",
-                                "/auth/check/**",
-                                "/auth/email/**",
-                                "/auth/password/reset/**",
-                                "/auth/oauth/**",
-                                "/users/profile/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
+                                "/auth/**",
                                 "/api/auth/**",
-                                "/api/swagger-ui/**",
-                                "/api/v3/api-docs/**"
+
+                                "/swagger-ui/**",
+                                "/swagger-resources/**",
+                                "/v3/api-docs/**",
+
+                                "/oauth2/**",
+                                "/login/**",
+                                "/api/oauth2/**",
+                                "/api/login/**"
                         ).permitAll()
 
                         // 2. 유저용 (User (Lv.1)) - 로그아웃 포함
-                        .requestMatchers("/auth/logout").authenticated()
+                        .requestMatchers("api/auth/logout","/auth/logout").authenticated()
 
                         // 3. 나머지 모든 /users/me/** 요청들
                         .anyRequest().authenticated()
@@ -98,12 +100,22 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                 )
 
+                // 7. OAuth 로그인 설정
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .failureUrl("/auth/login?error")
+                )
+
                 .exceptionHandling(exception -> exception
                     .authenticationEntryPoint((request, response, authException) -> {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.setContentType("application/json;charset=UTF-8");
                         response.getWriter().write("{\"code\": 401, \"message\": \"인증이 필요합니다. (또는 잘못된 접근입니다.)\"}");
-                    }));
+                    }))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 필요할 때 세션 생성
+                );
 
         return http.build();
     }

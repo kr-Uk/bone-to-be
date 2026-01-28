@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
                 command.email(),
                 passwordEncoder.encode(command.password()),
                 command.nickname(),
-                "USER"
+                UserRole.USER
         );
         User savedUser = userRepository.save(user);
 

@@ -5,6 +5,7 @@ import com.bonetobe.backend.common.response.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,6 +41,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(APIResponse.fail(ErrorCode.BAD_REQUEST, e.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    public ResponseEntity<APIResponse<Void>> handleAuthenticationException(AuthenticationCredentialsNotFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.UNAUTHORIZED.getStatus())
+                .body(APIResponse.fail(ErrorCode.UNAUTHORIZED));
     }
 
     @ExceptionHandler(BusinessException.class)

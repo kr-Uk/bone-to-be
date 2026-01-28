@@ -7,9 +7,13 @@ import com.bonetobe.backend.user.presentation.AuthMeResponse;
 import com.bonetobe.backend.user.presentation.PasswordReset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.naming.AuthenticationException;
 
 @Slf4j
 @Service
@@ -114,8 +118,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthMeResponse getMyInfo(UserPrincipal principal) {
-        // 컨트롤러에서 넘어온 principal이 이미 인증된 상태이므로
-        // 바로 DTO로 변환하여 반환합니다.
+        // principal이 null일 경우 커스텀 예외 발생
+        if (principal == null) {
+            throw new AuthenticationCredentialsNotFoundException(ErrorCode.UNAUTHORIZED.getMessage());
+        }
         return AuthMeResponse.from(principal);
     }
 }

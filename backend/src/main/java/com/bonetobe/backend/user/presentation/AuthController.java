@@ -132,11 +132,6 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<APIResponse<AuthMeResponse>> getMyInfo(@AuthenticationPrincipal UserPrincipal principal) {
-        if (principal == null) {
-            // 공통 에러 코드가 있다면 적용 (예: ErrorCode.UNAUTHORIZED)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, authService.getMyInfo(principal)));
     }
 }

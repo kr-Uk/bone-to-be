@@ -1,7 +1,8 @@
-package com.bonetobe.backend.report.presentation;
+package com.bonetobe.backend.report.infrastructure;
 
 import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.report.domain.ReportStore;
+import com.bonetobe.backend.report.presentation.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { FaCheck } from "react-icons/fa6";
 import { LuLock } from "react-icons/lu";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
@@ -162,8 +163,8 @@ export const PasswordResetPage = () => {
                   autoComplete="new-password"
                   disabled={!isTokenValid || isVerifying}
                 />
-                <InputIcon aria-hidden="true">
-                  <LuLock />
+                <InputIcon aria-hidden="true" $success={isPasswordMatch}>
+                  <FaCheck />
                 </InputIcon>
               </InputWrap>
               <HelperText $error={confirmPassword.length > 0 && !isPasswordMatch}>
@@ -370,12 +371,12 @@ const Input = styled.input`
   }
 `;
 
-const InputIcon = styled.span`
+const InputIcon = styled.span<{ $success?: boolean }>`
   position: absolute;
   top: 50%;
   right: 0.9rem;
   transform: translateY(-50%);
-  color: ${({ theme }) => theme.colors.gray[400]};
+  color: ${({ theme, $success }) => ($success ? "#22c55e" : theme.colors.gray[400])};
   pointer-events: none;
   display: inline-flex;
 `;

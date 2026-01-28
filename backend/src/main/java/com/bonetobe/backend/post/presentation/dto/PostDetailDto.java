@@ -4,12 +4,14 @@ import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
 import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.user.domain.Gender;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class PostDetailDto {
 
+    @Schema(name = "PostDetailResponse")
     public record Response(
             Long postId,
             String imageUrl,

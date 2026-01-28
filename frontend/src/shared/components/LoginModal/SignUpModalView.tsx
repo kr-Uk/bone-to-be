@@ -97,7 +97,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
     }
 
     try {
-      await axiosInstance.post("/api/auth/email/validate", { email: trimmedEmail });
+      await axiosInstance.post("/auth/email/verification", { email: trimmedEmail });
       setEmailCheckStatus("available");
       setIsTimerRunning(true);
       setTimer(180);
@@ -109,7 +109,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
   const handleConfirmAuth = async () => {
     try {
-      await axiosInstance.get("/api/auth/email/validate", {
+      await axiosInstance.post("/auth/email/verification/check", {
         params: {
           email: trimmedEmail,
           code: authCode,
@@ -162,10 +162,9 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
       {/* RIGHT: Sign Up Form */}
       <S.RightPanel>
-        <S.Brand>
-          <S.BrandTitle>BONE:TOBE</S.BrandTitle>
-          <S.BrandSub>당신만의 골격을 완성하다</S.BrandSub>
-        </S.Brand>
+      <S.Brand>
+        <S.BrandTitle>회원가입</S.BrandTitle>
+      </S.Brand>
 
         <S.Form>
           <S.Field>
@@ -328,3 +327,4 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
     </S.SignUpCard>
   );
 };
+  

@@ -3,11 +3,17 @@ import styled from "styled-components";
 import { loginPalette } from "./LoginModal.styles";
 
 export const PageWrapper = styled.div`
-  min-height: calc(100vh - 64px);
+  min-height: calc(85vh - 5rem);
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: ${loginPalette.cardDark};
+
+  @media (max-width: 768px) {
+    display: block;
+    min-height: auto;
+    padding: 20px 0 32px;
+  }
 `;
 
 export const LoginCard = styled.div`

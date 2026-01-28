@@ -24,7 +24,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [nicknameCheckStatus, setNicknameCheckStatus] = useState<
-    "idle" | "checking" | "available" | "taken" | "error"
+    "idle" | "checking" | "available" | "taken" | "invalid" | "error"
   >("idle");
   const [emailCheckStatus, setEmailCheckStatus] = useState<
     "idle" | "checking" | "available" | "taken" | "invalid" | "error" | "verified"
@@ -43,16 +43,21 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
   const hasLetter = /[A-Za-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
-  const isLengthValid = password.length >= 8 && password.length <= 16;
-  const isPasswordValid = hasLetter && hasNumber && isLengthValid;
+  const hasSpecial = /[^A-Za-z0-9]/.test(password);
+  const isLengthValid = password.length >= 8 && password.length <= 12;
+  const isPasswordValid = hasLetter && hasNumber && hasSpecial && isLengthValid;
   const showPasswordMismatch =
     isPasswordValid && confirmPassword.length > 0 && password !== confirmPassword;
   const isSendDisabled = !isEmailFormatValid || emailCheckStatus === "checking" || emailVerified;
+  const trimmedNickname = nickname.trim();
+  const hasInvalidNickname = /[ㄱ-ㅎㅏ-ㅣ]/.test(trimmedNickname);
   const nicknameFeedback =
     nicknameCheckStatus === "available"
       ? { text: "사용 가능한 닉네임입니다", isError: false }
       : nicknameCheckStatus === "taken"
         ? { text: "이미 사용 중인 닉네임입니다", isError: true }
+        : nicknameCheckStatus === "invalid"
+          ? { text: "올바르지 않은 닉네임입니다", isError: true }
         : nicknameCheckStatus === "error"
           ? { text: "닉네임 확인에 실패했습니다", isError: true }
           : null;
@@ -136,8 +141,11 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
   };
 
   const handleCheckNickname = async () => {
-    const trimmedNickname = nickname.trim();
     if (!trimmedNickname) {
+      return;
+    }
+    if (hasInvalidNickname) {
+      setNicknameCheckStatus("invalid");
       return;
     }
 
@@ -173,8 +181,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
   return (
     <S.RightPanel>
         <S.Brand>
-          <S.BrandTitle>BONE:TOBE</S.BrandTitle>
-          <S.BrandSub>당신만의 골격을 완성하다</S.BrandSub>
+          <S.BrandTitle>회원가입</S.BrandTitle>
         </S.Brand>
 
         <S.Form>
@@ -185,7 +192,17 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
                 placeholder="닉네임을 입력하세요"
                 value={nickname}
                 onChange={(e) => {
-                  setNickname(e.target.value);
+                  const nextValue = e.target.value;
+                  const nextTrimmed = nextValue.trim();
+                  setNickname(nextValue);
+                  if (!nextTrimmed) {
+                    setNicknameCheckStatus("idle");
+                    return;
+                  }
+                  if (/[ㄱ-ㅎㅏ-ㅣ]/.test(nextTrimmed)) {
+                    setNicknameCheckStatus("invalid");
+                    return;
+                  }
                   setNicknameCheckStatus("idle");
                 }}
                 style={{ flex: 1 }}
@@ -292,7 +309,8 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
             <S.Hint>
               {hasLetter ? <S.HintOn>✓ 영문 포함</S.HintOn> : <span>✓ 영문 포함</span>}
               {hasNumber ? <S.HintOn>✓ 숫자 포함</S.HintOn> : <span>✓ 숫자 포함</span>}
-              {isLengthValid ? <S.HintOn>✓ 8~16자</S.HintOn> : <span>✓ 8~16자</span>}
+              {hasSpecial ? <S.HintOn>✓ 특수문자 포함</S.HintOn> : <span>✓ 특수문자 포함</span>}
+              {isLengthValid ? <S.HintOn>✓ 8~12자</S.HintOn> : <span>✓ 8~12자</span>}
             </S.Hint>
           </S.Field>
 

@@ -49,6 +49,12 @@ public class User extends BaseEntity{
         return user;
     }
 
+    public static User of(Long userId) {
+        User user = new User();
+        user.id = userId;
+        return user;
+    }
+
     //
     public void updateProfile(String nickname, StoredFile profileImage) {
         this.nickname = nickname;

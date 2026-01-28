@@ -72,8 +72,6 @@ try:
     # These options MUST match temp/run_pipeline.py lines 61-68
     # IMPORTANT: Use ABSOLUTE path for checkpoint! Relative path fails from worker directory
     exp_opts = [
-        # CORRECT ABSOLUTE PATH - checkpoint is in shapy/data, not ai/data
-        'output_folder=/home/taekmin/S14P11D210/ai/shapy/data/trained_models/shapy/SHAPY_A',
         # Match temp's part_key (line 62)
         'part_key=pose',
         # Match temp's batch_size (line 67)
@@ -96,59 +94,75 @@ def handle(message: dict):
     if yolo_model is None or shapy_runner is None:
         publish({
             "status": "ERROR",
-            "error": "Models not initialized on worker",
-            "request": message
+            "reportId": message.get("reportId"),
+            "error": "Models not initialized on worker"
         })
         return
 
     try:
-        # Prioritize image_url for CDN usage
-        image_url = message.get("image_url")
-        image_path = message.get("image_path")
+        # Extract backend message fields
+        report_id = message.get("reportId")
+        weight = message.get("weight")  # Integer (kg)
+        height_cm = message.get("height")  # Integer (cm)
+        gender = message.get("gender", "").lower()  # "male" or "female"
+        presigned_url = message.get("presignedUrl")
+        
+        # Validate required fields
+        if not presigned_url:
+            publish({
+                "status": "ERROR",
+                "reportId": report_id,
+                "error": "Missing required field: presignedUrl"
+            })
+            return
+        
+        if not height_cm or height_cm <= 0:
+            publish({
+                "status": "ERROR",
+                "reportId": report_id,
+                "error": "Missing or invalid required field: height (must be > 0)"
+            })
+            return
+        
+        # Convert height from cm to meters for Shapy
+        height = height_cm / 100.0
+        
+        print(f"📊 Processing report {report_id}: height={height}m, weight={weight}kg, gender={gender}")
         
         img = None
 
-        # 1. Load Image from URL (CDN)
-        if image_url:
-            print(f"🌐 Downloading image from {image_url}...")
-            try:
-                # Use a session for better connection handling
-                with requests.Session() as session:
-                    resp = session.get(image_url, timeout=15)
-                    resp.raise_for_status() # Raise error for 4xx/5xx
-                    
-                    # Verify content type (basic check)
-                    if 'image' not in resp.headers.get('Content-Type', ''):
-                        print(f"⚠️ Warning: URL content-type is not image: {resp.headers.get('Content-Type')}")
+        # 1. Load Image from presigned URL
+        print(f"🌐 Downloading image from presigned URL...")
+        try:
+            # Use a session for better connection handling
+            with requests.Session() as session:
+                resp = session.get(presigned_url, timeout=15)
+                resp.raise_for_status() # Raise error for 4xx/5xx
+                
+                # Verify content type (basic check)
+                if 'image' not in resp.headers.get('Content-Type', ''):
+                    print(f"⚠️ Warning: URL content-type is not image: {resp.headers.get('Content-Type')}")
 
-                    arr = np.asarray(bytearray(resp.content), dtype=np.uint8)
-                    img = cv2.imdecode(arr, cv2.IMREAD_COLOR) # Force BGR (3 channels)
-                    
-                    if img is None:
-                        raise ValueError("Failed to decode image from URL data")
+                arr = np.asarray(bytearray(resp.content), dtype=np.uint8)
+                img = cv2.imdecode(arr, cv2.IMREAD_COLOR) # Force BGR (3 channels)
+                
+                if img is None:
+                    raise ValueError("Failed to decode image from URL data")
 
-            except Exception as e:
-                print(f"❌ Download failed: {e}")
-                publish({
-                    "status": "ERROR",
-                    "message": f"Failed to download image from URL: {str(e)}",
-                    "request": message
-                })
-                return
-
-        # 2. Fallback to Local Path (for testing)
-        elif image_path:
-            print(f"📂 Loading local image: {image_path}")
-            if os.path.exists(image_path):
-                img = cv2.imread(image_path)
-            else:
-                print(f"❌ File not found: {image_path}")
+        except Exception as e:
+            print(f"❌ Download failed: {e}")
+            publish({
+                "status": "ERROR",
+                "reportId": report_id,
+                "error": f"Failed to download image from presignedUrl: {str(e)}"
+            })
+            return
 
         if img is None:
             publish({
                 "status": "ERROR",
-                "message": "No valid image found (provide 'image_url' or valid 'image_path')",
-                "request": message
+                "reportId": report_id,
+                "error": "Failed to load image from presignedUrl"
             })
             return
 
@@ -159,8 +173,8 @@ def handle(message: dict):
         if not results or not results[0].keypoints or results[0].keypoints.data.shape[1] == 0:
             publish({
                 "status": "ERROR",
-                "message": "No person detected or no keypoints found",
-                "request": message
+                "reportId": report_id,
+                "error": "No person detected or no keypoints found"
             })
             return
 
@@ -181,23 +195,12 @@ def handle(message: dict):
         ).reshape(25, 3)
         print(f"✅ Converted to Body25 format: {body25_keypoints.shape}")
 
-        # 4. Get gender from message (optional, defaults to 'neutral')
-        gender = message.get("gender", "neutral")
-        if gender not in ["male", "female", "neutral"]:
-            print(f"⚠️ Invalid gender '{gender}', defaulting to 'neutral'")
-            gender = "neutral"
-        print(f"👤 Using gender: {gender}")
-
-        # 5. Shapy Inference (using Body25 keypoints like temp does)
-        # [NEW] Get height from message
-        height = message.get("height")
-        print(f"📏 Using height: {height} m")
-
+        # 4. Shapy Inference (using Body25 keypoints)
         print(f"🚀 Running Shapy inference...")
         output = shapy_runner.run(img, body25_keypoints, gender=gender, height=height)
         print(f"✅ Shapy inference completed")
 
-        # 6. Body Type Analysis - Calculate 10 metrics
+        # 5. Body Type Analysis - Calculate 11 metrics
         print(f"📊 Calculating body type metrics...")
         from body_type_analyzer import BodyTypeAnalyzer
         
@@ -237,26 +240,17 @@ def handle(message: dict):
             else:
                 return obj
     
-
         # 9. Prepare minimal response for backend
         backend_result = {
-            'body_type_metrics': output.get('body_type_metrics'),
-            'measurements': {
-                'chest': output.get('measurements', {}).get('chest'),
-                'waist': output.get('measurements', {}).get('waist'),
-                'hips': output.get('measurements', {}).get('hips')
-            },
-            'attributes': {
-                'height': height,
-                'gender': gender
-            }
+            'reportId': report_id,
+            'body_type_metrics': output.get('body_type_metrics')
         }
 
         # 10. Publish Result (only essentials)
         publish({
             "status": "COMPLETED",
-            "result": backend_result,
-            "request": message
+            "reportId": report_id,
+            "result": backend_result
         })
         print("✅ Processing completed and published.")
 
@@ -265,6 +259,6 @@ def handle(message: dict):
         traceback.print_exc()
         publish({
             "status": "ERROR",
-            "error": str(e),
-            "request": message
+            "reportId": report_id if 'report_id' in locals() else None,
+            "error": str(e)
         })

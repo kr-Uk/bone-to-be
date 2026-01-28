@@ -97,7 +97,7 @@ public class AuthController {
      * 명세서의 '토큰 유효 검증' 항목에 해당합니다.
      */
     @GetMapping("/password/reset/verify")
-    public ResponseEntity<APIResponse<Void>> verifyResetToke(@RequestParam String token) {
+    public ResponseEntity<APIResponse<Void>> verifyResetToken(@RequestParam String token) {
         // 1. Redis에 토큰이 살아있는지 확인 (삭제 X)
         emailService.validateTokenOnly(token);
 

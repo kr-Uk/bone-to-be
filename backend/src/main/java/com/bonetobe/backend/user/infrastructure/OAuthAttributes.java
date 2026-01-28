@@ -3,9 +3,11 @@ package com.bonetobe.backend.user.infrastructure;
 import com.bonetobe.backend.user.domain.OAuthProvider;
 import com.bonetobe.backend.user.domain.OAuthUser;
 import com.bonetobe.backend.user.domain.User;
+import com.bonetobe.backend.user.domain.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -104,6 +106,15 @@ public class OAuthAttributes {
     }
 
     public User toEntity() {
-        return User.createUser(email, "OAUTH_USER", nickname, "USER");
+        // 1. 추측 불가능한 랜덤 UUID 생성
+        // 소셜 사용자는 이 패스워드를 알 필요가 없으며, 보안상 '채워두기' 용도입니다.
+        String randomPassword = UUID.randomUUID().toString();
+
+        return User.createUser(
+                email,
+                randomPassword, // 고정된 "OAUTH_USER" 대신 랜덤 값 사용
+                nickname,
+                UserRole.OAUTH_USER
+        );
     }
 }

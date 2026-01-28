@@ -43,8 +43,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        // principal.getUserId()를 사용하여 요청 처리
-        userService.updatePassword(request.toCommand(principal.getUserId()));
+        userService.updatePassword(request.toCommand(principal.getId()));
 
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
@@ -58,7 +57,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        userService.deleteAccount(principal.getUserId()); // principal.getUserId() 호출
+        userService.deleteAccount(principal.getId());
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 }

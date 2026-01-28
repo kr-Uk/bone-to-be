@@ -7,6 +7,7 @@ import com.bonetobe.backend.user.domain.AuthService;
 import com.bonetobe.backend.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +73,6 @@ public class AuthController {
         // 실제 로직은 Spring Security Filter(LogoutFilter)에서 처리됩니다.
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
-
 
     // --- 비밀번호 재설정 ---
 

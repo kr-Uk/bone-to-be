@@ -31,4 +31,12 @@ public class OAuthUser extends BaseEntity {
 
     @Column(name = "provider_user_id", nullable = false)
     private String providerUserId;
+
+    public static OAuthUser createOAuthUser(User user, OAuthProvider provider, String providerUserId) {
+        OAuthUser oAuthUser = new OAuthUser();
+        oAuthUser.user = user;
+        oAuthUser.provider = provider;
+        oAuthUser.providerUserId = providerUserId;
+        return oAuthUser;
+    }
 }

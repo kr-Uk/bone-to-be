@@ -1,5 +1,7 @@
 package com.bonetobe.backend.report.domain;
 
+import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,5 +26,15 @@ public class ReportServiceImpl implements ReportService {
         Report report = reportReader.read(reportId);
         report.completeReport(analysisReport);
         return reportStore.update(report);
+    }
+
+    @Override
+    public Report getReport(Long reportId, Long userId) {
+        Report report = reportReader.read(reportId);
+        if (!report.getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+
+        return report;
     }
 }

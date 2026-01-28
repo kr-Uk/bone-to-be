@@ -64,7 +64,7 @@ public class Report extends BaseEntity {
         if (!status.equals(ReportStatus.PENDING)) {
             throw new IllegalArgumentException("분석이 완료되었거나, 유효하지 않은 리포트 입니다.");
         }
-
+        diagnosis = Diagnosis.calculateRatio(report);
         analysisReport = report;
         status = ReportStatus.COMPLETED;
     }

@@ -7,4 +7,6 @@ public interface ReportService {
     Report saveReport(ReportCommand command);
 
     Report saveResult(Long reportId, List<AnalysisDetail> report);
+
+    Report getReport(Long reportId, Long userId);
 }

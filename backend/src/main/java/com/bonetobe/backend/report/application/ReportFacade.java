@@ -20,7 +20,7 @@ public class ReportFacade {
     private final FileService fileService;
     private final ReportProducer reportProducer;
 
-    public void createReport(ReportCommand command) {
+    public Long createReport(ReportCommand command) {
         // 파일 db에 저장
         fileService.completeUpload(fileService.getFile(command.fileId()), command.user().getId());
 
@@ -33,6 +33,8 @@ public class ReportFacade {
         // rabbitMq 에 정보 전달
         ReportMessage.Request request = ReportMessage.Request.of(report, presignedUrl);
         reportProducer.produce(request);
+
+        return report.getId();
     }
 
     public void saveResultAndSendEvent(ReportResult result) {

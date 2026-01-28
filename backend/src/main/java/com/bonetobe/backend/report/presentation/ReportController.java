@@ -6,6 +6,7 @@ import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.report.application.ReportFacade;
+import com.bonetobe.backend.report.domain.ReportService;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 public class ReportController {
     private final FileService fileService;
     private final ReportFacade reportFacade;
+    private final ReportService reportService;
+
     @PostMapping("/createUrl")
     public ResponseEntity<APIResponse<FileUploadUrl.Response>> createReportPresignedUrl(
         @RequestBody ReportFileUploadUrl request,
@@ -33,13 +36,26 @@ public class ReportController {
     }
 
     @PostMapping
-    public ResponseEntity<APIResponse<Void>> startReport(
+    public ResponseEntity<APIResponse<PostReport>> startReport(
         @RequestBody PostBodyReport.Request request,
         @AuthenticationPrincipal UserPrincipal user
     ) {
-        reportFacade.createReport(request.toCommand(user.getUserId()));
+        Long reportId = reportFacade.createReport(request.toCommand(user.getUserId()));
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(APIResponse.success(SuccessCode.UPDATED));
+            .body(APIResponse.success(SuccessCode.UPDATED,
+                PostReport.of(reportId)));
+    }
+
+    @GetMapping("/{reportId}")
+    public ResponseEntity<APIResponse<GetReport>> getDetailReport(
+        @PathVariable Long reportId,
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(
+                APIResponse.success(SuccessCode.OK,
+                GetReport.from(reportService.getReport(reportId, userPrincipal.getUserId()))));
     }
 }

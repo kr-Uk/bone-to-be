@@ -38,6 +38,11 @@ export function FeedDetailModal({
     isLoading: isLikesLoading,
     error: likesError,
   } = useFeedLikes({ feedId, page: 1, limit: 50 });
+  const mobileMeta = detail?.height
+    ? `키 ${detail.height}cm${detail.weight ? ` · 몸무게 ${detail.weight}kg` : ""}`
+    : detail?.weight
+      ? `몸무게 ${detail.weight}kg`
+      : "정보 없음";
 
   useEffect(() => {
     // 모달 열릴 때 뒤 페이지 스크롤 막기
@@ -86,6 +91,22 @@ export function FeedDetailModal({
         <MdClose aria-hidden="true" size={28} />
       </CloseButton>
       <ModalWrapper onClick={(e) => e.stopPropagation()}>
+        <MobileHeader>
+          {detail?.author.avatarUrl ? (
+            <MobileAvatar src={detail.author.avatarUrl} alt="profile" />
+          ) : (
+            <MobileAvatarFallback />
+          )}
+          <div>
+            <MobileNameRow>
+              <MobileName>{detail?.author.username ?? "Loading..."}</MobileName>
+              {detail?.author.bodyType ? (
+                <BodyTypeBadge>{detail.author.bodyType}</BodyTypeBadge>
+              ) : null}
+            </MobileNameRow>
+            <MobileMeta>{mobileMeta}</MobileMeta>
+          </div>
+        </MobileHeader>
         <FeedDetailLeft
           imageUrl={detail?.imageUrl}
           isLoading={isDetailLoading}
@@ -124,7 +145,7 @@ const ModalWrapper = styled.div`
   min-width: 0;
   overflow: hidden;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 430px) {
     flex-direction: column;
     width: 95%;
     height: 90vh;
@@ -150,15 +171,95 @@ const NavButton = styled.button<{ $position: "left" | "right" }>`
   ${({ theme }) => theme.typography.body.lg.semibold};
   transition: transform 160ms ease;
 
-  &:hover:not(:disabled),
-  &:active:not(:disabled) {
-    transform: translateY(-50%) scale(1.15);
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      transform: translateY(-50%) scale(1.15);
+    }
+  }
+
+  @media (hover: none) {
+    &:active:not(:disabled) {
+      transform: translateY(-50%) scale(1.15);
+    }
   }
 
   &:disabled {
     opacity: 0.35;
     cursor: default;
   }
+
+  @media (max-width: 430px) {
+    width: 32px;
+    height: 32px;
+  }
+
+  @media (max-width: 430px) {
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+`;
+
+const MobileHeader = styled.div`
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #262626;
+  border-bottom: 1px solid #3f3f3f;
+
+  @media (max-width: 430px) {
+    display: flex;
+  }
+`;
+
+const MobileAvatar = styled.img`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #525252;
+  flex-shrink: 0;
+`;
+
+const MobileAvatarFallback = styled.div`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #525252;
+  flex-shrink: 0;
+`;
+
+const MobileName = styled.div`
+  color: #fafafa;
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const MobileNameRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const BodyTypeBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid #9810fa;
+  color: #9810fa;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  background: rgba(152, 16, 250, 0.12);
+`;
+
+const MobileMeta = styled.div`
+  color: #a1a1a1;
+  font-size: 12px;
 `;
 
 const CloseButton = styled.button`
@@ -169,7 +270,7 @@ const CloseButton = styled.button`
   height: 40px;
   border-radius: 50%;
   border: none;
-  background: rgba(0, 0, 0, 0.7);
+  background: transparent;
   color: ${({ theme }) => theme.colors.gray[50]};
   display: flex;
   align-items: center;
@@ -178,9 +279,23 @@ const CloseButton = styled.button`
   ${({ theme }) => theme.typography.body.lg.semibold};
   transition: transform 160ms ease;
 
-  &:hover,
-  &:active {
-    transform: scale(1.15);
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.15);
+    }
+  }
+
+  @media (hover: none) {
+    &:active {
+      transform: scale(1.15);
+    }
+  }
+
+  @media (max-width: 430px) {
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
   }
 `;
 

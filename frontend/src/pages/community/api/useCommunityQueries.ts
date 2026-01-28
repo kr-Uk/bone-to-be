@@ -62,6 +62,8 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
     location: "Unknown",
     avatarUrl: detail.author.profileImageUrl,
   },
+  height: detail.height,
+  weight: detail.weight,
   content: mapContentToLines(detail.content),
   tags: detail.style,
   createdAt: detail.createdAt,

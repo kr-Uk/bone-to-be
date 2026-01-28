@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { CommentInput } from "./CommentInput";
-import { IoIosMore } from "react-icons/io";
 import { CommentRow } from "./CommentRow";
 
 import {
@@ -52,7 +51,10 @@ export function FeedDetailRight({
   const [likeUsers, setLikeUsers] = useState<FeedLikeUser[]>([]);
   const [isLikesOpen, setIsLikesOpen] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+  const [isInputVisible, setIsInputVisible] = useState(false);
   const commentInputRef = useRef<HTMLInputElement | null>(null);
+  const commentsSectionRef = useRef<HTMLDivElement | null>(null);
   const likeToggleMutation = useLikeToggle();
   const createCommentMutation = useCreateFeedComment();
 
@@ -75,6 +77,30 @@ export function FeedDetailRight({
       setLikeUsers(likeUsersProp);
     }
   }, [likeUsersProp]);
+
+  useEffect(() => {
+    const updateDevice = () => {
+      setIsMobile(window.innerWidth <= 430);
+    };
+    updateDevice();
+    window.addEventListener("resize", updateDevice);
+    return () => window.removeEventListener("resize", updateDevice);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) {
+      setIsInputVisible(true);
+      return;
+    }
+    setIsInputVisible(false);
+  }, [isMobile, detail?.id]);
+
+  const desktopMeta = detail?.height
+    ? `키 ${detail.height}cm${detail.weight ? ` · 몸무게 ${detail.weight}kg` : ""}`
+    : detail?.weight
+      ? `몸무게 ${detail.weight}kg`
+      : "정보 없음";
+
 
   const handleLikeToggle = () => {
     if (!detail) return;
@@ -114,6 +140,20 @@ export function FeedDetailRight({
     });
 
     setCommentInput("");
+  };
+
+  const handleCommentNavigate = () => {
+    if (isMobile) {
+      setIsInputVisible((prev) => {
+        const next = !prev;
+        if (next) {
+          requestAnimationFrame(() => commentInputRef.current?.focus());
+        }
+        return next;
+      });
+      return;
+    }
+    commentInputRef.current?.focus();
   };
 
   const orderedComments = useMemo(() => {
@@ -156,120 +196,127 @@ export function FeedDetailRight({
 
   return (
     <RightContainer>
-      <Header>
-        <UserInfo>
+      <DesktopHeader>
+        {detail?.author.avatarUrl ? (
+          <DesktopAvatar src={detail.author.avatarUrl} alt="profile" />
+        ) : (
+          <DesktopAvatarFallback />
+        )}
+        <div>
+          <DesktopNameRow>
+            <DesktopName>{detail?.author.username ?? "Loading..."}</DesktopName>
+            {detail?.author.bodyType ? (
+              <BodyTypeBadge>{detail.author.bodyType}</BodyTypeBadge>
+            ) : null}
+          </DesktopNameRow>
+          <DesktopMeta>{desktopMeta}</DesktopMeta>
+        </div>
+      </DesktopHeader>
+      <ContentStack>
+        <PostContent>
           <Avatar />
           <div>
             <Username>{detail?.author.username ?? "Loading..."}</Username>
-            <SubInfo>
-              {detail
-                ? `${detail.author.bodyType} · ${detail.author.location}`
-                : "Loading..."}
-            </SubInfo>
+            {(detail?.content ?? []).map((line, index) => (
+              <Text key={`content-${index}`}>{line}</Text>
+            ))}
+            <Tags>
+              {(detail?.tags ?? []).map((tag) => `#${tag}`).join(" ")}
+            </Tags>
+            <Time>{detail?.createdAt ? formatTimeAgo(detail.createdAt) : ""}</Time>
           </div>
-        </UserInfo>
-        <IoIosMore color="#FAFAFA" size={25} />
-      </Header>
+        </PostContent>
 
-      <PostContent>
-        <Avatar />
-        <div>
-          <Username>{detail?.author.username ?? "Loading..."}</Username>
-          {(detail?.content ?? []).map((line, index) => (
-            <Text key={`content-${index}`}>{line}</Text>
-          ))}
-          <Tags>
-            {(detail?.tags ?? []).map((tag) => `#${tag}`).join(" ")}
-          </Tags>
-          <Time>{detail?.createdAt ? formatTimeAgo(detail.createdAt) : ""}</Time>
-        </div>
-      </PostContent>
+        <CommentsSection ref={commentsSectionRef}>
+          {hasError ? (
+            <CommentStatus>댓글을 불러올 수 없습니다.</CommentStatus>
+          ) : isLoading && comments.length === 0 ? (
+            <CommentStatus>댓글 로딩 중...</CommentStatus>
+          ) : comments.length === 0 ? (
+            <CommentStatus>첫 댓글을 남겨보세요.</CommentStatus>
+          ) : (
+            orderedComments.map(({ comment, depth }) => (
+              <CommentRowWrapper key={comment.id} $depth={depth}>
+                <CommentRow
+                  username={comment.username}
+                  text={comment.text}
+                  time={formatTimeAgo(comment.createdAt)} likeCount={0}              />
+              </CommentRowWrapper>
+            ))
+          )}
+        </CommentsSection>
+      </ContentStack>
 
-      <CommentsSection>
-        {hasError ? (
-          <CommentStatus>댓글을 불러올 수 없습니다.</CommentStatus>
-        ) : isLoading && comments.length === 0 ? (
-          <CommentStatus>댓글 로딩 중...</CommentStatus>
-        ) : comments.length === 0 ? (
-          <CommentStatus>첫 댓글을 남겨보세요.</CommentStatus>
-        ) : (
-          orderedComments.map(({ comment, depth }) => (
-            <CommentRowWrapper key={comment.id} $depth={depth}>
-              <CommentRow
-                username={comment.username}
-                text={comment.text}
-                time={formatTimeAgo(comment.createdAt)}
-              />
-            </CommentRowWrapper>
-          ))
-        )}
-      </CommentsSection>
+      <BottomStack>
+        <Footer>
+          <ActionRow>
+            <LeftActions>
+              <HeartButton liked={liked} onClick={handleLikeToggle}>
+                {liked ? <FaHeart size={20}/> : <FaRegHeart size={20}/>}
+              </HeartButton>
 
-      <Footer>
-        <ActionRow>
-          <LeftActions>
-            <HeartButton liked={liked} onClick={handleLikeToggle}>
-              {liked ? <FaHeart size={32}/> : <FaRegHeart size={32}/>}
-            </HeartButton>
+              <IconButton onClick={handleCommentNavigate}>
+                <FaRegComment size={20}/>
+              </IconButton>
 
-            <IconButton onClick={() => commentInputRef.current?.focus()}>
-              <FaRegComment size={32}/>
+            </LeftActions>
+
+            <IconButton onClick={() => setSaved((v) => !v)}>
+              {saved ? <FaBookmark size={20}/> : <FaRegBookmark size={20}/>}
             </IconButton>
+          </ActionRow>
 
-          </LeftActions>
+          <LikesButton type="button" onClick={() => setIsLikesOpen(true)}>
+            {likeCount} likes
+          </LikesButton>
 
-          <IconButton onClick={() => setSaved((v) => !v)}>
-            {saved ? <FaBookmark size={32}/> : <FaRegBookmark size={32}/>}
-          </IconButton>
-        </ActionRow>
-
-        <LikesButton type="button" onClick={() => setIsLikesOpen(true)}>
-          {likeCount} likes
-        </LikesButton>
-
-        {isLikesOpen && (
-          <LikesOverlay onClick={() => setIsLikesOpen(false)}>
-            <LikesPanel onClick={(event) => event.stopPropagation()}>
-              <LikesHeader>
-                <LikesTitle>좋아요</LikesTitle>
-                <LikesCloseButton type="button" onClick={() => setIsLikesOpen(false)}>
-                  ✕
-                </LikesCloseButton>
-              </LikesHeader>
-              {likeUsers.length === 0 ? (
-                <LikesEmpty>아직 좋아요가 없어요.</LikesEmpty>
-              ) : (
-                <LikesList>
-                  {likeUsers.map((user) => {
-                    const secondary = user.displayName ?? [user.bodyType, user.location].filter(Boolean).join(" · ");
-                    return (
-                      <LikeItem key={user.id}>
-                        <LikeLeft>
-                          <LikeAvatar />
-                          <div>
-                            <LikeName>{user.username}</LikeName>
-                            {secondary ? <LikeMeta>{secondary}</LikeMeta> : null}
-                          </div>
-                        </LikeLeft>
-                        <FollowButton type="button">팔로우</FollowButton>
-                      </LikeItem>
-                    );
-                  })}
-                </LikesList>
-              )}
-            </LikesPanel>
-          </LikesOverlay>
+          {isLikesOpen && (
+            <LikesOverlay onClick={() => setIsLikesOpen(false)}>
+              <LikesPanel onClick={(event) => event.stopPropagation()}>
+                <LikesHeader>
+                  <LikesTitle>좋아요</LikesTitle>
+                  <LikesCloseButton type="button" onClick={() => setIsLikesOpen(false)}>
+                    ✕
+                  </LikesCloseButton>
+                </LikesHeader>
+                {likeUsers.length === 0 ? (
+                  <LikesEmpty>아직 좋아요가 없어요.</LikesEmpty>
+                ) : (
+                  <LikesList>
+                    {likeUsers.map((user) => {
+                      const secondary = user.displayName ?? [user.bodyType, user.location].filter(Boolean).join(" · ");
+                      return (
+                        <LikeItem key={user.id}>
+                          <LikeLeft>
+                            <LikeAvatar />
+                            <div>
+                              <LikeName>{user.username}</LikeName>
+                              {secondary ? <LikeMeta>{secondary}</LikeMeta> : null}
+                            </div>
+                          </LikeLeft>
+                          <FollowButton type="button">팔로우</FollowButton>
+                        </LikeItem>
+                      );
+                    })}
+                  </LikesList>
+                )}
+              </LikesPanel>
+            </LikesOverlay>
+          )}
+        </Footer>
+        {(!isMobile || isInputVisible) && (
+          <FixedInput>
+            <CommentInput
+              ref={commentInputRef}
+              value={commentInput}
+              onChange={setCommentInput}
+              onSubmit={handleSubmitComment}
+              placeholder={"댓글 달기 ..."}
+              disabled={createCommentMutation.isPending}
+            />
+          </FixedInput>
         )}
-
-        <CommentInput
-          ref={commentInputRef}
-          value={commentInput}
-          onChange={setCommentInput}
-          onSubmit={handleSubmitComment}
-          placeholder={"댓글 달기 ..."}
-          disabled={createCommentMutation.isPending}
-        />
-      </Footer>
+      </BottomStack>
     </RightContainer>
   );
 }
@@ -279,8 +326,9 @@ const RightContainer = styled.div`
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background: #050505;
+  background: #262626;
   overflow-y: auto;
+  position: relative;
 
   /* Firefox */
   scrollbar-width: thin;
@@ -301,22 +349,86 @@ const RightContainer = styled.div`
     transition: background 0.2s ease;
   }
 
+  @media (max-width: 430px) {
+    overflow-y: hidden;
+  }
+
+  @media (max-width: 430px) {
+    overflow-y: hidden;
+  }
 `;
 
-
-
-const Header = styled.div`
+const ContentStack = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  min-height: 0;
+`;
+
+const BottomStack = styled.div`
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+`;
+
+const DesktopHeader = styled.div`
+  display: flex;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #525252;
-`;
-
-const UserInfo = styled.div`
-  display: flex;
   gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #3f3f3f;
+  background: #262626;
+
+  @media (max-width: 430px) {
+    display: none;
+  }
+`;
+
+const DesktopAvatar = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #525252;
+  flex-shrink: 0;
+`;
+
+const DesktopAvatarFallback = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #525252;
+  flex-shrink: 0;
+`;
+
+const DesktopName = styled.div`
+  color: #fafafa;
+  font-weight: 600;
+  font-size: 15px;
+`;
+
+const DesktopNameRow = styled.div`
+  display: flex;
   align-items: center;
+  gap: 8px;
+`;
+
+const BodyTypeBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid #9810fa;
+  color: #9810fa;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  background: rgba(152, 16, 250, 0.12);
+`;
+
+const DesktopMeta = styled.div`
+  color: #a1a1a1;
+  font-size: 13px;
 `;
 
 const Avatar = styled.div`
@@ -330,9 +442,6 @@ const Avatar = styled.div`
 const Username = styled.div`
   color: #fafafa;
   font-weight: 600;
-  @media (max-width: 390px) {
-    font-size: 14px;
-  }
 `;
 
 const SubInfo = styled.div`
@@ -349,10 +458,6 @@ const PostContent = styled.div`
 
 const Text = styled.p`
   color: #fafafa;
-
-  @media (max-width: 390px) {
-    font-size: 12px;
-  }
 `;
 
 const Tags = styled.div`
@@ -376,7 +481,7 @@ const CommentsSection = styled.div`
     gap: 12px; /* Tablet */
   }
 
-  @media (max-width: 390px) {
+  @media (max-width: 430px) {
     gap: 8px; /* Mobile */
   }
 `;
@@ -392,8 +497,12 @@ const CommentRowWrapper = styled.div<{ $depth: number }>`
 
 
 const Footer = styled.div`
-  padding: 16px;
-  border-top: 1px solid #525252;
+  padding: 16px 16px 0;
+  position: relative;
+
+  @media (max-width: 430px) {
+    padding: 16px 16px 16px;
+  }
 `;
 
 
@@ -458,7 +567,7 @@ const LikesButton = styled.button`
     font-size: 16px;
   }
 
-  @media (max-width: 390px) {
+  @media (max-width: 430px) {
     font-size: 14px;
   }
 `;
@@ -580,4 +689,16 @@ const FollowButton = styled.button`
     transform: translateY(0);
   }
 `;
+
+const FixedInput = styled.div`
+  position: relative;
+  background: #262626;
+  padding: 12px 16px;
+  border-top: 1px solid #525252;
+
+  @media (max-width: 430px) {
+    padding: 12px 16px 12px;
+  }
+`;
+
 

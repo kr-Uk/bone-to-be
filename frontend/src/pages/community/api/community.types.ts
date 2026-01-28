@@ -155,6 +155,8 @@ export interface FeedDetail {
   id: string;
   imageUrl: string;
   author: FeedAuthor;
+  height: number;
+  weight?: number;
   content: string[];
   tags: string[];
   createdAt: string;

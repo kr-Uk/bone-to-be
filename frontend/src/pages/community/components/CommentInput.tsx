@@ -41,6 +41,7 @@ const Wrapper = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+  background: #262626;
 `;
 
 const Input = styled.input`

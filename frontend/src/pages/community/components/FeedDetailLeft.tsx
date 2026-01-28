@@ -30,12 +30,13 @@ const LeftContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: black;
+  background: #262626;
+  border-right: 1px solid #262626;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 430px) {
     max-width: 100%;
     width: 100%;
-    height: min(60vh, 60%);
+    height: 45vh;
     min-width: 0;
   }
 `;

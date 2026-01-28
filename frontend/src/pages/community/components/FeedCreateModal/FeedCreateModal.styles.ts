@@ -142,8 +142,8 @@ export const DesktopImageSection = styled.div`
     /* Desktop: Left 영역, 절대 크기 제한 */
     display: flex;
     flex: 0 0 auto;
-    width: min(50vh, 600px);
-    height: min(50vh, 600px);
+    width: min(60vh, 600px);
+    height: min(60vh, 600px);
     padding: 2rem;
     margin: auto 0; /* 세로 중앙 정렬 */
     order: 1; /* Left */

@@ -26,10 +26,6 @@ export const UploadContainer = styled.div<{ $isDragOver: boolean }>`
     gap: 1.25rem;
   }
 
-  @media (min-width: 1024px) {
-    padding: 48px;
-  }
-
   &:hover {
     background-color: rgba(152, 16, 250, 0.1);
     border-color: ${({ theme }) => theme.colors.purple[600]};
@@ -103,7 +99,7 @@ export const SelectButton = styled.button`
   cursor: pointer;
   transform: scale(1);
   transition: all 0.2s ease;
-  padding: 0 0.5rem;
+  padding: 0.5rem 1rem;
   -webkit-tap-highlight-color: rgba(152, 16, 250, 0.2);
   touch-action: manipulation;
 
@@ -113,7 +109,7 @@ export const SelectButton = styled.button`
 
   @media (min-width: 768px) {
     height: 51px;
-    padding: 15px 32px;
+    padding: 1rem 2rem;
     font-size: 16px;
   }
 `;
@@ -129,8 +125,6 @@ export const PreviewContainer = styled.div`
   box-sizing: border-box; /* padding을 width 내부에 포함 */
   border-radius: 8px;
   overflow: hidden;
-
-  /* min-height 제거 - 부모의 aspect-ratio에 의존 */
 `;
 
 export const PreviewImage = styled.img`

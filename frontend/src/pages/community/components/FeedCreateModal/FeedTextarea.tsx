@@ -10,7 +10,8 @@ const TextareaContainer = styled.div`
 
 const StyledTextarea = styled.textarea`
   width: 100%;
-  min-height: 211.88px;
+  min-height: 210px;
+  resize: none;
   padding: 16px;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   border: 1px solid ${({ theme }) => theme.colors.gray[600]};
@@ -19,7 +20,6 @@ const StyledTextarea = styled.textarea`
   font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 400;
   font-family: inherit;
-  resize: vertical;
   transition: all 0.2s ease;
 
   &:focus {

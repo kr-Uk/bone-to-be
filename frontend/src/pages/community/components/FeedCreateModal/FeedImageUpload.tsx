@@ -2,27 +2,30 @@ import { useCallback, useRef, useState } from "react";
 
 import * as S from "./FeedImageUpload.styles";
 
-import type { FeedImageUploadProps } from "./types";
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ["image/svg+xml", "image/png", "image/jpeg"];
+
+interface FeedImageUploadProps {
+  imagePreview: string | null;
+  onImageChange: (file: File | null) => void;
+}
 
 export function FeedImageUpload({ imagePreview, onImageChange }: FeedImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(false);
 
   const validateFile = useCallback((file: File): boolean => {
-    setError(null);
+    setLocalError(null);
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      setError("SVG, PNG, JPG 파일만 업로드할 수 있습니다.");
+      setLocalError("SVG, PNG, JPG 파일만 업로드할 수 있습니다.");
       return false;
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      setError("10MB 이하의 이미지 파일만 업로드할 수 있습니다.");
+      setLocalError("10MB 이하의 이미지 파일만 업로드할 수 있습니다.");
       return false;
     }
 
@@ -143,7 +146,7 @@ export function FeedImageUpload({ imagePreview, onImageChange }: FeedImageUpload
         />
       </S.UploadContainer>
 
-      {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
+      {localError && <S.ErrorMessage>{localError}</S.ErrorMessage>}
     </>
   );
 }

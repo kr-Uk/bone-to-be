@@ -1,102 +1,77 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import { useFeedCreate } from "../../api/useCommunityQueries";
 
 import * as S from "./FeedCreateModal.styles";
 import { FeedFormSection, ProfileHeader } from "./FeedFormSection";
 import { FeedImageUpload } from "./FeedImageUpload";
+import { feedFormSchema, type FeedFormValues } from "./validation";
 
-import type { BodyType, FeedCreateModalProps, Gender } from "./types";
+import type { FeedCreateModalProps } from "./types";
 
 export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [content, setContent] = useState("");
-  const [bodyType, setBodyType] = useState<BodyType | null>(null);
-  const [gender, setGender] = useState<Gender | null>(null);
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
-  const [styles, setStyles] = useState<string[]>([]);
 
   const { mutate: createFeed, isPending: isSubmitting } = useFeedCreate();
 
-  // Handle image change
-  const handleImageChange = useCallback(
-    (file: File | null) => {
-      setImage(file);
-
-      // Clean up previous preview URL
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
-
-      // Create new preview URL
-      if (file) {
-        const preview = URL.createObjectURL(file);
-        setImagePreview(preview);
-      } else {
-        setImagePreview(null);
-      }
+  // Initialize React Hook Form
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<FeedFormValues>({
+    resolver: zodResolver(feedFormSchema),
+    mode: "onChange", // Real-time validation
+    defaultValues: {
+      content: "",
+      height: "",
+      weight: "",
+      styles: [],
     },
-    [imagePreview],
-  );
+  });
 
-  // Validate form
-  const isValid = image !== null && bodyType !== null && gender !== null && styles.length > 0;
+  // Watch image for preview
+  const imageFile = watch("image");
+  const contentValue = watch("content");
 
-  // Handle submit
-  const handleSubmit = useCallback(() => {
-    if (!isValid || isSubmitting || !image || !bodyType || !gender) return;
+  // Create image preview URL
+  const imagePreview = useMemo(() => {
+    if (!imageFile) return null;
+    return URL.createObjectURL(imageFile);
+  }, [imageFile]);
 
-    createFeed(
-      {
-        image,
-        content,
-        bodyType,
-        gender,
-        height: height ? parseInt(height, 10) : 0,
-        weight: weight ? parseInt(weight, 10) : undefined,
-        styles,
+  // Handle form submission
+  const onSubmit = handleSubmit((data) => {
+    // Transform data to match API requirements
+    const apiData = {
+      ...data,
+      height: data.height ? parseInt(data.height, 10) : 0,
+      weight: data.weight ? parseInt(data.weight, 10) : undefined,
+    };
+
+    createFeed(apiData, {
+      onSuccess: () => {
+        reset(); // Reset form
+        onClose();
       },
-      {
-        onSuccess: () => {
-          // Reset form and close modal
-          setImage(null);
-          setImagePreview(null);
-          setContent("");
-          setBodyType(null);
-          setGender(null);
-          setHeight("");
-          setWeight("");
-          setStyles([]);
-          onClose();
-        },
-        onError: (error) => {
-          console.error("Failed to create feed:", error);
-          // TODO: Show error toast
-        },
+      onError: (error) => {
+        console.error("Failed to create feed:", error);
+        // TODO: Show error toast
       },
-    );
-  }, [
-    isValid,
-    isSubmitting,
-    image,
-    content,
-    bodyType,
-    gender,
-    height,
-    weight,
-    styles,
-    createFeed,
-    onClose,
-  ]);
+    });
+  });
 
   // Handle close
   const handleClose = useCallback(() => {
     if (isSubmitting) return;
+    reset(); // Reset form on close
     onClose();
-  }, [isSubmitting, onClose]);
+  }, [isSubmitting, onClose, reset]);
 
   // Handle overlay click
   const handleOverlayClick = useCallback(
@@ -181,7 +156,16 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
         <S.ModalContent>
           {/* Desktop: ImageSection outside FormSection (Left) */}
           <S.DesktopImageSection>
-            <FeedImageUpload imagePreview={imagePreview} onImageChange={handleImageChange} />
+            <Controller
+              name="image"
+              control={control}
+              render={({ field }) => (
+                <FeedImageUpload
+                  imagePreview={imagePreview}
+                  onImageChange={(file) => field.onChange(file)}
+                />
+              )}
+            />
           </S.DesktopImageSection>
 
           <S.FormSection>
@@ -190,23 +174,24 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
             <S.ScrollableContent>
               {/* Mobile/Tablet: ImageSection inside ScrollableContent */}
               <S.MobileTabletImageSection>
-                <FeedImageUpload imagePreview={imagePreview} onImageChange={handleImageChange} />
+                <Controller
+                  name="image"
+                  control={control}
+                  render={({ field }) => (
+                    <FeedImageUpload
+                      imagePreview={imagePreview}
+                      onImageChange={(file) => field.onChange(file)}
+                    />
+                  )}
+                />
               </S.MobileTabletImageSection>
 
               <FeedFormSection
-                content={content}
-                bodyType={bodyType}
-                gender={gender}
-                height={height}
-                weight={weight}
-                styles={styles}
-                onContentChange={setContent}
-                onBodyTypeChange={setBodyType}
-                onGenderChange={setGender}
-                onHeightChange={setHeight}
-                onWeightChange={setWeight}
-                onStylesChange={setStyles}
-                onSubmit={handleSubmit}
+                control={control}
+                register={register}
+                errors={errors}
+                contentLength={contentValue?.length || 0}
+                onSubmit={onSubmit}
                 isSubmitting={isSubmitting}
                 isValid={isValid}
               />

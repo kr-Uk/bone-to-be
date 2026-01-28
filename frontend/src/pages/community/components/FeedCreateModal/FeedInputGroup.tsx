@@ -1,6 +1,5 @@
+import React from "react";
 import styled from "styled-components";
-
-import type { FeedInputGroupProps } from "./types";
 
 const GroupContainer = styled.div`
   display: flex;
@@ -42,10 +41,10 @@ const InputContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledInput = styled.input`
+const StyledInput = styled.input<{ $hasError?: boolean }>`
   background: transparent;
   border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.gray[600]};
+  border-bottom: 1px solid ${({ theme, $hasError }) => ($hasError ? "#ff4444" : theme.colors.gray[600])};
   color: ${({ theme }) => theme.colors.gray[50]};
   font-size: clamp(10px, 2.5vw, 16px);
   font-weight: 400;
@@ -55,7 +54,7 @@ const StyledInput = styled.input`
 
   &:focus {
     outline: none;
-    border-bottom-color: ${({ theme }) => theme.colors.purple[600]};
+    border-bottom-color: ${({ theme, $hasError }) => ($hasError ? "#ff4444" : theme.colors.purple[600])};
     border-bottom-width: 2px;
     padding-bottom: 7px;
   }
@@ -76,28 +75,19 @@ const StyledInput = styled.input`
   }
 `;
 
+interface FeedInputGroupProps {
+  heightProps: React.InputHTMLAttributes<HTMLInputElement>;
+  weightProps: React.InputHTMLAttributes<HTMLInputElement>;
+  heightError?: string;
+  weightError?: string;
+}
+
 export function FeedInputGroup({
-  heightValue,
-  weightValue,
-  onHeightChange,
-  onWeightChange,
+  heightProps,
+  weightProps,
+  heightError,
+  weightError,
 }: FeedInputGroupProps) {
-  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow numbers
-    if (value === "" || /^\d+$/.test(value)) {
-      onHeightChange(value);
-    }
-  };
-
-  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow numbers
-    if (value === "" || /^\d+$/.test(value)) {
-      onWeightChange(value);
-    }
-  };
-
   return (
     <GroupContainer>
       <Label>키 / 몸무게</Label>
@@ -106,20 +96,20 @@ export function FeedInputGroup({
           <StyledInput
             type="text"
             inputMode="numeric"
-            value={heightValue}
-            onChange={handleHeightChange}
             placeholder="키(cm)"
             aria-label="키(cm)"
+            $hasError={!!heightError}
+            {...heightProps}
           />
         </InputContainer>
         <InputContainer>
           <StyledInput
             type="text"
             inputMode="numeric"
-            value={weightValue}
-            onChange={handleWeightChange}
             placeholder="몸무게(kg)"
             aria-label="몸무게(kg)"
+            $hasError={!!weightError}
+            {...weightProps}
           />
         </InputContainer>
       </InputsWrapper>

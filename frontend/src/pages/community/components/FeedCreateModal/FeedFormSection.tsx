@@ -1,9 +1,11 @@
+import { Controller, type Control, type UseFormRegister } from "react-hook-form";
+
 import * as S from "./FeedFormSection.styles";
 import { FeedInputGroup } from "./FeedInputGroup";
 import { FeedOptionGroup } from "./FeedOptionGroup";
 import { FeedTextarea } from "./FeedTextarea";
 
-import type { FeedFormSectionProps } from "./types";
+import type { FeedFormValues } from "./validation";
 
 const BODY_TYPE_OPTIONS = [
   { label: "Natural", value: "Natural" },
@@ -39,19 +41,28 @@ export function ProfileHeader() {
   );
 }
 
+interface FeedFormSectionProps {
+  control: Control<FeedFormValues>;
+  register: UseFormRegister<FeedFormValues>;
+  errors: {
+    content?: { message?: string };
+    bodyType?: { message?: string };
+    gender?: { message?: string };
+    height?: { message?: string };
+    weight?: { message?: string };
+    styles?: { message?: string };
+  };
+  contentLength: number;
+  onSubmit: () => void;
+  isSubmitting: boolean;
+  isValid: boolean;
+}
+
 export function FeedFormSection({
-  content,
-  bodyType,
-  gender,
-  height,
-  weight,
-  styles,
-  onContentChange,
-  onBodyTypeChange,
-  onGenderChange,
-  onHeightChange,
-  onWeightChange,
-  onStylesChange,
+  control,
+  register,
+  errors,
+  contentLength,
   onSubmit,
   isSubmitting,
   isValid,
@@ -67,39 +78,70 @@ export function FeedFormSection({
     <>
       <S.FormContainer>
         {/* Content Textarea */}
-        <FeedTextarea value={content} onChange={onContentChange} maxLength={2200} />
+        <FeedTextarea
+          {...register("content")}
+          maxLength={2200}
+          currentLength={contentLength}
+          error={errors.content?.message}
+          placeholder="오늘의 코디를 공유해보세요..."
+        />
 
         {/* Body Type Selection */}
-        <FeedOptionGroup
-          label="골격 유형"
-          options={BODY_TYPE_OPTIONS}
-          value={bodyType}
-          onChange={onBodyTypeChange}
+        <Controller
+          name="bodyType"
+          control={control}
+          render={({ field }) => (
+            <FeedOptionGroup
+              label="골격 유형"
+              options={BODY_TYPE_OPTIONS}
+              value={field.value ?? null}
+              onChange={(value) => field.onChange(value)}
+            />
+          )}
         />
 
         {/* Gender Selection */}
-        <FeedOptionGroup
-          label="성별"
-          options={GENDER_OPTIONS}
-          value={gender}
-          onChange={onGenderChange}
+        <Controller
+          name="gender"
+          control={control}
+          render={({ field }) => (
+            <FeedOptionGroup
+              label="성별"
+              options={GENDER_OPTIONS}
+              value={field.value ?? null}
+              onChange={(value) => field.onChange(value)}
+            />
+          )}
         />
 
         {/* Height & Weight Input */}
         <FeedInputGroup
-          heightValue={height}
-          weightValue={weight}
-          onHeightChange={onHeightChange}
-          onWeightChange={onWeightChange}
+          heightProps={{
+            ...register("height"),
+          }}
+          weightProps={{
+            ...register("weight"),
+          }}
+          heightError={errors.height?.message}
+          weightError={errors.weight?.message}
         />
 
         {/* Style Selection */}
-        <FeedOptionGroup
-          label="스타일"
-          options={STYLE_OPTIONS}
-          value={styles}
-          onChange={onStylesChange}
-          multiSelect
+        <Controller
+          name="styles"
+          control={control}
+          render={({ field }) => (
+            <FeedOptionGroup
+              label="스타일"
+              options={STYLE_OPTIONS}
+              value={field.value}
+              onChange={(value) => {
+                const newStyles = Array.isArray(value) ? value : value ? [value] : [];
+                field.onChange(newStyles);
+              }}
+              multiSelect
+            />
+          )}
         />
         <S.SubmitButton
           type="button"

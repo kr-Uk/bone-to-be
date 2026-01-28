@@ -35,6 +35,7 @@ public class Report extends BaseEntity {
     private Diagnosis diagnosis;
 
     @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ReportStatus status = ReportStatus.PENDING;
 
     private String description;

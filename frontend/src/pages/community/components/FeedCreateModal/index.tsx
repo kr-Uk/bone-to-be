@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useFeedCreate } from "../../api/useCommunityQueries";
 
 import * as S from "./FeedCreateModal.styles";
-import { FeedFormSection } from "./FeedFormSection";
+import { FeedFormSection, ProfileHeader } from "./FeedFormSection";
 import { FeedImageUpload } from "./FeedImageUpload";
 
 import type { BodyType, FeedCreateModalProps, Gender } from "./types";
@@ -178,36 +178,46 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
         aria-labelledby="modal-title"
         aria-modal="true"
       >
-        <S.ModalHeader>
+        {/* <S.ModalHeader>
           <S.ModalTitle id="modal-title">새 게시글 작성하기</S.ModalTitle>
           <S.CloseButton onClick={handleClose} aria-label="Close modal">
             ×
           </S.CloseButton>
-        </S.ModalHeader>
+        </S.ModalHeader> */}
 
         <S.ModalContent>
-          <S.ImageSection>
+          {/* Desktop: ImageSection outside FormSection (Left) */}
+          <S.DesktopImageSection>
             <FeedImageUpload imagePreview={imagePreview} onImageChange={handleImageChange} />
-          </S.ImageSection>
+          </S.DesktopImageSection>
 
           <S.FormSection>
-            <FeedFormSection
-              content={content}
-              bodyType={bodyType}
-              gender={gender}
-              height={height}
-              weight={weight}
-              styles={styles}
-              onContentChange={setContent}
-              onBodyTypeChange={setBodyType}
-              onGenderChange={setGender}
-              onHeightChange={setHeight}
-              onWeightChange={setWeight}
-              onStylesChange={setStyles}
-              onSubmit={handleSubmit}
-              isSubmitting={isSubmitting}
-              isValid={isValid}
-            />
+            <ProfileHeader />
+
+            <S.ScrollableContent>
+              {/* Mobile/Tablet: ImageSection inside ScrollableContent */}
+              <S.MobileTabletImageSection>
+                <FeedImageUpload imagePreview={imagePreview} onImageChange={handleImageChange} />
+              </S.MobileTabletImageSection>
+
+              <FeedFormSection
+                content={content}
+                bodyType={bodyType}
+                gender={gender}
+                height={height}
+                weight={weight}
+                styles={styles}
+                onContentChange={setContent}
+                onBodyTypeChange={setBodyType}
+                onGenderChange={setGender}
+                onHeightChange={setHeight}
+                onWeightChange={setWeight}
+                onStylesChange={setStyles}
+                onSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
+                isValid={isValid}
+              />
+            </S.ScrollableContent>
           </S.FormSection>
         </S.ModalContent>
       </S.ModalContainer>

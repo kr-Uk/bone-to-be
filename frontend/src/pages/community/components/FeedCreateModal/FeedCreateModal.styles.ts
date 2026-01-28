@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const ModalOverlay = styled.div<{ $isOpen: boolean }>`
   display: flex;
@@ -31,8 +31,8 @@ export const ModalContainer = styled.div<{ $isOpen: boolean }>`
     opacity 0.3s ease;
 
   /* Mobile */
-  width: 100vw;
-  height: 100vh;
+  width: 80%;
+  height: 80%;
   max-height: 100vh;
   border-radius: 0;
 
@@ -119,49 +119,81 @@ export const ModalContent = styled.div`
   @media (min-width: 1024px) {
     /* Desktop: horizontal layout */
     flex-direction: row;
-    margin-top: 80px;
   }
 `;
 
-export const ImageSection = styled.div`
+// 공통 ImageSection 스타일
+const ImageSectionBase = css`
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => theme.colors.gray[800]};
   aspect-ratio: 1 / 1;
+  width: 100%;
+`;
 
-  /* Mobile */
+export const DesktopImageSection = styled.div`
+  ${ImageSectionBase}
+
+  /* Mobile/Tablet: 숨김 */
+  display: none;
+
+  @media (min-width: 1024px) {
+    /* Desktop: Left 영역, 절대 크기 제한 */
+    display: flex;
+    flex: 0 0 auto;
+    width: min(50vh, 600px);
+    height: min(50vh, 600px);
+    padding: 2rem;
+    margin: auto 0; /* 세로 중앙 정렬 */
+    order: 1; /* Left */
+  }
+`;
+
+export const MobileTabletImageSection = styled.div`
+  ${ImageSectionBase}
+
+  /* Mobile/Tablet: ScrollableContent 내부에서 scroll 가능 */
   padding: 1.5rem;
-  min-height: 270px;
+  flex-shrink: 0; /* 1:1 비율 유지 */
 
-  @media (min-width: 768px) {
+  @media (min-width: 768px) and (max-width: 1023px) {
     /* Tablet */
-    padding: 89px 89px 0 89px;
-    min-height: 570px;
+    padding: 2rem;
   }
 
   @media (min-width: 1024px) {
-    /* Desktop */
-    width: 863px;
-    padding: 145.5px;
-    min-height: auto;
+    /* Desktop: 숨김 */
+    display: none;
   }
 `;
 
 export const FormSection = styled.div`
   flex: 1;
+  min-height: 0; /* flex 아이템이 자식의 min-content를 무시하도록 */
   background-color: ${({ theme }) => theme.colors.gray[800]};
-  overflow-y: auto;
-  padding: 24px;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
 
-  @media (min-width: 768px) {
-    padding: 48px;
+  /* Mobile/Tablet: 전체 영역, ProfileHeader + ScrollableContent 포함 */
+  @media (max-width: 1023px) {
+    padding: 0; /* padding은 내부 요소에서 제어 */
   }
 
   @media (min-width: 1024px) {
-    width: 577px;
-    padding: 48px;
+    /* Desktop: Right 영역 */
+    flex: 1;
+    padding: 0;
+    order: 2; /* Right */
   }
+`;
+
+export const ScrollableContent = styled.div`
+  flex: 1;
+  min-height: 0; /* flex 아이템이 overflow를 제대로 처리하도록 */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
 `;

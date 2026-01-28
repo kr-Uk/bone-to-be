@@ -18,19 +18,14 @@ export const UploadContainer = styled.div<{ $isDragOver: boolean }>`
   transform: ${({ $isDragOver }) => ($isDragOver ? "scale(1.02)" : "scale(1)")};
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Mobile */
-  min-height: 222px;
+  /* min-height 제거 - 부모의 aspect-ratio에 의존 */
   padding: 24px;
 
   @media (min-width: 768px) {
-    /* Tablet */
-    min-height: 392px;
     padding: 48px;
   }
 
   @media (min-width: 1024px) {
-    /* Desktop */
-    min-height: 572px;
     padding: 48px;
   }
 
@@ -137,18 +132,7 @@ export const PreviewContainer = styled.div`
   border-radius: 8px;
   overflow: hidden;
 
-  /* Mobile */
-  min-height: 222px;
-
-  @media (min-width: 768px) {
-    /* Tablet */
-    min-height: 392px;
-  }
-
-  @media (min-width: 1024px) {
-    /* Desktop */
-    min-height: 572px;
-  }
+  /* min-height 제거 - 부모의 aspect-ratio에 의존 */
 `;
 
 export const PreviewImage = styled.img`

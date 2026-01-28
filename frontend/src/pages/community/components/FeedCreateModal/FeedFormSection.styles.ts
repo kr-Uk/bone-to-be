@@ -5,12 +5,45 @@ export const FormContainer = styled.div`
   flex-direction: column;
   gap: clamp(12px, 6vw, 48px);
   padding-bottom: clamp(80px, 15vh, 120px);
+
+  /* Mobile/Tablet: padding 추가 (ProfileHeader 제외) */
+  @media (max-width: 1023px) {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  @media (min-width: 1024px) {
+    /* Desktop: padding 추가 */
+    padding-left: 48px;
+    padding-right: 48px;
+  }
 `;
 
 export const ProfileHeader = styled.div`
   display: flex;
   align-items: center;
   gap: clamp(10px, 2vw, 15px);
+  background-color: ${({ theme }) => theme.colors.gray[800]};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0; /* 고정 높이 유지 */
+
+  /* Mobile */
+  padding: 24px 24px 16px 24px;
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    /* Tablet */
+    padding: 48px 48px 24px 48px;
+  }
+
+  @media (min-width: 1024px) {
+    /* Desktop */
+    padding: 48px 48px 24px 48px;
+  }
 `;
 
 export const Avatar = styled.div`

@@ -27,6 +27,18 @@ const STYLE_OPTIONS = [
   { label: "페미닌", value: "feminine" },
 ];
 
+// ProfileHeader 컴포넌트 분리
+export function ProfileHeader() {
+  return (
+    <S.ProfileHeader>
+      <S.Avatar>
+        <S.AvatarPlaceholder>👤</S.AvatarPlaceholder>
+      </S.Avatar>
+      <S.Username>사용자</S.Username>
+    </S.ProfileHeader>
+  );
+}
+
 export function FeedFormSection({
   content,
   bodyType,
@@ -54,14 +66,6 @@ export function FeedFormSection({
   return (
     <>
       <S.FormContainer>
-        {/* Profile Header */}
-        <S.ProfileHeader>
-          <S.Avatar>
-            <S.AvatarPlaceholder>👤</S.AvatarPlaceholder>
-          </S.Avatar>
-          <S.Username>사용자</S.Username>
-        </S.ProfileHeader>
-
         {/* Content Textarea */}
         <FeedTextarea value={content} onChange={onContentChange} maxLength={2200} />
 

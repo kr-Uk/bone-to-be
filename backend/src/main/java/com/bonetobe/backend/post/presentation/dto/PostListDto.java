@@ -6,6 +6,7 @@ import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummary;
+import com.bonetobe.backend.post.presentation.parser.PostRequestParser;
 import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.user.domain.Gender;
 
@@ -17,6 +18,7 @@ public class PostListDto {
     public record Request(
             String sort,
             String gender,
+            String skeletonType,
             Integer minHeight,
             Integer maxHeight,
             Integer minWeight,
@@ -27,12 +29,14 @@ public class PostListDto {
             validateRange(minHeight, maxHeight, minWeight, maxWeight);
 
             PostSort parsedPostSort = parseSort(sort);
-            Gender parsedGender = parseGender(gender);
-            List<StyleName> parsedStyles = parseStyles(style);
+            Gender parsedGender = PostRequestParser.parseGender(gender);
+            List<StyleName> parsedStyles = PostRequestParser.parseStyles(style);
+            SkeletonType parsedSkeletonType = PostRequestParser.parseSkeletonType(skeletonType);
 
             return new PostListQuery(
                     parsedPostSort,
                     parsedGender,
+                    parsedSkeletonType,
                     minHeight,
                     maxHeight,
                     minWeight,
@@ -67,31 +71,6 @@ public class PostListDto {
                 case "LATEST" -> PostSort.LATEST;
                 default -> throw new BusinessException(ErrorCode.POST_LIST_INVALID_SORT);
             };
-        }
-
-        private static Gender parseGender(String gender) {
-            if (gender == null || gender.isBlank()) return null;
-
-            String g = gender.trim().toUpperCase();
-            return switch (g) {
-                case "F", "FEMALE" -> Gender.FEMALE;
-                case "M", "MALE" -> Gender.MALE;
-                default -> throw new BusinessException(ErrorCode.POST_LIST_INVALID_GENDER);
-            };
-        }
-
-        private static List<StyleName> parseStyles(List<String> styles) {
-            if (styles == null || styles.isEmpty()) return null;
-
-            try {
-                return styles.stream()
-                        .filter(s -> s != null && !s.isBlank())
-                        .map(s -> s.trim().toUpperCase())
-                        .map(StyleName::valueOf)
-                        .toList();
-            } catch (IllegalArgumentException e) {
-                throw new BusinessException(ErrorCode.POST_LIST_INVALID_STYLE);
-            }
         }
     }
 

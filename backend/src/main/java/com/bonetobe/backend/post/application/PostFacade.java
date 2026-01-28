@@ -13,7 +13,6 @@ import com.bonetobe.backend.post.domain.query.*;
 import com.bonetobe.backend.style.domain.Style;
 import com.bonetobe.backend.style.domain.StyleService;
 import com.bonetobe.backend.user.domain.User;
-import com.bonetobe.backend.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,6 @@ public class PostFacade {
 
     private final PostService postService;
     private final FileService fileService;
-    private final UserService userService;
     private final StyleService styleService;
 
     @Transactional(readOnly = true)
@@ -71,7 +69,7 @@ public class PostFacade {
     }
 
     public void createPost(PostCreateCommand command) {
-        User user = userService.getUserById(command.userId());
+        User user = User.of(command.userId());
         StoredFile file = fileService.getFile(command.fileId());
         List<Style> styles = styleService.getStylesByNames(command.styles());
 

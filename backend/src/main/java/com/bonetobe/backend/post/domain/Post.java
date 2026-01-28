@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -76,17 +77,13 @@ public class Post extends BaseEntity {
     }
 
     public void applyStyles(List<Style> styles) {
-//        if (styles == null || styles.isEmpty()) return;
-//
-//        for (Style style : styles) {
-//            if (style == null) continue;
-//            this.postStyles.add(PostStyle.create(this, style));
-//        }
-        styles.forEach(
-                style -> {
-                    postStyles.add(PostStyle.create(this, style));
-                }
-        );
+        if (styles == null) return;
+        styles.stream()
+                .filter(Objects::nonNull)
+                .forEach(style ->
+                        postStyles.add(PostStyle.create(this, style))
+                );
+
     }
 
     public void update(

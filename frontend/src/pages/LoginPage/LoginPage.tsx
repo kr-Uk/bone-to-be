@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
-import { LoginModalView } from "./components/LoginModalView";
 import { LoginFooter } from "./components/LoginFooter";
 import LoginHeader from "./components/LoginHeader";
+import { LoginModalView } from "./components/LoginModalView";
 import { SignUpModalView } from "./components/SignUpModalView";
 import * as S from "./styles/LoginPage.styles";
 

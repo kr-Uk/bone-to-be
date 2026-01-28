@@ -1,8 +1,6 @@
-import { FaArrowRightLong } from "react-icons/fa6"
 import { motion, useScroll, useTransform } from "framer-motion";
-
 import { useEffect, useMemo, useRef, useState } from "react";
-
+import { FaArrowRightLong } from "react-icons/fa6"
 import styled, { css } from "styled-components";
 
 

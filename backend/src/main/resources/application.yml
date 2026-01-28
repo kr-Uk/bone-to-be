@@ -138,9 +138,7 @@ logging:
   level:
     root: INFO
     com.bonetobe.backend: DEBUG
-    # [핵심] 시큐리티가 입구를 막는 이유를 모두 로그로 찍습니다.
     org.springframework.security: DEBUG
-    # [추가] 카카오와 통신하는 상세 내역을 찍습니다.
     org.springframework.web.client.RestTemplate: DEBUG
 
 ##################################

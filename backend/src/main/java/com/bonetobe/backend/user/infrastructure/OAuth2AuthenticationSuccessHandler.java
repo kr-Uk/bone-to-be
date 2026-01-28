@@ -18,12 +18,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-
-        log.info(">>>> OAuth2 로그인 성공! 리다이렉트를 진행합니다.");
-
         // 세션 기반이므로 별도의 토큰 발급 없이 프론트엔드 메인 페이지로 보냅니다.
         String targetUrl = "https://bonetobe.site";
-
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }

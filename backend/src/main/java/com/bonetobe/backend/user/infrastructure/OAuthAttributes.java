@@ -56,7 +56,6 @@ public class OAuthAttributes {
                 .name(name)
                 .email(email)
                 .provider(OAuthProvider.KAKAO)
-                // [핵심] 카카오 ID는 숫자(Long)이므로 반드시 String.valueOf를 써야 500 에러가 안 납니다!
                 .providerUserId(String.valueOf(attributes.get(userNameAttributeName)))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)

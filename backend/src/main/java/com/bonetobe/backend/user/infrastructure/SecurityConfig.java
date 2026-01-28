@@ -46,20 +46,19 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/**",
                                 "/api/auth/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/api/swagger-ui/**",
-                                "/api/v3/api-docs/**",
 
-                                // [수정] OAuth2 관련 모든 경로 및 기본 로그인/에러 경로 개방
+                                "/swagger-ui/**",
+                                "/swagger-resources/**",
+                                "/v3/api-docs/**",
+
                                 "/oauth2/**",
-                                "/login/**",           // 에러 페이지(/login?error) 대응
+                                "/login/**",
                                 "/api/oauth2/**",
-                                "/api/login/**"        // context-path 반영 에러 페이지 대응
+                                "/api/login/**"
                         ).permitAll()
 
                         // 2. 유저용 (User (Lv.1)) - 로그아웃 포함
-                        .requestMatchers("/auth/logout").authenticated()
+                        .requestMatchers("api/auth/logout","/auth/logout").authenticated()
 
                         // 3. 나머지 모든 /users/me/** 요청들
                         .anyRequest().authenticated()
@@ -100,10 +99,10 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                 )
 
+                // 7. OAuth 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(oAuth2AuthenticationSuccessHandler)
-                        // [수정] 에러 발생 시 리다이렉트될 경로를 명시 (존재하는 경로로!)
                         .failureUrl("/auth/login?error")
                 )
 

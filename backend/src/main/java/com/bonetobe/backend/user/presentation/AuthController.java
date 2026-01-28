@@ -7,6 +7,7 @@ import com.bonetobe.backend.user.domain.AuthService;
 import com.bonetobe.backend.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +74,6 @@ public class AuthController {
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 
-
     // --- 비밀번호 재설정 ---
 
     /**
@@ -97,7 +97,7 @@ public class AuthController {
      * 명세서의 '토큰 유효 검증' 항목에 해당합니다.
      */
     @GetMapping("/password/reset/verify")
-    public ResponseEntity<APIResponse<Void>> verifyResetToken(@RequestParam String token) {
+    public ResponseEntity<APIResponse<Void>> verifyResetToke(@RequestParam String token) {
         // 1. Redis에 토큰이 살아있는지 확인 (삭제 X)
         emailService.validateTokenOnly(token);
 

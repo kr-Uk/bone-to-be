@@ -28,56 +28,54 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        // ㅡㅡ+ 이 로그가 찍히는지 안 찍히는지가 '필터 문제'인지 '로직 문제'인지 가르는 기준입니다!
-        System.out.println("########## OAuth2 로직 진입 성공! ##########");
-        log.error("########## OAuth2 로직 진입 성공! ##########");
-
         OAuth2User oAuth2User;
+
         try {
+            // 소셜 서비스의 UserInfo 엔드포인트에서 실제 사용자 정보를 가져옴
+            // 성공 시 이메일, 닉네임 등의 JSON 데이터 저장
             oAuth2User = super.loadUser(userRequest);
-            log.info(">>>> 카카오 데이터 수신 성공: {}", oAuth2User.getAttributes());
         } catch (Exception e) {
-            log.error(">>>> [🚨FATAL ERROR] 카카오 서버 통신 실패: {}", e.getMessage());
             throw e;
         }
 
         try {
+            // 소셜 서비스의 고유 ID (kakao, google, naver)
             String registrationId = userRequest.getClientRegistration().getRegistrationId();
+            // 소셜 서비스에서 사용자를 식별하기 위한 고유 식별자 (sub, id, response)
             String userNameAttributeName = userRequest.getClientRegistration()
                     .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
+            // 소셜 서비스마다 다른 JSON 키 값을 하나로 묶어주는 어댑터
             OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
+            // 데이터베이스 동기화 전략
             User user = saveOrUpdate(attributes);
 
+            // 시큐리티 세션용 객체 생성 (권한, 데이터 담음)
             return new DefaultOAuth2User(
                     Collections.singleton(new SimpleGrantedAuthority(user.getRole())),
                     attributes.getAttributes(),
                     attributes.getNameAttributeKey()
             );
         } catch (Exception e) {
-            // [핵심] 여기서 에러 로그를 콘솔에 강제로 도배합니다! ㅡㅡ+
-            log.error(">>>> [🚨FATAL ERROR] 데이터 처리 중 폭발!!!");
-            log.error(">>>> 에러 메시지: {}", e.getMessage());
-            e.printStackTrace(); // 스택트레이스 전체 출력
+            e.printStackTrace();
             throw new OAuth2AuthenticationException(e.getMessage());
         }
     }
 
-    // CustomOAuth2UserService.java 내부 수정
     private User saveOrUpdate(OAuthAttributes attributes) {
-        // 1. 이미 소셜 연동(OAuthUser)이 되어 있는지 확인
+        // 1. 이미 소셜 연동(OAuthUser)이 되어 있는지 확인 (있으면 바로 User 반환)
         return oAuthUserRepository.findByProviderAndProviderUserId(
                         attributes.getProvider(), attributes.getProviderUserId())
                 .map(OAuthUser::getUser)
+                // 2. 소설 연동이 없는 경우
                 .orElseGet(() -> {
-                    // 2. 소셜 연동은 없지만, 해당 이메일로 가입된 '일반 유저'가 있는지 확인
+                    // 2-1. 해당 이메일로 가입된 '일반 유저'가 있는지 확인
                     User user = userRepository.findByEmail(attributes.getEmail())
                             .orElseGet(() -> {
-                                // 3. 둘 다 없다면 신규 가입 (save 결과를 변수에 명확히 담음)
+                                // 2-1-1. 소셜 연동, 이메일 둘다 없다면 신규 가입 (save 결과를 변수에 명확히 담음)
                                 return userRepository.save(attributes.toEntity());
                             });
-
-                    // 4. 일반 유저는 있으나 소셜 연동이 안 된 경우, 연동 정보를 새로 생성
+                    // 2-2. 일반 유저는 있으나 소셜 연동이 안 된 경우, 연동 정보를 새로 생성
                     oAuthUserRepository.save(attributes.toOAuthUserEntity(user));
                     return user;
                 });

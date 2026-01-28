@@ -47,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
         String token = UUID.randomUUID().toString();
         // TODO: 리셋 링크 짜자
         // String resetLink = "https://bonetobe.site/password-reset?token=" + token;
-        String resetLink = "https://bonetobe.site"; //
+        String resetLink = "https://bonetobe.site";
 
         sendEmail(email, "[BONETOBE] 비밀번호 재설정 안내",
                 "아래 링크를 클릭하여 비밀번호를 재설정하세요.\n" + resetLink);

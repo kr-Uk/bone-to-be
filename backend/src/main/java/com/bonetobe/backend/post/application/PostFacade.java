@@ -97,11 +97,10 @@ public class PostFacade {
         FileUploadUrl.Request req = new FileUploadUrl.Request(
                 command.originalFileName(),
                 command.contentType(),
-                command.fileDomainCategory(),
                 command.fileSize()
         );
 
-        FileUploadUrl.Response res = fileService.createUploadUrl(req, command.userId());
+        FileUploadUrl.Response res = fileService.createUploadUrl(req, command.userId(), command.fileDomainCategory());
 
         return new PostFileSummary(
                 res.fileId(),

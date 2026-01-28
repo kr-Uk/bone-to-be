@@ -50,6 +50,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private long likeCount = 0L;
 
+    // 양방향은 순환참조의 위험이 있음 -> Join으로
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<PostStyle> postStyles = new ArrayList<>();
 
@@ -75,12 +76,17 @@ public class Post extends BaseEntity {
     }
 
     public void applyStyles(List<Style> styles) {
-        if (styles == null || styles.isEmpty()) return;
-
-        for (Style style : styles) {
-            if (style == null) continue;
-            this.postStyles.add(PostStyle.create(this, style));
-        }
+//        if (styles == null || styles.isEmpty()) return;
+//
+//        for (Style style : styles) {
+//            if (style == null) continue;
+//            this.postStyles.add(PostStyle.create(this, style));
+//        }
+        styles.forEach(
+                style -> {
+                    postStyles.add(PostStyle.create(this, style));
+                }
+        );
     }
 
     public void update(
@@ -100,7 +106,7 @@ public class Post extends BaseEntity {
     }
 
     public void updateStyles(List<Style> styles) {
-        this.postStyles.clear();
+        postStyles.clear();
         applyStyles(styles);
     }
 

@@ -1,11 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import DiagnosisLayout from "../layouts/DiagnosisLayout";
-
 import ErrorLayout from "@/app/layouts/ErrorLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import CommunityPage from "@/pages/community/CommunityPage";
 import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
+import ReportPage from "@/pages/diagnosis/ReportPage";
 import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { PasswordResetPage } from "@/pages/PasswordResetPage";
@@ -26,7 +25,6 @@ export const router = createBrowserRouter([
       },
       {
         path: "diagnosis",
-        element: <DiagnosisLayout />,
         children: [
           {
             path: "basic-info",
@@ -35,6 +33,10 @@ export const router = createBrowserRouter([
           {
             path: "photo-capture",
             element: <PhotoCapturePage />,
+          },
+          {
+            path: "report",
+            element: <ReportPage />,
           },
         ],
       },

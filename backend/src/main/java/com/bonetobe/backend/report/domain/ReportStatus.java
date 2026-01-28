@@ -2,7 +2,7 @@ package com.bonetobe.backend.report.domain;
 
 public enum ReportStatus {
         PENDING,
-        COMPLETE,
+        COMPLETED,
         FAILED,
         DELETED
 }

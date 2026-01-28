@@ -4,9 +4,9 @@ import com.bonetobe.backend.common.rabbitconfig.RabbitExchangeProperties;
 import com.bonetobe.backend.report.domain.ReportProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class RabbitReportProducer implements ReportProducer {
     private final AmqpTemplate amqpTemplate;

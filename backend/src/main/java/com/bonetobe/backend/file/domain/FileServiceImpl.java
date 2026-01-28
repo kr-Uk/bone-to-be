@@ -1,5 +1,6 @@
 package com.bonetobe.backend.file.domain;
 
+import com.bonetobe.backend.common.DomainCategory;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import com.bonetobe.backend.file.presentation.FileUploadUrl;
@@ -19,16 +20,16 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public FileUploadUrl.Response createUploadUrl(FileUploadUrl.Request request, Long userId) {
+    public FileUploadUrl.Response createUploadUrl(FileUploadUrl.Request request, Long userId, DomainCategory domainCategory) {
         ContentType contentType = ContentType.getContentType(request.contentType());
-        String storageKey = fileStorage.generateKey(request.fileDomainCategory(), contentType);
+        String storageKey = fileStorage.generateKey(domainCategory, contentType);
 
         FileMetadata metadata = FileMetadata.createMetadata(
             storageKey,
             request.originalFileName(),
             request.contentType(),
             userId,
-            request.fileDomainCategory(),
+            domainCategory,
             request.fileSize()
         );
 

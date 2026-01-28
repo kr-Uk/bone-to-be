@@ -1,5 +1,6 @@
 package com.bonetobe.backend.file.presentation;
 
+import com.bonetobe.backend.common.DomainCategory;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.file.domain.FileService;
@@ -26,7 +27,7 @@ public class FileTestController {
         @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.status(HttpStatus.OK)
-            .body(APIResponse.success(SuccessCode.OK, fileService.createUploadUrl(request, user.getId())));
+            .body(APIResponse.success(SuccessCode.OK, fileService.createUploadUrl(request, user.getId(), DomainCategory.PROFILE)));
     }
 
     @GetMapping("/download")

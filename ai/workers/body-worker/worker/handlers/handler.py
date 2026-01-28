@@ -93,15 +93,15 @@ def handle(message: dict):
     
     if yolo_model is None or shapy_runner is None:
         publish({
+            "report_id": message.get("report_id"),
             "status": "FAILED",
-            "reportId": message.get("reportId"),
             "error": "Models not initialized on worker"
         })
         return
 
     try:
         # Extract backend message fields
-        report_id = message.get("reportId")
+        report_id = message.get("report_id")
         weight = message.get("weight")  # Integer (kg)
         height_cm = message.get("height")  # Integer (cm)
         gender = message.get("gender", "").lower()  # "male" or "female"
@@ -110,16 +110,16 @@ def handle(message: dict):
         # Validate required fields
         if not presigned_url:
             publish({
+                "report_id": report_id,
                 "status": "FAILED",
-                "reportId": report_id,
                 "error": "Missing required field: presignedUrl"
             })
             return
         
         if not height_cm or height_cm <= 0:
             publish({
+                "report_id": report_id,
                 "status": "FAILED",
-                "reportId": report_id,
                 "error": "Missing or invalid required field: height (must be > 0)"
             })
             return
@@ -152,16 +152,16 @@ def handle(message: dict):
         except Exception as e:
             print(f"❌ Download failed: {e}")
             publish({
+                "report_id": report_id,
                 "status": "FAILED",
-                "reportId": report_id,
                 "error": f"Failed to download image from presignedUrl: {str(e)}"
             })
             return
 
         if img is None:
             publish({
+                "report_id": report_id,
                 "status": "FAILED",
-                "reportId": report_id,
                 "error": "Failed to load image from presignedUrl"
             })
             return
@@ -172,8 +172,8 @@ def handle(message: dict):
         
         if not results or not results[0].keypoints or results[0].keypoints.data.shape[1] == 0:
             publish({
+                "report_id": report_id,
                 "status": "FAILED",
-                "reportId": report_id,
                 "error": "No person detected or no keypoints found"
             })
             return
@@ -240,17 +240,11 @@ def handle(message: dict):
             else:
                 return obj
     
-        # 9. Prepare minimal response for backend
-        backend_result = {
-            'reportId': report_id,
-            'body_type_metrics': output.get('body_type_metrics')
-        }
-
-        # 10. Publish Result (only essentials)
+        # 9. Publish Result (flat structure for backend ReportResult)
         publish({
-            "status": "COMPLETED",
-            "reportId": report_id,
-            "result": backend_result
+            "report_id": report_id,
+            "bodyMetrics": output.get('body_type_metrics'),
+            "status": "COMPLETED"
         })
         print("✅ Processing completed and published.")
 
@@ -258,7 +252,7 @@ def handle(message: dict):
         import traceback
         traceback.print_exc()
         publish({
+            "report_id": report_id if 'report_id' in locals() else None,
             "status": "FAILED",
-            "reportId": report_id if 'report_id' in locals() else None,
             "error": str(e)
         })

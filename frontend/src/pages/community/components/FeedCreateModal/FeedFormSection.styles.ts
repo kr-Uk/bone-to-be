@@ -84,3 +84,11 @@ export const SubmitButton = styled.button<{ $disabled: boolean }>`
     opacity: 0.6;
   }
 `;
+
+export const ErrorText = styled.span`
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #ff4444;
+  line-height: 1.4;
+`;

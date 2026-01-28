@@ -18,8 +18,22 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        // 세션 기반이므로 별도의 토큰 발급 없이 프론트엔드 메인 페이지로 보냅니다.
-        String targetUrl = "https://bonetobe.site";
+
+        request.getSession(true);
+
+        // 현재 요청이 들어온 Origin이나 Host를 확인하여 리다이렉트
+        String host = request.getHeader("Host"); // 예: localhost:8080
+        String targetUrl;
+
+        if (host != null && host.contains("localhost")) {
+            // 로컬 개발 환경 (프론트엔드 포트에 맞게)
+            targetUrl = "http://localhost:5173";
+        } else {
+            // 실서비스 환경
+            targetUrl = "https://bonetobe.site";
+        }
+
+        log.info("[OAuth2 Success] Redirecting to: {}", targetUrl);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }

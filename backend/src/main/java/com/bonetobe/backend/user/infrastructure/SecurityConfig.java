@@ -17,6 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -59,7 +61,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // 2. 유저용 (User (Lv.1)) - 로그아웃 포함
-                        .requestMatchers("api/auth/logout","/auth/logout").authenticated()
+                        .requestMatchers("/auth/logout", "/auth/me").authenticated()
 
                         // 3. 나머지 모든 /users/me/** 요청들
                         .anyRequest().authenticated()
@@ -124,13 +126,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("https://bonetobe.site");
-        configuration.addAllowedOrigin("http://localhost:5173");
-        configuration.addAllowedOrigin("http://localhost:5174");
+        // 1. 프론트엔드 도메인 명시 (와일드카드 * 사용 불가)
+        configuration.setAllowedOrigins(List.of("https://bonetobe.site", "http://localhost:5173", "http://localhost:5174"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
 
-        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용 (GET, POST 등)
-        configuration.addAllowedHeader("*"); // 모든 헤더 허용
-        configuration.setAllowCredentials(true); // 쿠키/인증 정보를 포함한 요청 허용
+        // 2. 쿠키 전송 허용 (핵심!)
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

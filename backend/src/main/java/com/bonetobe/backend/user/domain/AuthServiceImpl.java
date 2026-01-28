@@ -2,6 +2,8 @@ package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.user.infrastructure.UserPrincipal;
+import com.bonetobe.backend.user.presentation.AuthMeResponse;
 import com.bonetobe.backend.user.presentation.PasswordReset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,5 +110,12 @@ public class AuthServiceImpl implements AuthService {
         user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
 
         emailService.deleteResetToken(request.getToken());
+    }
+
+    @Override
+    public AuthMeResponse getMyInfo(UserPrincipal principal) {
+        // 컨트롤러에서 넘어온 principal이 이미 인증된 상태이므로
+        // 바로 DTO로 변환하여 반환합니다.
+        return AuthMeResponse.from(principal);
     }
 }

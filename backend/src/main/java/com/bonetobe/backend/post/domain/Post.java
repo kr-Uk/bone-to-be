@@ -106,15 +106,4 @@ public class Post extends BaseEntity {
         postStyles.clear();
         applyStyles(styles);
     }
-
-    public void increaseLike() {
-        this.likeCount++;
-    }
-
-    public void decreaseLike() {
-        if (this.likeCount == 0L) {
-            throw new BusinessException(ErrorCode.POST_LIST_INVALID_LIKE);
-        }
-        this.likeCount--;
-    }
 }

@@ -3,10 +3,14 @@ package com.bonetobe.backend.report.domain;
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.user.domain.User;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,6 +42,10 @@ public class Report extends BaseEntity {
     @Column(name = "is_representative", nullable = false)
     private boolean representative = false;
 
+    @Type(JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb")
+    private List<AnalysisDetail> analysisReport;
+
     public static Report startReport(
         User user,
         BodyInfo bodyInfo
@@ -45,6 +53,18 @@ public class Report extends BaseEntity {
         Report report = new Report();
         report.user = user;
         report.bodyInfo = bodyInfo;
+        /*
+            TODO : 첫 리포트인 경우 representative 를 첫 리포트로 등록하는 로직 추가
+         */
         return report;
+    }
+
+    public void completeReport(List<AnalysisDetail> report) {
+        if (!status.equals(ReportStatus.PENDING)) {
+            throw new IllegalArgumentException("분석이 완료되었거나, 유효하지 않은 리포트 입니다.");
+        }
+
+        analysisReport = report;
+        status = ReportStatus.COMPLETED;
     }
 }

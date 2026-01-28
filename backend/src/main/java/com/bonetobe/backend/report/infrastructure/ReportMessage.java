@@ -1,7 +1,6 @@
 package com.bonetobe.backend.report.infrastructure;
 
 import com.bonetobe.backend.report.domain.Report;
-import com.bonetobe.backend.report.domain.ReportStatus;
 import com.bonetobe.backend.user.domain.Gender;
 
 public class ReportMessage {
@@ -21,12 +20,5 @@ public class ReportMessage {
                 presignedUrl
             );
         }
-    }
-
-    public record ReportResult(
-        ReportStatus status,
-        Long reportId,
-        BodyMetrics bodyMetrics
-    ) {
     }
 }

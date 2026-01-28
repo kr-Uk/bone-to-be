@@ -7,6 +7,7 @@ import com.bonetobe.backend.report.domain.ReportCommand;
 import com.bonetobe.backend.report.domain.ReportProducer;
 import com.bonetobe.backend.report.domain.ReportService;
 import com.bonetobe.backend.report.infrastructure.ReportMessage;
+import com.bonetobe.backend.report.presentation.ReportResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -32,5 +33,14 @@ public class ReportFacade {
         // rabbitMq 에 정보 전달
         ReportMessage.Request request = ReportMessage.Request.of(report, presignedUrl);
         reportProducer.produce(request);
+    }
+
+    public void saveResultAndSendEvent(ReportResult result) {
+        Report report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
+
+        /*
+            TODO : 프론트 구현 시 해제
+         */
+        // reportService.sendEvent(result.reportId());
     }
 }

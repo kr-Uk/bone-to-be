@@ -14,4 +14,9 @@ public class ReportStoreImpl implements ReportStore {
     public Report save(Report report) {
         return reportRepository.save(report);
     }
+
+    @Override
+    public Report update(Report report) {
+        return report;
+    }
 }

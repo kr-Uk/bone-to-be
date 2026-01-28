@@ -75,7 +75,7 @@ const TriangleChart = ({ straight, wave, natural }: TriangleChartProps) => {
         max: 100,
         ticks: {
           display: false, // Hide tick labels
-          stepSize: 25,
+          stepSize: 50,
         },
         grid: {
           color: "#525252", // gray[600]

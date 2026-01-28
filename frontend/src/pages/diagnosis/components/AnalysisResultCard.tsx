@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
+import BodyTypeTriangleChart from "./BodyTypeTriangleChart";
 import SkeletonStrengthBar from "./SkeletonStrengthBar";
-import TriangleChart from "./TriangleChart";
 
 const Card = styled(motion.div)`
   backdrop-filter: blur(10px);
@@ -74,7 +74,7 @@ const AnalysisResultCard = ({
       <Heading>AI 분석결과</Heading>
 
       <ChartSection>
-        <TriangleChart straight={straight} wave={wave} natural={natural} />
+        <BodyTypeTriangleChart straight={straight} wave={wave} natural={natural} />
       </ChartSection>
 
       <SkeletonStrengthBar percentage={dominantPercentage} description={strengthDescription} />

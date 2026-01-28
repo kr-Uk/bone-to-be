@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+
 import ErrorLayout from "@/app/layouts/ErrorLayout";
 import { MainLayout } from "@/layouts/MainLayout";
 import CommunityPage from "@/pages/community/CommunityPage";

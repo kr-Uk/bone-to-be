@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.processing.Completions;
 import java.util.Collections;
 
 @Slf4j
@@ -24,6 +25,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final OAuthUserRepository oAuthUserRepository;
+    private final OAuthAttributesFactory attributesFactory;
 
     @Override
     @Transactional
@@ -35,7 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String userNameAttributeName = userRequest.getClientRegistration()
                     .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-            OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
+            OAuthAttributes attributes = attributesFactory.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
             User user = saveOrUpdate(attributes);
 

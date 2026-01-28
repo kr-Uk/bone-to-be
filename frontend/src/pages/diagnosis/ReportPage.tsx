@@ -47,7 +47,7 @@ const MainContent = styled.main<{ $isDesktop: boolean }>`
 `;
 
 const LeftSection = styled.aside`
-  width: 389.33px;
+  width: 480px;
   flex-shrink: 0;
 `;
 
@@ -56,7 +56,7 @@ const ContentWrapper = styled.div<{ $isDesktop: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 40px;
-  width: ${({ $isDesktop }) => ($isDesktop ? "810.67px" : "100%")};
+  width: ${({ $isDesktop }) => ($isDesktop ? "740px" : "100%")};
 `;
 
 const ReportPage = () => {

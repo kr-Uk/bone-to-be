@@ -10,11 +10,15 @@ const Card = styled(motion.div)`
   border: 1px solid ${({ theme }) => theme.colors.gray[600]};
   border-radius: 16px;
   box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.5);
-  padding: 33px;
+  padding: 2rem 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
   align-items: center;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
 
   @media (min-width: 1024px) {
     /* position: sticky;

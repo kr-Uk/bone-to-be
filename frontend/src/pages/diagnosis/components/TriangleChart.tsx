@@ -34,7 +34,7 @@ const ChartContainer = styled(motion.div)`
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 323px;
+  max-width: 400px;
   margin: 0 auto;
 `;
 

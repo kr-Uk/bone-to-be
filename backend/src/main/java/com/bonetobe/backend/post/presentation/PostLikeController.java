@@ -24,7 +24,7 @@ public class PostLikeController {
             @PathVariable Long postId,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        postLikeFacade.like(postId, user.getUserId());
+        postLikeFacade.like(postId, user.getId());
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK));
@@ -35,7 +35,7 @@ public class PostLikeController {
             @PathVariable Long postId,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        postLikeFacade.unlike(postId, user.getUserId());
+        postLikeFacade.unlike(postId, user.getId());
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK));
@@ -46,7 +46,7 @@ public class PostLikeController {
             @PathVariable Long postId,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        List<PostLikeUserSummary> summaries = postLikeFacade.getPostLikeUsers(postId, user.getUserId());
+        List<PostLikeUserSummary> summaries = postLikeFacade.getPostLikeUsers(postId, user.getId());
         List<PostLikeUserDto.Response> response = summaries.stream()
                 .map(PostLikeUserDto.Response::of)
                 .toList();

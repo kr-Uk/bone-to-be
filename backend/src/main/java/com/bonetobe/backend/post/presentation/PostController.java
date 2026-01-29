@@ -31,7 +31,7 @@ public class PostController {
             @PageableDefault(size = 20) Pageable pageable
     ) {
 
-        Page<PostSummary> summaryPage = postFacade.getPostList(request.toQuery(user.getUserId()), pageable);
+        Page<PostSummary> summaryPage = postFacade.getPostList(request.toQuery(user.getId()), pageable);
         Page<PostListDto.Response> dtoPage = summaryPage.map(PostListDto.Response::of);
 
         PaginatedResponse<PostListDto.Response> paginated = PaginatedResponse.createPaginatedResponse(dtoPage);
@@ -46,7 +46,7 @@ public class PostController {
             @PathVariable Long feedId,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        PostDetailSummary summary = postFacade.getPostDetail(feedId, user.getUserId());
+        PostDetailSummary summary = postFacade.getPostDetail(feedId, user.getId());
         PostDetailDto.Response response = PostDetailDto.Response.of(summary);
 
         return ResponseEntity

@@ -25,8 +25,7 @@ public record PostDetailSummary(
     public record AuthorSummary(
             Long userId,
             String profileImageUrl,
-            String nickname,
-            Boolean isFollowing
+            String nickname
     ) {
     }
 }

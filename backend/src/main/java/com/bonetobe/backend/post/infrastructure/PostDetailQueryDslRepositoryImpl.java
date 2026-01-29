@@ -42,11 +42,6 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
                         postLike.post.eq(post),
                         postLike.user.id.eq(viewerId)
                 )
-                .leftJoin(follow)
-                .on(
-                        follow.follower.id.eq(viewerId),
-                        follow.following.id.eq(user.id)
-                )
                 .where(post.id.eq(postId))
                 .transform(
                         GroupBy.groupBy(post.id).list(
@@ -66,8 +61,7 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
                                                 PostDetailSummaryRaw.AuthorSummary.class,
                                                 user.id,
                                                 profileFile.id,
-                                                user.nickname,
-                                                follow.id.isNotNull()
+                                                user.nickname
                                         ),
                                         post.createdAt
                                 )

@@ -47,15 +47,13 @@ public class PostDetailDto {
     public record Author(
             Long userId,
             String profileImageUrl,
-            String nickname,
-            Boolean isFollowing
+            String nickname
     ) {
         public static Author of(PostDetailSummary.AuthorSummary summary) {
             return new Author(
                     summary.userId(),
                     summary.profileImageUrl(),
-                    summary.nickname(),
-                    summary.isFollowing()
+                    summary.nickname()
             );
         }
     }

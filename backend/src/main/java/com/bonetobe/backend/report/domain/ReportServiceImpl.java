@@ -2,7 +2,6 @@ package com.bonetobe.backend.report.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
-import com.bonetobe.backend.report.presentation.GetReport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

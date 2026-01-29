@@ -13,8 +13,6 @@ import type {
   FeedLikeUserDto,
   FeedCommentListResponseDto,
   FeedCommentDto,
-  LikeToggleResponseDto,
-  FeedListResponse,
 } from "@/pages/community/api";
 
 const mockFeedItems: FeedItem[] = [

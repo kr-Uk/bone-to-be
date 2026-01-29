@@ -1,5 +1,3 @@
- 
-
 import styled from "styled-components";
 
 import { FilterDropdown, type FilterOption } from "./FilterDropdown";

@@ -12,7 +12,6 @@ import * as S from "../styles/LoginModal.styles";
 import googleIcon from "@/assets/image/Google.png";
 import kakaoIcon from "@/assets/image/Kakao.png";
 
-
 type Props = {
   onSwitchToLogin: () => void;
 };
@@ -58,9 +57,9 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
         ? { text: "이미 사용 중인 닉네임입니다", isError: true }
         : nicknameCheckStatus === "invalid"
           ? { text: "올바르지 않은 닉네임입니다", isError: true }
-        : nicknameCheckStatus === "error"
-          ? { text: "닉네임 확인에 실패했습니다", isError: true }
-          : null;
+          : nicknameCheckStatus === "error"
+            ? { text: "닉네임 확인에 실패했습니다", isError: true }
+            : null;
   const emailFeedback = showEmailFormatError
     ? { text: "이메일 형식이 올바르지 않습니다", isError: true }
     : emailVerified
@@ -178,193 +177,202 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
       });
   };
 
+  const handleGoogle = () => {
+    window.location.href = "/api/oauth2/authorization/google";
+  };
+  const handleKakao = () => {
+    window.location.href = "/api/oauth2/authorization/kakao";
+  };
   return (
     <S.RightPanel>
-        <S.Brand>
-          <S.BrandTitle>회원가입</S.BrandTitle>
-        </S.Brand>
+      <S.Brand>
+        <S.BrandTitle>회원가입</S.BrandTitle>
+      </S.Brand>
 
-        <S.Form>
-          <S.Field>
-            <S.Label>닉네임</S.Label>
-            <S.InputRow>
-              <S.Input
-                placeholder="닉네임을 입력하세요"
-                value={nickname}
-                onChange={(e) => {
-                  const nextValue = e.target.value;
-                  const nextTrimmed = nextValue.trim();
-                  setNickname(nextValue);
-                  if (!nextTrimmed) {
-                    setNicknameCheckStatus("idle");
-                    return;
-                  }
-                  if (/[ㄱ-ㅎㅏ-ㅣ]/.test(nextTrimmed)) {
-                    setNicknameCheckStatus("invalid");
-                    return;
-                  }
+      <S.Form>
+        <S.Field>
+          <S.Label>닉네임</S.Label>
+          <S.InputRow>
+            <S.Input
+              placeholder="닉네임을 입력하세요"
+              value={nickname}
+              onChange={(e) => {
+                const nextValue = e.target.value;
+                const nextTrimmed = nextValue.trim();
+                setNickname(nextValue);
+                if (!nextTrimmed) {
                   setNicknameCheckStatus("idle");
-                }}
-                style={{ flex: 1 }}
-              />
-              <S.InputGroupBtn type="button" onClick={handleCheckNickname}>
-                중복 확인
-              </S.InputGroupBtn>
-            </S.InputRow>
-            <S.ValidationMessage
-              $isError={nicknameFeedback?.isError}
-              style={{ visibility: nicknameFeedback ? "visible" : "hidden" }}
-            >
-              {nicknameFeedback ? (
-                <>
-                  {!nicknameFeedback.isError && (
-                    <span className="material-symbols-outlined">✓</span>
-                  )}
-                  {nicknameFeedback.text}
-                </>
-              ) : (
-                " "
-              )}
-            </S.ValidationMessage>
-          </S.Field>
-
-          <S.Field>
-            <S.Label>이메일</S.Label>
-            <S.InputRow>
-              <S.Input
-                type="email"
-                placeholder="example@email.com"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setEmailCheckStatus("idle");
-                  setEmailVerified(false);
-                  setIsTimerRunning(false);
-                  setTimer(180);
-                  setAuthCode("");
-                }}
-                style={{ flex: 1 }}
-                disabled={emailVerified}
-              />
-              <S.InputGroupBtn type="button" onClick={handleSendAuth} disabled={isSendDisabled}>
-                인증번호 전송
-              </S.InputGroupBtn>
-            </S.InputRow>
-            <S.ValidationMessage
-              $isError={emailFeedback?.isError}
-              style={{ visibility: emailFeedback ? "visible" : "hidden" }}
-            >
-              {emailFeedback ? (
-                <>
-                  {!emailFeedback.isError && (
-                    <span className="material-symbols-outlined">✓</span>
-                  )}
-                  {emailFeedback.text}
-                </>
-              ) : (
-                " "
-              )}
-            </S.ValidationMessage>
-          </S.Field>
-
-          {shouldShowAuthBlock && (
-            <div>
-              {isTimerRunning && !emailVerified && (
-                <S.InputRow>
-                  <S.TimerWrapper>
-                    <S.Input
-                      placeholder="인증번호 6자리"
-                      value={authCode}
-                      onChange={(e) => setAuthCode(e.target.value.slice(0, 6))}
-                      maxLength={6}
-                    />
-                    <S.TimerText>{formatTime(timer)}</S.TimerText>
-                  </S.TimerWrapper>
-                  <S.InputGroupBtn
-                    type="button"
-                    onClick={handleConfirmAuth}
-                    disabled={!isAuthCodeComplete}
-                  >
-                    확인
-                  </S.InputGroupBtn>
-                </S.InputRow>
-              )}
-              <S.ValidationMessage
-                $isError={authFeedback?.isError}
-                style={{ visibility: authFeedback ? "visible" : "hidden" }}
-              >
-                {authFeedback?.text ?? " "}
-              </S.ValidationMessage>
-            </div>
-          )}
-
-          <S.Field>
-            <S.Label>비밀번호</S.Label>
-            <S.Input
-              type="password"
-              placeholder="비밀번호를 입력하세요"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+                  return;
+                }
+                if (/[ㄱ-ㅎㅏ-ㅣ]/.test(nextTrimmed)) {
+                  setNicknameCheckStatus("invalid");
+                  return;
+                }
+                setNicknameCheckStatus("idle");
+              }}
+              style={{ flex: 1 }}
             />
-            <S.Hint>
-              {hasLetter ? <S.HintOn>✓ 영문 포함</S.HintOn> : <span>✓ 영문 포함</span>}
-              {hasNumber ? <S.HintOn>✓ 숫자 포함</S.HintOn> : <span>✓ 숫자 포함</span>}
-              {hasSpecial ? <S.HintOn>✓ 특수문자 포함</S.HintOn> : <span>✓ 특수문자 포함</span>}
-              {isLengthValid ? <S.HintOn>✓ 8~12자</S.HintOn> : <span>✓ 8~12자</span>}
-            </S.Hint>
-          </S.Field>
+            <S.InputGroupBtn type="button" onClick={handleCheckNickname}>
+              중복 확인
+            </S.InputGroupBtn>
+          </S.InputRow>
+          <S.ValidationMessage
+            $isError={nicknameFeedback?.isError}
+            style={{ visibility: nicknameFeedback ? "visible" : "hidden" }}
+          >
+            {nicknameFeedback ? (
+              <>
+                {!nicknameFeedback.isError && <span className="material-symbols-outlined">✓</span>}
+                {nicknameFeedback.text}
+              </>
+            ) : (
+              " "
+            )}
+          </S.ValidationMessage>
+        </S.Field>
 
-          <S.Field>
-            <S.Label>비밀번호 확인</S.Label>
+        <S.Field>
+          <S.Label>이메일</S.Label>
+          <S.InputRow>
             <S.Input
-              type="password"
-              placeholder="비밀번호를 다시 입력하세요"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={!isPasswordValid}
+              type="email"
+              placeholder="example@email.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailCheckStatus("idle");
+                setEmailVerified(false);
+                setIsTimerRunning(false);
+                setTimer(180);
+                setAuthCode("");
+              }}
+              style={{ flex: 1 }}
+              disabled={emailVerified}
             />
+            <S.InputGroupBtn type="button" onClick={handleSendAuth} disabled={isSendDisabled}>
+              인증번호 전송
+            </S.InputGroupBtn>
+          </S.InputRow>
+          <S.ValidationMessage
+            $isError={emailFeedback?.isError}
+            style={{ visibility: emailFeedback ? "visible" : "hidden" }}
+          >
+            {emailFeedback ? (
+              <>
+                {!emailFeedback.isError && <span className="material-symbols-outlined">✓</span>}
+                {emailFeedback.text}
+              </>
+            ) : (
+              " "
+            )}
+          </S.ValidationMessage>
+        </S.Field>
+
+        {shouldShowAuthBlock && (
+          <div>
+            {isTimerRunning && !emailVerified && (
+              <S.InputRow>
+                <S.TimerWrapper>
+                  <S.Input
+                    placeholder="인증번호 6자리"
+                    value={authCode}
+                    onChange={(e) => setAuthCode(e.target.value.slice(0, 6))}
+                    maxLength={6}
+                  />
+                  <S.TimerText>{formatTime(timer)}</S.TimerText>
+                </S.TimerWrapper>
+                <S.InputGroupBtn
+                  type="button"
+                  onClick={handleConfirmAuth}
+                  disabled={!isAuthCodeComplete}
+                >
+                  확인
+                </S.InputGroupBtn>
+              </S.InputRow>
+            )}
             <S.ValidationMessage
-              $isError={passwordFeedback?.isError}
-              style={{ visibility: passwordFeedback ? "visible" : "hidden" }}
+              $isError={authFeedback?.isError}
+              style={{ visibility: authFeedback ? "visible" : "hidden" }}
             >
-              {passwordFeedback?.text ?? " "}
+              {authFeedback?.text ?? " "}
             </S.ValidationMessage>
-          </S.Field>
-
-          <S.PrimaryButton type="button" onClick={handleSignUp} style={{ marginTop: "8px" }}>
-            회원가입
-          </S.PrimaryButton>
-
-          <S.OrRow style={{ marginTop: "10px" }}>
-            <S.OrLine />
-            <S.OrText
-              style={{ fontSize: "10px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}
-            >
-              간편 회원가입
-            </S.OrText>
-            <S.OrLine />
-          </S.OrRow>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "5px" }}>
-            <S.SocialButton type="button">
-              <img alt="Google" src={googleIcon} width={16} height={16} />
-              <span>Google</span>
-            </S.SocialButton>
-            <S.SocialButtonKakao type="button">
-              <img alt="Kakao" src={kakaoIcon} width={16} height={16} />
-              <span>Kakao</span>
-            </S.SocialButtonKakao>
           </div>
+        )}
 
-          <S.BottomLinks >
-            <S.LinkRow>
-              <S.SmallText>이미 계정이 있으신가요?</S.SmallText>
-              <S.LinkButton type="button" onClick={onSwitchToLogin}>
-                로그인
-              </S.LinkButton>
-            </S.LinkRow>
-          </S.BottomLinks>
-        </S.Form>
+        <S.Field>
+          <S.Label>비밀번호</S.Label>
+          <S.Input
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <S.Hint>
+            {hasLetter ? <S.HintOn>✓ 영문 포함</S.HintOn> : <span>✓ 영문 포함</span>}
+            {hasNumber ? <S.HintOn>✓ 숫자 포함</S.HintOn> : <span>✓ 숫자 포함</span>}
+            {hasSpecial ? <S.HintOn>✓ 특수문자 포함</S.HintOn> : <span>✓ 특수문자 포함</span>}
+            {isLengthValid ? <S.HintOn>✓ 8~12자</S.HintOn> : <span>✓ 8~12자</span>}
+          </S.Hint>
+        </S.Field>
+
+        <S.Field>
+          <S.Label>비밀번호 확인</S.Label>
+          <S.Input
+            type="password"
+            placeholder="비밀번호를 다시 입력하세요"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={!isPasswordValid}
+          />
+          <S.ValidationMessage
+            $isError={passwordFeedback?.isError}
+            style={{ visibility: passwordFeedback ? "visible" : "hidden" }}
+          >
+            {passwordFeedback?.text ?? " "}
+          </S.ValidationMessage>
+        </S.Field>
+
+        <S.PrimaryButton type="button" onClick={handleSignUp} style={{ marginTop: "8px" }}>
+          회원가입
+        </S.PrimaryButton>
+
+        <S.OrRow style={{ marginTop: "10px" }}>
+          <S.OrLine />
+          <S.OrText
+            style={{
+              fontSize: "10px",
+              fontWeight: 900,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+            }}
+          >
+            간편 회원가입
+          </S.OrText>
+          <S.OrLine />
+        </S.OrRow>
+
+        <div
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "5px" }}
+        >
+          <S.SocialButton type="button" onClick={handleGoogle}>
+            <img alt="Google" src={googleIcon} width={16} height={16} />
+            <span>Google</span>
+          </S.SocialButton>
+          <S.SocialButtonKakao type="button" onClick={handleKakao}>
+            <img alt="Kakao" src={kakaoIcon} width={16} height={16} />
+            <span>Kakao</span>
+          </S.SocialButtonKakao>
+        </div>
+
+        <S.BottomLinks>
+          <S.LinkRow>
+            <S.SmallText>이미 계정이 있으신가요?</S.SmallText>
+            <S.LinkButton type="button" onClick={onSwitchToLogin}>
+              로그인
+            </S.LinkButton>
+          </S.LinkRow>
+        </S.BottomLinks>
+      </S.Form>
     </S.RightPanel>
   );
 };

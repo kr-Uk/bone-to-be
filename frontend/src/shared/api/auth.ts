@@ -48,7 +48,7 @@ export type PasswordResetConfirmResponse = {
 
 export const getMe = async (): Promise<Me> => {
   const { data } = await axiosInstance.get<Me>("/auth/me");
-  if (data) {
+  if (!data) {
     throw new Error("인증 정보가 없습니다");
   }
   return data;
@@ -81,7 +81,9 @@ export const requestPasswordReset = async (
   return data;
 };
 
-export const verifyPasswordResetToken = async (token: string): Promise<PasswordResetVerifyResponse> => {
+export const verifyPasswordResetToken = async (
+  token: string,
+): Promise<PasswordResetVerifyResponse> => {
   const { data } = await axiosInstance.get<PasswordResetVerifyResponse>(
     "/auth/password/reset/verify",
     { params: { token } },

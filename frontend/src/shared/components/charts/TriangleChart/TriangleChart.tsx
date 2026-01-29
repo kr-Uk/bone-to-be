@@ -24,7 +24,6 @@ import type { TriangleChartProps } from "./TriangleChart.types";
 
 import triangleLabelsPlugin from "@/shared/plugins/triangleLabelsPlugin";
 
-
 // Register Chart.js components
 ChartJS.register(
   RadialLinearScale,
@@ -107,7 +106,8 @@ const TriangleChart = ({
 
   const numericData = data.map((value) => Number(value));
   const maxValue = Math.max(...numericData);
-  const normalizedData = maxValue > 0 && maxValue <= 1 ? numericData.map((value) => value * 100) : numericData;
+  const normalizedData =
+    maxValue > 0 && maxValue <= 1 ? numericData.map((value) => value * 100) : numericData;
 
   const chartData = {
     labels,

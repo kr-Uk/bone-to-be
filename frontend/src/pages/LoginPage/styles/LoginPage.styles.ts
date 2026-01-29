@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { loginPalette } from "./LoginModal.styles";
 
 export const PageWrapper = styled.div`
-  min-height: calc(85vh - 5rem);
+  min-height: calc(87vh);
+  min-height: calc(100dvh - 5rem);
   display: flex;
   align-items: center;
   justify-content: center;

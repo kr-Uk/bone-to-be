@@ -1,10 +1,7 @@
-import { FaArrowRightLong } from "react-icons/fa6"
 import { motion, useScroll, useTransform } from "framer-motion";
-
 import { useEffect, useMemo, useRef, useState } from "react";
-
+import { FaArrowRightLong } from "react-icons/fa6";
 import styled, { css } from "styled-components";
-
 
 type BodyTypeKey = "STRAIGHT" | "WAVE" | "NATURAL";
 
@@ -72,15 +69,22 @@ const Frame = styled.div`
   }
 `;
 
-const NavRail = styled.div`
-  position: sticky;
-  top: 0;
-  height: 100vh;
+const NavRail = styled.div<{ $show: boolean; $mode: "fixed" | "absolute" }>`
+  position: ${({ $mode }) => ($mode === "fixed" ? "fixed" : "absolute")};
+  top: ${({ $mode }) => ($mode === "fixed" ? "0" : "auto")};
+  bottom: ${({ $mode }) => ($mode === "fixed" ? "auto" : "0")};
+  right: 0;
+  height: ${({ $mode }) => ($mode === "fixed" ? "100vh" : "100%")};
   display: flex;
   align-items: center;
   justify-content: flex-end;
   pointer-events: none;
   z-index: 20;
+
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
+  transform: ${({ $show }) => ($show ? "translateY(0)" : "translateY(-8px)")};
+  transition: ${({ $show }) =>
+    $show ? "opacity 0.2s ease, transform 0.2s ease" : "opacity 0s ease, transform 0s ease"};
 
   @media (max-width: 900px) {
     display: none;
@@ -144,10 +148,10 @@ const NavDot = styled.span<{ $active: boolean }>`
   background: currentColor;
   flex: 0 0 auto;
   opacity: ${({ $active }) => ($active ? 1 : 0.7)};
-  transition: height 0.25s ease, opacity 0.25s ease;
+  transition:
+    height 0.25s ease,
+    opacity 0.25s ease;
 `;
-
- 
 
 const CopyBlock = styled(motion.div)`
   display: flex;
@@ -157,9 +161,9 @@ const CopyBlock = styled(motion.div)`
   max-width: 36rem;
   padding-left: 0.5rem;
   padding-top: 4rem;
-  @media (max-width: 1024px){
-      padding-top: 0.5rem;
-      gap: 0.5rem;
+  @media (max-width: 1024px) {
+    padding-top: 0.5rem;
+    gap: 0.5rem;
   }
 `;
 
@@ -281,29 +285,16 @@ const GenderSwitchButton = styled.button<{ $active: boolean }>`
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.brand};
     color: ${({ theme, $active }) => ($active ? theme.colors.gray[50] : theme.colors.gray[50])};
   }
 `;
-
-const ScrollWash = styled(motion.div)`
-  position: absolute;
-  inset: -15% 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.04) 0%,
-    rgba(255, 255, 255, 0) 35%,
-    rgba(255, 255, 255, 0.06) 60%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-`;
-
 
 const Kicker = styled(motion.div)`
   font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
@@ -362,13 +353,11 @@ const Cta = styled(motion.a)`
     transform: translateY(-0.125rem);
     box-shadow: 0 0.75rem 1.5rem rgba(152, 16, 250, 0.35);
   }
-  @media (max-width: 1024px){
+  @media (max-width: 1024px) {
     padding: 0.5rem 0.9rem;
     margin-top: 0.75rem;
-
   }
 `;
-
 
 type ModelPhotosProps = {
   section: BodyTypeSection;
@@ -443,13 +432,12 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
 
   const opacity = useTransform(scrollYProgress, [0, 0.4, 1], [0, 1, 1]);
   const y = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [40, 0, 0, -40]);
-  const washY = useTransform(scrollYProgress, [0, 1], [-120, 120]);
   const sectionId = `body-type-${section.key.toLowerCase()}`;
 
   return (
     <PinnedSectionWrap ref={sectionRef} id={sectionId} data-key={section.key}>
       <PinnedSticky>
-        <ScrollWash style={{ y: washY }} />
+        {/* <ScrollWash style={{ y: washY }} /> */}
         <PinnedContent style={{ opacity, y }}>
           <Frame>
             <CopyBlock>
@@ -478,6 +466,7 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
 };
 
 export function BodyTypeScrollShowcase() {
+  const wrapRef = useRef<HTMLElement | null>(null);
   const sections: BodyTypeSection[] = useMemo(
     () => [
       {
@@ -527,9 +516,7 @@ export function BodyTypeScrollShowcase() {
       (entries) => {
         const visible = entries.filter((entry) => entry.isIntersecting);
         if (visible.length === 0) return;
-        const topEntry = visible.sort(
-          (a, b) => b.intersectionRatio - a.intersectionRatio,
-        )[0];
+        const topEntry = visible.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         const key = (topEntry.target as HTMLElement).dataset.key as BodyTypeKey | undefined;
         if (key) setActiveKey(key);
       },
@@ -540,9 +527,34 @@ export function BodyTypeScrollShowcase() {
     return () => observer.disconnect();
   }, [sections]);
 
+  const [showNav, setShowNav] = useState(false);
+  const [navMode, setNavMode] = useState<"fixed" | "absolute">("fixed");
+  useEffect(() => {
+    const first = document.getElementById("body-type-straight");
+    if (!first) return;
+
+    const onScroll = () => {
+      if (!wrapRef.current) {
+        setShowNav(false);
+        return;
+      }
+      const top = first.getBoundingClientRect().top;
+      const wrapRect = wrapRef.current.getBoundingClientRect();
+      const hideOffset = 24;
+      const isInSection = wrapRect.top <= 0 && wrapRect.bottom > hideOffset;
+      const shouldPinToBottom = wrapRect.bottom <= window.innerHeight && wrapRect.bottom > 0;
+      setShowNav(top <= 0 && isInSection);
+      setNavMode(shouldPinToBottom ? "absolute" : "fixed");
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <Wrap>
-      <NavRail>
+    <Wrap ref={wrapRef}>
+      <NavRail $show={showNav} $mode={navMode}>
         <FloatingNav aria-label="Body type sections">
           {sections.map((section) => {
             const isActive = activeKey === section.key;

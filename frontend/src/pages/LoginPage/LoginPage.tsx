@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
-import { LoginModalView } from "./components/LoginModalView";
 import { LoginFooter } from "./components/LoginFooter";
 import LoginHeader from "./components/LoginHeader";
+import { LoginModalView } from "./components/LoginModalView";
 import { SignUpModalView } from "./components/SignUpModalView";
 import * as S from "./styles/LoginPage.styles";
 
@@ -50,11 +50,11 @@ export const LoginPage = () => {
   };
 
   const handleKakao = () => {
-    console.log("TODO: Kakao Login");
+    window.location.href = `/api/oauth2/authorization/kakao`;
   };
 
   const handleGoogle = () => {
-    console.log("TODO: Google Login");
+    window.location.href = "/api/oauth2/authorization/google";
   };
 
   const handleSwitchToSignUp = () => {

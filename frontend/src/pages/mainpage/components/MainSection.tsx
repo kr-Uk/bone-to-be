@@ -196,7 +196,6 @@ const floatNatural = keyframes`
   100% { transform: rotate(0deg) translateY(0) scale(1); }
 `;
 
-
 const HeroContent = styled.div`
   position: relative;
   z-index: 1;

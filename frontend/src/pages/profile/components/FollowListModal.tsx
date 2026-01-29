@@ -101,7 +101,8 @@ function FollowRow({
   onUnfollow?: (userId: string) => void;
   onToggleFollow?: (userId: string) => void;
 }) {
-  const buttonLabel = type === "following" ? "Following" : user.isFollowing ? "Following" : "Follow";
+  const buttonLabel =
+    type === "following" ? "Following" : user.isFollowing ? "Following" : "Follow";
 
   const handleClick = () => {
     if (type === "following") {
@@ -213,7 +214,6 @@ const SearchWrap = styled.div`
   gap: 0.5rem;
   padding: 0 0.75rem;
 `;
-
 
 const SearchInput = styled.input`
   flex: 1;

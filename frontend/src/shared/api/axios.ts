@@ -7,7 +7,7 @@ export const baseURL =
 
 const axiosInstance = axios.create({
   baseURL,
-  // withCredentials: true,
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
@@ -24,6 +24,13 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function (error: AxiosError) {
+    const status = error.response?.status;
+    if (status === 401) {
+      const currentPath = window.location.pathname;
+      if (!currentPath.startsWith("/login")) {
+        window.location.assign("/login");
+      }
+    }
     return Promise.reject(error);
   },
 );

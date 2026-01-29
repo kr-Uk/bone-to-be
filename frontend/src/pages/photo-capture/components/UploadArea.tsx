@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
-import { IoCamera } from 'react-icons/io5';
-import styled from 'styled-components';
+import { useRef, useState } from "react";
+import { IoCamera } from "react-icons/io5";
+import styled from "styled-components";
 
-import type { ChangeEvent, DragEvent } from 'react';
+import type { ChangeEvent, DragEvent } from "react";
 
 const Container = styled.div`
   width: 100%;
@@ -23,8 +23,8 @@ const UploadBox = styled.div<{ $isDragging: boolean; $hasImage: boolean }>`
   width: 100%;
   aspect-ratio: 3 / 4;
   background-color: ${({ theme }) => theme.colors.gray[800]};
-  border: 2px dashed ${({ theme, $isDragging }) =>
-    $isDragging ? theme.colors.purple[600] : theme.colors.secondary};
+  border: 2px dashed
+    ${({ theme, $isDragging }) => ($isDragging ? theme.colors.purple[600] : theme.colors.secondary)};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -45,7 +45,9 @@ const UploadBox = styled.div<{ $isDragging: boolean; $hasImage: boolean }>`
   }
 `;
 
-const CornerBracket = styled.div<{ $position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' }>`
+const CornerBracket = styled.div<{
+  $position: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+}>`
   position: absolute;
   width: 24px;
   height: 24px;
@@ -53,28 +55,28 @@ const CornerBracket = styled.div<{ $position: 'top-left' | 'top-right' | 'bottom
 
   ${({ $position }) => {
     switch ($position) {
-      case 'top-left':
+      case "top-left":
         return `
           top: 12px;
           left: 12px;
           border-top: 2px solid;
           border-left: 2px solid;
         `;
-      case 'top-right':
+      case "top-right":
         return `
           top: 12px;
           right: 12px;
           border-top: 2px solid;
           border-right: 2px solid;
         `;
-      case 'bottom-left':
+      case "bottom-left":
         return `
           bottom: 12px;
           left: 12px;
           border-bottom: 2px solid;
           border-left: 2px solid;
         `;
-      case 'bottom-right':
+      case "bottom-right":
         return `
           bottom: 12px;
           right: 12px;
@@ -93,8 +95,9 @@ const TopGlowLine = styled.div`
   width: 80%;
   height: 2px;
   background: ${({ theme }) => theme.colors.purple[600]};
-  box-shadow: 0 0 12px ${({ theme }) => theme.colors.purple[600]},
-              0 0 24px ${({ theme }) => theme.colors.purple[600]}40;
+  box-shadow:
+    0 0 12px ${({ theme }) => theme.colors.purple[600]},
+    0 0 24px ${({ theme }) => theme.colors.purple[600]}40;
   border-radius: 1px;
 `;
 
@@ -184,7 +187,7 @@ interface UploadAreaProps {
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
+const ALLOWED_TYPES = ["image/jpeg", "image/png"];
 
 export const UploadArea = ({ onImageSelect, selectedImage }: UploadAreaProps) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -195,12 +198,12 @@ export const UploadArea = ({ onImageSelect, selectedImage }: UploadAreaProps) =>
     setError(null);
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      setError('JPG 또는 PNG 파일만 업로드 가능합니다.');
+      setError("JPG 또는 PNG 파일만 업로드 가능합니다.");
       return false;
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      setError('파일 크기는 10MB를 초과할 수 없습니다.');
+      setError("파일 크기는 10MB를 초과할 수 없습니다.");
       return false;
     }
 
@@ -213,7 +216,7 @@ export const UploadArea = ({ onImageSelect, selectedImage }: UploadAreaProps) =>
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result;
-      if (typeof result === 'string') {
+      if (typeof result === "string") {
         onImageSelect(result);
       }
     };
@@ -264,7 +267,7 @@ export const UploadArea = ({ onImageSelect, selectedImage }: UploadAreaProps) =>
         tabIndex={0}
         aria-label="이미지 업로드 영역"
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             handleClick();
           }

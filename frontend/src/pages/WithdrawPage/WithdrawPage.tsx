@@ -3,13 +3,10 @@ import { LuChevronDown, LuLock } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-
 import LoginHeader from "@/pages/LoginPage/components/LoginHeader";
 import { NaturalShape, StraightShape, WaveShape } from "@/shared/components/BoneShapes";
 import { useDeleteMe } from "@/shared/hooks/useDeleteMe";
 import { useLogout } from "@/shared/hooks/useLogout";
-
-
 
 type ReasonOption = {
   value: string;
@@ -85,7 +82,11 @@ export const WithdrawPage = () => {
               <SelectWrap>
                 <Select value={reason} onChange={(event) => setReason(event.target.value)}>
                   {reasonOptions.map((option) => (
-                    <option key={option.value || "placeholder"} value={option.value} disabled={!option.value}>
+                    <option
+                      key={option.value || "placeholder"}
+                      value={option.value}
+                      disabled={!option.value}
+                    >
                       {option.label}
                     </option>
                   ))}
@@ -129,7 +130,11 @@ export const WithdrawPage = () => {
               <GhostButton type="button" onClick={() => navigate(-1)} disabled={isSubmitting}>
                 취소하기
               </GhostButton>
-              <DangerButton type="button" disabled={!canSubmit || isSubmitting} onClick={handleWithdraw}>
+              <DangerButton
+                type="button"
+                disabled={!canSubmit || isSubmitting}
+                onClick={handleWithdraw}
+              >
                 탈퇴하기
               </DangerButton>
             </ActionRow>
@@ -184,7 +189,7 @@ const ShapesLayer = styled.div`
   }
 
   & ${NaturalShape} {
-    top:10%;
+    top: 10%;
     left: 12%;
     margin-left: 0;
     margin-top: 0;

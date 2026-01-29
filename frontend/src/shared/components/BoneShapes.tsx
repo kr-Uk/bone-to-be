@@ -6,7 +6,11 @@ type ShapeAnimationProps = {
   $timingFunction?: string;
 };
 
-const applyFloatAnimation = ({ $floatAnimation, $duration, $timingFunction }: ShapeAnimationProps) =>
+const applyFloatAnimation = ({
+  $floatAnimation,
+  $duration,
+  $timingFunction,
+}: ShapeAnimationProps) =>
   $floatAnimation && $duration
     ? css`
         animation: ${$floatAnimation} ${$duration} ${$timingFunction ?? "ease-in-out"} infinite;

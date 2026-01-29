@@ -1,8 +1,9 @@
-import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 
 import { useFeedList, useLikeToggle } from "./api";
+import { FeedCreateModal } from "./components/FeedCreateModal";
+import { FeedDetailModal } from "./components/FeedDetailModal";
 import { FeedFAB } from "./components/FeedFAB";
 import { FeedFilters } from "./components/FeedFilters";
 import { FeedGrid } from "./components/FeedGrid";
@@ -77,7 +78,6 @@ const EmptyContainer = styled.div`
 `;
 
 export default function CommunityPage() {
-  const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<SortBy>("popular");
   const [filters, setFilters] = useState<FeedFiltersType>({
     gender: null,
@@ -86,13 +86,18 @@ export default function CommunityPage() {
     heightRange: null,
     weightRange: null,
   });
-
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
   const { data, isLoading, error } = useFeedList({
     sortBy,
     filters,
     page: 1,
     limit: 12,
   });
+  const feedIds = useMemo(() => data?.items.map((item) => item.id) ?? [], [data?.items]);
+  const selectedIndex = selectedFeedId ? feedIds.indexOf(selectedFeedId) : -1;
+  const hasPrev = selectedIndex > 0;
+  const hasNext = selectedIndex >= 0 && selectedIndex < feedIds.length - 1;
 
   const likeToggleMutation = useLikeToggle();
 
@@ -124,20 +129,29 @@ export default function CommunityPage() {
     [likeToggleMutation],
   );
 
-  const handleCardClick = useCallback(
-    (feedId: string) => {
-      console.log(`Navigating to feed detail: ${feedId}`);
-      // TODO: Navigate to feed detail page when implemented
-      // navigate(`/community/feed/${feedId}`);
-    },
-    [navigate],
-  );
+  const handleCardClick = useCallback((feedId: string) => {
+    setSelectedFeedId(feedId);
+  }, []);
+  const handlePrev = useCallback(() => {
+    if (!hasPrev) {
+      return;
+    }
+    setSelectedFeedId(feedIds[selectedIndex - 1]);
+  }, [feedIds, hasPrev, selectedIndex]);
+  const handleNext = useCallback(() => {
+    if (!hasNext) {
+      return;
+    }
+    setSelectedFeedId(feedIds[selectedIndex + 1]);
+  }, [feedIds, hasNext, selectedIndex]);
 
   const handleFABClick = useCallback(() => {
-    console.log("Navigating to create feed page");
-    // TODO: Navigate to feed creation page when implemented
-    // navigate("/community/create");
-  }, [navigate]);
+    setIsCreateModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsCreateModalOpen(false);
+  }, []);
 
   return (
     <PageContainer>
@@ -160,6 +174,18 @@ export default function CommunityPage() {
       </ContentContainer>
 
       <FeedFAB onClick={handleFABClick} />
+
+      <FeedCreateModal isOpen={isCreateModalOpen} onClose={handleCloseModal} />
+      {selectedFeedId && (
+        <FeedDetailModal
+          onClose={() => setSelectedFeedId(null)}
+          feedId={selectedFeedId}
+          onPrev={handlePrev}
+          onNext={handleNext}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+        />
+      )}
     </PageContainer>
   );
 }

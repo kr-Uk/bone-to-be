@@ -81,8 +81,7 @@ const DropdownMenu = styled.div<DropdownMenuProps>`
   top: ${({ $top }) => ($top !== undefined ? `${$top}px` : "auto")};
   bottom: ${({ $bottom }) => ($bottom !== undefined ? `${$bottom}px` : "auto")};
   left: ${({ $left, $isMobile }) => ($isMobile ? `${$left}px` : `${$left}px`)};
-  right: ${({ $right, $isMobile }) =>
-    $isMobile && $right !== undefined ? `${$right}px` : "auto"};
+  right: ${({ $right, $isMobile }) => ($isMobile && $right !== undefined ? `${$right}px` : "auto")};
 
   max-height: ${({ $maxHeight }) => `${$maxHeight}px`};
   overflow-y: auto;
@@ -103,7 +102,9 @@ const DropdownMenu = styled.div<DropdownMenuProps>`
 
   /* Mobile: Slide up animation */
   animation: ${({ $isMobile, $bottom }) =>
-    $isMobile && $bottom !== undefined ? "slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)" : "fadeIn 0.2s ease"};
+    $isMobile && $bottom !== undefined
+      ? "slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+      : "fadeIn 0.2s ease"};
 
   @keyframes slideUp {
     from {
@@ -338,7 +339,11 @@ export function RangeFilterDropdown({
         </DropdownButton>
       </DropdownContainer>
 
-      <DropdownPortal isOpen={isOpen} onBackdropClick={handleClose} showBackdrop={position.isMobile}>
+      <DropdownPortal
+        isOpen={isOpen}
+        onBackdropClick={handleClose}
+        showBackdrop={position.isMobile}
+      >
         <DropdownMenu
           aria-modal={position.isMobile}
           $top={position.top}

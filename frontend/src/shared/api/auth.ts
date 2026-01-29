@@ -81,7 +81,9 @@ export const requestPasswordReset = async (
   return data;
 };
 
-export const verifyPasswordResetToken = async (token: string): Promise<PasswordResetVerifyResponse> => {
+export const verifyPasswordResetToken = async (
+  token: string,
+): Promise<PasswordResetVerifyResponse> => {
   const { data } = await axiosInstance.get<PasswordResetVerifyResponse>(
     "/auth/password/reset/verify",
     { params: { token } },

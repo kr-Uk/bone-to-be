@@ -60,7 +60,9 @@ const Avatar = styled.div`
   background: var(--base-black, black);
   border-radius: 624.9375rem;
   overflow: hidden;
-  box-shadow: 0 0 1.25rem rgba(124, 58, 237, 0.3), 0 0 0 0.125rem rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 1.25rem rgba(124, 58, 237, 0.3),
+    0 0 0 0.125rem rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,7 +138,6 @@ const TypePill = styled.div`
   display: inline-flex;
 
   @media (max-width: 1024px) {
-
   }
 `;
 
@@ -452,7 +453,7 @@ const ProfileHeaderSection = ({
                 <EditButtonText>프로필 편집</EditButtonText>
               </EditButton>
               <SettingsButton type="button" aria-label="Profile settings">
-                <MdOutlineSettings size={24}color="#FAFAFA" />
+                <MdOutlineSettings size={24} color="#FAFAFA" />
               </SettingsButton>
             </>
           ) : (

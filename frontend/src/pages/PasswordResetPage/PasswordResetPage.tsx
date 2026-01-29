@@ -5,10 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 
 import LoginHeader from "@/pages/LoginPage/components/LoginHeader";
-import {
-  confirmPasswordReset,
-  verifyPasswordResetToken,
-} from "@/shared/api/auth";
+import { confirmPasswordReset, verifyPasswordResetToken } from "@/shared/api/auth";
 import { NaturalShape, StraightShape, WaveShape } from "@/shared/components/BoneShapes";
 
 export const PasswordResetPage = () => {
@@ -35,7 +32,9 @@ export const PasswordResetPage = () => {
   useEffect(() => {
     const tokenParam = searchParams.get("token") ?? "";
     const storedToken =
-      typeof window !== "undefined" ? window.sessionStorage.getItem("passwordResetToken") ?? "" : "";
+      typeof window !== "undefined"
+        ? (window.sessionStorage.getItem("passwordResetToken") ?? "")
+        : "";
     const resolvedToken = tokenParam || storedToken;
 
     if (!resolvedToken) {
@@ -390,8 +389,7 @@ const RuleList = styled.div`
 
 const RuleItem = styled.span<{ $active: boolean }>`
   font-size: 0.75rem;
-  color: ${({ theme, $active }) =>
-    $active ? theme.colors.brand : theme.colors.gray[500]};
+  color: ${({ theme, $active }) => ($active ? theme.colors.brand : theme.colors.gray[500])};
 `;
 
 const HelperText = styled.p<{ $error?: boolean }>`

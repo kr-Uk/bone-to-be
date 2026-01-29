@@ -56,10 +56,7 @@ export const LoginModalView = ({
             autoComplete="current-password"
           />
         </S.Field>
-        <S.ValidationMessage
-          $isError
-          style={{ visibility: loginError ? "visible" : "hidden" }}
-        >
+        <S.ValidationMessage $isError style={{ visibility: loginError ? "visible" : "hidden" }}>
           {loginError ?? " "}
         </S.ValidationMessage>
 
@@ -72,15 +69,15 @@ export const LoginModalView = ({
           <S.OrText>간편 로그인</S.OrText>
           <S.OrLine />
         </S.OrRow>
-          <S.SocialButtonKakao type="button" onClick={onClickKakao}>
-            <img alt="Kakao" src={kakaoIcon} width={16} height={16} />
-            카카오로 시작하기
-          </S.SocialButtonKakao>
+        <S.SocialButtonKakao type="button" onClick={onClickKakao}>
+          <img alt="Kakao" src={kakaoIcon} width={16} height={16} />
+          카카오로 시작하기
+        </S.SocialButtonKakao>
 
-          <S.SocialButtonGoogle type="button" onClick={onClickGoogle}>
-            <img alt="Google" src={googleIcon} width={16} height={16} />
-            구글로 시작하기
-          </S.SocialButtonGoogle>
+        <S.SocialButtonGoogle type="button" onClick={onClickGoogle}>
+          <img alt="Google" src={googleIcon} width={16} height={16} />
+          구글로 시작하기
+        </S.SocialButtonGoogle>
 
         <S.BottomLinks>
           <S.LinkRow>

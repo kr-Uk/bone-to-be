@@ -7,8 +7,6 @@ import {
   getPresignedUrl,
   uploadImageToS3,
   createFeed,
-} from "./community.api";
-import {
   createFeedComment,
   getFeedComments,
   getFeedDetail,
@@ -29,6 +27,10 @@ import type {
   FeedLikesResponseDto,
   FeedLikeUserDto,
   FeedLikeUser,
+  FeedListRequest,
+  FeedListResponse,
+  LikeToggleRequest,
+  FeedCreateRequest,
 } from "./community.types";
 
 const mapGenderToUi = (gender: "female" | "male") => (gender === "female" ? "F" : "M");
@@ -94,12 +96,6 @@ const mapFeedLikeUserDtoToUi = (user: FeedLikeUserDto): FeedLikeUser => ({
   avatarUrl: user.profileImageUrl,
   isFollowing: user.isFollowing,
 });
-import type {
-  FeedListRequest,
-  FeedListResponse,
-  LikeToggleRequest,
-  FeedCreateRequest,
-} from "./community.types";
 
 /**
  * 피드 리스트 조회 쿼리
@@ -153,7 +149,11 @@ export function useFeedComments(request: FeedCommentListRequest) {
  * 좋아요 리스트 조회 쿼리
  */
 export function useFeedLikes(request: FeedLikesRequest) {
-  return useQuery<FeedLikesResponseDto, Error, { likeCount: number; likes: FeedLikeUser[]; hasMore: boolean }>({
+  return useQuery<
+    FeedLikesResponseDto,
+    Error,
+    { likeCount: number; likes: FeedLikeUser[]; hasMore: boolean }
+  >({
     queryKey: ["feedLikes", request.feedId, request.page, request.limit],
     queryFn: () => getFeedLikes(request),
     enabled: Boolean(request.feedId),
@@ -230,11 +230,7 @@ export function useFeedCreate() {
 
         while (uploadAttempts < MAX_UPLOAD_RETRIES) {
           try {
-            await uploadImageToS3(
-              presignedResponse.data.uploadUrl,
-              params.file,
-              params.file.type,
-            );
+            await uploadImageToS3(presignedResponse.data.uploadUrl, params.file, params.file.type);
             break; // 성공 시 탈출
           } catch {
             uploadAttempts++;

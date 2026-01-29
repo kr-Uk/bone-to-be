@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const ExplainSection = styled.div<{ $variant?: 'mobile' | 'tablet' | 'desktop' }>`
+const ExplainSection = styled.div<{ $variant?: "mobile" | "tablet" | "desktop" }>`
   display: flex;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.secondary};
@@ -9,14 +9,14 @@ const ExplainSection = styled.div<{ $variant?: 'mobile' | 'tablet' | 'desktop' }
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  
+
   @media (min-width: 768px) and (max-width: 1023px) {
     width: 100%;
     padding: 2rem;
     justify-content: flex-start;
     gap: 3rem;
   }
-  
+
   @media (min-width: 1024px) {
     width: 50%;
     padding: 3rem;
@@ -34,7 +34,7 @@ const ExplainSection = styled.div<{ $variant?: 'mobile' | 'tablet' | 'desktop' }
 
 const ExplainContent = styled.div`
   margin-top: 5rem;
-  
+
   @media (min-width: 768px) and (max-width: 1023px) {
     margin-top: 0;
     display: flex;
@@ -46,7 +46,7 @@ const ExplainContent = styled.div`
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   @media (min-width: 1024px) {
     flex-direction: column;
   }
@@ -103,7 +103,7 @@ const Title = styled.h2`
     font-weight: 700;
     line-height: 1.2;
   }
-  
+
   @media (min-width: 1024px) {
     font-size: 3.75rem;
     font-weight: 700;
@@ -139,7 +139,7 @@ const ProgressSteps = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
   font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
-  
+
   @media (min-width: 768px) and (max-width: 1023px) {
     flex-direction: row;
     justify-content: center; // Center progress steps
@@ -153,7 +153,7 @@ const ProgressSteps = styled.div`
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   @media (min-width: 1024px) {
     flex-direction: row;
   }
@@ -171,7 +171,7 @@ const ProgressSteps = styled.div`
     margin-bottom: 0.5rem;
     overflow-x: auto;
     white-space: nowrap;
-    
+
     &::-webkit-scrollbar {
       display: none;
     }
@@ -197,11 +197,11 @@ const StepSeparator = styled.div`
   width: 2rem;
   height: 1px;
   background-color: ${({ theme }) => theme.colors.gray[700]};
-  
+
   @media (min-width: 768px) and (max-width: 1023px) {
     display: block;
   }
-  
+
   @media (max-width: 767px) {
     display: block;
     width: 1.5rem;
@@ -214,7 +214,7 @@ interface DiagnosisExplainSectionProps {
   title: React.ReactNode;
   description: React.ReactNode;
   onClose?: () => void;
-  variant?: 'mobile' | 'tablet' | 'desktop';
+  variant?: "mobile" | "tablet" | "desktop";
 }
 
 const DiagnosisExplainSection = ({
@@ -222,7 +222,7 @@ const DiagnosisExplainSection = ({
   stepLabel,
   title,
   description,
-  variant = 'desktop',
+  variant = "desktop",
 }: DiagnosisExplainSectionProps) => {
   return (
     <ExplainSection $variant={variant}>

@@ -21,11 +21,7 @@ type NavItem = {
   path?: string;
 };
 
-const baseNavItems: NavItem[] = [
-  { label: "ABOUT" },
-  { label: "FUNCTION" },
-  { label: "COMMUNITY" },
-];
+const baseNavItems: NavItem[] = [{ label: "ABOUT" }, { label: "FUNCTION" }, { label: "COMMUNITY" }];
 
 type TypographyToken = {
   fontSize: string;
@@ -310,7 +306,11 @@ export const MainHeader = () => {
             </SideMenuLoginBar>
           )}
 
-          <SideMenuCloseButton type="button" aria-label="Close menu" onClick={() => setIsMobileMenuOpen(false)}>
+          <SideMenuCloseButton
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
             <MdOutlineClose size={24} />
           </SideMenuCloseButton>
         </SideMenuPanel>
@@ -776,7 +776,13 @@ const SideMenuIconSlot = styled.span<{ $danger?: boolean; $isActive?: boolean }>
 const SideMenuRowText = styled.span<{ $isActive?: boolean }>`
   color: ${({ theme, $isActive }) =>
     $isActive ? (theme as AppTheme).colors.brand : (theme as AppTheme).colors.gray[50]};
-  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    Pretendard,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 18px;
   font-weight: 400;
   line-height: 24px;
@@ -801,7 +807,13 @@ const SideMenuLogoutButton = styled.button`
 
 const SideMenuLogoutText = styled.span`
   color: #f87171;
-  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    Pretendard,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 18px;
   font-weight: 400;
   line-height: 24px;
@@ -824,7 +836,13 @@ const SideMenuLoginRow = styled.div`
 
 const SideMenuLoginHint = styled.span`
   color: ${({ theme }) => (theme as AppTheme).colors.gray[300]};
-  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    Pretendard,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 24px;
@@ -835,7 +853,13 @@ const SideMenuLoginLink = styled.button`
   background: transparent;
   cursor: pointer;
   color: ${({ theme }) => (theme as AppTheme).colors.brand};
-  font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    Pretendard,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 24px;
@@ -868,5 +892,3 @@ const SideMenuPlaceholder = styled.div`
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
 `;
-
-

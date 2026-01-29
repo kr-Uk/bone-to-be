@@ -27,7 +27,6 @@ import { dataURLtoBlob, generateFilename, compressImage } from "@/shared/utils/i
 import { validateFullBodyPose } from "@/shared/utils/poseValidation";
 import { validateImagePose } from "@/shared/utils/validateImagePose";
 
-
 // Layout containers
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -447,10 +446,7 @@ const PhotoCapturePage = () => {
         bodyType: "Natural", // This would come from polling getAnalysisResult
         bodyTypeRatio: { natural: 60, wave: 25, straight: 15 },
         measurements: { shoulderWidth: 42, waistWidth: 28, hipWidth: 38 },
-        recommendations: [
-          "루즈핏 상의가 잘 어울립니다",
-          "자연스러운 실루엣의 원피스를 추천합니다",
-        ],
+        recommendations: ["루즈핏 상의가 잘 어울립니다", "자연스러운 실루엣의 원피스를 추천합니다"],
         processedAt: new Date().toISOString(),
       });
     } catch (error) {
@@ -610,7 +606,10 @@ const PhotoCapturePage = () => {
       />
 
       {/* Analysis Complete Modal */}
-      <AnalysisComplete isOpen={analysisStatus === "complete"} onNavigateToResults={handleNavigateToResults} />
+      <AnalysisComplete
+        isOpen={analysisStatus === "complete"}
+        onNavigateToResults={handleNavigateToResults}
+      />
     </PageContainer>
   );
 };

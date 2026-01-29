@@ -11,7 +11,6 @@ export const loginPalette = {
   whiteLine: "rgba(255, 255, 255, 0.1)",
 };
 
-
 export const ModalCard = styled.div`
   width: min(980px, calc(100vw - 32px));
   height: min(600px, calc(100vh - 24px));
@@ -121,14 +120,7 @@ export const Hourglass = styled.div`
   width: clamp(92px, 12vw, 140px);
   height: clamp(92px, 12vw, 140px);
   background: ${theme.colors.purple[200]};
-  clip-path: polygon(
-    0% 0%,
-    100% 0%,
-    60% 50%,
-    100% 100%,
-    0% 100%,
-    40% 50%
-  );
+  clip-path: polygon(0% 0%, 100% 0%, 60% 50%, 100% 100%, 0% 100%, 40% 50%);
 
   @media (max-width: 1024px) {
     left: 12%;
@@ -147,7 +139,7 @@ export const Trapezoid = styled.div`
   top: 34%;
   width: clamp(80px, 10vw, 120px);
   height: clamp(92px, 12vw, 140px);
-  background: ${({theme}) => theme.colors.purple[200]}; 
+  background: ${({ theme }) => theme.colors.purple[200]};
   /* #ded8ff is distinct, keeping closest match or hex if no theme var fits perfectly.
      Theme has purple[200]=#E9D4FF which is lighter.
      To be safe with design, I will keep hex if specific tone needed, or use purple 200.
@@ -157,7 +149,7 @@ export const Trapezoid = styled.div`
      User provided #ded8ff. purple 200 is #e9d4ff. 
      I'll use purple[200] for better integration.
   */
-  background: ${theme.colors.purple[200]}; 
+  background: ${theme.colors.purple[200]};
   opacity: 0.8; /* Adjustment for visual diff if needed */
   clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
 
@@ -202,7 +194,13 @@ export const Brand = styled.div`
 `;
 
 export const BrandTitle = styled.div`
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 24px;
   font-weight: 700;
   line-height: 32px;
@@ -256,7 +254,8 @@ export const Input = styled.input`
   }
 
   &:focus {
-    box-shadow: inset 0 0 0 1px rgba(152, 16, 250, 0.6),
+    box-shadow:
+      inset 0 0 0 1px rgba(152, 16, 250, 0.6),
       0 0 0 4px rgba(152, 16, 250, 0.15);
   }
 
@@ -320,7 +319,6 @@ export const OrText = styled.div`
   color: ${loginPalette.slate400};
 `;
 
-
 export const SocialButtonKakao = styled.button`
   position: relative;
   display: flex;
@@ -351,7 +349,6 @@ export const SocialButtonKakao = styled.button`
     transform: scale(0.985);
   }
 `;
-
 
 export const SocialButtonGoogle = styled.button`
   position: relative;
@@ -478,9 +475,8 @@ export const ValidationMessage = styled.div<{ $isError?: boolean }>`
   gap: 4px;
   min-height: 16px;
   line-height: 1.2;
-  margin-top:4px;
+  margin-top: 4px;
 `;
-
 
 export const TimerWrapper = styled.div`
   position: relative;

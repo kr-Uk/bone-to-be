@@ -66,7 +66,13 @@ const Col = styled.div<{ $align?: "left" | "center" | "right" }>`
 
 const Title = styled.div`
   color: ${loginPalette.slate100};
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: 16px;
@@ -75,7 +81,13 @@ const Title = styled.div`
 
 const Text = styled.div`
   color: ${loginPalette.slate400};
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 12px;
   font-weight: 300;
   line-height: 16px;

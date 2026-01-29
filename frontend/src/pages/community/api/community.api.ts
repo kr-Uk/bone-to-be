@@ -83,7 +83,7 @@ export async function getFeedDetail(feedId: string): Promise<FeedDetailDto> {
  * 댓글 리스트 조회
  */
 export async function getFeedComments(
-  request: FeedCommentListRequest
+  request: FeedCommentListRequest,
 ): Promise<FeedCommentListResponseDto> {
   const { data } = await axiosInstance.get<FeedCommentListResponseDto>(
     `/feeds/${request.feedId}/comments`,
@@ -100,18 +100,13 @@ export async function getFeedComments(
 /**
  * 좋아요 리스트 조회
  */
-export async function getFeedLikes(
-  request: FeedLikesRequest
-): Promise<FeedLikesResponseDto> {
-  const { data } = await axiosInstance.get<FeedLikesResponseDto>(
-    `/feeds/${request.feedId}/likes`,
-    {
-      params: {
-        page: request.page,
-        size: request.limit,
-      },
+export async function getFeedLikes(request: FeedLikesRequest): Promise<FeedLikesResponseDto> {
+  const { data } = await axiosInstance.get<FeedLikesResponseDto>(`/feeds/${request.feedId}/likes`, {
+    params: {
+      page: request.page,
+      size: request.limit,
     },
-  );
+  });
   return data;
 }
 
@@ -119,15 +114,12 @@ export async function getFeedLikes(
  * 댓글 작성
  */
 export async function createFeedComment(
-  request: FeedCommentCreateRequest
+  request: FeedCommentCreateRequest,
 ): Promise<FeedCommentDto> {
-  const { data } = await axiosInstance.post<FeedCommentDto>(
-    `/feeds/${request.feedId}/comments`,
-    {
-      text: request.text,
-      parentCommentId: request.parentCommentId ?? null,
-    },
-  );
+  const { data } = await axiosInstance.post<FeedCommentDto>(`/feeds/${request.feedId}/comments`, {
+    text: request.text,
+    parentCommentId: request.parentCommentId ?? null,
+  });
   return data;
 }
 
@@ -135,22 +127,15 @@ export async function createFeedComment(
  * 피드 좋아요 토글
  */
 export async function toggleLike(request: LikeToggleRequest): Promise<LikeToggleResponseDto> {
-  const { data } = await axiosInstance.post<LikeToggleResponseDto>(
-    `/feeds/${request.feedId}/like`
-  );
+  const { data } = await axiosInstance.post<LikeToggleResponseDto>(`/feeds/${request.feedId}/like`);
   return data;
 }
 
 /**
  * 1단계: Presigned URL 발급
  */
-export async function getPresignedUrl(
-  request: PresignedUrlRequest,
-): Promise<PresignedUrlResponse> {
-  const { data } = await axiosInstance.post<PresignedUrlResponse>(
-    "/feeds/presigned-url",
-    request,
-  );
+export async function getPresignedUrl(request: PresignedUrlRequest): Promise<PresignedUrlResponse> {
+  const { data } = await axiosInstance.post<PresignedUrlResponse>("/feeds/presigned-url", request);
   return data;
 }
 

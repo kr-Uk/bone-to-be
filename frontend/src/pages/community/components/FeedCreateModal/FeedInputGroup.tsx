@@ -44,7 +44,8 @@ const InputContainer = styled.div`
 const StyledInput = styled.input<{ $hasError?: boolean }>`
   background: transparent;
   border: none;
-  border-bottom: 1px solid ${({ theme, $hasError }) => ($hasError ? "#ff4444" : theme.colors.gray[600])};
+  border-bottom: 1px solid
+    ${({ theme, $hasError }) => ($hasError ? "#ff4444" : theme.colors.gray[600])};
   color: ${({ theme }) => theme.colors.gray[50]};
   font-size: clamp(10px, 2.5vw, 16px);
   font-weight: 400;
@@ -54,7 +55,8 @@ const StyledInput = styled.input<{ $hasError?: boolean }>`
 
   &:focus {
     outline: none;
-    border-bottom-color: ${({ theme, $hasError }) => ($hasError ? "#ff4444" : theme.colors.purple[600])};
+    border-bottom-color: ${({ theme, $hasError }) =>
+      $hasError ? "#ff4444" : theme.colors.purple[600]};
     border-bottom-width: 2px;
     padding-bottom: 7px;
   }

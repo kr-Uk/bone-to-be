@@ -36,9 +36,7 @@ export const handlers = [
   http.get("/api/auth/check/nickname", ({ request }) => {
     const url = new URL(request.url);
     const nickname = url.searchParams.get("nickname") ?? "";
-    const hasNickname =
-      nickname.includes("taken") ||
-      nickname.includes("duplicate");
+    const hasNickname = nickname.includes("taken") || nickname.includes("duplicate");
 
     return HttpResponse.json({
       code: 200,
@@ -49,10 +47,7 @@ export const handlers = [
   http.post("/api/auth/email/verification", async ({ request }) => {
     const body = (await request.json()) as { email?: string };
     if (!body?.email) {
-      return HttpResponse.json(
-        { code: 400, message: "요청 실패", data: null },
-        { status: 400 },
-      );
+      return HttpResponse.json({ code: 400, message: "요청 실패", data: null }, { status: 400 });
     }
 
     return HttpResponse.json({
@@ -64,17 +59,11 @@ export const handlers = [
   http.post("/api/auth/email/verification/check", async ({ request }) => {
     const body = (await request.json()) as { email?: string; code?: string };
     if (!body?.email || !body?.code) {
-      return HttpResponse.json(
-        { code: 400, message: "인증 실패", data: null },
-        { status: 400 },
-      );
+      return HttpResponse.json({ code: 400, message: "인증 실패", data: null }, { status: 400 });
     }
 
     if (body.code !== "123123") {
-      return HttpResponse.json(
-        { code: 400, message: "인증 실패", data: null },
-        { status: 400 },
-      );
+      return HttpResponse.json({ code: 400, message: "인증 실패", data: null }, { status: 400 });
     }
 
     return HttpResponse.json({
@@ -115,16 +104,11 @@ export const handlers = [
     const email = body?.email ?? "";
 
     if (!email) {
-      return HttpResponse.json(
-        { code: 400, message: "?붿껌 ?ㅽ뙣", data: null },
-        { status: 400 },
-      );
+      return HttpResponse.json({ code: 400, message: "?붿껌 ?ㅽ뙣", data: null }, { status: 400 });
     }
 
     const isUnknown =
-      email.includes("notfound") ||
-      email.includes("withdrawn") ||
-      email.endsWith("@missing.com");
+      email.includes("notfound") || email.includes("withdrawn") || email.endsWith("@missing.com");
 
     if (isUnknown) {
       return HttpResponse.json(
@@ -156,10 +140,7 @@ export const handlers = [
     };
 
     if (!body?.token || !body?.newPassword || !body?.confirmPassword) {
-      return HttpResponse.json(
-        { code: 400, message: "요청 실패", data: null },
-        { status: 400 },
-      );
+      return HttpResponse.json({ code: 400, message: "요청 실패", data: null }, { status: 400 });
     }
 
     if (body.newPassword !== body.confirmPassword) {
@@ -181,10 +162,7 @@ export const handlers = [
   }),
   http.get("/api/auth/me", () => {
     if (!mockAuthState.isLoggedIn || !mockAuthState.me) {
-      return HttpResponse.json(
-        { code: 401, message: "Unauthorized" },
-        { status: 401 },
-      );
+      return HttpResponse.json({ code: 401, message: "Unauthorized" }, { status: 401 });
     }
 
     return HttpResponse.json(mockAuthState.me);
@@ -216,8 +194,7 @@ export const handlers = [
       return HttpResponse.json(
         {
           code: 400,
-          message:
-            "비밀번호는 8~20자의 영문과 숫자를 포함해야 합니다.",
+          message: "비밀번호는 8~20자의 영문과 숫자를 포함해야 합니다.",
           data: null,
         },
         { status: 400 },
@@ -243,7 +220,9 @@ export const handlers = [
     }
 
     const hasEmail =
-      email.includes("already_exists") || email.includes("duplicate") || email.endsWith("@used.com");
+      email.includes("already_exists") ||
+      email.includes("duplicate") ||
+      email.endsWith("@used.com");
     if (hasEmail) {
       return HttpResponse.json(
         { code: 400, message: "이미 가입된 이메일입니다.", data: null },

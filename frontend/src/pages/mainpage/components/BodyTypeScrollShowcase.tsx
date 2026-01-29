@@ -1,9 +1,7 @@
-
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaArrowRightLong } from "react-icons/fa6"
+import { FaArrowRightLong } from "react-icons/fa6";
 import styled, { css } from "styled-components";
-
 
 type BodyTypeKey = "STRAIGHT" | "WAVE" | "NATURAL";
 
@@ -93,7 +91,6 @@ const NavRail = styled.div<{ $show: boolean; $mode: "fixed" | "absolute" }>`
   }
 `;
 
-
 const FloatingNav = styled.nav`
   display: flex;
   flex-direction: column;
@@ -151,10 +148,10 @@ const NavDot = styled.span<{ $active: boolean }>`
   background: currentColor;
   flex: 0 0 auto;
   opacity: ${({ $active }) => ($active ? 1 : 0.7)};
-  transition: height 0.25s ease, opacity 0.25s ease;
+  transition:
+    height 0.25s ease,
+    opacity 0.25s ease;
 `;
-
-
 
 const CopyBlock = styled(motion.div)`
   display: flex;
@@ -164,9 +161,9 @@ const CopyBlock = styled(motion.div)`
   max-width: 36rem;
   padding-left: 0.5rem;
   padding-top: 4rem;
-  @media (max-width: 1024px){
-      padding-top: 0.5rem;
-      gap: 0.5rem;
+  @media (max-width: 1024px) {
+    padding-top: 0.5rem;
+    gap: 0.5rem;
   }
 `;
 
@@ -288,14 +285,16 @@ const GenderSwitchButton = styled.button<{ $active: boolean }>`
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.brand};
     color: ${({ theme, $active }) => ($active ? theme.colors.gray[50] : theme.colors.gray[50])};
   }
 `;
-
 
 const Kicker = styled(motion.div)`
   font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
@@ -354,13 +353,11 @@ const Cta = styled(motion.a)`
     transform: translateY(-0.125rem);
     box-shadow: 0 0.75rem 1.5rem rgba(152, 16, 250, 0.35);
   }
-  @media (max-width: 1024px){
+  @media (max-width: 1024px) {
     padding: 0.5rem 0.9rem;
     margin-top: 0.75rem;
-
   }
 `;
-
 
 type ModelPhotosProps = {
   section: BodyTypeSection;
@@ -508,7 +505,6 @@ export function BodyTypeScrollShowcase() {
 
   const [activeKey, setActiveKey] = useState<BodyTypeKey>("STRAIGHT");
 
-
   useEffect(() => {
     const elements = sections
       .map((section) => document.getElementById(`body-type-${section.key.toLowerCase()}`))
@@ -520,9 +516,7 @@ export function BodyTypeScrollShowcase() {
       (entries) => {
         const visible = entries.filter((entry) => entry.isIntersecting);
         if (visible.length === 0) return;
-        const topEntry = visible.sort(
-          (a, b) => b.intersectionRatio - a.intersectionRatio,
-        )[0];
+        const topEntry = visible.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         const key = (topEntry.target as HTMLElement).dataset.key as BodyTypeKey | undefined;
         if (key) setActiveKey(key);
       },

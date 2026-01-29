@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { useFeedList, useLikeToggle } from "./api";
+import { FeedCreateModal } from "./components/FeedCreateModal";
 import { FeedFAB } from "./components/FeedFAB";
 import { FeedFilters } from "./components/FeedFilters";
 import { FeedGrid } from "./components/FeedGrid";
@@ -86,6 +87,7 @@ export default function CommunityPage() {
     heightRange: null,
     weightRange: null,
   });
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { data, isLoading, error } = useFeedList({
     sortBy,
@@ -134,10 +136,12 @@ export default function CommunityPage() {
   );
 
   const handleFABClick = useCallback(() => {
-    console.log("Navigating to create feed page");
-    // TODO: Navigate to feed creation page when implemented
-    // navigate("/community/create");
-  }, [navigate]);
+    setIsCreateModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsCreateModalOpen(false);
+  }, []);
 
   return (
     <PageContainer>
@@ -160,6 +164,8 @@ export default function CommunityPage() {
       </ContentContainer>
 
       <FeedFAB onClick={handleFABClick} />
+
+      <FeedCreateModal isOpen={isCreateModalOpen} onClose={handleCloseModal} />
     </PageContainer>
   );
 }

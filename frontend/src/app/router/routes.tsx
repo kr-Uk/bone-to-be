@@ -7,11 +7,11 @@ import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
 import ReportPage from "@/pages/diagnosis/ReportPage";
 import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage";
 import { LoginPage } from "@/pages/LoginPage";
-import { PasswordResetPage } from "@/pages/PasswordResetPage";
-import { WithdrawPage } from "@/pages/WithdrawPage";
 import MainPage from "@/pages/mainpage/MainPage";
+import { PasswordResetPage } from "@/pages/PasswordResetPage";
 import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
 import ProfilePage from "@/pages/profile/profile";
+import { WithdrawPage } from "@/pages/WithdrawPage";
 
 export const router = createBrowserRouter([
   {

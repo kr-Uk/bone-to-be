@@ -1,6 +1,6 @@
 import * as S from "./FeedDetailLeft.styles";
 
-import type { FeedDetailLeftProps } from "./types";
+import type { FeedDetailLeftProps } from "../../types";
 
 export function FeedDetailLeft({ imageUrl, isLoading, hasError }: FeedDetailLeftProps) {
   return (

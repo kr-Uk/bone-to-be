@@ -1,5 +1,6 @@
+import { formatTimeAgo } from "../../utils";
+
 import * as S from "./FeedDetailRight.styles";
-import { formatTimeAgo } from "./utils";
 
 export interface FeedDetailContentProps {
   author: {

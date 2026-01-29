@@ -4,9 +4,9 @@ import { MdClose } from "react-icons/md";
 
 import { useFeedComments, useFeedDetail, useFeedLikes } from "../../api";
 
-import { FeedDetailLeft } from "./FeedDetailLeft";
+import { FeedDetailLeft } from "./components/FeedDetailLeft";
+import { FeedDetailRight } from "./components/FeedDetailRight";
 import * as S from "./FeedDetailModal.styles";
-import { FeedDetailRight } from "./FeedDetailRight";
 
 import type { FeedDetailModalProps } from "./types";
 

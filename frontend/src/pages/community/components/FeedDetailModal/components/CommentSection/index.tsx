@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 
-import { CommentRow } from "../CommentRow";
+import { CommentRow } from "../../../CommentRow";
+import { formatTimeAgo } from "../../utils";
+import { buildCommentTree } from "../../utils/commentTree";
 
 import * as S from "./CommentSection.styles";
-import { formatTimeAgo } from "./utils";
-import { buildCommentTree } from "./utils/commentTree";
 
-import type { CommentSectionProps } from "./types";
+import type { CommentSectionProps } from "../../types";
 
 export function CommentSection({ comments, isLoading, hasError }: CommentSectionProps) {
   const orderedComments = useMemo(() => buildCommentTree(comments), [comments]);

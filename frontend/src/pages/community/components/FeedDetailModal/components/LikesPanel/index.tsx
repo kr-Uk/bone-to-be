@@ -1,6 +1,6 @@
 import * as S from "./LikesPanel.styles";
 
-import type { LikesPanelProps } from "./types";
+import type { LikesPanelProps } from "../../types";
 
 export function LikesPanel({ isOpen, onClose, likeUsers }: LikesPanelProps) {
   if (!isOpen) return null;

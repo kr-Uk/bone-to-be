@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 
-import { CommentSection } from "./CommentSection";
+import { useFeedDetailState } from "../../hooks/useFeedDetailState";
+import { CommentSection } from "../CommentSection";
+
 import { FeedDetailActions } from "./FeedDetailActions";
 import { FeedDetailContent } from "./FeedDetailContent";
 import { FeedDetailFooter } from "./FeedDetailFooter";
 import { FeedDetailHeader } from "./FeedDetailHeader";
 import * as S from "./FeedDetailRight.styles";
-import { useFeedDetailState } from "./hooks/useFeedDetailState";
 
-import type { FeedDetailRightProps } from "./types";
+import type { FeedDetailRightProps } from "../../types";
 
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 

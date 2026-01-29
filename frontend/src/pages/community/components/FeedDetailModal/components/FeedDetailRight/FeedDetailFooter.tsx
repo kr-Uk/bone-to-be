@@ -1,9 +1,9 @@
-import { CommentInput } from "../CommentInput";
+import { CommentInput } from "../../../CommentInput";
+import { LikesPanel } from "../LikesPanel";
 
 import * as S from "./FeedDetailRight.styles";
-import { LikesPanel } from "./LikesPanel";
 
-import type { FeedLikeUser } from "../../api";
+import type { FeedLikeUser } from "../../../../api";
 import type { RefObject } from "react";
 
 export interface FeedDetailFooterProps {

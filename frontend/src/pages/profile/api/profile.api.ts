@@ -1,48 +1,23 @@
 ﻿import axiosInstance from "../../../shared/api/axios";
 
-import type {
-  BodyTypeHistoryItem,
-  BodyTypeRatio,
-  FollowModalType,
-  FollowUser,
-  UserPost,
-  UserProfile,
-} from "./profile.types";
+import type { Me } from "@/shared/api/auth";
 
-export interface UserPostDto {
-  postID: number;
-  image: string;
+import type { BodyTypeRatio, FollowModalType, FollowUser, UserProfile } from "./profile.types";
+
+interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
 }
 
-export interface BodyTypeRatioDto {
-  natural: number;
-  wave: number;
-  straight: number;
-}
-
-export interface BodyTypeHistoryItemDto {
-  id?: number | string;
-  type: string;
-  date?: string;
-  isLatest?: boolean;
-  ratio?: BodyTypeRatioDto;
-  bodyTypeRatio?: BodyTypeRatioDto;
-}
-
-export interface UserProfileDto {
-  username: string;
-  postcount: number;
-  follower: number;
-  following: number;
-  bodyType: string;
-  bodyTypeRatio?: BodyTypeRatioDto;
-  bodyTypeRatios?: BodyTypeRatioDto;
-  bio?: string;
-  isOwner?: boolean;
-  bodyTypeHistory?: BodyTypeHistoryItemDto[];
-  bodyTypeHistories?: BodyTypeHistoryItemDto[];
-  posts: UserPostDto[];
-  saved: UserPostDto[];
+export interface UserProfileBaseDto {
+  profileImageUrl: string | null;
+  nickname: string;
+  skeletonType: string | null;
+  postCount: number;
+  followerCount: number;
+  followingCount: number;
+  bio: string | null;
 }
 
 export interface FollowUserDto {
@@ -53,11 +28,6 @@ export interface FollowUserDto {
   avatarUrl?: string;
   isFollowing?: boolean;
 }
-
-const mapPost = (post: UserPostDto): UserPost => ({
-  postId: post.postID,
-  imageUrl: post.image,
-});
 
 const mapFollowUser = (user: FollowUserDto): FollowUser => ({
   id: String(user.id),
@@ -87,7 +57,7 @@ const getFallbackRatio = (bodyType?: string): BodyTypeRatio => {
 };
 
 const normalizeRatio = (
-  ratio: Partial<BodyTypeRatioDto> | undefined,
+  ratio: Partial<BodyTypeRatio> | undefined,
   bodyType?: string,
 ): BodyTypeRatio => {
   const natural = ratio?.natural ?? 0;
@@ -108,56 +78,44 @@ const normalizeRatio = (
   };
 };
 
-const mapHistoryItem = (item: BodyTypeHistoryItemDto, index: number): BodyTypeHistoryItem => {
-  const ratioSource = item.ratio ?? item.bodyTypeRatio;
+const mapBaseProfile = (profile: UserProfileBaseDto, isOwner: boolean): UserProfile => {
+  const bodyType = profile.skeletonType ?? "Natural";
 
   return {
-    id: item.id ? String(item.id) : String(index),
-    type: item.type,
-    date: item.date ?? "",
-    ratio: normalizeRatio(ratioSource, item.type),
-    isLatest: item.isLatest ?? index === 0,
+    profileImageUrl: profile.profileImageUrl ?? null,
+    username: profile.nickname,
+    postCount: profile.postCount,
+    follower: profile.followerCount,
+    following: profile.followingCount,
+    bodyType,
+    bodyTypeRatio: normalizeRatio(undefined, bodyType),
+    bio: profile.bio ?? "소개글이 없습니다.",
+    isOwner,
+    bodyTypeHistory: [],
+    posts: [],
+    saved: [],
   };
 };
 
-const getFallbackHistory = (bodyType?: string): BodyTypeHistoryItem[] => {
-  const fallbackItems = [
-    { id: "latest", type: bodyType || "Natural", date: "2026.02.23 (Mon)", isLatest: true },
-    { id: "straight-1", type: "Straight", date: "2026.01.20 (Tue)", isLatest: false },
-    { id: "wave-1", type: "Wave", date: "2026.01.17 (Sat)", isLatest: false },
-    { id: "straight-2", type: "Straight", date: "2026.01.10 (Sat)", isLatest: false },
-  ];
-
-  return fallbackItems.map((item, index) => ({
-    ...item,
-    ratio: normalizeRatio(undefined, item.type),
-    isLatest: item.isLatest ?? index === 0,
-  }));
+export const fetchMyProfile = async (): Promise<UserProfile> => {
+  const { data } = await axiosInstance.get<ApiResponse<UserProfileBaseDto>>("/users/me");
+  if (!data?.data) {
+    throw new Error("프로필 정보를 불러오지 못했습니다.");
+  }
+  return mapBaseProfile(data.data, true);
 };
 
-export const fetchUserProfile = async (): Promise<UserProfile> => {
-  const { data } = await axiosInstance.get<UserProfileDto>("/v1/users");
-  const ratioSource = data.bodyTypeRatio ?? data.bodyTypeRatios;
-  const bodyTypeRatio = normalizeRatio(ratioSource, data.bodyType);
-  const historySource = data.bodyTypeHistory ?? data.bodyTypeHistories;
-  const bodyTypeHistory = historySource?.length
-    ? historySource.map(mapHistoryItem)
-    : getFallbackHistory(data.bodyType);
-
-  return {
-    username: data.username,
-    postCount: data.postcount,
-    follower: data.follower,
-    following: data.following,
-    bodyType: data.bodyType,
-    bodyTypeRatio,
-    bio: data.bio ?? "소개글이 없습니다.",
-    isOwner: data.isOwner ?? false,
-    bodyTypeHistory,
-    posts: data.posts.map(mapPost),
-    saved: data.saved.map(mapPost),
-  };
+export const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
+  const encodedUserId = encodeURIComponent(userId);
+  const { data } = await axiosInstance.get<ApiResponse<UserProfileBaseDto>>(
+    `/users/${encodedUserId}`,
+  );
+  if (!data?.data) {
+    throw new Error("프로필 정보를 불러오지 못했습니다.");
+  }
+  return mapBaseProfile(data.data, false);
 };
+
 
 const followEndpoint: Record<FollowModalType, string> = {
   following: "/v1/users/following",

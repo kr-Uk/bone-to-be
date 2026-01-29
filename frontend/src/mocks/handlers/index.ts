@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+﻿import { http, HttpResponse } from "msw";
 
 import { communityHandlers } from "./community.handlers";
 import { diagnosisHandlers } from "./diagnosis.handlers";
@@ -160,12 +160,47 @@ export const handlers = [
     mockAuthState = { isLoggedIn: false, me: null };
     return HttpResponse.json({ message: "회원 탈퇴 완료" });
   }),
+
+  http.get("/api/users/me", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: {
+        profileImageUrl: null,
+        nickname: "???",
+        skeletonType: null,
+        postCount: 0,
+        followerCount: 0,
+        followingCount: 4,
+        bio: null,
+      },
+    });
+  }),
+  http.get("/api/users/:userId", ({ params }) => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: {
+        profileImageUrl: null,
+        nickname: String(params.userId ?? "user"),
+        skeletonType: null,
+        postCount: 0,
+        followerCount: 1,
+        followingCount: 0,
+        bio: null,
+      },
+    });
+  }),
   http.get("/api/auth/me", () => {
     if (!mockAuthState.isLoggedIn || !mockAuthState.me) {
       return HttpResponse.json({ code: 401, message: "Unauthorized" }, { status: 401 });
     }
 
-    return HttpResponse.json(mockAuthState.me);
+    return HttpResponse.json({
+      code: 200,
+      message: "OK",
+      data: mockAuthState.me,
+    });
   }),
   http.post("/api/auth/signup", async ({ request }) => {
     const body = (await request.json()) as {

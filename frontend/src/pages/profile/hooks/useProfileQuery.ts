@@ -1,14 +1,24 @@
 ﻿import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
-import { fetchUserProfile } from "../api/profile.api";
+import { fetchMyProfile, fetchUserProfile } from "../api/profile.api";
 
 import type { UserProfile } from "../api/profile.types";
 
-export const profileQueryKey = ["profile"] as const;
+export const profileQueryKey = (userId?: string) =>
+  userId ? (["profile", "user", userId] as const) : (["profile", "me"] as const);
 
-export const useProfileQuery = (): UseQueryResult<UserProfile, Error> => {
+type UseProfileOptions = {
+  enabled?: boolean;
+};
+
+export const useProfileQuery = (
+  userId?: string,
+  options: UseProfileOptions = {},
+): UseQueryResult<UserProfile, Error> => {
+  const { enabled = true } = options;
   return useQuery<UserProfile, Error>({
-    queryKey: profileQueryKey,
-    queryFn: fetchUserProfile,
+    queryKey: profileQueryKey(userId),
+    queryFn: () => (userId ? fetchUserProfile(userId) : fetchMyProfile()),
+    enabled,
   });
 };

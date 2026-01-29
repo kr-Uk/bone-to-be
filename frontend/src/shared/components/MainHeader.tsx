@@ -46,14 +46,14 @@ const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
 export const MainHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isAuthEnabled = !["/", "/community"].includes(location.pathname);
-  const { isAuthLoading, isLoggedIn, me } = useAuth({ enabled: isAuthEnabled });
+  const { isAuthLoading, isLoggedIn, me } = useAuth();
   const logoutMutation = useLogout();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const profilePath = me?.nickname ? `/profile/${encodeURIComponent(me.nickname)}` : "/profile";
   const navItems: NavItem[] = isLoggedIn
-    ? [...baseNavItems, { label: "MYPAGE", path: "/profile" }]
+    ? [...baseNavItems, { label: "MYPAGE", path: profilePath }]
     : baseNavItems;
   const navIcons: Record<string, ReactNode> = {
     ABOUT: <RiShareBoxLine size={19} strokeWidth={2.1} />,
@@ -102,6 +102,15 @@ export const MainHeader = () => {
     setIsProfileMenuOpen(false);
     setIsMobileMenuOpen(false);
   }, [location.pathname, location.search, location.hash]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !me?.nickname) {
+      return;
+    }
+    if (location.pathname === "/profile") {
+      navigate(`/profile/${encodeURIComponent(me.nickname)}`, { replace: true });
+    }
+  }, [isLoggedIn, me?.nickname, location.pathname, navigate]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) {

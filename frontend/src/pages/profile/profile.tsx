@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import BodyTypeHistorySection from "./components/BodyTypeHistorySection";
@@ -10,6 +11,7 @@ import { useFollowListQuery } from "./hooks/useFollowListQuery";
 import { useProfileQuery } from "./hooks/useProfileQuery";
 
 import type { FollowModalType, FollowUser, UserProfile } from "./api/profile.types";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 const Page = styled.div`
   min-height: 100vh;
@@ -108,20 +110,19 @@ const FollowModalCard = styled.div`
   height: min(40rem, 90vh);
 `;
 
-const getViewerUsername = (): string | null => {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    return window.localStorage.getItem("viewerUsername");
-  } catch {
-    return null;
-  }
-};
 
 const ProfilePage = () => {
-  const { data, isLoading, isError } = useProfileQuery();
+  const navigate = useNavigate();
+  const { nickname: rawNickname } = useParams<{ nickname?: string }>();
+  const nickname = rawNickname ? decodeURIComponent(rawNickname) : undefined;
+  const { me, isAuthLoading, isLoggedIn } = useAuth();
+  const isAuthReady = !isAuthLoading;
+  const isMe = Boolean(isAuthReady && nickname && me?.nickname && nickname === me.nickname);
+  const queryUserId = isMe ? undefined : nickname;
+  const shouldFetchProfile = Boolean(nickname) && isAuthReady;
+  const { data, isLoading, isError } = useProfileQuery(queryUserId, {
+    enabled: shouldFetchProfile,
+  });
   const [followModalType, setFollowModalType] = useState<FollowModalType | null>(null);
   const {
     data: followUsers,
@@ -129,18 +130,35 @@ const ProfilePage = () => {
     isError: isFollowError,
   } = useFollowListQuery(followModalType, !!followModalType);
   const [localFollowUsers, setLocalFollowUsers] = useState<FollowUser[]>([]);
-  const viewerUsername = getViewerUsername();
   const profile: UserProfile | undefined = data;
+
+  useEffect(() => {
+    if (!nickname && isAuthReady) {
+      if (me?.nickname) {
+        navigate(`/profile/${encodeURIComponent(me.nickname)}`, { replace: true });
+      }
+    }
+  }, [nickname, isAuthReady, me?.nickname, navigate]);
 
   useEffect(() => {
     setLocalFollowUsers(followUsers ?? []);
   }, [followUsers]);
 
-  if (isLoading) {
+  if (isAuthLoading || (shouldFetchProfile && isLoading)) {
     return (
       <Page>
         <Main>
           <StatusMessage>Loading profile...</StatusMessage>
+        </Main>
+      </Page>
+    );
+  }
+
+  if (!nickname && !isLoggedIn) {
+    return (
+      <Page>
+        <Main>
+          <StatusMessage>Login required.</StatusMessage>
         </Main>
       </Page>
     );
@@ -156,7 +174,7 @@ const ProfilePage = () => {
     );
   }
 
-  const isOwner = profile.isOwner || (viewerUsername ? viewerUsername === profile.username : false);
+  const isOwner = profile.isOwner || isMe;
 
   return (
     <Page>

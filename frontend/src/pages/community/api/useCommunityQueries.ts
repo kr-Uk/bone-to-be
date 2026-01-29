@@ -33,7 +33,7 @@ import type {
   FeedCreateRequest,
 } from "./community.types";
 
-const mapGenderToUi = (gender: "female" | "male") => (gender === "female" ? "F" : "M");
+const mapGenderToUi = (gender: "female" | "male"): "F" | "M" => (gender === "female" ? "F" : "M");
 
 const mapContentToLines = (content: string) => {
   const lines = content

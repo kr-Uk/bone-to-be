@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { useFeedList, useLikeToggle } from "./api";
@@ -79,7 +78,6 @@ const EmptyContainer = styled.div`
 `;
 
 export default function CommunityPage() {
-  const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<SortBy>("popular");
   const [filters, setFilters] = useState<FeedFiltersType>({
     gender: null,

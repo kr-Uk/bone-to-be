@@ -16,6 +16,7 @@ public class PostLikeServiceImpl implements PostLikeService {
 
     private final PostLikeStore postLikeStore;
     private final PostLikeReader postLikeReader;
+    private final PostReader postReader;
 
     @Override
     public void like(Long postId, Long userId) {
@@ -49,6 +50,9 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Transactional(readOnly = true)
     @Override
     public List<PostLikeUserSummaryRaw> getPostLikeUsers(Long postId, Long viewerId) {
+        if (postReader.getById(postId) == null){
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
+        }
         return postLikeReader.findPostLikeUsers(postId, viewerId);
     }
 }

@@ -26,6 +26,9 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private String nickname;
 
+    @Column(length = 100)
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
@@ -47,6 +50,7 @@ public class User extends BaseEntity{
         user.password = password;
         user.nickname = nickname;
         user.role = (role == null) ? UserRole.USER : role;
+        user.bio = ""; // 기본값 빈 문자열
         return user;
     }
 
@@ -57,8 +61,9 @@ public class User extends BaseEntity{
     }
 
     //
-    public void updateProfile(String nickname, StoredFile profileImage) {
+    public void updateProfile(String nickname, String bio, StoredFile profileImage) {
         this.nickname = nickname;
+        this.bio = bio;
         this.profileImage = profileImage;
     }
 

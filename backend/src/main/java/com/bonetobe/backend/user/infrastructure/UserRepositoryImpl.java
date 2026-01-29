@@ -5,6 +5,7 @@ import com.bonetobe.backend.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -48,5 +49,15 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User update(User user) {
         return user;
+    }
+
+    @Override
+    public List<User> findFollowingsByUserId(Long userId) {
+        return jpaRepository.findFollowingsByUserId(userId);
+    }
+
+    @Override
+    public List<User> findFollowersByUserId(Long userId) {
+        return jpaRepository.findFollowersByUserId(userId);
     }
 }

@@ -91,7 +91,7 @@ export default function CommunityPage() {
   const { data, isLoading, error } = useFeedList({
     sortBy,
     filters,
-    page: 1,
+    page: 0,
     limit: 12,
   });
   const feedIds = useMemo(() => data?.items.map((item) => item.id) ?? [], [data?.items]);

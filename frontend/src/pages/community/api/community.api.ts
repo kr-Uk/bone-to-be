@@ -13,6 +13,7 @@ import type {
   LikeToggleRequest,
   LikeToggleResponseDto,
   FeedListResponseDto,
+  ApiFeedListResponse,
   PresignedUrlRequest,
   PresignedUrlResponse,
   FeedCreateRequest,
@@ -65,10 +66,17 @@ function buildFeedApiParams(request: FeedListRequest): FeedListApiParams {
  */
 export async function getFeedList(request: FeedListRequest): Promise<FeedListResponseDto> {
   const apiParams = buildFeedApiParams(request);
-  const { data } = await axiosInstance.get<FeedListResponseDto>(`/feed`, {
+  const { data } = await axiosInstance.get<ApiFeedListResponse>(`/feeds`, {
     params: apiParams,
   });
-  return data;
+
+  // 백엔드 응답을 프론트엔드 형태로 변환
+  return {
+    items: data.data.content,
+    total: data.data.totalElements,
+    page: data.data.pageNumber,
+    hasMore: !data.data.last,
+  };
 }
 
 /**

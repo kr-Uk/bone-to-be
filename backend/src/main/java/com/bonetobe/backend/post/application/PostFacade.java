@@ -19,10 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -63,28 +60,20 @@ public class PostFacade {
 
         PostDetailSummaryRaw raw = postService.getPostDetail(postId, viewerId);
 
-        // 게시글 사진과 프로필 사진 fileId들
-        List<Long> fileIds = Arrays.asList(
-                raw.fileId(),
-                raw.author().profileId()
-        );
+        Long postFileId = raw.fileId();
+        Long profileFileId = raw.author().profileId();
 
-        // presigned url 한번에 발급하기
-        Map<Long, String> urlMap = fileService.getPublicDownloadUrls(
-                fileIds.stream()
-                        .filter(Objects::nonNull)
-                        .distinct()
-                        .map(FileDownloadUrl.Query::new)
-                        .toList()
-        ).stream().collect(Collectors.toMap(
-                FileDownloadUrl.Result::fileId,
-                FileDownloadUrl.Result::presignedUrl
-        ));
+        String postUrl = fileService.getPublicDownloadUrls(
+                List.of(new FileDownloadUrl.Query(postFileId))
+        ).get(0).presignedUrl();
 
-        return raw.toSummary(
-                urlMap.get(raw.fileId()),
-                urlMap.get(raw.author().profileId())
-        );
+        String profileUrl = profileFileId == null ? null :
+                fileService.getPublicDownloadUrls(List.of(new FileDownloadUrl.Query(profileFileId)))
+                        .get(0).presignedUrl();
+
+        return raw.toSummary(postUrl, profileUrl);
+
+
     }
 
     public void createPost(PostCreateCommand command) {
@@ -101,7 +90,6 @@ public class PostFacade {
         postService.deletePost(command);
     }
 
-    @Transactional
     public void updatePost(Long postId, PostUpdateCommand command) {
 
         List<Style> styles = styleService.getStylesByNames(command.styles());

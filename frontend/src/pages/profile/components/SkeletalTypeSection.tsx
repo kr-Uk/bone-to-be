@@ -1,7 +1,9 @@
 ﻿import { CiLock } from "react-icons/ci";
 import styled from "styled-components";
 
-import { applySmoothing, getBodyTypeBadge, toPoint, toVertex } from "../hooks/useBodyTypeChart";
+import TriangleChart from "@/shared/components/charts/TriangleChart/TriangleChart";
+
+import { applySmoothing } from "../hooks/useBodyTypeChart";
 
 import { Stack, Text } from "./ProfileCommon";
 
@@ -57,8 +59,8 @@ const Card = styled.div`
 `;
 
 const ChartWrap = styled.div`
-  width: 12.5rem;
-  height: 12.5rem;
+  width: 16rem;
+  height: 16rem;
   border-radius: 624.9375rem;
   background: var(--base-black, black);
   border: 0.0625rem var(--neutral-600, #525252) solid;
@@ -67,52 +69,32 @@ const ChartWrap = styled.div`
   justify-content: center;
 
   @media (max-width: 480px) {
-    width: 10.5rem;
-    height: 10.5rem;
+    width: 14rem;
+    height: 14rem;
     margin: 0 auto;
   }
 `;
 
 const ChartInner = styled.div`
-  width: 8.75rem;
-  height: 8.75rem;
+  width: 16rem;
+  height: 16rem;
   position: relative;
 
   @media (max-width: 480px) {
-    width: 7.25rem;
-    height: 7.25rem;
+    width: 14rem;
+    height: 14rem;
   }
 `;
 
-const ChartSvg = styled.svg`
-  width: 100%;
-  height: 100%;
-`;
+const ProfileTriangleChart = styled(TriangleChart)`
+  width: 16rem;
+  height: 16rem;
+  max-width: none;
 
-const ChartTypeLabel = styled.text`
-  fill: var(--neutral-500, #737373);
-  font-size: 0.9375rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-`;
-
-const TriangleOutline = styled.polygon`
-  fill: none;
-  stroke: var(--neutral-600, #525252);
-  stroke-width: 2.8;
-  stroke-dasharray: 4 4;
-`;
-
-const TriangleFill = styled.polygon`
-  fill: var(--color-brand-primary-900, #59168b);
-  opacity: 0.15;
-`;
-
-const TriangleStroke = styled.polygon`
-  fill: none;
-  stroke: var(--color-bg-brand, #9810fa);
-  stroke-width: 2;
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
 `;
 
 const Details = styled(Stack)`
@@ -217,21 +199,12 @@ const formatBodyType = (value?: string) => {
 };
 
 const SkeletalTypeSection = ({ bodyType, bodyTypeRatio }: SkeletalTypeSectionProps) => {
-  const center = { x: 50, y: 50 };
-  const radius = 46;
-  const vertexTop = toVertex(center, radius, -90);
-  const vertexLeft = toVertex(center, radius, 150);
-  const vertexRight = toVertex(center, radius, 30);
-
-  const smoothRatio = applySmoothing(bodyTypeRatio);
-  const topPoint = toPoint(vertexTop, center, smoothRatio.natural);
-  const leftPoint = toPoint(vertexLeft, center, smoothRatio.wave);
-  const rightPoint = toPoint(vertexRight, center, smoothRatio.straight);
-  const outlinePoints = `${vertexTop.x},${vertexTop.y} ${vertexLeft.x},${vertexLeft.y} ${vertexRight.x},${vertexRight.y}`;
-  const innerPoints = `${topPoint.x},${topPoint.y} ${leftPoint.x},${leftPoint.y} ${rightPoint.x},${rightPoint.y}`;
+  const smoothRatio = applySmoothing({
+    natural: Number(bodyTypeRatio.natural),
+    wave: Number(bodyTypeRatio.wave),
+    straight: Number(bodyTypeRatio.straight),
+  });
   const typeTitle = formatBodyType(bodyType);
-  const typeLabel = getBodyTypeBadge(bodyType);
-  const labelY = Math.max(vertexLeft.y, vertexRight.y) + 8;
 
   return (
     <Section>
@@ -242,14 +215,18 @@ const SkeletalTypeSection = ({ bodyType, bodyTypeRatio }: SkeletalTypeSectionPro
       <Card>
         <ChartWrap>
           <ChartInner>
-            <ChartSvg viewBox="0 0 100 100" role="img" aria-label="Body type chart">
-              <TriangleOutline points={outlinePoints} />
-              <TriangleFill points={innerPoints} />
-              <TriangleStroke points={innerPoints} />
-              <ChartTypeLabel x="50" y={labelY} textAnchor="middle" dominantBaseline="hanging">
-                {typeLabel}
-              </ChartTypeLabel>
-            </ChartSvg>
+            <ProfileTriangleChart
+              data={[smoothRatio.straight * 100, smoothRatio.wave * 100, smoothRatio.natural * 100]}
+              labels={["STRAIGHT", "WAVE", "NATURAL"]}
+              customLabels={{
+                enabled: true,
+                alignments: ["center", "right", "left"],
+                font:{size:12}
+              }}
+              tooltip={{ enabled: false }}
+              animate={false}
+              
+            />
           </ChartInner>
         </ChartWrap>
         <Details>

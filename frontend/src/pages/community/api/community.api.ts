@@ -2,10 +2,17 @@ import axios from "axios";
 
 import type {
   FeedListRequest,
-  FeedListResponse,
   FeedListApiParams,
+  FeedDetailDto,
+  FeedCommentListRequest,
+  FeedCommentListResponseDto,
+  FeedLikesRequest,
+  FeedLikesResponseDto,
+  FeedCommentCreateRequest,
+  FeedCommentDto,
   LikeToggleRequest,
-  LikeToggleResponse,
+  LikeToggleResponseDto,
+  FeedListResponseDto,
   PresignedUrlRequest,
   PresignedUrlResponse,
   FeedCreateRequest,
@@ -26,7 +33,7 @@ function buildFeedApiParams(request: FeedListRequest): FeedListApiParams {
 
   // 2. 성별 필터
   if (request.filters.gender) {
-    params.gender = request.filters.gender;
+    params.gender = request.filters.gender === "F" ? "female" : "male";
   }
 
   // 3. 스타일 필터 (소문자로 변환하여 쉼표로 결합)
@@ -56,19 +63,81 @@ function buildFeedApiParams(request: FeedListRequest): FeedListApiParams {
 /**
  * 피드 리스트 조회
  */
-export async function getFeedList(request: FeedListRequest): Promise<FeedListResponse> {
+export async function getFeedList(request: FeedListRequest): Promise<FeedListResponseDto> {
   const apiParams = buildFeedApiParams(request);
-  const { data } = await axiosInstance.get<FeedListResponse>(`/feed`, {
+  const { data } = await axiosInstance.get<FeedListResponseDto>(`/feed`, {
     params: apiParams,
   });
   return data;
 }
 
 /**
+ * 피드 상세 조회
+ */
+export async function getFeedDetail(feedId: string): Promise<FeedDetailDto> {
+  const { data } = await axiosInstance.get<FeedDetailDto>(`/feeds/${feedId}`);
+  return data;
+}
+
+/**
+ * 댓글 리스트 조회
+ */
+export async function getFeedComments(
+  request: FeedCommentListRequest
+): Promise<FeedCommentListResponseDto> {
+  const { data } = await axiosInstance.get<FeedCommentListResponseDto>(
+    `/feeds/${request.feedId}/comments`,
+    {
+      params: {
+        page: request.page,
+        size: request.limit,
+      },
+    },
+  );
+  return data;
+}
+
+/**
+ * 좋아요 리스트 조회
+ */
+export async function getFeedLikes(
+  request: FeedLikesRequest
+): Promise<FeedLikesResponseDto> {
+  const { data } = await axiosInstance.get<FeedLikesResponseDto>(
+    `/feeds/${request.feedId}/likes`,
+    {
+      params: {
+        page: request.page,
+        size: request.limit,
+      },
+    },
+  );
+  return data;
+}
+
+/**
+ * 댓글 작성
+ */
+export async function createFeedComment(
+  request: FeedCommentCreateRequest
+): Promise<FeedCommentDto> {
+  const { data } = await axiosInstance.post<FeedCommentDto>(
+    `/feeds/${request.feedId}/comments`,
+    {
+      text: request.text,
+      parentCommentId: request.parentCommentId ?? null,
+    },
+  );
+  return data;
+}
+
+/**
  * 피드 좋아요 토글
  */
-export async function toggleLike(request: LikeToggleRequest): Promise<LikeToggleResponse> {
-  const { data } = await axiosInstance.post<LikeToggleResponse>(`/feed/${request.feedId}/like`);
+export async function toggleLike(request: LikeToggleRequest): Promise<LikeToggleResponseDto> {
+  const { data } = await axiosInstance.post<LikeToggleResponseDto>(
+    `/feeds/${request.feedId}/like`
+  );
   return data;
 }
 

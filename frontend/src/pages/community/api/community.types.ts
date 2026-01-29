@@ -51,7 +51,7 @@ export interface FeedListRequest {
  */
 export interface FeedListApiParams {
   sort?: ApiSortBy;
-  gender?: "M" | "F";
+  gender?: "male" | "female";
   min_height?: number;
   max_height?: number;
   min_weight?: number;
@@ -66,6 +66,44 @@ export interface FeedListApiParams {
  */
 export interface FeedListResponse {
   items: FeedItem[];
+  total: number;
+  page: number;
+  hasMore: boolean;
+}
+
+/**
+ * 백엔드 DTO - 작성자
+ */
+export interface FeedAuthorDto {
+  memberId: number;
+  profileImageUrl: string | null;
+  nickname: string;
+  isFollowing: boolean;
+}
+
+/**
+ * 백엔드 DTO - 피드 리스트 아이템
+ */
+export interface FeedListItemDto {
+  postId: number;
+  imageUrl: string;
+  style: string[];
+  gender: "female" | "male";
+  height: number;
+  weight?: number;
+  skeletonType: "Straight" | "Wave" | "Natural";
+  likeCount: number;
+  commentCount?: number;
+  isLiked: boolean;
+  author: FeedAuthorDto;
+  createdAt: string;
+}
+
+/**
+ * 백엔드 DTO - 피드 리스트 응답
+ */
+export interface FeedListResponseDto {
+  items: FeedListItemDto[];
   total: number;
   page: number;
   hasMore: boolean;
@@ -128,4 +166,175 @@ export interface FeedCreateResponse {
   code: number;
   message: string;
   data: null;
+}
+
+/**
+ * 피드 상세 작성자 정보
+ */
+export interface FeedAuthor {
+  username: string;
+  bodyType: "Straight" | "Wave" | "Natural";
+  location: string;
+  avatarUrl?: string | null;
+}
+
+/**
+ * 좋아요 유저 프로필
+ */
+export interface FeedLikeUser {
+  id: string;
+  username: string;
+  displayName?: string;
+  isFollowing?: boolean;
+  bodyType?: "Straight" | "Wave" | "Natural";
+  location?: string;
+  avatarUrl?: string | null;
+}
+
+/**
+ * 피드 상세 정보
+ */
+export interface FeedDetail {
+  id: string;
+  imageUrl: string;
+  author: FeedAuthor;
+  height: number;
+  weight?: number;
+  content: string[];
+  tags: string[];
+  createdAt: string;
+  isLiked: boolean;
+  likeCount: number;
+  likeUsers: FeedLikeUser[];
+  commentCount: number;
+  isSaved: boolean;
+}
+
+/**
+ * 백엔드 DTO - 피드 상세 응답
+ */
+export interface FeedDetailDto {
+  postId: number;
+  imageUrl: string;
+  style: string[];
+  gender: "female" | "male";
+  height: number;
+  weight?: number;
+  skeletonType: "Straight" | "Wave" | "Natural";
+  content: string;
+  likeCount: number;
+  commentCount: number;
+  isLiked: boolean;
+  author: FeedAuthorDto;
+  createdAt: string;
+}
+
+/**
+ * 댓글 아이템
+ */
+export interface FeedComment {
+  id: string;
+  username: string;
+  text: string;
+  createdAt: string;
+  likeCount: number;
+  isLiked: boolean;
+  parentCommentId?: string | null;
+}
+
+/**
+ * 백엔드 DTO - 댓글 작성자
+ */
+export interface FeedCommentAuthorDto {
+  memberId: number;
+  nickname: string;
+  profileImageUrl: string | null;
+}
+
+/**
+ * 백엔드 DTO - 댓글
+ */
+export interface FeedCommentDto {
+  replyId: number;
+  replyContent: string;
+  likeCount: number;
+  isLiked: boolean;
+  createdAt: string;
+  author: FeedCommentAuthorDto;
+}
+
+/**
+ * 댓글 작성 요청
+ */
+export interface FeedCommentCreateRequest {
+  feedId: string;
+  text: string;
+  parentCommentId?: string | null;
+}
+
+/**
+ * 댓글 리스트 요청
+ */
+export interface FeedCommentListRequest {
+  feedId: string;
+  page: number;
+  limit: number;
+}
+
+/**
+ * 댓글 리스트 응답
+ */
+export interface FeedCommentListResponse {
+  items: FeedComment[];
+  total: number;
+  page: number;
+  hasMore: boolean;
+}
+
+/**
+ * 백엔드 DTO - 댓글 리스트 응답
+ */
+export interface FeedCommentListResponseDto {
+  postId: number;
+  commentCount: number;
+  hasNext: boolean;
+  comments: FeedCommentDto[];
+}
+
+/**
+ * 백엔드 DTO - 좋아요 토글 응답
+ */
+export interface LikeToggleResponseDto {
+  postId: number;
+  isLiked: boolean;
+  likeCount: number;
+}
+
+/**
+ * 백엔드 DTO - 좋아요 유저
+ */
+export interface FeedLikeUserDto {
+  memberId: number;
+  nickname: string;
+  profileImageUrl: string | null;
+  isFollowing: boolean;
+}
+
+/**
+ * 백엔드 DTO - 좋아요 리스트 응답
+ */
+export interface FeedLikesResponseDto {
+  postId: number;
+  likeCount: number;
+  hasNext: boolean;
+  likes: FeedLikeUserDto[];
+}
+
+/**
+ * 좋아요 리스트 요청
+ */
+export interface FeedLikesRequest {
+  feedId: string;
+  page: number;
+  limit: number;
 }

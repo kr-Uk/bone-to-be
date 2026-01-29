@@ -54,7 +54,8 @@ export const LoginPage = () => {
   };
 
   const handleGoogle = () => {
-    window.location.href = "/api/oauth2/authorization/kakao";
+window.location.href = '/api/oauth2/authorization/google';
+
   };
 
   const handleSwitchToSignUp = () => {

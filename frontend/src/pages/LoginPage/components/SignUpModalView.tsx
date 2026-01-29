@@ -356,11 +356,11 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
         <div
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "5px" }}
         >
-          <S.SocialButton type="button">
+          <S.SocialButton type="button" onClick={handleGoogle}>
             <img alt="Google" src={googleIcon} width={16} height={16} />
             <span>Google</span>
           </S.SocialButton>
-          <S.SocialButtonKakao type="button">
+          <S.SocialButtonKakao type="button" onClick={handleKakao}>
             <img alt="Kakao" src={kakaoIcon} width={16} height={16} />
             <span>Kakao</span>
           </S.SocialButtonKakao>

@@ -88,23 +88,44 @@ export interface LikeToggleResponse {
 }
 
 /**
- * 피드 생성 요청
+ * Presigned URL 요청
+ */
+export interface PresignedUrlRequest {
+  originalFileName: string;
+  contentType: string;
+  fileSize: number;
+}
+
+/**
+ * Presigned URL 응답
+ */
+export interface PresignedUrlResponse {
+  code: number;
+  message: string;
+  data: {
+    fileId: number;
+    uploadUrl: string;
+  };
+}
+
+/**
+ * 피드 생성 요청 (새 형식 - JSON)
  */
 export interface FeedCreateRequest {
-  image: File;
+  fileId: number;
   content: string;
-  bodyType: "Natural" | "Wave" | "Straight";
-  gender: "F" | "M";
+  gender: "female" | "male";
+  skeletonType: "natural" | "straight" | "wave";
+  style: string[];
   height: number; // cm
-  weight?: number; // kg (선택)
-  styles: string[];
+  weight: number; // kg (필수)
 }
 
 /**
  * 피드 생성 응답
  */
 export interface FeedCreateResponse {
-  success: boolean;
-  feedId: string;
+  code: number;
   message: string;
+  data: null;
 }

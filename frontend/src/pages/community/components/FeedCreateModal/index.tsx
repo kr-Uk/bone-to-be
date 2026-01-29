@@ -30,7 +30,7 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
     defaultValues: {
       content: "",
       height: "",
-      weight: "",
+      weight: "", // 필수 입력으로 변경 (사용자가 입력해야 함)
       styles: [],
     },
   });
@@ -48,22 +48,27 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
   // Handle form submission
   const onSubmit = handleSubmit((data) => {
     // Transform data to match API requirements
-    const apiData = {
-      ...data,
-      height: data.height ? parseInt(data.height, 10) : 0,
-      weight: data.weight ? parseInt(data.weight, 10) : undefined,
-    };
-
-    createFeed(apiData, {
-      onSuccess: () => {
-        reset(); // Reset form
-        onClose();
+    createFeed(
+      {
+        file: data.image,
+        content: data.content,
+        gender: data.gender,
+        bodyType: data.bodyType,
+        styles: data.styles,
+        height: parseInt(data.height, 10),
+        weight: parseInt(data.weight, 10), // 필수로 변경
       },
-      onError: (error) => {
-        console.error("Failed to create feed:", error);
-        // TODO: Show error toast
+      {
+        onSuccess: () => {
+          reset(); // Reset form
+          onClose();
+        },
+        onError: (error) => {
+          console.error("Failed to create feed:", error);
+          // TODO: Show error toast
+        },
       },
-    });
+    );
   });
 
   // Handle close

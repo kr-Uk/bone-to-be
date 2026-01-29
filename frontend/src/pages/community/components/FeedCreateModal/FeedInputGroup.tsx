@@ -106,7 +106,7 @@ export function FeedInputGroup({
           <StyledInput
             type="text"
             inputMode="numeric"
-            placeholder="몸무게(kg)"
+            placeholder="몸무게(kg) *"
             aria-label="몸무게(kg)"
             $hasError={!!weightError}
             {...weightProps}

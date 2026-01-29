@@ -1,9 +1,13 @@
+import axios from "axios";
+
 import type {
   FeedListRequest,
   FeedListResponse,
   FeedListApiParams,
   LikeToggleRequest,
   LikeToggleResponse,
+  PresignedUrlRequest,
+  PresignedUrlResponse,
   FeedCreateRequest,
   FeedCreateResponse,
 } from "./community.types";
@@ -69,23 +73,40 @@ export async function toggleLike(request: LikeToggleRequest): Promise<LikeToggle
 }
 
 /**
- * 피드 생성
+ * 1단계: Presigned URL 발급
+ */
+export async function getPresignedUrl(
+  request: PresignedUrlRequest,
+): Promise<PresignedUrlResponse> {
+  const { data } = await axiosInstance.post<PresignedUrlResponse>(
+    "/feeds/presigned-url",
+    request,
+  );
+  return data;
+}
+
+/**
+ * 2단계-A: S3에 이미지 직접 업로드
+ */
+export async function uploadImageToS3(
+  uploadUrl: string,
+  file: File,
+  contentType: string,
+): Promise<void> {
+  await axios.put(uploadUrl, file, {
+    headers: {
+      "Content-Type": contentType,
+    },
+  });
+}
+
+/**
+ * 2단계-B: 피드 생성 (JSON 형식)
  */
 export async function createFeed(request: FeedCreateRequest): Promise<FeedCreateResponse> {
-  const formData = new FormData();
-  formData.append("image", request.image);
-  formData.append("content", request.content);
-  formData.append("bodyType", request.bodyType);
-  formData.append("gender", request.gender);
-  formData.append("height", request.height.toString());
-  if (request.weight) {
-    formData.append("weight", request.weight.toString());
-  }
-  formData.append("styles", request.styles.join(","));
-
-  const { data } = await axiosInstance.post<FeedCreateResponse>("/feed", formData, {
+  const { data } = await axiosInstance.post<FeedCreateResponse>("/feeds", request, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
     },
   });
 

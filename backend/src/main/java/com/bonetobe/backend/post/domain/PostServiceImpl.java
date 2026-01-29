@@ -34,8 +34,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public PostDetailSummaryRaw getPostDetail(Long postId) {
-        return postReader.findPostDetail(postId);
+    public PostDetailSummaryRaw getPostDetail(Long postId, Long viewerId) {
+        return postReader.findPostDetail(postId, viewerId);
     }
 
     @Override

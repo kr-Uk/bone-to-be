@@ -23,11 +23,11 @@ public record PostDetailSummaryRaw(
 ) {
     public record AuthorSummary(
             Long userId,
-            String nickname,
-            Boolean isFollowing
+            Long profileId,
+            String nickname
     ) {}
 
-    public PostDetailSummary toSummary(String imageUrl) {
+    public PostDetailSummary toSummary(String imageUrl, String profileImmageUrl) {
         return new PostDetailSummary(
                 postId,
                 imageUrl,
@@ -41,8 +41,8 @@ public record PostDetailSummaryRaw(
                 isLiked,
                 new PostDetailSummary.AuthorSummary(
                         author.userId(),
-                        author.nickname(),
-                        author.isFollowing()
+                        profileImmageUrl,
+                        author.nickname()
                 ),
                 createdAt
         );

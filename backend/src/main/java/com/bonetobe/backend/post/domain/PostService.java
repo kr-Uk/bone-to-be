@@ -17,7 +17,7 @@ import java.util.List;
 public interface PostService {
     Page<PostSummaryRaw> getPostList(PostListQuery query, Pageable pageable);
 
-    PostDetailSummaryRaw getPostDetail(Long postId);
+    PostDetailSummaryRaw getPostDetail(Long postId, Long viewerId);
 
     void createPost(PostCreateCommand command, User user, StoredFile file, List<Style> styles);
 

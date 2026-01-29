@@ -1,13 +1,13 @@
 ﻿import { CiLock } from "react-icons/ci";
 import styled from "styled-components";
 
-import TriangleChart from "@/shared/components/charts/TriangleChart/TriangleChart";
-
 import { applySmoothing } from "../hooks/useBodyTypeChart";
 
 import { Stack, Text } from "./ProfileCommon";
 
 import type { BodyTypeRatio } from "../api/profile.types";
+
+import TriangleChart from "@/shared/components/charts/TriangleChart/TriangleChart";
 
 const Section = styled.section`
   display: flex;
@@ -221,11 +221,10 @@ const SkeletalTypeSection = ({ bodyType, bodyTypeRatio }: SkeletalTypeSectionPro
               customLabels={{
                 enabled: true,
                 alignments: ["center", "right", "left"],
-                font:{size:12}
+                font: { size: 12 },
               }}
               tooltip={{ enabled: false }}
               animate={false}
-              
             />
           </ChartInner>
         </ChartWrap>

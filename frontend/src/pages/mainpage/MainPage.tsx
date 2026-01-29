@@ -7,7 +7,6 @@ import { MainSection } from "./components/MainSection";
 
 import type { AppTheme } from "@/shared/styles/theme";
 
-
 type TypographyToken = {
   fontSize: string;
   fontWeight: number;
@@ -68,7 +67,6 @@ const Container = styled.div`
   color: ${({ theme }) => theme.colors.text};
   background: ${({ theme }) => theme.colors.background};
 `;
-
 
 const FinalCTASection = styled.section`
   background-color: ${({ theme }) => theme.colors.purple[800]};

@@ -1,11 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-import type {
-  DiagnosisData,
-  BasicInfoApiData,
-  AnalysisResultData,
-} from "@/shared/types/diagnosis";
+import type { DiagnosisData, BasicInfoApiData, AnalysisResultData } from "@/shared/types/diagnosis";
 
 type DiagnosisStore = {
   diagnosisData: DiagnosisData;

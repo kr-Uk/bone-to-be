@@ -183,9 +183,7 @@ export function PoseValidationFeedback({
       )}
 
       {status === "error" && (
-        <RetryButton onClick={onRetry}>
-          {mode === "camera" ? "다시 촬영" : "다시 선택"}
-        </RetryButton>
+        <RetryButton onClick={onRetry}>{mode === "camera" ? "다시 촬영" : "다시 선택"}</RetryButton>
       )}
     </Container>
   );

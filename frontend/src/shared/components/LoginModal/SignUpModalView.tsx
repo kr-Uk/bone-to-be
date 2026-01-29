@@ -162,9 +162,9 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
       {/* RIGHT: Sign Up Form */}
       <S.RightPanel>
-      <S.Brand>
-        <S.BrandTitle>회원가입</S.BrandTitle>
-      </S.Brand>
+        <S.Brand>
+          <S.BrandTitle>회원가입</S.BrandTitle>
+        </S.Brand>
 
         <S.Form>
           <S.Field>
@@ -220,9 +220,7 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
               </S.InputGroupBtn>
             </S.InputRow>
             {showEmailFormatError && (
-              <S.ValidationMessage $isError>
-                이메일 형식이 올바르지 않습니다
-              </S.ValidationMessage>
+              <S.ValidationMessage $isError>이메일 형식이 올바르지 않습니다</S.ValidationMessage>
             )}
             {emailVerified && (
               <S.SuccessText>
@@ -296,14 +294,26 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
           <S.OrRow style={{ marginTop: "20px" }}>
             <S.OrLine />
             <S.OrText
-              style={{ fontSize: "10px", fontWeight: 900, letterSpacing: "0.22em", textTransform: "uppercase" }}
+              style={{
+                fontSize: "10px",
+                fontWeight: 900,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+              }}
             >
               OR JOIN WITH
             </S.OrText>
             <S.OrLine />
           </S.OrRow>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "14px" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "12px",
+              marginTop: "14px",
+            }}
+          >
             <S.SocialButton type="button">
               <img alt="Google" src={googleIcon} width={16} height={16} />
               <span>Google</span>
@@ -327,4 +337,3 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
     </S.SignUpCard>
   );
 };
-  

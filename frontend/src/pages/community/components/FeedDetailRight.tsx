@@ -1,16 +1,11 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FaRegHeart, FaHeart, FaRegComment, FaRegBookmark, FaBookmark } from "react-icons/fa";
 import styled from "styled-components";
+
+import { useCreateFeedComment, useLikeToggle } from "../api";
+
 import { CommentInput } from "./CommentInput";
 import { CommentRow } from "./CommentRow";
-
-import {
-  FaRegHeart,
-  FaHeart,
-  FaRegComment,
-  FaRegBookmark,
-  FaBookmark,
-} from "react-icons/fa";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useCreateFeedComment, useLikeToggle } from "../api";
 
 import type { FeedComment, FeedDetail, FeedLikeUser } from "../api";
 
@@ -100,7 +95,6 @@ export function FeedDetailRight({
     : detail?.weight
       ? `몸무게 ${detail.weight}kg`
       : "정보 없음";
-
 
   const handleLikeToggle = () => {
     if (!detail) return;
@@ -215,9 +209,7 @@ export function FeedDetailRight({
             {(detail?.content ?? []).map((line, index) => (
               <Text key={`content-${index}`}>{line}</Text>
             ))}
-            <Tags>
-              {(detail?.tags ?? []).map((tag) => `#${tag}`).join(" ")}
-            </Tags>
+            <Tags>{(detail?.tags ?? []).map((tag) => `#${tag}`).join(" ")}</Tags>
             <Time>{detail?.createdAt ? formatTimeAgo(detail.createdAt) : ""}</Time>
           </div>
         </PostContent>
@@ -235,7 +227,9 @@ export function FeedDetailRight({
                 <CommentRow
                   username={comment.username}
                   text={comment.text}
-                  time={formatTimeAgo(comment.createdAt)} likeCount={0}              />
+                  time={formatTimeAgo(comment.createdAt)}
+                  likeCount={0}
+                />
               </CommentRowWrapper>
             ))
           )}
@@ -247,17 +241,16 @@ export function FeedDetailRight({
           <ActionRow>
             <LeftActions>
               <HeartButton liked={liked} onClick={handleLikeToggle}>
-                {liked ? <FaHeart size={20}/> : <FaRegHeart size={20}/>}
+                {liked ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
               </HeartButton>
 
               <IconButton onClick={handleCommentNavigate}>
-                <FaRegComment size={20}/>
+                <FaRegComment size={20} />
               </IconButton>
-
             </LeftActions>
 
             <IconButton onClick={() => setSaved((v) => !v)}>
-              {saved ? <FaBookmark size={20}/> : <FaRegBookmark size={20}/>}
+              {saved ? <FaBookmark size={20} /> : <FaRegBookmark size={20} />}
             </IconButton>
           </ActionRow>
 
@@ -279,7 +272,9 @@ export function FeedDetailRight({
                 ) : (
                   <LikesList>
                     {likeUsers.map((user) => {
-                      const secondary = user.displayName ?? [user.bodyType, user.location].filter(Boolean).join(" · ");
+                      const secondary =
+                        user.displayName ??
+                        [user.bodyType, user.location].filter(Boolean).join(" · ");
                       return (
                         <LikeItem key={user.id}>
                           <LikeLeft>
@@ -327,7 +322,7 @@ const RightContainer = styled.div`
 
   /* Firefox */
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 
   /* Chrome, Edge, Safari */
   &::-webkit-scrollbar {
@@ -431,7 +426,7 @@ const Text = styled.p`
   color: #fafafa;
 
   @media (max-width: 430px) {
-  font-size: 14px; /* Mobile */
+    font-size: 14px; /* Mobile */
   }
 `;
 
@@ -470,7 +465,6 @@ const CommentRowWrapper = styled.div<{ $depth: number }>`
   padding-left: ${({ $depth }) => ($depth > 0 ? "24px" : "0")};
 `;
 
-
 const Footer = styled.div`
   padding: 16px 16px 0;
   position: relative;
@@ -480,7 +474,6 @@ const Footer = styled.div`
     padding: 8px 16px 4px;
   }
 `;
-
 
 const ActionRow = styled.div`
   display: flex;
@@ -513,7 +506,9 @@ const HeartButton = styled.button<{ liked: boolean }>`
   color: ${({ liked }) => (liked ? "#ef4444" : "#fafafa")};
 
   svg {
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease;
   }
 
   &:hover svg {
@@ -524,7 +519,6 @@ const HeartButton = styled.button<{ liked: boolean }>`
     transform: scale(1.3);
   }
 `;
-
 
 const LikesButton = styled.button`
   color: #fafafa;
@@ -562,12 +556,8 @@ const LikesPanel = styled.div`
   --likes-item-height: 72px;
   --likes-visible-count: 7;
   width: min(640px, 92vw);
-  height: calc(
-    var(--likes-item-height) * var(--likes-visible-count) + 56px
-  );
-  max-height: calc(
-    var(--likes-item-height) * var(--likes-visible-count) + 56px
-  );
+  height: calc(var(--likes-item-height) * var(--likes-visible-count) + 56px);
+  max-height: calc(var(--likes-item-height) * var(--likes-visible-count) + 56px);
   background: #202124;
   border: 1px solid #2f3033;
   border-radius: 18px;
@@ -661,7 +651,9 @@ const FollowButton = styled.button`
   padding: 8px 18px;
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 
   &:hover {
     background: #4f46e5;
@@ -683,5 +675,3 @@ const FixedInput = styled.div`
     padding: 12px 16px 12px;
   }
 `;
-
-

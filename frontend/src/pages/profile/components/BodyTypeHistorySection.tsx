@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import styled from "styled-components";
 
-import TriangleChart from "@/shared/components/charts/TriangleChart/TriangleChart";
-
 import { applySmoothing, getBodyTypeBadge, getBodyTypeLabels } from "../hooks/useBodyTypeChart";
 
 import { Stack, Text } from "./ProfileCommon";
@@ -11,7 +9,7 @@ import { Stack, Text } from "./ProfileCommon";
 import type { BodyTypeHistoryItem } from "../api/profile.types";
 import type { CSSProperties } from "react";
 
-
+import TriangleChart from "@/shared/components/charts/TriangleChart/TriangleChart";
 
 const Section = styled.section`
   display: flex;
@@ -72,7 +70,10 @@ const ArrowButton = styled.button`
   outline: 0.0625rem var(--neutral-600, #525252) solid;
   outline-offset: -0.0625rem;
   color: var(--neutral-500, #737373);
-  transition: background 0.2s ease, color 0.2s ease, outline-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    outline-color 0.2s ease;
 
   &:hover {
     background: var(--color-bg-brand, #9810fa);
@@ -126,7 +127,9 @@ const Card = styled.article<{ $highlight?: boolean; $dimmed?: boolean }>`
   flex-direction: column;
   cursor: inherit;
   scroll-snap-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
   --accent-color: ${({ theme }) => theme.colors.purple[600]};
   --accent-fill: ${({ theme }) => theme.colors.purple[900]};
@@ -149,7 +152,6 @@ const Card = styled.article<{ $highlight?: boolean; $dimmed?: boolean }>`
   }
 `;
 
-
 const LatestBadge = styled.span`
   position: absolute;
   top: 1.3125rem;
@@ -163,7 +165,9 @@ const LatestBadge = styled.span`
   letter-spacing: 0.12em;
   text-transform: uppercase;
   border-radius: 0.15625rem;
-  box-shadow: 0 0.25rem 0.375rem -0.25rem rgba(0, 0, 0, 0.1), 0 0.625rem 0.9375rem -0.1875rem rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 0.25rem 0.375rem -0.25rem rgba(0, 0, 0, 0.1),
+    0 0.625rem 0.9375rem -0.1875rem rgba(0, 0, 0, 0.1);
 `;
 
 const CardBody = styled.div`

@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-
 import { LoginModalView } from "./LoginModalView";
 import { SignUpModalView } from "./SignUpModalView";
 
@@ -9,9 +8,6 @@ import type { AxiosError } from "axios";
 import { Modal } from "@/shared/components/Modal/Modal";
 import { useLogin } from "@/shared/hooks";
 import { useAuthStore } from "@/shared/stores/authStore";
-
-
-
 
 export const LoginModalContainer = () => {
   const { isLoginModalOpen, closeLoginModal } = useAuthStore();

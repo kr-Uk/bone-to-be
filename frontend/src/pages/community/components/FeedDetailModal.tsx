@@ -1,10 +1,12 @@
+import { useEffect } from "react";
+import { GrNext, GrPrevious } from "react-icons/gr";
+import { MdClose } from "react-icons/md";
 import styled from "styled-components";
+
+import { useFeedComments, useFeedDetail, useFeedLikes } from "../api";
+
 import { FeedDetailLeft } from "./FeedDetailLeft";
 import { FeedDetailRight } from "./FeedDetailRight";
-import { useEffect } from "react";
-import { useFeedComments, useFeedDetail, useFeedLikes } from "../api";
-import { MdClose } from "react-icons/md";
-import { GrNext, GrPrevious } from "react-icons/gr";
 
 interface Props {
   onClose: () => void;
@@ -23,11 +25,7 @@ export function FeedDetailModal({
   hasPrev = false,
   hasNext = false,
 }: Props) {
-  const {
-    data: detail,
-    isLoading: isDetailLoading,
-    error: detailError,
-  } = useFeedDetail(feedId);
+  const { data: detail, isLoading: isDetailLoading, error: detailError } = useFeedDetail(feedId);
   const {
     data: commentsData,
     isLoading: isCommentsLoading,
@@ -133,7 +131,7 @@ const Overlay = styled.div`
   justify-content: center;
   align-items: center;
 
-  z-index: 9999;        /* 페이지보다 위 */
+  z-index: 9999; /* 페이지보다 위 */
 `;
 
 const ModalWrapper = styled.div`
@@ -298,4 +296,3 @@ const CloseButton = styled.button`
     height: 32px;
   }
 `;
-

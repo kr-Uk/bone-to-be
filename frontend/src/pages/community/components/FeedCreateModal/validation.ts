@@ -36,10 +36,7 @@ export const feedFormSchema = z.object({
   height: z.string().regex(/^\d*$/, "숫자만 입력 가능합니다").default(""),
 
   // 필수: 몸무게 (양의 정수, 필수 입력)
-  weight: z
-    .string()
-    .regex(/^\d+$/, "숫자만 입력 가능합니다")
-    .min(1, "몸무게를 입력해주세요"),
+  weight: z.string().regex(/^\d+$/, "숫자만 입력 가능합니다").min(1, "몸무게를 입력해주세요"),
 
   // 필수: 스타일 (최소 1개 이상 선택)
   styles: z.array(z.string()).min(1, "스타일을 최소 1개 이상 선택해주세요").default([]),

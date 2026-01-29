@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 const Card = styled.div`
   background: rgba(38, 38, 38, 0.6);

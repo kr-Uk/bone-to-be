@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import logo from "@/assets/image/logo.svg"
+import logo from "@/assets/image/logo.svg";
 
 const Container = styled.header`
   width: 100%;
@@ -12,7 +12,7 @@ const Container = styled.header`
   justify-content: center;
 
   background-color: ${({ theme }) => theme.colors.gray[900]};
-  border-bottom: 1px solid ${({theme}) => theme.colors.gray[700]};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray[700]};
 `;
 
 const ContentWrap = styled.div`

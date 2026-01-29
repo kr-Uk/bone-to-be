@@ -122,8 +122,8 @@ function checkFullBodyVisible(landmarks: NormalizedLandmark[]): {
   const rightAnkleY = landmarks[POSE_LANDMARKS.RIGHT_ANKLE].y;
 
   // 머리가 너무 위쪽에 있거나 발이 너무 아래쪽에 있으면 잘림
-  const headCutOff = headY < 0.10; // 상단 10% 이내
-  const feetCutOff = Math.max(leftAnkleY, rightAnkleY) > 0.90; // 하단 10% 이내
+  const headCutOff = headY < 0.1; // 상단 10% 이내
+  const feetCutOff = Math.max(leftAnkleY, rightAnkleY) > 0.9; // 하단 10% 이내
 
   return {
     visible: allVisible && !headCutOff && !feetCutOff,

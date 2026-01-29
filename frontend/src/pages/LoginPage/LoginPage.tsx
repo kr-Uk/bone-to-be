@@ -51,13 +51,11 @@ export const LoginPage = () => {
 
   const handleKakao = () => {
     window.location.href = `/api/oauth2/authorization/kakao`
-    console.log("카카오")
   };
 
   const handleGoogle = () => {
 window.location.href = '/api/oauth2/authorization/google';
 
-    console.log("google")
   };
 
   const handleSwitchToSignUp = () => {

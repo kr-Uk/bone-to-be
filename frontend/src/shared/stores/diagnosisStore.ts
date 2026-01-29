@@ -5,8 +5,10 @@ import type { DiagnosisData, BasicInfoApiData, AnalysisResultData } from "@/shar
 
 type DiagnosisStore = {
   diagnosisData: DiagnosisData;
+  reportId: number | null; // 추가: 현재 리포트 ID
   setBasicInfo: (data: BasicInfoApiData) => void;
   setPhotoData: (data: string) => void;
+  setReportId: (id: number) => void; // 추가: 리포트 ID 설정
   setAnalysisResult: (data: AnalysisResultData) => void;
   clearDiagnosisData: () => void;
 };
@@ -19,6 +21,7 @@ export const useDiagnosisStore = create<DiagnosisStore>()(
         photoData: null,
         analysisResult: null,
       },
+      reportId: null, // 추가: 초기값
       setBasicInfo: (data) =>
         set((state) => ({
           diagnosisData: { ...state.diagnosisData, basicInfo: data },
@@ -27,6 +30,7 @@ export const useDiagnosisStore = create<DiagnosisStore>()(
         set((state) => ({
           diagnosisData: { ...state.diagnosisData, photoData: data },
         })),
+      setReportId: (id) => set({ reportId: id }), // 추가: 리포트 ID 설정
       setAnalysisResult: (data) =>
         set((state) => ({
           diagnosisData: { ...state.diagnosisData, analysisResult: data },
@@ -38,6 +42,7 @@ export const useDiagnosisStore = create<DiagnosisStore>()(
             photoData: null,
             analysisResult: null,
           },
+          reportId: null, // 추가: 초기화 시 포함
         }),
     }),
     {

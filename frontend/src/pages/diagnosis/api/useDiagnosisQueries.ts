@@ -5,6 +5,9 @@ import {
   uploadImageToS3,
   submitAnalysisRequest,
   getAnalysisResult,
+  createPresignedUrl,
+  createReport,
+  getReportDetail,
 } from "./diagnosis.api";
 
 import type {
@@ -12,24 +15,33 @@ import type {
   AnalysisRequest,
   AnalysisResponse,
   AnalysisResult,
+  CreatePresignedUrlResponse,
+  CreateReportRequest,
+  CreateReportResponse,
+  ReportDetailResponse,
 } from "./diagnosis.types";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 
 /**
- * Presigned URL 요청 훅
+ * ===== 새로운 /reports API Hooks =====
  */
-export function usePresignedUrl(): UseMutationResult<
-  PresignedUrlResponse,
+
+/**
+ * Presigned URL 생성 훅 (새 API)
+ */
+export function useCreatePresignedUrl(): UseMutationResult<
+  CreatePresignedUrlResponse["data"],
   Error,
-  { fileName: string; fileType: string }
+  { originalFileName: string; contentType: string; fileSize: number }
 > {
   return useMutation({
-    mutationFn: ({ fileName, fileType }) => getPresignedUrl(fileName, fileType),
+    mutationFn: ({ originalFileName, contentType, fileSize }) =>
+      createPresignedUrl(originalFileName, contentType, fileSize),
   });
 }
 
 /**
- * S3 업로드 훅
+ * S3 업로드 훅 (변경 없음)
  */
 export function useS3Upload(): UseMutationResult<
   void,
@@ -42,7 +54,83 @@ export function useS3Upload(): UseMutationResult<
 }
 
 /**
- * 분석 요청 훅
+ * 리포트 생성 훅 (분석 시작)
+ */
+export function useCreateReport(): UseMutationResult<
+  CreateReportResponse["data"],
+  Error,
+  CreateReportRequest
+> {
+  return useMutation({
+    mutationFn: (request) => createReport(request),
+  });
+}
+
+/**
+ * 리포트 상세 조회 훅 (폴링 지원)
+ */
+export function useReportDetail(
+  reportId: number | null,
+  options?: {
+    enabled?: boolean;
+    onSuccess?: (data: ReportDetailResponse["data"]) => void;
+    onError?: (error: Error) => void;
+  }
+): UseQueryResult<ReportDetailResponse["data"], Error> {
+  return useQuery({
+    queryKey: ["reportDetail", reportId],
+    queryFn: () => getReportDetail(reportId!),
+    enabled: options?.enabled !== false && reportId !== null,
+
+    // 핵심: 폴링 로직
+    refetchInterval: (query) => {
+      const data = query.state.data;
+
+      // PENDING 상태이면 2초마다 재조회
+      if (data?.status === "PENDING") {
+        return 2000;
+      }
+
+      // COMPLETED or FAILED이면 폴링 중지
+      return false;
+    },
+
+    staleTime: 0, // 항상 최신 데이터 요청
+
+    // 에러 재시도 로직
+    retry: (failureCount, error) => {
+      // 4xx 에러는 재시도 안 함
+      if (error instanceof Error && "response" in error) {
+        const status = (error as any).response?.status;
+        if (status && status >= 400 && status < 500) {
+          return false;
+        }
+      }
+      // 서버 에러는 최대 3번 재시도
+      return failureCount < 3;
+    },
+  });
+}
+
+/**
+ * ===== 레거시 API Hooks (기존 코드 호환성) =====
+ */
+
+/**
+ * Presigned URL 요청 훅 (레거시)
+ */
+export function usePresignedUrl(): UseMutationResult<
+  PresignedUrlResponse,
+  Error,
+  { fileName: string; fileType: string }
+> {
+  return useMutation({
+    mutationFn: ({ fileName, fileType }) => getPresignedUrl(fileName, fileType),
+  });
+}
+
+/**
+ * 분석 요청 훅 (레거시)
  */
 export function useAnalysisRequest(): UseMutationResult<AnalysisResponse, Error, AnalysisRequest> {
   return useMutation({
@@ -51,7 +139,7 @@ export function useAnalysisRequest(): UseMutationResult<AnalysisResponse, Error,
 }
 
 /**
- * 분석 결과 조회 훅 (폴링 지원)
+ * 분석 결과 조회 훅 (레거시, 폴링 지원)
  */
 export function useAnalysisResult(
   analysisId: string | null,

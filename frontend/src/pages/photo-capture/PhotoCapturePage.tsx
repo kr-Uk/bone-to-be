@@ -20,7 +20,12 @@ import type { CaptureMode, AnalysisStatus } from "@/shared/types/diagnosis";
 import type { PoseValidationResult } from "@/shared/utils/poseValidation";
 import type { Results } from "@mediapipe/pose";
 
-import { usePresignedUrl, useS3Upload, useAnalysisRequest } from "@/pages/diagnosis/api";
+import {
+  useCreatePresignedUrl,
+  useS3Upload,
+  useCreateReport,
+} from "@/pages/diagnosis/api";
+import { convertGenderToApi } from "@/pages/diagnosis/api/diagnosis.types";
 import { useMediaQuery } from "@/shared/hooks";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 import { dataURLtoBlob, generateFilename, compressImage } from "@/shared/utils/image";
@@ -307,7 +312,7 @@ const Button = styled.button<{ $variant?: "primary" | "secondary" }>`
 
 const PhotoCapturePage = () => {
   const navigate = useNavigate();
-  const { diagnosisData, setPhotoData, setAnalysisResult } = useDiagnosisStore();
+  const { diagnosisData, setPhotoData, setReportId } = useDiagnosisStore();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
 
@@ -322,10 +327,10 @@ const PhotoCapturePage = () => {
   const captureRef = useRef<(() => string | null) | null>(null);
   const latestLandmarksRef = useRef<Results | null>(null);
 
-  // API hooks
-  const presignedUrlMutation = usePresignedUrl();
+  // API hooks (새 API 사용)
+  const createPresignedUrlMutation = useCreatePresignedUrl();
   const s3UploadMutation = useS3Upload();
-  const analysisRequestMutation = useAnalysisRequest();
+  const createReportMutation = useCreateReport();
 
   // Redirect if no basic info
   useEffect(() => {
@@ -392,63 +397,51 @@ const PhotoCapturePage = () => {
     setCameraActive(newMode === "camera");
   };
 
-  // Handle analysis flow
+  // Handle analysis flow (새 API 사용)
   const handleAnalyze = async () => {
     if (!selectedImage || !poseValidation?.isValid || !diagnosisData.basicInfo) {
       return;
     }
 
     try {
-      // Step 1: S3 Upload
+      // Step 1: 이미지 압축
       setAnalysisStatus("s3-upload");
 
-      // Compress image before upload
       const compressedImage = await compressImage(selectedImage, 1920, 0.8);
       const imageBlob = dataURLtoBlob(compressedImage);
       const fileName = generateFilename("diagnosis", "jpg");
 
-      // Get presigned URL
-      const presignedData = await presignedUrlMutation.mutateAsync({
-        fileName,
-        fileType: "image/jpeg",
+      // Step 2: Presigned URL 생성
+      const presignedData = await createPresignedUrlMutation.mutateAsync({
+        originalFileName: fileName,
+        contentType: "image/jpeg",
+        fileSize: imageBlob.size, // 신규 필드
       });
 
-      // Upload to S3
+      // Step 3: S3 업로드
       await s3UploadMutation.mutateAsync({
         uploadUrl: presignedData.uploadUrl,
         imageBlob,
       });
 
-      // Step 2: Analysis Request
+      // Step 4: 리포트 생성 (분석 시작)
       setAnalysisStatus("analysis-request");
 
-      const analysisResponse = await analysisRequestMutation.mutateAsync({
-        gender: diagnosisData.basicInfo.gender,
+      const reportData = await createReportMutation.mutateAsync({
+        fileId: presignedData.fileId, // 기존: imageKey
         height: diagnosisData.basicInfo.height,
         weight: diagnosisData.basicInfo.weight,
-        styles: diagnosisData.basicInfo.styles,
-        imageKey: presignedData.fileKey,
+        gender: convertGenderToApi(diagnosisData.basicInfo.gender), // gender 변환
+        // styles 필드 제거됨
       });
 
-      // Step 3: Processing (in MSW, it's instant, but in real scenario this would poll)
-      setAnalysisStatus("processing");
-
-      // Simulate processing delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Step 4: Complete
+      // Step 5: reportId 저장 및 이동
       setAnalysisStatus("complete");
-
-      // Save to store
       setPhotoData(selectedImage);
-      setAnalysisResult({
-        analysisId: analysisResponse.analysisId,
-        bodyType: "Natural", // This would come from polling getAnalysisResult
-        bodyTypeRatio: { natural: 60, wave: 25, straight: 15 },
-        measurements: { shoulderWidth: 42, waistWidth: 28, hipWidth: 38 },
-        recommendations: ["루즈핏 상의가 잘 어울립니다", "자연스러운 실루엣의 원피스를 추천합니다"],
-        processedAt: new Date().toISOString(),
-      });
+      setReportId(reportData.reportId); // 핵심: reportId 저장
+
+      // 폴링은 ReportPage에서 처리하므로 즉시 navigate
+      navigate("/diagnosis/report");
     } catch (error) {
       console.error("Analysis failed:", error);
       alert("분석에 실패했습니다. 다시 시도해주세요.");

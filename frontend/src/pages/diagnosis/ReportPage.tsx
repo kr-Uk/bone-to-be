@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -8,9 +8,10 @@ import RecommendationSection from "./components/RecommendationSection";
 import ReportHeroSection from "./components/ReportHeroSection";
 import VirtualFittingSection from "./components/VirtualFittingSection";
 
+import { useReportDetail } from "@/pages/diagnosis/api";
+import { convertSkeletonTypeToBodyType } from "@/pages/diagnosis/api/diagnosis.types";
 import {
   BODY_TYPE_METADATA,
-  VIRTUAL_FITTING_OPTIONS,
   type BodyTypeKey,
 } from "@/shared/constants/reportMockData";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
@@ -59,60 +60,171 @@ const ContentWrapper = styled.div<{ $isDesktop: boolean }>`
   width: ${({ $isDesktop }) => ($isDesktop ? "740px" : "100%")};
 `;
 
-const ReportPage = () => {
-  const navigate = useNavigate();
-  const diagnosisData = useDiagnosisStore((state) => state.diagnosisData);
-  const analysisResult = diagnosisData.analysisResult;
-  const [virtualFittingIndex, setVirtualFittingIndex] = useState(0);
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+// 로딩 뷰
+const LoadingView = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+  background-color: ${({ theme }) => theme.colors.gray[900]};
+  color: ${({ theme }) => theme.colors.secondary};
+`;
 
-  // Development mock data
-  const mockAnalysisResult = import.meta.env.DEV
-    ? {
-        analysisId: "mock-id",
-        bodyType: "natural",
-        bodyTypeRatio: {
-          straight: 25,
-          wave: 30,
-          natural: 45,
-        },
-        measurements: {
-          shoulderWidth: 42,
-          waistWidth: 30,
-          hipWidth: 38,
-        },
-        recommendations: [],
-        processedAt: new Date().toISOString(),
-      }
-    : null;
+const LoadingSpinner = styled.div`
+  width: 48px;
+  height: 48px;
+  border: 4px solid ${({ theme }) => theme.colors.gray[700]};
+  border-top-color: ${({ theme }) => theme.colors.purple[600]};
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 
-  // Use mock data in development if no real data
-  const currentAnalysisResult = analysisResult || mockAnalysisResult;
-
-  // Redirect if no analysis result (only in production)
-  useEffect(() => {
-    if (!currentAnalysisResult) {
-      navigate("/diagnosis/basic-info");
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
     }
-  }, [currentAnalysisResult, navigate]);
+  }
+`;
 
-  if (!currentAnalysisResult) {
-    return null;
+const LoadingText = styled.div`
+  font-size: ${({ theme }) => theme.typography.body.lg.semibold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.lg.semibold.fontWeight};
+  color: ${({ theme }) => theme.colors.secondary};
+`;
+
+const LoadingSubtext = styled.div`
+  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
+  color: ${({ theme }) => theme.colors.gray[400]};
+`;
+
+// 에러 뷰
+const ErrorView = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1.5rem;
+  background-color: ${({ theme }) => theme.colors.gray[900]};
+  color: ${({ theme }) => theme.colors.secondary};
+  padding: 2rem;
+`;
+
+const ErrorIcon = styled.div`
+  font-size: 64px;
+`;
+
+const ErrorTitle = styled.div`
+  font-size: ${({ theme }) => theme.typography.heading.h3.fontSize};
+  font-weight: ${({ theme }) => theme.typography.heading.h3.fontWeight};
+  color: ${({ theme }) => theme.colors.secondary};
+`;
+
+const ErrorMessage = styled.div`
+  font-size: ${({ theme }) => theme.typography.body.md.regular.fontSize};
+  color: ${({ theme }) => theme.colors.gray[400]};
+  text-align: center;
+`;
+
+const ErrorButton = styled.button`
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.xl};
+  background-color: ${({ theme }) => theme.colors.purple[600]};
+  color: ${({ theme }) => theme.colors.secondary};
+  border: none;
+  border-radius: 9999px;
+  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.purple[700]};
   }
 
-  // Get body type metadata
-  const bodyTypeKey = currentAnalysisResult.bodyType.toLowerCase() as BodyTypeKey;
-  const metadata = BODY_TYPE_METADATA[bodyTypeKey] || BODY_TYPE_METADATA.natural;
+  &:focus {
+    outline: 2px solid ${({ theme }) => theme.colors.purple[600]};
+    outline-offset: 2px;
+  }
+`;
 
-  // Get ratios
-  const { straight, wave, natural } = currentAnalysisResult.bodyTypeRatio;
+const ReportPage = () => {
+  const navigate = useNavigate();
+  const reportId = useDiagnosisStore((state) => state.reportId);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-  // Get current virtual fitting data
-  const currentVirtualFitting = VIRTUAL_FITTING_OPTIONS[virtualFittingIndex];
+  // 실시간 리포트 조회 (폴링)
+  const {
+    data: reportData,
+    isLoading,
+    isError,
+    error,
+  } = useReportDetail(reportId);
 
-  const handleTryAnotherStyle = () => {
-    // Cycle through virtual fitting options
-    setVirtualFittingIndex((prev) => (prev + 1) % VIRTUAL_FITTING_OPTIONS.length);
+  // reportId 없으면 리다이렉트
+  useEffect(() => {
+    if (!reportId) {
+      navigate("/diagnosis/basic-info");
+    }
+  }, [reportId, navigate]);
+
+  // 로딩 중
+  if (isLoading || !reportData) {
+    return (
+      <LoadingView>
+        <LoadingSpinner />
+        <LoadingText>분석 결과를 불러오는 중...</LoadingText>
+      </LoadingView>
+    );
+  }
+
+  // 에러 발생
+  if (isError) {
+    return (
+      <ErrorView>
+        <ErrorIcon>⚠️</ErrorIcon>
+        <ErrorTitle>분석 결과를 불러올 수 없습니다</ErrorTitle>
+        <ErrorMessage>{error?.message || "알 수 없는 오류가 발생했습니다"}</ErrorMessage>
+        <ErrorButton onClick={() => navigate("/diagnosis/basic-info")}>
+          처음부터 다시 시작
+        </ErrorButton>
+      </ErrorView>
+    );
+  }
+
+  // 분석 대기 중 (폴링 중)
+  if (reportData.status === "PENDING") {
+    return (
+      <LoadingView>
+        <LoadingSpinner />
+        <LoadingText>AI가 체형을 분석하고 있습니다...</LoadingText>
+        <LoadingSubtext>잠시만 기다려주세요 (약 1-2분 소요)</LoadingSubtext>
+      </LoadingView>
+    );
+  }
+
+  // 분석 실패
+  if (reportData.status === "FAILED") {
+    return (
+      <ErrorView>
+        <ErrorIcon>❌</ErrorIcon>
+        <ErrorTitle>분석에 실패했습니다</ErrorTitle>
+        <ErrorMessage>사진을 다시 업로드하거나 고객센터에 문의해주세요</ErrorMessage>
+        <ErrorButton onClick={() => navigate("/diagnosis/photo-capture")}>
+          사진 다시 촬영하기
+        </ErrorButton>
+      </ErrorView>
+    );
+  }
+
+  // 분석 완료 - Null Safety 체크
+  const bodyTypeKey = convertSkeletonTypeToBodyType(reportData.skeletonType);
+  const metadata = BODY_TYPE_METADATA[bodyTypeKey];
+
+  const ratios = {
+    straight: reportData.straightRate || 0,
+    wave: reportData.waveRate || 0,
+    natural: reportData.naturalRate || 0,
   };
 
   return (
@@ -133,9 +245,9 @@ const ReportPage = () => {
         {isDesktop && (
           <LeftSection>
             <AnalysisResultCard
-              straight={straight}
-              wave={wave}
-              natural={natural}
+              straight={ratios.straight}
+              wave={ratios.wave}
+              natural={ratios.natural}
               dominantType={bodyTypeKey}
               strengthDescription={metadata.strengthDescription}
             />
@@ -147,9 +259,9 @@ const ReportPage = () => {
           {/* Mobile: Chart appears before content sections */}
           {!isDesktop && (
             <AnalysisResultCard
-              straight={straight}
-              wave={wave}
-              natural={natural}
+              straight={ratios.straight}
+              wave={ratios.wave}
+              natural={ratios.natural}
               dominantType={bodyTypeKey}
               strengthDescription={metadata.strengthDescription}
             />
@@ -162,14 +274,16 @@ const ReportPage = () => {
             dontRecommendations={metadata.dontRecommendations}
           />
 
-          <VirtualFittingSection
-            key={virtualFittingIndex}
-            imageUrl={currentVirtualFitting.imageUrl}
-            title={currentVirtualFitting.title}
-            description={currentVirtualFitting.description}
-            tags={currentVirtualFitting.tags}
-            onTryAnother={handleTryAnotherStyle}
-          />
+          {/* VirtualFittingSection은 details 데이터가 있을 때만 표시 */}
+          {reportData.details && (
+            <VirtualFittingSection
+              imageUrl={"/images/virtual-fitting-placeholder.png"}
+              title="가상 피팅 준비 중"
+              description="곧 이용하실 수 있습니다"
+              tags={[]}
+              onTryAnother={() => {}}
+            />
+          )}
         </ContentWrapper>
       </MainContent>
     </PageContainer>

@@ -295,21 +295,6 @@ const GenderSwitchButton = styled.button<{ $active: boolean }>`
   }
 `;
 
-const ScrollWash = styled(motion.div)`
-  position: absolute;
-  inset: -15% 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.04) 0%,
-    rgba(255, 255, 255, 0) 35%,
-    rgba(255, 255, 255, 0.06) 60%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-`;
-
 
 const Kicker = styled(motion.div)`
   font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
@@ -449,7 +434,6 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
 
   const opacity = useTransform(scrollYProgress, [0, 0.4, 1], [0, 1, 1]);
   const y = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [40, 0, 0, -40]);
-  const washY = useTransform(scrollYProgress, [0, 1], [-120, 120]);
   const sectionId = `body-type-${section.key.toLowerCase()}`;
 
   return (

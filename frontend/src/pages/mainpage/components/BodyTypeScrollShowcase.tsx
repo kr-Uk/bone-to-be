@@ -1,3 +1,4 @@
+
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowRightLong } from "react-icons/fa6"

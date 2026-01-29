@@ -203,12 +203,7 @@ export function FeedDetailRight({
           <DesktopAvatarFallback />
         )}
         <div>
-          <DesktopNameRow>
-            <DesktopName>{detail?.author.username ?? "Loading..."}</DesktopName>
-            {detail?.author.bodyType ? (
-              <BodyTypeBadge>{detail.author.bodyType}</BodyTypeBadge>
-            ) : null}
-          </DesktopNameRow>
+          <DesktopName>{detail?.author.username ?? "Loading..."}</DesktopName>
           <DesktopMeta>{desktopMeta}</DesktopMeta>
         </div>
       </DesktopHeader>
@@ -404,26 +399,6 @@ const DesktopName = styled.div`
   color: #fafafa;
   font-weight: 600;
   font-size: 15px;
-`;
-
-const DesktopNameRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const BodyTypeBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 7px;
-  border-radius: 5px;
-  border: 1px solid #9810fa;
-  color: #9810fa;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 15px;
-  background: rgba(152, 16, 250, 0.12);
 `;
 
 const DesktopMeta = styled.div`

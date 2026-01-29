@@ -1,5 +1,6 @@
 package com.bonetobe.backend.user.domain;
 
+import com.bonetobe.backend.user.domain.command.UserCreateCommand;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.user.presentation.dto.AuthMeResponse;
 import com.bonetobe.backend.user.presentation.dto.PasswordReset;

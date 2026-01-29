@@ -1,4 +1,4 @@
-package com.bonetobe.backend.user.domain;
+package com.bonetobe.backend.user.domain.command;
 
 import lombok.Builder;
 

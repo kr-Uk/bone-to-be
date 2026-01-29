@@ -1,7 +1,8 @@
 package com.bonetobe.backend.user.presentation.dto;
 
 import com.bonetobe.backend.common.annotation.Password;
-import com.bonetobe.backend.user.domain.UserUpdateCommand;
+import com.bonetobe.backend.user.domain.command.UpdateMyPageCommand;
+import com.bonetobe.backend.user.domain.command.UserUpdateCommand;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
@@ -26,6 +27,16 @@ public class UpdateUser {
                     .newPassword(newPassword)
                     .newPasswordConfirm(newPasswordConfirm)
                     .build();
+        }
+    }
+
+    public record Request(
+            @NotBlank String nickname,
+            String bio,
+            Long profileImageId // 이미지 변경 시 업로드 후 받은 fileId
+    ) {
+        public UpdateMyPageCommand toCommand(Long userId) {
+            return new UpdateMyPageCommand(userId, nickname, bio, profileImageId);
         }
     }
 }

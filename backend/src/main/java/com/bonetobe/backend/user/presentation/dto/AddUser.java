@@ -3,7 +3,7 @@ package com.bonetobe.backend.user.presentation.dto;
 import com.bonetobe.backend.common.annotation.Nickname;
 import com.bonetobe.backend.common.annotation.Password;
 import com.bonetobe.backend.user.domain.User;
-import com.bonetobe.backend.user.domain.UserCreateCommand;
+import com.bonetobe.backend.user.domain.command.UserCreateCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

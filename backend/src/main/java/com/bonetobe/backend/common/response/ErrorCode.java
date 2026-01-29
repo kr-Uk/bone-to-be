@@ -44,6 +44,7 @@ public enum ErrorCode {
     NULL_FILE_NAME_EXCEPTION(4001, HttpStatus.BAD_REQUEST, "파일 이름이 비어있습니다."),
     S3_UPLOAD_FAIL_ERROR(4002, HttpStatus.INTERNAL_SERVER_ERROR, "S3 업로드에 실패했습니다."),
     FILE_NOT_CONFIRMED_EXCEPTION(4003, HttpStatus.BAD_REQUEST, "승인되지 않은 파일입니다."),
+    FILE_NOT_FOUND(4004, HttpStatus.BAD_REQUEST, "파일이 존재하지 않습니다"),
 
 
     // 5000번대 코드 : AI

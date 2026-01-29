@@ -62,6 +62,20 @@ public class UserController {
                 .body(APIResponse.success(SuccessCode.OK, response));
     }
 
+    @PutMapping("/me")
+    public ResponseEntity<APIResponse<Void>> updateMyPage(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody @Valid UpdateUser.Request request
+    ) {
+        if (principal == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+
+        userService.updateMyPage(request.toCommand(principal.getId()));
+
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
     // 프로필 이미지 업로드
     @PostMapping("/me/profile-image/presigned-url")
     public ResponseEntity<APIResponse<UserFileDto.Response>> issueProfilePresignedUrl(

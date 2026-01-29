@@ -11,7 +11,7 @@ public enum ErrorCode {
     // 1000번대 코드 : 회원 관련
     UNAUTHORIZED(1000, HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다."),
     FORBIDDEN(1001, HttpStatus.FORBIDDEN, "사용 권한이 없습니다."),
-    USER_NOT_FOUND(1002, HttpStatus.NOT_FOUND, "해당 이메일로 가입된 사용자를 찾을 수 없습니다."),
+    USER_NOT_FOUND(1002, HttpStatus.BAD_REQUEST, "해당 이메일로 가입된 사용자를 찾을 수 없습니다."),
     PASSWORD_SAME_AS_OLD(1003, HttpStatus.BAD_REQUEST, "기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다."),
     EMAIL_NOT_VERIFIED(1004, HttpStatus.BAD_REQUEST, "이메일 인증이 완료되지 않았습니다."),
     DUPLICATE_EMAIL(1005, HttpStatus.BAD_REQUEST, "이미 가입된 이메일입니다."),

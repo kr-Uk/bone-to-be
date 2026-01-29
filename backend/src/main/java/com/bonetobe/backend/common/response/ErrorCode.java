@@ -19,6 +19,8 @@ public enum ErrorCode {
     INVALID_EMAIL_OR_PASSWORD(1007, HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 일치하지 않습니다."),
     PASSWORD_MISMATCH(1008, HttpStatus.BAD_REQUEST, "비밀번호 확인이 일치하지 않습니다."),
     INVALID_RESET_TOKEN(1009, HttpStatus.BAD_REQUEST, "유효하지 않거나 만료된 비밀번호 재설정 토큰입니다."),
+    SELF_FOLLOW_NOT_ALLOWED(1010, HttpStatus.BAD_REQUEST, "자기 자신은 팔로우할 수 없습니다."),
+    ALREADY_FOLLOWING(1011, HttpStatus.BAD_REQUEST, "이미 팔로우한 유저입니다."),
 
     // 2000번대 코드 : 게시판 관련
     POST_LIST_INVALID_SORT(2000, HttpStatus.BAD_REQUEST, "유효하지 않은 정렬 조건입니다."),

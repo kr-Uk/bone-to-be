@@ -72,9 +72,10 @@ const Frame = styled.div`
   }
 `;
 
-const NavRail = styled.div`
-  position: sticky;
+const NavRail = styled.div<{ $show: boolean }>`
+  position: fixed;
   top: 0;
+  right: 0;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -82,10 +83,15 @@ const NavRail = styled.div`
   pointer-events: none;
   z-index: 20;
 
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
+  transform: ${({ $show }) => ($show ? "translateY(0)" : "translateY(-8px)")};
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
   @media (max-width: 900px) {
     display: none;
   }
 `;
+
 
 const FloatingNav = styled.nav`
   display: flex;
@@ -147,7 +153,7 @@ const NavDot = styled.span<{ $active: boolean }>`
   transition: height 0.25s ease, opacity 0.25s ease;
 `;
 
- 
+
 
 const CopyBlock = styled(motion.div)`
   display: flex;
@@ -449,7 +455,7 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
   return (
     <PinnedSectionWrap ref={sectionRef} id={sectionId} data-key={section.key}>
       <PinnedSticky>
-        <ScrollWash style={{ y: washY }} />
+        {/* <ScrollWash style={{ y: washY }} /> */}
         <PinnedContent style={{ opacity, y }}>
           <Frame>
             <CopyBlock>
@@ -516,6 +522,7 @@ export function BodyTypeScrollShowcase() {
 
   const [activeKey, setActiveKey] = useState<BodyTypeKey>("STRAIGHT");
 
+
   useEffect(() => {
     const elements = sections
       .map((section) => document.getElementById(`body-type-${section.key.toLowerCase()}`))
@@ -540,9 +547,24 @@ export function BodyTypeScrollShowcase() {
     return () => observer.disconnect();
   }, [sections]);
 
+  const [showNav, setShowNav] = useState(false);
+  useEffect(() => {
+    const first = document.getElementById("body-type-straight");
+    if (!first) return;
+
+    const onScroll = () => {
+      const top = first.getBoundingClientRect().top;
+      setShowNav(top <= 0);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <Wrap>
-      <NavRail>
+      <NavRail $show={showNav}>
         <FloatingNav aria-label="Body type sections">
           {sections.map((section) => {
             const isActive = activeKey === section.key;

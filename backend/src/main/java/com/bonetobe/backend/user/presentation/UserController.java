@@ -1,6 +1,5 @@
 package com.bonetobe.backend.user.presentation;
 
-import com.bonetobe.backend.user.application.UserFacade;
 import com.bonetobe.backend.user.domain.query.UserFileSummary;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.common.exception.BusinessException;
@@ -8,6 +7,8 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.UserService;
+import com.bonetobe.backend.user.presentation.dto.UpdateUser;
+import com.bonetobe.backend.user.presentation.dto.UserFileDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,10 @@ public class UserController {
     // @SecurityRequirements(value = {})
 
     // 프로필 조회
-    @PostMapping("/image/presigned-url")
+    @GetMapping("/me")
+
+    // 프로필 이미지 업로드
+    @PostMapping("/me/profile-image/presigned-url")
     public ResponseEntity<APIResponse<UserFileDto.Response>> issueProfilePresignedUrl(
             @RequestBody UserFileDto.Request request,
             @AuthenticationPrincipal UserPrincipal user
@@ -44,8 +48,6 @@ public class UserController {
                         .success(SuccessCode.OK,
                                 UserFileDto.Response.of(summary)));
     }
-
-    // 이미지 업로드
 
     // 마이페이지 수정
     //@PutMapping("/me")

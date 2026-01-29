@@ -1,4 +1,4 @@
-package com.bonetobe.backend.user.presentation;
+package com.bonetobe.backend.user.presentation.dto;
 
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.Builder;

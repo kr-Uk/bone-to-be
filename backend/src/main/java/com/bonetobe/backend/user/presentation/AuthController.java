@@ -5,23 +5,19 @@ import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.EmailService;
 import com.bonetobe.backend.user.domain.AuthService;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
+import com.bonetobe.backend.user.presentation.dto.AddUser;
+import com.bonetobe.backend.user.presentation.dto.AuthMeResponse;
+import com.bonetobe.backend.user.presentation.dto.LoginUser;
+import com.bonetobe.backend.user.presentation.dto.PasswordReset;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController

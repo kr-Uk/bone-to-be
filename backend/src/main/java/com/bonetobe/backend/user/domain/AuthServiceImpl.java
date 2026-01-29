@@ -3,17 +3,14 @@ package com.bonetobe.backend.user.domain;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
-import com.bonetobe.backend.user.presentation.AuthMeResponse;
-import com.bonetobe.backend.user.presentation.PasswordReset;
+import com.bonetobe.backend.user.presentation.dto.AuthMeResponse;
+import com.bonetobe.backend.user.presentation.dto.PasswordReset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.naming.AuthenticationException;
 
 @Slf4j
 @Service

@@ -8,7 +8,12 @@ type UseAuthResult = {
   isAuthLoading: boolean;
 };
 
-export const useAuth = (): UseAuthResult => {
+type UseAuthOptions = {
+  enabled?: boolean;
+};
+
+export const useAuth = (options: UseAuthOptions = {}): UseAuthResult => {
+  const { enabled = true } = options;
   const meQuery = useQuery<Me, Error>({
     queryKey: ["me"],
     queryFn: getMe,
@@ -20,6 +25,7 @@ export const useAuth = (): UseAuthResult => {
     refetchOnWindowFocus: false,
     refetchInterval: 30 * 60 * 1000,
     refetchIntervalInBackground: false,
+    enabled,
   });
 
   return {

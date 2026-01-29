@@ -75,7 +75,7 @@ export async function getFeedList(request: FeedListRequest): Promise<FeedListRes
  * 피드 상세 조회
  */
 export async function getFeedDetail(feedId: string): Promise<FeedDetailDto> {
-  const { data } = await axiosInstance.get<FeedDetailDto>(`/feed/${feedId}`);
+  const { data } = await axiosInstance.get<FeedDetailDto>(`/feeds/${feedId}`);
   return data;
 }
 
@@ -86,7 +86,7 @@ export async function getFeedComments(
   request: FeedCommentListRequest
 ): Promise<FeedCommentListResponseDto> {
   const { data } = await axiosInstance.get<FeedCommentListResponseDto>(
-    `/feed/${request.feedId}/comments`,
+    `/feeds/${request.feedId}/comments`,
     {
       params: {
         page: request.page,
@@ -104,7 +104,7 @@ export async function getFeedLikes(
   request: FeedLikesRequest
 ): Promise<FeedLikesResponseDto> {
   const { data } = await axiosInstance.get<FeedLikesResponseDto>(
-    `/feed/${request.feedId}/likes`,
+    `/feeds/${request.feedId}/likes`,
     {
       params: {
         page: request.page,
@@ -122,7 +122,7 @@ export async function createFeedComment(
   request: FeedCommentCreateRequest
 ): Promise<FeedCommentDto> {
   const { data } = await axiosInstance.post<FeedCommentDto>(
-    `/feed/${request.feedId}/comments`,
+    `/feeds/${request.feedId}/comments`,
     {
       text: request.text,
       parentCommentId: request.parentCommentId ?? null,
@@ -136,7 +136,7 @@ export async function createFeedComment(
  */
 export async function toggleLike(request: LikeToggleRequest): Promise<LikeToggleResponseDto> {
   const { data } = await axiosInstance.post<LikeToggleResponseDto>(
-    `/feed/${request.feedId}/like`
+    `/feeds/${request.feedId}/like`
   );
   return data;
 }

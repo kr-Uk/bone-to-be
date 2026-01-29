@@ -1088,8 +1088,8 @@ export const communityHandlers = [
     return HttpResponse.json(response);
   }),
 
-  // POST /api/feed/:feedId/like (새로운 엔드포인트)
-  http.post("/api/feed/:feedId/like", async ({ params }) => {
+  // POST /api/feeds/:feedId/like (새로운 엔드포인트)
+  http.post("/api/feeds/:feedId/like", async ({ params }) => {
     await delay(200);
 
     const { feedId } = params;
@@ -1131,8 +1131,8 @@ export const communityHandlers = [
 
   }),
 
-  // GET /api/feed/:feedId (피드 상세)
-  http.get("/api/feed/:feedId", async ({ params }) => {
+  // GET /api/feeds/:feedId (피드 상세)
+  http.get("/api/feeds/:feedId", async ({ params }) => {
     await delay(250);
 
     const { feedId } = params;
@@ -1203,8 +1203,8 @@ export const communityHandlers = [
     });
   }),
 
-  // GET /api/feed/:feedId/likes (좋아요 유저 목록)
-  http.get("/api/feed/:feedId/likes", async ({ params, request }) => {
+  // GET /api/feeds/:feedId/likes (좋아요 유저 목록)
+  http.get("/api/feeds/:feedId/likes", async ({ params, request }) => {
     await delay(250);
 
     const { feedId } = params;
@@ -1258,8 +1258,8 @@ export const communityHandlers = [
     });
   }),
 
-  // GET /api/feed/:feedId/comments (댓글 리스트)
-  http.get("/api/feed/:feedId/comments", async ({ params, request }) => {
+  // GET /api/feeds/:feedId/comments (댓글 리스트)
+  http.get("/api/feeds/:feedId/comments", async ({ params, request }) => {
     await delay(250);
 
     const { feedId } = params;
@@ -1318,8 +1318,8 @@ export const communityHandlers = [
     });
   }),
 
-  // POST /api/feed/:feedId/comments (댓글 작성)
-  http.post("/api/feed/:feedId/comments", async ({ params, request }) => {
+  // POST /api/feeds/:feedId/comments (댓글 작성)
+  http.post("/api/feeds/:feedId/comments", async ({ params, request }) => {
     await delay(200);
 
     const { feedId } = params;

@@ -1203,8 +1203,8 @@ export const communityHandlers = [
     });
   }),
 
-  // GET /api/feed (새로운 엔드포인트)
-  http.get("/api/feed", async ({ request }) => {
+  // GET /api/feeds (새로운 엔드포인트)
+  http.get("/api/feeds", async ({ request }) => {
     await delay(300);
 
     const url = new URL(request.url);

@@ -65,7 +65,7 @@ function buildFeedApiParams(request: FeedListRequest): FeedListApiParams {
  */
 export async function getFeedList(request: FeedListRequest): Promise<FeedListResponseDto> {
   const apiParams = buildFeedApiParams(request);
-  const { data } = await axiosInstance.get<FeedListResponseDto>(`/feed`, {
+  const { data } = await axiosInstance.get<FeedListResponseDto>(`/feeds`, {
     params: apiParams,
   });
   return data;

@@ -42,7 +42,8 @@ const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
 export const MainHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthLoading, isLoggedIn, me } = useAuth();
+  const isAuthEnabled = location.pathname !== "/";
+  const { isAuthLoading, isLoggedIn, me } = useAuth({ enabled: isAuthEnabled });
   const logoutMutation = useLogout();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);

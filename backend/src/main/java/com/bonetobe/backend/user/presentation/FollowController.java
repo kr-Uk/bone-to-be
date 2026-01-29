@@ -4,6 +4,7 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.FollowService;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
+import com.bonetobe.backend.user.presentation.dto.FollowResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +41,7 @@ public class FollowController {
     }
 
     @GetMapping("/me/followings")
-    public ResponseEntity<APIResponse<List<?>>> getMyFollowings(
+    public ResponseEntity<APIResponse<List<FollowResponse>>> getMyFollowings(
             @AuthenticationPrincipal UserPrincipal user
     ) {
         return ResponseEntity
@@ -49,7 +50,7 @@ public class FollowController {
     }
 
     @GetMapping("/{userId}/followings")
-    public ResponseEntity<APIResponse<List<?>>> getOtherFollowings(
+    public ResponseEntity<APIResponse<List<FollowResponse>>> getOtherFollowings(
             @PathVariable Long userId
     ) {
         return ResponseEntity
@@ -58,7 +59,7 @@ public class FollowController {
     }
 
     @GetMapping("/me/followers")
-    public ResponseEntity<APIResponse<List<?>>> getMyFollowers(
+    public ResponseEntity<APIResponse<List<FollowResponse>>> getMyFollowers(
             @AuthenticationPrincipal UserPrincipal user
     ) {
         return ResponseEntity
@@ -67,7 +68,7 @@ public class FollowController {
     }
 
     @GetMapping("/{userId}/followers")
-    public ResponseEntity<APIResponse<List<?>>> getOtherFollowers(
+    public ResponseEntity<APIResponse<List<FollowResponse>>> getOtherFollowers(
             @PathVariable Long userId
     ) {
         return ResponseEntity

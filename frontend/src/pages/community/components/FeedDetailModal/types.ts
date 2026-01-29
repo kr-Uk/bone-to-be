@@ -18,7 +18,7 @@ export interface FeedDetailLeftProps {
 export interface FeedDetailRightProps {
   detail: FeedDetail | null;
   comments: FeedComment[];
-  likeUsers?: FeedLikeUser[];
+  likeUsers?: FeedLikeUser[]; // 타입 변경 (배열로)
   likeCount?: number;
   isLoading?: boolean;
   hasError?: boolean;

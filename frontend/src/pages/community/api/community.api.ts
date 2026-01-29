@@ -5,9 +5,7 @@ import type {
   FeedListApiParams,
   FeedDetailDto,
   FeedCommentListRequest,
-  FeedCommentListResponseDto,
   FeedLikesRequest,
-  FeedLikesResponseDto,
   FeedCommentCreateRequest,
   FeedCommentDto,
   LikeToggleRequest,
@@ -18,6 +16,8 @@ import type {
   PresignedUrlResponse,
   FeedCreateRequest,
   FeedCreateResponse,
+  ApiResponse,
+  FeedLikeUserDto,
 } from "./community.types";
 
 import axiosInstance from "@/shared/api/axios";
@@ -83,18 +83,16 @@ export async function getFeedList(request: FeedListRequest): Promise<FeedListRes
  * 피드 상세 조회
  */
 export async function getFeedDetail(feedId: string): Promise<FeedDetailDto> {
-  const { data } = await axiosInstance.get<FeedDetailDto>(`/feeds/${feedId}`);
-  return data;
+  const { data } = await axiosInstance.get<ApiResponse<FeedDetailDto>>(`/feeds/${feedId}`);
+  return data.data; // 래퍼 언래핑
 }
 
 /**
  * 댓글 리스트 조회
  */
-export async function getFeedComments(
-  request: FeedCommentListRequest,
-): Promise<FeedCommentListResponseDto> {
-  const { data } = await axiosInstance.get<FeedCommentListResponseDto>(
-    `/feeds/${request.feedId}/comments`,
+export async function getFeedComments(request: FeedCommentListRequest): Promise<FeedCommentDto[]> {
+  const { data } = await axiosInstance.get<ApiResponse<FeedCommentDto[]>>(
+    `/feeds/${request.feedId}/replies`, // comments → replies
     {
       params: {
         page: request.page,
@@ -102,20 +100,23 @@ export async function getFeedComments(
       },
     },
   );
-  return data;
+  return data.data; // 래퍼 언래핑
 }
 
 /**
  * 좋아요 리스트 조회
  */
-export async function getFeedLikes(request: FeedLikesRequest): Promise<FeedLikesResponseDto> {
-  const { data } = await axiosInstance.get<FeedLikesResponseDto>(`/feeds/${request.feedId}/likes`, {
-    params: {
-      page: request.page,
-      size: request.limit,
+export async function getFeedLikes(request: FeedLikesRequest): Promise<FeedLikeUserDto[]> {
+  const { data } = await axiosInstance.get<ApiResponse<FeedLikeUserDto[]>>(
+    `/feeds/${request.feedId}/likes`,
+    {
+      params: {
+        page: request.page,
+        size: request.limit,
+      },
     },
-  });
-  return data;
+  );
+  return data.data; // 래퍼 언래핑
 }
 
 /**
@@ -173,4 +174,12 @@ export async function createFeed(request: FeedCreateRequest): Promise<FeedCreate
   });
 
   return data;
+}
+
+/**
+ * 댓글 좋아요 토글
+ */
+export async function toggleCommentLike(replyId: string, isLiked: boolean): Promise<void> {
+  const method = isLiked ? "delete" : "post";
+  await axiosInstance[method]<ApiResponse<null>>(`/replies/${replyId}/likes`);
 }

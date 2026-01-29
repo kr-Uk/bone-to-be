@@ -105,8 +105,8 @@ export function FeedDetailModal({
         />
         <FeedDetailRight
           detail={detail ?? null}
-          likeUsers={likesData?.likes ?? []}
-          likeCount={likesData?.likeCount}
+          likeUsers={likesData ?? []}
+          likeCount={detail?.likeCount ?? 0}
           comments={commentsData?.items ?? []}
           isLoading={isDetailLoading || isCommentsLoading || isLikesLoading}
           hasError={Boolean(detailError || commentsError || likesError)}

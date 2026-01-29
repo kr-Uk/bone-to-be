@@ -31,8 +31,7 @@ export const LoginModalView = ({
   return (
     <S.RightPanel>
       <S.Brand>
-        <S.BrandTitle>BONE:TOBE</S.BrandTitle>
-        <S.BrandSub>당신만의 골격을 완성하다</S.BrandSub>
+        <S.BrandTitle>로그인</S.BrandTitle>
       </S.Brand>
 
       <S.Form>

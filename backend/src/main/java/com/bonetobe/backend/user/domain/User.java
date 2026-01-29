@@ -3,16 +3,10 @@ package com.bonetobe.backend.user.domain;
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.file.domain.StoredFile;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -32,8 +26,9 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private String nickname;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role; // "USER" 또는 "ADMIN"
+    private UserRole role;
 
     @Column(nullable = false)
     private Boolean isDeleted = false;
@@ -46,12 +41,18 @@ public class User extends BaseEntity{
     private StoredFile profileImage;
 
     // 정적 팩토리 메서드 도입
-    public static User createUser(String email, String password, String nickname, String role) {
+    public static User createUser(String email, String password, String nickname, UserRole role) {
         User user = new User();
         user.email = email;
         user.password = password;
         user.nickname = nickname;
-        user.role = (role == null) ? "USER" : role; // 권한이 입력되지 않으면 기본값 "USER"
+        user.role = (role == null) ? UserRole.USER : role;
+        return user;
+    }
+
+    public static User of(Long userId) {
+        User user = new User();
+        user.id = userId;
         return user;
     }
 
@@ -71,5 +72,10 @@ public class User extends BaseEntity{
         if (!isDeleted) {
             isDeleted = true;
         }
+    }
+
+    public User update(String name) {
+        this.nickname = name;
+        return this;
     }
 }

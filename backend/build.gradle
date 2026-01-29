@@ -36,11 +36,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-
+    implementation "com.vladmihalcea:hibernate-types-60:2.21.1"
     // 스프링 시큐리티
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
 
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'

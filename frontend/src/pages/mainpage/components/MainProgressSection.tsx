@@ -2,9 +2,9 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useLayoutEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-import MainDataDrivenIcon1 from "@/assets/mainDataDrivenIcon1.svg";
-import MainDataDrivenIcon2 from "@/assets/mainDataDrivenIcon2.svg";
-import MainDataDrivenIcon3 from "@/assets/mainDataDrivenIcon3.svg";
+import MainDataDrivenIcon1 from "@/assets/MainDataDrivenIcon1.svg";
+import MainDataDrivenIcon2 from "@/assets/MainDataDrivenIcon2.svg";
+import MainDataDrivenIcon3 from "@/assets/MainDataDrivenIcon3.svg";
 
 export const MainProgressSection = () => {
   const sectionRef = useRef<HTMLDivElement | null>(null);

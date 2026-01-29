@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
+import { LoginFooter } from "./components/LoginFooter";
+import LoginHeader from "./components/LoginHeader";
 import { LoginModalView } from "./components/LoginModalView";
 import { SignUpModalView } from "./components/SignUpModalView";
 import * as S from "./styles/LoginPage.styles";
@@ -11,6 +13,7 @@ import { useAuth, useLogin } from "@/shared/hooks";
 
 export const LoginPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { isAuthLoading, isLoggedIn } = useAuth();
   const loginMutation = useLogin();
   const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");
@@ -47,11 +50,11 @@ export const LoginPage = () => {
   };
 
   const handleKakao = () => {
-    console.log("TODO: Kakao Login");
+    window.location.href = `/api/oauth2/authorization/kakao`
   };
 
   const handleGoogle = () => {
-    console.log("TODO: Google Login");
+    window.location.href = "/api/oauth2/authorization/kakao";
   };
 
   const handleSwitchToSignUp = () => {
@@ -63,7 +66,7 @@ export const LoginPage = () => {
   };
 
   const handleFindPassword = () => {
-    console.log("TODO: Go to Find Password");
+    navigate("/findPW");
   };
 
   useEffect(() => {
@@ -76,23 +79,27 @@ export const LoginPage = () => {
   }
 
   return (
-    <S.PageWrapper>
-      {viewMode === "LOGIN" ? (
-        <LoginModalView
-          email={email}
-          password={password}
-          loginError={loginError}
-          onChangeEmail={handleChangeEmail}
-          onChangePassword={handleChangePassword}
-          onSubmit={handleSubmit}
-          onClickKakao={handleKakao}
-          onClickGoogle={handleGoogle}
-          onClickSignUp={handleSwitchToSignUp}
-          onClickFindPassword={handleFindPassword}
-        />
-      ) : (
-        <SignUpModalView onSwitchToLogin={handleSwitchToLogin} />
-      )}
-    </S.PageWrapper>
+    <>
+      <LoginHeader />
+      <S.PageWrapper>
+        {viewMode === "LOGIN" ? (
+          <LoginModalView
+            email={email}
+            password={password}
+            loginError={loginError}
+            onChangeEmail={handleChangeEmail}
+            onChangePassword={handleChangePassword}
+            onSubmit={handleSubmit}
+            onClickKakao={handleKakao}
+            onClickGoogle={handleGoogle}
+            onClickSignUp={handleSwitchToSignUp}
+            onClickFindPassword={handleFindPassword}
+          />
+        ) : (
+          <SignUpModalView onSwitchToLogin={handleSwitchToLogin} />
+        )}
+      </S.PageWrapper>
+      <LoginFooter />
+    </>
   );
 };

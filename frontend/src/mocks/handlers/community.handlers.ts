@@ -176,6 +176,9 @@ const mockFeedItems: FeedItem[] = [
   },
 ];
 
+// S3 업로드 재시도 테스트용 상태 (개발 환경에서만 사용)
+let uploadAttemptCount = 0;
+
 const mockLikeUsersPool: FeedLikeUser[] = [
   { id: "1", username: "daily_urban", displayName: "데일리어반", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/1.jpg", isFollowing: true },
   { id: "2", username: "cozy_fan", displayName: "코지팬", bodyType: "Natural", location: "Daejeon, Korea", avatarUrl: "https://cdn.myapp.com/profile/2.jpg", isFollowing: false },
@@ -831,6 +834,183 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
 };
 
 export const communityHandlers = [
+  // 1단계: Presigned URL 발급
+  http.post("/api/feeds/presigned-url", async ({ request }) => {
+    await delay(200);
+
+    const body = (await request.json()) as {
+      originalFileName: string;
+      contentType: string;
+      fileSize: number;
+    };
+
+    console.log("[MSW] Presigned URL 요청:", body);
+
+    // 파일 크기 검증 (10MB 초과)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (body.fileSize > MAX_FILE_SIZE) {
+      return HttpResponse.json(
+        {
+          code: 400,
+          message: "파일 크기는 10MB 이하여야 합니다.",
+          data: null,
+        },
+        { status: 400 },
+      );
+    }
+
+    // 파일 타입 검증
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
+    if (!validTypes.includes(body.contentType)) {
+      return HttpResponse.json(
+        {
+          code: 400,
+          message: "지원하지 않는 파일 형식입니다.",
+          data: null,
+        },
+        { status: 400 },
+      );
+    }
+
+    const fileId = Math.floor(Math.random() * 1000) + 1;
+    const timestamp = Date.now();
+
+    // 실제 S3 URL 패턴 생성
+    const uploadUrl = `https://bone-to-be-image-bucket.s3.amazonaws.com/uploads/${fileId}/${timestamp}-${body.originalFileName}?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=mock&X-Amz-Date=20260129T000000Z&X-Amz-Expires=600&X-Amz-Signature=mocksignature`;
+
+    console.log("[MSW] Presigned URL 발급 성공:", { fileId, uploadUrl });
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: {
+        fileId,
+        uploadUrl,
+      },
+    });
+  }),
+
+  // 2단계-A: S3 외부 도메인 업로드 모킹
+  http.put("https://*.s3.amazonaws.com/*", async ({ request }) => {
+    uploadAttemptCount++;
+    console.log(`[MSW] S3 업로드 시도 #${uploadAttemptCount}`);
+
+    // 재시도 로직 테스트: 처음 2번은 실패, 3번째 성공
+    // 실제 테스트 시 이 로직을 활성화/비활성화할 수 있음
+    const ENABLE_RETRY_TEST = false; // true로 변경하면 재시도 테스트
+
+    if (ENABLE_RETRY_TEST && uploadAttemptCount < 3) {
+      console.log(`[MSW] S3 업로드 실패 (재시도 테스트) - 시도 ${uploadAttemptCount}/3`);
+      uploadAttemptCount++;
+      return new HttpResponse(null, { status: 500 });
+    }
+
+    // 정상적으로 업로드 성공
+    await delay(300); // S3 업로드 시뮬레이션
+
+    const contentType = request.headers.get("Content-Type");
+    console.log("[MSW] S3 업로드 성공 (Content-Type:", contentType, ")");
+
+    // 재시도 카운터 리셋
+    uploadAttemptCount = 0;
+
+    // S3는 성공 시 빈 응답 반환
+    return new HttpResponse(null, { status: 200 });
+  }),
+
+  // 2단계-B: 피드 생성
+  http.post("/api/feeds", async ({ request }) => {
+    await delay(300);
+
+    const body = (await request.json()) as {
+      fileId: number;
+      content: string;
+      gender: "female" | "male";
+      skeletonType: "natural" | "straight" | "wave";
+      style: string[];
+      height: number;
+      weight: number;
+    };
+
+    console.log("[MSW] 피드 생성 요청:", body);
+
+    // 필수 필드 검증
+    if (!body.fileId) {
+      return HttpResponse.json(
+        {
+          code: 400,
+          message: "fileId가 필요합니다.",
+          data: null,
+        },
+        { status: 400 },
+      );
+    }
+
+    if (!body.weight || body.weight <= 0) {
+      return HttpResponse.json(
+        {
+          code: 400,
+          message: "몸무게를 입력해주세요.",
+          data: null,
+        },
+        { status: 400 },
+      );
+    }
+
+    // 스타일 검증
+    const validStyles = [
+      "street",
+      "minimal",
+      "casual",
+      "classic",
+      "formal",
+      "vintage",
+      "sporty",
+      "feminine",
+    ];
+    const invalidStyle = body.style.find((s) => !validStyles.includes(s.toLowerCase()));
+
+    if (invalidStyle) {
+      console.log("[MSW] 유효하지 않은 스타일:", invalidStyle);
+      return HttpResponse.json(
+        {
+          code: 400,
+          message: "유효하지 않은 스타일 값입니다.",
+          data: null,
+        },
+        { status: 400 },
+      );
+    }
+
+    // 성공 응답
+    console.log("[MSW] 피드 생성 성공");
+
+    // 새 피드를 mockFeedItems에 추가 (선택적)
+    const newFeed: FeedItem = {
+      id: String(mockFeedItems.length + 1),
+      imageUrl: `https://placehold.co/400x533?text=NewFeed_${body.fileId}`,
+      username: "current_user",
+      bodyType: body.skeletonType === "natural" ? "Natural" :
+                body.skeletonType === "wave" ? "Wave" : "Straight",
+      height: body.height,
+      weight: body.weight,
+      styles: body.style,
+      gender: body.gender === "female" ? "F" : "M",
+      isLiked: false,
+      likeCount: 0,
+      createdAt: new Date().toISOString(),
+    };
+
+    mockFeedItems.unshift(newFeed);
+    console.log("[MSW] 새 피드 추가됨:", newFeed);
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+
   // GET /api/feed (새로운 엔드포인트)
   http.get("/api/feed", async ({ request }) => {
     await delay(300);

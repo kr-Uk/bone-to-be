@@ -1,8 +1,7 @@
-import { FaArrowRightLong } from "react-icons/fa6"
+
 import { motion, useScroll, useTransform } from "framer-motion";
-
 import { useEffect, useMemo, useRef, useState } from "react";
-
+import { FaArrowRightLong } from "react-icons/fa6"
 import styled, { css } from "styled-components";
 
 
@@ -72,9 +71,10 @@ const Frame = styled.div`
   }
 `;
 
-const NavRail = styled.div`
-  position: sticky;
+const NavRail = styled.div<{ $show: boolean }>`
+  position: fixed;
   top: 0;
+  right: 0;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -82,10 +82,15 @@ const NavRail = styled.div`
   pointer-events: none;
   z-index: 20;
 
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
+  transform: ${({ $show }) => ($show ? "translateY(0)" : "translateY(-8px)")};
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
   @media (max-width: 900px) {
     display: none;
   }
 `;
+
 
 const FloatingNav = styled.nav`
   display: flex;
@@ -147,7 +152,7 @@ const NavDot = styled.span<{ $active: boolean }>`
   transition: height 0.25s ease, opacity 0.25s ease;
 `;
 
- 
+
 
 const CopyBlock = styled(motion.div)`
   display: flex;
@@ -289,125 +294,6 @@ const GenderSwitchButton = styled.button<{ $active: boolean }>`
   }
 `;
 
-const ScrollWash = styled(motion.div)`
-  position: absolute;
-  inset: -15% 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.04) 0%,
-    rgba(255, 255, 255, 0) 35%,
-    rgba(255, 255, 255, 0.06) 60%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-`;
-
-const OrbitGroup = styled.div`
-  position: absolute;
-  inset: -2.5rem;
-  pointer-events: none;
-  z-index: 0;
-
-  @media (max-width: 900px) {
-    inset: -2rem;
-  }
-`;
-
-const OrbitShape = styled(motion.div)<{
-  $tone: BodyTypeKey;
-  $variant: 1 | 2 | 3;
-  $shape: "rect" | "wave" | "tri";
-}>`
-  position: absolute;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
-  filter: drop-shadow(0 1rem 2rem rgba(15, 23, 42, 0.35));
-  opacity: 0.7;
-
-  ${({ theme, $tone }) => {
-    const palette: Record<BodyTypeKey, [string, string]> = {
-      STRAIGHT: [theme.colors.purple[200], theme.colors.brand],
-      WAVE: [theme.colors.purple[50], theme.colors.purple[700]],
-      NATURAL: [theme.colors.purple[200], theme.colors.purple[800]],
-    };
-    const [from, to] = palette[$tone];
-    return css`
-      background: linear-gradient(135deg, ${from} 0%, ${to} 100%);
-    `;
-  }}
-
-  ${({ $shape }) =>
-    $shape === "rect" &&
-    css`
-      border-radius: 0.35rem;
-    `}
-
-  ${({ $shape }) =>
-    $shape === "wave" &&
-    css`
-      border-radius: 0.4rem;
-      clip-path: polygon(0 0, 100% 0, 65% 52%, 100% 100%, 0 100%, 35% 52%);
-    `}
-
-  ${({ $shape }) =>
-    $shape === "tri" &&
-    css`
-      clip-path: polygon(0 0, 100% 0, 82% 100%, 18% 100%);
-    `}
-
-  ${({ $variant }) =>
-    $variant === 1 &&
-    css`
-      width: 8.75rem;
-      height: 12.5rem;
-      top: -1.6rem;
-      right: -1.4rem;
-    `}
-
-  ${({ $variant }) =>
-    $variant === 2 &&
-    css`
-      width: 8rem;
-      height: 10.5rem;
-      right: 10%;
-      bottom: -1.5rem;
-    `}
-
-  ${({ $variant }) =>
-    $variant === 3 &&
-    css`
-      width: 6.75rem;
-      height: 6.75rem;
-      left: -1.8rem;
-      bottom: -1.2rem;
-    `}
-
-  @media (max-width: 900px) {
-    ${({ $variant }) =>
-      $variant === 1 &&
-      css`
-        width: 7.5rem;
-        height: 10.5rem;
-      `}
-
-    ${({ $variant }) =>
-      $variant === 2 &&
-      css`
-        width: 6.75rem;
-        height: 9rem;
-      `}
-
-    ${({ $variant }) =>
-      $variant === 3 &&
-      css`
-        width: 5.5rem;
-        height: 5.5rem;
-      `}
-  }
-`;
 
 const Kicker = styled(motion.div)`
   font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
@@ -547,13 +433,12 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
 
   const opacity = useTransform(scrollYProgress, [0, 0.4, 1], [0, 1, 1]);
   const y = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [40, 0, 0, -40]);
-  const washY = useTransform(scrollYProgress, [0, 1], [-120, 120]);
   const sectionId = `body-type-${section.key.toLowerCase()}`;
 
   return (
     <PinnedSectionWrap ref={sectionRef} id={sectionId} data-key={section.key}>
       <PinnedSticky>
-        <ScrollWash style={{ y: washY }} />
+        {/* <ScrollWash style={{ y: washY }} /> */}
         <PinnedContent style={{ opacity, y }}>
           <Frame>
             <CopyBlock>
@@ -620,6 +505,7 @@ export function BodyTypeScrollShowcase() {
 
   const [activeKey, setActiveKey] = useState<BodyTypeKey>("STRAIGHT");
 
+
   useEffect(() => {
     const elements = sections
       .map((section) => document.getElementById(`body-type-${section.key.toLowerCase()}`))
@@ -644,9 +530,24 @@ export function BodyTypeScrollShowcase() {
     return () => observer.disconnect();
   }, [sections]);
 
+  const [showNav, setShowNav] = useState(false);
+  useEffect(() => {
+    const first = document.getElementById("body-type-straight");
+    if (!first) return;
+
+    const onScroll = () => {
+      const top = first.getBoundingClientRect().top;
+      setShowNav(top <= 0);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <Wrap>
-      <NavRail>
+      <NavRail $show={showNav}>
         <FloatingNav aria-label="Body type sections">
           {sections.map((section) => {
             const isActive = activeKey === section.key;

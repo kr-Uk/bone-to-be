@@ -1,5 +1,7 @@
 package com.bonetobe.backend.user.presentation;
 
+import com.bonetobe.backend.user.application.UserFacade;
+import com.bonetobe.backend.user.domain.query.UserFileSummary;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.APIResponse;
@@ -26,7 +28,22 @@ public class UserController {
     // @SecurityRequirements(value = {})
 
     // 프로필 조회
-    //@GetMapping("/me")
+    @PostMapping("/image/presigned-url")
+    public ResponseEntity<APIResponse<UserFileDto.Response>> issueProfilePresignedUrl(
+            @RequestBody UserFileDto.Request request,
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        // 앞서 작성한 인증 예외 처리가 여기서 적용됨
+        if (user == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+
+        UserFileSummary summary = userService.issueProfilePresignedUrl(request.toCommand(user.getId()));
+        return ResponseEntity
+                .ok(APIResponse
+                        .success(SuccessCode.OK,
+                                UserFileDto.Response.of(summary)));
+    }
 
     // 이미지 업로드
 
@@ -43,8 +60,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        // principal.getUserId()를 사용하여 요청 처리
-        userService.updatePassword(request.toCommand(principal.getUserId()));
+        userService.updatePassword(request.toCommand(principal.getId()));
 
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
@@ -58,7 +74,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        userService.deleteAccount(principal.getUserId()); // principal.getUserId() 호출
+        userService.deleteAccount(principal.getId());
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 }

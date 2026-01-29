@@ -46,7 +46,7 @@ export const handlers = [
       data: { hasNickname },
     });
   }),
-  http.post("/api/auth/email/validate", async ({ request }) => {
+  http.post("/api/auth/email/verification", async ({ request }) => {
     const body = (await request.json()) as { email?: string };
     if (!body?.email) {
       return HttpResponse.json(
@@ -61,10 +61,16 @@ export const handlers = [
       data: null,
     });
   }),
-  http.get("/api/auth/email/validate", ({ request }) => {
-    const url = new URL(request.url);
-    const code = url.searchParams.get("code");
-    if (code !== "123123") {
+  http.post("/api/auth/email/verification/check", async ({ request }) => {
+    const body = (await request.json()) as { email?: string; code?: string };
+    if (!body?.email || !body?.code) {
+      return HttpResponse.json(
+        { code: 400, message: "인증 실패", data: null },
+        { status: 400 },
+      );
+    }
+
+    if (body.code !== "123123") {
       return HttpResponse.json(
         { code: 400, message: "인증 실패", data: null },
         { status: 400 },
@@ -104,9 +110,74 @@ export const handlers = [
       { status: 401 },
     );
   }),
+  http.post("/api/auth/password/reset/request", async ({ request }) => {
+    const body = (await request.json()) as { email?: string };
+    const email = body?.email ?? "";
+
+    if (!email) {
+      return HttpResponse.json(
+        { code: 400, message: "?붿껌 ?ㅽ뙣", data: null },
+        { status: 400 },
+      );
+    }
+
+    const isUnknown =
+      email.includes("notfound") ||
+      email.includes("withdrawn") ||
+      email.endsWith("@missing.com");
+
+    if (isUnknown) {
+      return HttpResponse.json(
+        { code: 404, message: "해당 이메일로 가입된 사용자를 찾을 수 없습니다.", data: null },
+        { status: 404 },
+      );
+    }
+
+    return HttpResponse.json({ code: 200, message: "?붿껌 ?깃났", data: null });
+  }),
+  http.get("/api/auth/password/reset/verify", ({ request }) => {
+    const url = new URL(request.url);
+    const token = url.searchParams.get("token");
+
+    if (!token || token === "expired") {
+      return HttpResponse.json(
+        { code: 400, message: "유효하지 않은 토큰입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({ code: 200, message: "요청 성공", data: null });
+  }),
+  http.post("/api/auth/password/reset/confirm", async ({ request }) => {
+    const body = (await request.json()) as {
+      token?: string;
+      newPassword?: string;
+      confirmPassword?: string;
+    };
+
+    if (!body?.token || !body?.newPassword || !body?.confirmPassword) {
+      return HttpResponse.json(
+        { code: 400, message: "요청 실패", data: null },
+        { status: 400 },
+      );
+    }
+
+    if (body.newPassword !== body.confirmPassword) {
+      return HttpResponse.json(
+        { code: 400, message: "비밀번호가 일치하지 않습니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({ code: 200, message: "수정 완료", data: null });
+  }),
   http.post("/api/auth/logout", () => {
     mockAuthState = { isLoggedIn: false, me: null };
     return HttpResponse.json({ message: "濡쒓렇?꾩썐 ?꾨즺" });
+  }),
+  http.delete("/api/users/me", () => {
+    mockAuthState = { isLoggedIn: false, me: null };
+    return HttpResponse.json({ message: "회원 탈퇴 완료" });
   }),
   http.get("/api/auth/me", () => {
     if (!mockAuthState.isLoggedIn || !mockAuthState.me) {

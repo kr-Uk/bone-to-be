@@ -25,8 +25,8 @@ public class PostReaderImpl implements PostReader {
     }
 
     @Override
-    public PostDetailSummaryRaw findPostDetail(Long postId) {
-        return postDetailQueryDslRepository.findPostDetail(postId);
+    public PostDetailSummaryRaw findPostDetail(Long postId, Long viewerId) {
+        return postDetailQueryDslRepository.findPostDetail(postId, viewerId);
     }
 
     @Override

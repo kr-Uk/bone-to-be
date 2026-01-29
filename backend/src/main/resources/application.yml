@@ -54,6 +54,45 @@ spring:
   ##################################
 
   ##################################
+  # Security
+  ##################################
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            scope: profile, email
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
+            scope: profile_nickname, account_email
+            client-name: Kakao
+          naver:
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
+            redirect-uri: "{baseUrl}/login/oauth2/code/naver"
+            authorization-grant-type: authorization_code
+            scope: name, email, profile_image
+            client-name: Naver
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+          naver:
+            authorization-uri: https://nid.naver.com/oauth2.0/authorize
+            token-uri: https://nid.naver.com/oauth2.0/token
+            user-info-uri: https://openapi.naver.com/v1/nid/me
+            user-name-attribute: response # 네이버는 유저 정보가 response라는 키 안에 담겨 옴
+
+  ##################################
   # RabbitMQ
   ##################################
   rabbitmq:
@@ -62,13 +101,41 @@ spring:
     username: ${RABBITMQ_USERNAME:guest}
     password: ${RABBITMQ_PASSWORD:guest}
     virtual-host: ${RABBITMQ_VHOST:/}
-
     listener:
       simple:
         acknowledge-mode: manual
         concurrency: 3
         max-concurrency: 10
         prefetch: 10
+
+rabbitmq:
+  topology:
+    analysis:
+      exchange: analysis.exchange
+      queues:
+        request:
+          name: analysis.request.queue
+          routingKey: analysis.requested
+
+        completed:
+          name: analysis.completed.queue
+          routingKey: analysis.completed
+
+        failed:
+          name: analysis.failed.queue
+          routingKey: analysis.failed
+
+    tryon:
+      exchange: tryon.exchange
+      queues:
+        request:
+          name: tryon.request.queue
+          routingKey: tryon.requested
+
+        completed:
+          name: tryon.completed.queue
+          routingKey: tryon.completed
+
 
   ##################################
   # Jackson
@@ -103,6 +170,12 @@ server:
   port: 8080
   servlet:
     context-path: /api
+    session:
+      cookie:
+        http-only: true
+        secure: true # HTTPS 환경이면 true
+        same-site: none # 프론트-백 도메인이 다르면 필수
+        path: /
 
 ##################################
 # Logging
@@ -111,6 +184,8 @@ logging:
   level:
     root: INFO
     com.bonetobe.backend: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web.client.RestTemplate: DEBUG
 
 ##################################
 # Actuator

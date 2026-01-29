@@ -1,3 +1,5 @@
+import axios from "axios";
+
 import type {
   FeedListRequest,
   FeedListApiParams,
@@ -11,6 +13,10 @@ import type {
   LikeToggleRequest,
   LikeToggleResponseDto,
   FeedListResponseDto,
+  PresignedUrlRequest,
+  PresignedUrlResponse,
+  FeedCreateRequest,
+  FeedCreateResponse,
 } from "./community.types";
 
 import axiosInstance from "@/shared/api/axios";
@@ -132,5 +138,87 @@ export async function toggleLike(request: LikeToggleRequest): Promise<LikeToggle
   const { data } = await axiosInstance.post<LikeToggleResponseDto>(
     `/feed/${request.feedId}/like`
   );
+  return data;
+}
+
+/**
+ * 1단계: Presigned URL 발급
+ */
+export async function getPresignedUrl(
+  request: PresignedUrlRequest,
+): Promise<PresignedUrlResponse> {
+  const { data } = await axiosInstance.post<PresignedUrlResponse>(
+    "/feeds/presigned-url",
+    request,
+  );
+  return data;
+}
+
+/**
+ * 2단계-A: S3에 이미지 직접 업로드
+ */
+export async function uploadImageToS3(
+  uploadUrl: string,
+  file: File,
+  contentType: string,
+): Promise<void> {
+  await axios.put(uploadUrl, file, {
+    headers: {
+      "Content-Type": contentType,
+    },
+  });
+}
+
+/**
+ * 2단계-B: 피드 생성 (JSON 형식)
+ */
+export async function createFeed(request: FeedCreateRequest): Promise<FeedCreateResponse> {
+  const { data } = await axiosInstance.post<FeedCreateResponse>("/feeds", request, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  return data;
+}
+
+/**
+ * 1단계: Presigned URL 발급
+ */
+export async function getPresignedUrl(
+  request: PresignedUrlRequest,
+): Promise<PresignedUrlResponse> {
+  const { data } = await axiosInstance.post<PresignedUrlResponse>(
+    "/feeds/presigned-url",
+    request,
+  );
+  return data;
+}
+
+/**
+ * 2단계-A: S3에 이미지 직접 업로드
+ */
+export async function uploadImageToS3(
+  uploadUrl: string,
+  file: File,
+  contentType: string,
+): Promise<void> {
+  await axios.put(uploadUrl, file, {
+    headers: {
+      "Content-Type": contentType,
+    },
+  });
+}
+
+/**
+ * 2단계-B: 피드 생성 (JSON 형식)
+ */
+export async function createFeed(request: FeedCreateRequest): Promise<FeedCreateResponse> {
+  const { data } = await axiosInstance.post<FeedCreateResponse>("/feeds", request, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
   return data;
 }

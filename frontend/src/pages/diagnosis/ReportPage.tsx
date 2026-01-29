@@ -10,10 +10,7 @@ import VirtualFittingSection from "./components/VirtualFittingSection";
 
 import { useReportDetail } from "@/pages/diagnosis/api";
 import { convertSkeletonTypeToBodyType } from "@/pages/diagnosis/api/diagnosis.types";
-import {
-  BODY_TYPE_METADATA,
-  type BodyTypeKey,
-} from "@/shared/constants/reportMockData";
+import { BODY_TYPE_METADATA, type BodyTypeKey } from "@/shared/constants/reportMockData";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
@@ -154,12 +151,7 @@ const ReportPage = () => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   // 실시간 리포트 조회 (폴링)
-  const {
-    data: reportData,
-    isLoading,
-    isError,
-    error,
-  } = useReportDetail(reportId);
+  const { data: reportData, isLoading, isError, error } = useReportDetail(reportId);
 
   // reportId 없으면 리다이렉트
   useEffect(() => {

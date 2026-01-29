@@ -23,7 +23,7 @@ import axios from "@/shared/api/axios";
 export async function createPresignedUrl(
   originalFileName: string,
   contentType: string,
-  fileSize: number
+  fileSize: number,
 ): Promise<CreatePresignedUrlResponse["data"]> {
   const requestData: CreatePresignedUrlRequest = {
     originalFileName,
@@ -31,10 +31,7 @@ export async function createPresignedUrl(
     fileSize,
   };
 
-  const response = await axios.post<CreatePresignedUrlResponse>(
-    "/reports/createUrl",
-    requestData
-  );
+  const response = await axios.post<CreatePresignedUrlResponse>("/reports/createUrl", requestData);
 
   return response.data.data; // 래퍼 벗기기
 }
@@ -54,7 +51,7 @@ export async function uploadImageToS3(uploadUrl: string, imageBlob: Blob): Promi
  * 리포트 생성 (분석 시작)
  */
 export async function createReport(
-  request: CreateReportRequest
+  request: CreateReportRequest,
 ): Promise<CreateReportResponse["data"]> {
   const response = await axios.post<CreateReportResponse>("/reports", request);
 
@@ -64,9 +61,7 @@ export async function createReport(
 /**
  * 리포트 상세 조회
  */
-export async function getReportDetail(
-  reportId: number
-): Promise<ReportDetailResponse["data"]> {
+export async function getReportDetail(reportId: number): Promise<ReportDetailResponse["data"]> {
   const response = await axios.get<ReportDetailResponse>(`/reports/${reportId}`);
 
   return response.data.data; // 래퍼 벗기기

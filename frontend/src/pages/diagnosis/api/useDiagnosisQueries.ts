@@ -75,7 +75,7 @@ export function useReportDetail(
     enabled?: boolean;
     onSuccess?: (data: ReportDetailResponse["data"]) => void;
     onError?: (error: Error) => void;
-  }
+  },
 ): UseQueryResult<ReportDetailResponse["data"], Error> {
   return useQuery({
     queryKey: ["reportDetail", reportId],

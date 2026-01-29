@@ -20,11 +20,7 @@ import type { CaptureMode, AnalysisStatus } from "@/shared/types/diagnosis";
 import type { PoseValidationResult } from "@/shared/utils/poseValidation";
 import type { Results } from "@mediapipe/pose";
 
-import {
-  useCreatePresignedUrl,
-  useS3Upload,
-  useCreateReport,
-} from "@/pages/diagnosis/api";
+import { useCreatePresignedUrl, useS3Upload, useCreateReport } from "@/pages/diagnosis/api";
 import { convertGenderToApi } from "@/pages/diagnosis/api/diagnosis.types";
 import { useMediaQuery } from "@/shared/hooks";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";

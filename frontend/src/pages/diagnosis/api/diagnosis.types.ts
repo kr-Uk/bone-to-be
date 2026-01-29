@@ -83,9 +83,7 @@ export type ReportDetailResponse = ApiResponse<{
 /**
  * 프론트엔드 gender 값을 API gender 값으로 변환
  */
-export const convertGenderToApi = (
-  gender: "women" | "men"
-): "MALE" | "FEMALE" => {
+export const convertGenderToApi = (gender: "women" | "men"): "MALE" | "FEMALE" => {
   return gender === "men" ? "MALE" : "FEMALE";
 };
 
@@ -93,7 +91,7 @@ export const convertGenderToApi = (
  * API skeletonType을 프론트엔드 bodyType으로 변환
  */
 export const convertSkeletonTypeToBodyType = (
-  skeletonType: SkeletonType | null
+  skeletonType: SkeletonType | null,
 ): "natural" | "wave" | "straight" => {
   if (!skeletonType) return "natural"; // fallback
   return skeletonType.toLowerCase() as "natural" | "wave" | "straight";

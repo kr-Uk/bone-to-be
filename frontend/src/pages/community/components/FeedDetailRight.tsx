@@ -420,7 +420,7 @@ const Username = styled.div`
 `;
 
 const PostContent = styled.div`
-  padding: 20px;
+  padding: 12px;
   display: inline-flex;
   flex: 0 0 Auto;
   gap: 6px;
@@ -429,6 +429,10 @@ const PostContent = styled.div`
 
 const Text = styled.p`
   color: #fafafa;
+
+  @media (max-width: 430px) {
+  font-size: 14px; /* Mobile */
+  }
 `;
 
 const Tags = styled.div`
@@ -470,9 +474,10 @@ const CommentRowWrapper = styled.div<{ $depth: number }>`
 const Footer = styled.div`
   padding: 16px 16px 0;
   position: relative;
+  background-color: #262626;
 
   @media (max-width: 430px) {
-    padding: 16px 16px 16px;
+    padding: 8px 16px 4px;
   }
 `;
 

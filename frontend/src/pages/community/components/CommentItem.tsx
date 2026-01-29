@@ -49,10 +49,16 @@ const TextArea = styled.div`
 const Username = styled.div`
   font-weight: 600;
   color: #fafafa;
+  @media (max-width: 430px) {
+    font-size: 14px;
+  }
 `;
 
 const CommentText = styled.div`
   color: #e5e5e5;
+  @media (max-width: 430px) {
+    font-size: 14px;
+  }  
 `;
 
 const MetaRow = styled.div`

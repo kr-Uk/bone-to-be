@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { FaRegHeart, FaHeart, FaRegComment, FaRegBookmark, FaBookmark } from "react-icons/fa";
-
-import { CommentInput } from "../CommentInput";
 
 import { CommentSection } from "./CommentSection";
+import { FeedDetailActions } from "./FeedDetailActions";
+import { FeedDetailContent } from "./FeedDetailContent";
+import { FeedDetailFooter } from "./FeedDetailFooter";
+import { FeedDetailHeader } from "./FeedDetailHeader";
 import * as S from "./FeedDetailRight.styles";
 import { useFeedDetailState } from "./hooks/useFeedDetailState";
-import { LikesPanel } from "./LikesPanel";
-import { formatTimeAgo } from "./utils";
 
 import type { FeedDetailRightProps } from "./types";
 
@@ -78,74 +77,53 @@ export function FeedDetailRight({
 
   return (
     <S.RightContainer>
-      <S.DesktopHeader>
-        {detail?.author.avatarUrl ? (
-          <S.DesktopAvatar src={detail.author.avatarUrl} alt="profile" />
-        ) : (
-          <S.DesktopAvatarFallback />
-        )}
-        <div>
-          <S.DesktopName>{detail?.author.username ?? "Loading..."}</S.DesktopName>
-          <S.DesktopMeta>{desktopMeta}</S.DesktopMeta>
-        </div>
-      </S.DesktopHeader>
+      <FeedDetailHeader
+        avatarUrl={detail?.author.avatarUrl ?? null}
+        username={detail?.author.username ?? "Loading..."}
+        meta={desktopMeta}
+      />
+
       <S.ContentStack>
-        <S.PostContent>
-          <S.Avatar />
-          <div>
-            <S.Username>{detail?.author.username ?? "Loading..."}</S.Username>
-            {(detail?.content ?? []).map((line: string, index: number) => (
-              <S.Text key={`content-${index}`}>{line}</S.Text>
-            ))}
-            <S.Tags>{(detail?.tags ?? []).map((tag: string) => `#${tag}`).join(" ")}</S.Tags>
-            <S.Time>{detail?.createdAt ? formatTimeAgo(detail.createdAt) : ""}</S.Time>
-          </div>
-        </S.PostContent>
+        {detail && (
+          <FeedDetailContent
+            author={{
+              username: detail.author.username,
+              avatarUrl: detail.author.avatarUrl,
+            }}
+            content={detail.content}
+            tags={detail.tags}
+            createdAt={detail.createdAt}
+          />
+        )}
 
         <CommentSection comments={comments} isLoading={isLoading} hasError={hasError} />
       </S.ContentStack>
 
       <S.BottomStack>
         <S.Footer>
-          <S.ActionRow>
-            <S.LeftActions>
-              <S.HeartButton $liked={liked} onClick={handleLikeToggle}>
-                {liked ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
-              </S.HeartButton>
+          <FeedDetailActions
+            liked={liked}
+            saved={saved}
+            onLikeToggle={handleLikeToggle}
+            onCommentClick={handleCommentNavigate}
+            onSaveToggle={handleSaveToggle}
+          />
 
-              <S.IconButton onClick={handleCommentNavigate}>
-                <FaRegComment size={20} />
-              </S.IconButton>
-            </S.LeftActions>
-
-            <S.IconButton onClick={handleSaveToggle}>
-              {saved ? <FaBookmark size={20} /> : <FaRegBookmark size={20} />}
-            </S.IconButton>
-          </S.ActionRow>
-
-          <S.LikesButton type="button" onClick={() => setIsLikesOpen(true)}>
-            {likeCount} likes
-          </S.LikesButton>
-
-          <LikesPanel
-            isOpen={isLikesOpen}
-            onClose={() => setIsLikesOpen(false)}
-            likeUsers={likeUsers}
+          <FeedDetailFooter
             likeCount={likeCount}
+            likeUsers={likeUsers}
+            isLikesOpen={isLikesOpen}
+            onLikesClick={() => setIsLikesOpen(true)}
+            onLikesClose={() => setIsLikesOpen(false)}
+            commentInput={commentInput}
+            onCommentChange={setCommentInput}
+            onCommentSubmit={handleSubmitComment}
+            isCommentInputVisible={isInputVisible}
+            isSubmitting={isSubmittingComment}
+            commentInputRef={commentInputRef}
+            isMobile={isMobile}
           />
         </S.Footer>
-        {(!isMobile || isInputVisible) && (
-          <S.FixedInput>
-            <CommentInput
-              ref={commentInputRef}
-              value={commentInput}
-              onChange={setCommentInput}
-              onSubmit={handleSubmitComment}
-              placeholder={"댓글 달기 ..."}
-              disabled={isSubmittingComment}
-            />
-          </S.FixedInput>
-        )}
       </S.BottomStack>
     </S.RightContainer>
   );

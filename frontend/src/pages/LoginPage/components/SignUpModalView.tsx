@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-
 import {
   checkEmail,
   checkNickname,
@@ -18,7 +17,6 @@ type Props = {
 };
 
 export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
-
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [authCode, setAuthCode] = useState("");

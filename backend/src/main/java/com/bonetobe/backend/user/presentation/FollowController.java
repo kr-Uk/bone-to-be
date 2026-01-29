@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -35,5 +37,41 @@ public class FollowController {
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK));
+    }
+
+    @GetMapping("/me/followings")
+    public ResponseEntity<APIResponse<List<?>>> getMyFollowings(
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, followService.getFollowings(user.getId())));
+    }
+
+    @GetMapping("/{userId}/followings")
+    public ResponseEntity<APIResponse<List<?>>> getOtherFollowings(
+            @PathVariable Long userId
+    ) {
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, followService.getFollowings(userId)));
+    }
+
+    @GetMapping("/me/followers")
+    public ResponseEntity<APIResponse<List<?>>> getMyFollowers(
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, followService.getFollowers(user.getId())));
+    }
+
+    @GetMapping("/{userId}/followers")
+    public ResponseEntity<APIResponse<List<?>>> getOtherFollowers(
+            @PathVariable Long userId
+    ) {
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, followService.getFollowers(userId)));
     }
 }

@@ -2,7 +2,6 @@ package com.bonetobe.backend.user.infrastructure;
 
 import com.bonetobe.backend.user.domain.Follow;
 import com.bonetobe.backend.user.domain.FollowRepository;
-import com.bonetobe.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

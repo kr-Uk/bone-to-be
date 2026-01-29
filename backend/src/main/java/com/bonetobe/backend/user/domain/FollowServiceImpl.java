@@ -2,10 +2,13 @@ package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.user.presentation.dto.FollowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -39,10 +42,24 @@ public class FollowServiceImpl implements FollowService{
     @Override
     @Transactional
     public void unfollow(Long followingId, Long followerId) {
-        // 관계를 찾아 삭제합니다.
         Follow follow = followRepository.findByFollowingIdAndFollowerId(followingId, followerId)
-                .orElseThrow(() -> new RuntimeException("팔로우 관계가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.FOLLOW_NOT_FOUND));
 
         followRepository.delete(follow);
+    }
+
+    @Override
+    public List<FollowResponse> getFollowings(Long userId) {
+        // 2. 이미 구현한 FollowResponse.from() 메서드 활용
+        return userRepository.findFollowingsByUserId(userId).stream()
+                .map(FollowResponse::from)
+                .toList();
+    }
+
+    @Override
+    public List<FollowResponse> getFollowers(Long userId) {
+        return userRepository.findFollowersByUserId(userId).stream()
+                .map(FollowResponse::from)
+                .toList();
     }
 }

@@ -21,6 +21,7 @@ public enum ErrorCode {
     INVALID_RESET_TOKEN(1009, HttpStatus.BAD_REQUEST, "유효하지 않거나 만료된 비밀번호 재설정 토큰입니다."),
     SELF_FOLLOW_NOT_ALLOWED(1010, HttpStatus.BAD_REQUEST, "자기 자신은 팔로우할 수 없습니다."),
     ALREADY_FOLLOWING(1011, HttpStatus.BAD_REQUEST, "이미 팔로우한 유저입니다."),
+    FOLLOW_NOT_FOUND(1012, HttpStatus.BAD_REQUEST, "팔로우를 찾을 수 없습니다."),
 
     // 2000번대 코드 : 게시판 관련
     POST_LIST_INVALID_SORT(2000, HttpStatus.BAD_REQUEST, "유효하지 않은 정렬 조건입니다."),

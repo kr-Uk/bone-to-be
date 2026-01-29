@@ -31,4 +31,16 @@ public class FollowRepositoryImpl implements FollowRepository {
     public void delete(Follow follow) {
         jpaRepository.delete(follow);
     }
+
+    @Override
+    public long countByFollowingId(Long userId) {
+        // 나를 팔로우하는 사람들의 수 (팔로워)
+        return jpaRepository.countByFollowingId(userId);
+    }
+
+    @Override
+    public long countByFollowerId(Long userId) {
+        // 내가 팔로우하는 사람들의 수 (팔로잉)
+        return jpaRepository.countByFollowerId(userId);
+    }
 }

@@ -14,4 +14,5 @@ public interface PostReader {
 
     Post getById(Long postId);
 
+    long countByUserId(Long userId);
 }

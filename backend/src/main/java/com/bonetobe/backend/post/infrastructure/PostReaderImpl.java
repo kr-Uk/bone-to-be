@@ -34,4 +34,9 @@ public class PostReaderImpl implements PostReader {
         return postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
     }
+
+    @Override
+    public long countByUserId(Long userId) {
+        return postJpaRepository.countByUserId(userId);
+    }
 }

@@ -11,4 +11,8 @@ public interface FollowJpaRepository extends JpaRepository<Follow, Long> {
 
     // 이미 팔로우 중인지 확인하기 위해 필요합니다.
     boolean existsByFollowingIdAndFollowerId(Long followingId, Long followerId);
+
+    long countByFollowingId(Long userId);
+
+    long countByFollowerId(Long userId);
 }

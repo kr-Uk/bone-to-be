@@ -7,4 +7,7 @@ public interface FollowRepository {
     boolean existsByFollowingIdAndFollowerId(Long followingId, Long followerId);
     Follow save(Follow follow);
     void delete(Follow follow);
+
+    long countByFollowingId(Long userId);
+    long countByFollowerId(Long userId);
 }

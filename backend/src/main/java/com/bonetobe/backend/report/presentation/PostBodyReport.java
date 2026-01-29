@@ -14,7 +14,7 @@ public class PostBodyReport {
     ) {
         public ReportCommand toCommand(Long userId) {
             return new ReportCommand(
-                User.makeReferencedUser(userId),
+                User.of(userId),
                 BodyInfo.createBodyInfo(
                     weight,
                     height,

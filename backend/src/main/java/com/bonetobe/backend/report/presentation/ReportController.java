@@ -32,7 +32,7 @@ public class ReportController {
                 .body(APIResponse
                     .success(
                         SuccessCode.CREATED,
-                        fileService.createUploadUrl(request.toUrlRequest(), user.getUserId(), DomainCategory.DIAGNOSE_PICTURE)));
+                        fileService.createUploadUrl(request.toUrlRequest(), user.getId(), DomainCategory.DIAGNOSE_PICTURE)));
     }
 
     @PostMapping
@@ -40,7 +40,7 @@ public class ReportController {
         @RequestBody PostBodyReport.Request request,
         @AuthenticationPrincipal UserPrincipal user
     ) {
-        Long reportId = reportFacade.createReport(request.toCommand(user.getUserId()));
+        Long reportId = reportFacade.createReport(request.toCommand(user.getId()));
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(APIResponse.success(SuccessCode.UPDATED,
@@ -56,6 +56,6 @@ public class ReportController {
             .status(HttpStatus.OK)
             .body(
                 APIResponse.success(SuccessCode.OK,
-                GetReport.from(reportService.getReport(reportId, userPrincipal.getUserId()))));
+                GetReport.from(reportService.getReport(reportId, userPrincipal.getId()))));
     }
 }

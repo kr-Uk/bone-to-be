@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import styled, { css, keyframes, useTheme } from "styled-components";
 
 import type { AppTheme } from "@/shared/styles/theme";
 
 import { NaturalShape, StraightShape, WaveShape } from "@/shared/components/BoneShapes";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 type TypographyToken = {
   fontSize: string;
@@ -30,6 +32,17 @@ export const MainSection = ({ categoryItems }: Props) => {
   const lineColor = theme.colors.brand;
   const lineOpacity = 0.5;
   const dotColor = theme.colors.brand;
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth({ enabled: false });
+
+  const handleCtaClick = () => {
+    if (!isLoggedIn) {
+      window.alert("로그인이 필요한 서비스입니다.");
+      navigate("/login");
+      return;
+    }
+    navigate("/diagnosis/basic-info");
+  };
 
   return (
     <>
@@ -117,7 +130,9 @@ export const MainSection = ({ categoryItems }: Props) => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 2.1, duration: 0.45, ease: "easeOut" }}
           >
-            <CTAButton>내 골격 진단하기 →</CTAButton>
+            <CTAButton type="button" onClick={handleCtaClick}>
+              내 골격 진단하기 →
+            </CTAButton>
           </CtaMotion>
         </HeroContent>
       </HeroSection>

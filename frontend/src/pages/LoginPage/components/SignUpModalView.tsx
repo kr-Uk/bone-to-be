@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-
 
 import {
   checkEmail,
@@ -22,8 +20,6 @@ type Props = {
 };
 
 export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
-
-  const navigate = useNavigate();
 
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");

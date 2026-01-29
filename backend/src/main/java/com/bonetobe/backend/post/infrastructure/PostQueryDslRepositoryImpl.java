@@ -10,7 +10,6 @@ import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,6 +24,7 @@ import java.util.List;
 
 import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
 import static com.bonetobe.backend.post.domain.QPost.post;
+import static com.bonetobe.backend.post.domain.QPostLike.postLike;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
 import static com.bonetobe.backend.style.domain.QStyle.style;
 
@@ -73,6 +73,11 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 .join(post.storedFile, storedFile)
                 .leftJoin(postStyle).on(postStyle.post.eq(post))
                 .leftJoin(postStyle.style, style)
+                .leftJoin(postLike)
+                .on(
+                        postLike.post.eq(post),
+                        postLike.user.id.eq(c.viewerId())
+                )
                 .where(post.id.in(postIds))
                 .orderBy(orderSpecifiers.toArray(OrderSpecifier[]::new))
                 .transform(
@@ -86,7 +91,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                         GroupBy.list(style.styleName),
                                         post.height,
                                         post.weight,
-                                        Expressions.FALSE,
+                                        postLike.id.isNotNull(),
                                         post.createdAt
                                 )
                         )

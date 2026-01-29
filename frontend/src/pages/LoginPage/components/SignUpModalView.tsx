@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   checkEmail,
@@ -17,6 +18,8 @@ type Props = {
 };
 
 export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
+  const navigate = useNavigate();
+
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [authCode, setAuthCode] = useState("");
@@ -177,6 +180,12 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
       });
   };
 
+  const handleGoogle = () => {
+    window.location.href = "/api/oauth2/authorization/google";
+  };
+  const handleKakao = () => {
+    window.location.href = "/api/oauth2/authorization/kakao";
+  };
   return (
     <S.RightPanel>
       <S.Brand>

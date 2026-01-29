@@ -4,15 +4,24 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.EmailService;
 import com.bonetobe.backend.user.domain.AuthService;
-import com.bonetobe.backend.user.domain.User;
+import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -73,7 +82,6 @@ public class AuthController {
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 
-
     // --- 비밀번호 재설정 ---
 
     /**
@@ -120,5 +128,10 @@ public class AuthController {
         authService.updatePassword(email, request);
 
         return ResponseEntity.ok(APIResponse.success(SuccessCode.UPDATED));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<APIResponse<AuthMeResponse>> getMyInfo(@AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK, authService.getMyInfo(principal)));
     }
 }

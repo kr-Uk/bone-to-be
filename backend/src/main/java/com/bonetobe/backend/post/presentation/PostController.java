@@ -59,7 +59,7 @@ public class PostController {
             @RequestBody PostCreateDto.Request request,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        postFacade.createPost(request.toCommand(user.getUserId()));
+        postFacade.createPost(request.toCommand(user.getId()));
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK));
@@ -70,7 +70,7 @@ public class PostController {
             @PathVariable Long postId,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        postFacade.deletePost(PostDeleteDto.Request.toCommand(user.getUserId(), postId));
+        postFacade.deletePost(PostDeleteDto.Request.toCommand(user.getId(), postId));
 
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
@@ -83,7 +83,7 @@ public class PostController {
             @RequestBody PostUpdateDto.Request request,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        postFacade.updatePost(postId, request.toCommand(user.getUserId()));
+        postFacade.updatePost(postId, request.toCommand(user.getId()));
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 
@@ -92,7 +92,7 @@ public class PostController {
             @RequestBody PostFileDto.Request request,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        PostFileSummary summary = postFacade.issuePresignedUrl(request.toCommand(user.getUserId()));
+        PostFileSummary summary = postFacade.issuePresignedUrl(request.toCommand(user.getId()));
         PostFileDto.Response response = PostFileDto.Response.of(summary);
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())

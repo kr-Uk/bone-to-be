@@ -9,12 +9,13 @@ import com.bonetobe.backend.post.domain.query.PostSummary;
 import com.bonetobe.backend.post.presentation.parser.PostRequestParser;
 import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.user.domain.Gender;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class PostListDto {
-
+    @Schema(name = "PostListRequest")
     public record Request(
             String sort,
             String gender,
@@ -75,6 +76,7 @@ public class PostListDto {
         }
     }
 
+    @Schema(name = "PostFileResponse")
     public record Response(
             Long postId,
             String imageUrl,

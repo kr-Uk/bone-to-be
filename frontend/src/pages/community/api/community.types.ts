@@ -141,6 +141,7 @@ export interface LikeToggleRequest {
 
 /**
  * 좋아요 토글 응답
+ * @deprecated 새 백엔드 스펙에서는 사용하지 않음 (data: null 반환)
  */
 export interface LikeToggleResponse {
   feedId: string;
@@ -293,8 +294,7 @@ export interface FeedCommentDto {
  */
 export interface FeedCommentCreateRequest {
   feedId: string;
-  text: string;
-  parentCommentId?: string | null;
+  content: string;
 }
 
 /**
@@ -331,6 +331,7 @@ export interface FeedCommentListResponseDto {
 
 /**
  * 백엔드 DTO - 좋아요 토글 응답
+ * @deprecated 새 백엔드 스펙에서는 사용하지 않음 (data: null 반환)
  */
 export interface LikeToggleResponseDto {
   postId: number;

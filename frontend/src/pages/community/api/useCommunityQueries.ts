@@ -3,7 +3,8 @@ import axios from "axios";
 
 import {
   getFeedList,
-  toggleLike,
+  addFeedLike,
+  removeFeedLike,
   getPresignedUrl,
   uploadImageToS3,
   createFeed,
@@ -28,7 +29,6 @@ import type {
   FeedLikeUser,
   FeedListRequest,
   FeedListResponse,
-  LikeToggleRequest,
   FeedCreateRequest,
   CommentLikeToggleRequest,
 } from "./community.types";
@@ -186,17 +186,52 @@ export function useCreateFeedComment() {
 }
 
 /**
- * 피드 좋아요 토글 뮤테이션
+ * 피드 좋아요 토글 뮤테이션 (Optimistic Updates 적용)
  */
 export function useLikeToggle() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: LikeToggleRequest) => toggleLike(request),
-    onSuccess: (_, request) => {
-      // 캐시 무효화
+    mutationFn: async ({ feedId, isLiked }: { feedId: string; isLiked: boolean }) => {
+      // 현재 좋아요 상태에 따라 추가/취소 API 호출
+      if (isLiked) {
+        await removeFeedLike(feedId);
+      } else {
+        await addFeedLike(feedId);
+      }
+    },
+    onMutate: async ({ feedId, isLiked }) => {
+      // 진행 중인 쿼리 취소 (낙관적 업데이트와 충돌 방지)
+      await queryClient.cancelQueries({ queryKey: ["feedDetail", feedId] });
+      await queryClient.cancelQueries({ queryKey: ["feedList"] });
+
+      // 이전 상태 스냅샷 저장
+      const previousDetail = queryClient.getQueryData<FeedDetailDto>(["feedDetail", feedId]);
+
+      // 낙관적 업데이트: 피드 상세의 좋아요 상태 즉시 변경
+      queryClient.setQueryData<FeedDetailDto>(["feedDetail", feedId], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          isLiked: !isLiked,
+          likeCount: isLiked ? old.likeCount - 1 : old.likeCount + 1,
+        };
+      });
+
+      // rollback을 위해 이전 상태 반환
+      return { previousDetail };
+    },
+    onError: (error, { feedId }, context) => {
+      // 에러 발생 시 이전 상태로 rollback
+      if (context?.previousDetail) {
+        queryClient.setQueryData(["feedDetail", feedId], context.previousDetail);
+      }
+    },
+    onSettled: (_, __, { feedId }) => {
+      // 성공/실패 무관하게 캐시 무효화하여 서버 상태 동기화
+      queryClient.invalidateQueries({ queryKey: ["feedDetail", feedId] });
       queryClient.invalidateQueries({ queryKey: ["feedList"] });
-      queryClient.invalidateQueries({ queryKey: ["feedDetail", request.feedId] });
+      queryClient.invalidateQueries({ queryKey: ["feedLikes", feedId] });
     },
   });
 }

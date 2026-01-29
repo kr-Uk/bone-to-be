@@ -122,18 +122,29 @@ export async function getFeedLikes(request: FeedLikesRequest): Promise<FeedLikeU
 /**
  * 댓글 작성
  */
-export async function createFeedComment(
-  request: FeedCommentCreateRequest,
-): Promise<FeedCommentDto> {
-  const { data } = await axiosInstance.post<FeedCommentDto>(`/feeds/${request.feedId}/comments`, {
-    text: request.text,
-    parentCommentId: request.parentCommentId ?? null,
+export async function createFeedComment(request: FeedCommentCreateRequest): Promise<void> {
+  await axiosInstance.post<ApiResponse<null>>(`/feeds/${request.feedId}/replies`, {
+    content: request.content,
   });
-  return data;
+}
+
+/**
+ * 피드 좋아요 추가
+ */
+export async function addFeedLike(feedId: string): Promise<void> {
+  await axiosInstance.post<ApiResponse<null>>(`/feeds/${feedId}/likes`);
+}
+
+/**
+ * 피드 좋아요 취소
+ */
+export async function removeFeedLike(feedId: string): Promise<void> {
+  await axiosInstance.delete<ApiResponse<null>>(`/feeds/${feedId}/likes`);
 }
 
 /**
  * 피드 좋아요 토글
+ * @deprecated 새 백엔드 스펙에서는 addFeedLike/removeFeedLike 사용
  */
 export async function toggleLike(request: LikeToggleRequest): Promise<LikeToggleResponseDto> {
   const { data } = await axiosInstance.post<LikeToggleResponseDto>(`/feeds/${request.feedId}/like`);

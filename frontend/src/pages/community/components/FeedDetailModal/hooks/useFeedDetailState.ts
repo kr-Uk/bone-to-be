@@ -63,7 +63,7 @@ export function useFeedDetailState({
   const handleLikeToggle = () => {
     const nextLiked = !liked;
 
-    // 낙관적 업데이트
+    // 낙관적 업데이트 (로컬 상태)
     setLiked(nextLiked);
     setLikeCount((count) => (nextLiked ? count + 1 : count - 1));
 
@@ -91,8 +91,34 @@ export function useFeedDetailState({
       return users;
     });
 
-    // 서버 요청
-    likeToggleMutation.mutate({ feedId });
+    // 서버 요청 (현재 좋아요 상태 전달 - API가 토글 처리)
+    likeToggleMutation.mutate(
+      { feedId, isLiked: liked },
+      {
+        onError: () => {
+          // 에러 발생 시 로컬 상태 롤백
+          setLiked(liked);
+          setLikeCount((count) => (liked ? count + 1 : count - 1));
+          setLikeUsers((users) => {
+            if (liked) {
+              // 좋아요였다면 다시 추가
+              return [
+                {
+                  id: "me",
+                  username: "me",
+                  displayName: "me",
+                  avatarUrl: null,
+                  isFollowing: false,
+                },
+                ...users.filter((u) => u.id !== "me"),
+              ];
+            }
+            // 좋아요 아니었다면 다시 제거
+            return users.filter((u) => u.id !== "me");
+          });
+        },
+      },
+    );
   };
 
   const handleSaveToggle = () => {
@@ -105,7 +131,7 @@ export function useFeedDetailState({
 
     createCommentMutation.mutate({
       feedId,
-      text: text.trim(),
+      content: text.trim(),
     });
   };
 

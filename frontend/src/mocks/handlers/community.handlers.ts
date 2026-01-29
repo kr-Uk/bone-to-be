@@ -1309,7 +1309,70 @@ export const communityHandlers = [
     });
   }),
 
-  // POST /api/feeds/:feedId/like (새로운 엔드포인트)
+  // POST /feeds/:feedId/likes (좋아요 추가 - 새 백엔드 스펙)
+  http.post("/feeds/:feedId/likes", async ({ params }) => {
+    await delay(200);
+
+    const { feedId } = params;
+    const mockItem = mockFeedItems.find((item) => item.id === feedId);
+    const mockDetail = mockFeedDetails[String(feedId)];
+
+    if (!mockItem || !mockDetail) {
+      return HttpResponse.json(
+        { code: 400, message: "잘못된 요청입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    // 좋아요 추가
+    mockItem.isLiked = true;
+    mockDetail.isLiked = true;
+
+    const exists = mockDetail.likeUsers.some((user) => user.id === viewerLikeUser.id);
+    if (!exists) {
+      mockDetail.likeUsers.unshift(viewerLikeUser);
+      mockDetail.likeCount = mockDetail.likeUsers.length;
+      mockItem.likeCount = mockDetail.likeCount;
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+
+  // DELETE /feeds/:feedId/likes (좋아요 취소 - 새 백엔드 스펙)
+  http.delete("/feeds/:feedId/likes", async ({ params }) => {
+    await delay(200);
+
+    const { feedId } = params;
+    const mockItem = mockFeedItems.find((item) => item.id === feedId);
+    const mockDetail = mockFeedDetails[String(feedId)];
+
+    if (!mockItem || !mockDetail) {
+      return HttpResponse.json(
+        { code: 400, message: "잘못된 요청입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    // 좋아요 취소
+    mockItem.isLiked = false;
+    mockDetail.isLiked = false;
+
+    mockDetail.likeUsers = mockDetail.likeUsers.filter((user) => user.id !== viewerLikeUser.id);
+    mockDetail.likeCount = mockDetail.likeUsers.length;
+    mockItem.likeCount = mockDetail.likeCount;
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+
+  // POST /api/feeds/:feedId/like (구 엔드포인트 - 호환성)
   http.post("/api/feeds/:feedId/like", async ({ params }) => {
     await delay(200);
 
@@ -1514,10 +1577,9 @@ export const communityHandlers = [
     const items = source.items.slice(start, end);
 
     return HttpResponse.json({
-      postId: Number(feedId),
-      commentCount: source.items.length,
-      hasNext: end < source.items.length,
-      comments: items.map(toCommentDto),
+      code: 200,
+      message: "요청 성공",
+      data: items.map(toCommentDto),
     });
   }),
 
@@ -1574,12 +1636,11 @@ export const communityHandlers = [
     }
 
     const body = (await request.json()) as {
-      text?: string;
-      parentCommentId?: string | null;
+      content?: string;
     };
 
-    const text = (body.text ?? "").trim();
-    if (!text) {
+    const content = (body.content ?? "").trim();
+    if (!content) {
       return HttpResponse.json(
         { code: 400, message: "댓글 내용을 입력해주세요.", data: null },
         { status: 400 },
@@ -1589,16 +1650,20 @@ export const communityHandlers = [
     const newComment = {
       id: `c-${Date.now()}`,
       username: "me",
-      text,
+      text: content,
       createdAt: new Date().toISOString(),
       isLiked: false,
       likeCount: 0,
       isMine: true,
-      parentCommentId: body.parentCommentId ?? null,
+      parentCommentId: null,
     };
 
     source.items.push(newComment);
 
-    return HttpResponse.json(toCommentDto(newComment));
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
   }),
 ];

@@ -86,3 +86,46 @@ export interface LikeToggleResponse {
   isLiked: boolean;
   likeCount: number;
 }
+
+/**
+ * Presigned URL 요청
+ */
+export interface PresignedUrlRequest {
+  originalFileName: string;
+  contentType: string;
+  fileSize: number;
+}
+
+/**
+ * Presigned URL 응답
+ */
+export interface PresignedUrlResponse {
+  code: number;
+  message: string;
+  data: {
+    fileId: number;
+    uploadUrl: string;
+  };
+}
+
+/**
+ * 피드 생성 요청 (새 형식 - JSON)
+ */
+export interface FeedCreateRequest {
+  fileId: number;
+  content: string;
+  gender: "female" | "male";
+  skeletonType: "natural" | "straight" | "wave";
+  style: string[];
+  height: number; // cm
+  weight: number; // kg (필수)
+}
+
+/**
+ * 피드 생성 응답
+ */
+export interface FeedCreateResponse {
+  code: number;
+  message: string;
+  data: null;
+}

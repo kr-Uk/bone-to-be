@@ -13,7 +13,11 @@ export const useAuth = (): UseAuthResult => {
     queryKey: ["me"],
     queryFn: getMe,
     retry: false,
-    staleTime: 60_000,
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 
   return {

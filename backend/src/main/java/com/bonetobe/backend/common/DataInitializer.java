@@ -2,6 +2,7 @@ package com.bonetobe.backend.common;
 
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserRepository;
+import com.bonetobe.backend.user.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -36,7 +37,7 @@ public class DataInitializer implements CommandLineRunner {
                     adminEmail,
                     encodedPassword,
                     "관리자",
-                    "ADMIN"
+                    UserRole.ADMIN
             );
 
             userRepository.save(admin);

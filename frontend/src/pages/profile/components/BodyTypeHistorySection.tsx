@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import styled from "styled-components";
 
-import { applySmoothing, getBodyTypeBadge, getBodyTypeLabels, toPoint, toVertex } 
-  from "../hooks/useBodyTypeChart";
+import TriangleChart from "@/shared/components/charts/TriangleChart/TriangleChart";
+
+import { applySmoothing, getBodyTypeBadge, getBodyTypeLabels } from "../hooks/useBodyTypeChart";
 
 import { Stack, Text } from "./ProfileCommon";
 
@@ -113,8 +114,8 @@ const Track = styled.div`
 `;
 
 const Card = styled.article<{ $highlight?: boolean; $dimmed?: boolean }>`
-  min-width: 13.75rem;
-  height: 22.5625rem;
+  min-width: 18rem;
+  height: 24rem;
   background: var(--neutral-800, #262626);
   border-radius: 0.9375rem;
   outline: 0.0625rem var(--neutral-600, #525252) solid;
@@ -143,7 +144,8 @@ const Card = styled.article<{ $highlight?: boolean; $dimmed?: boolean }>`
   }
 
   @media (max-width: 768px) {
-    min-width: clamp(13rem, 34vw, 16.25rem);
+    min-width: clamp(14rem, 78vw, 18rem);
+    height: clamp(20rem, 85vw, 24rem);
   }
 `;
 
@@ -173,33 +175,25 @@ const CardBody = styled.div`
 `;
 
 const Preview = styled.div`
-  width: 8.75rem;
-  height: 8.75rem;
+  width: 16rem;
+  height: 16rem;
   position: relative;
+
+  @media (max-width: 768px) {
+    width: clamp(14rem, 62vw, 16rem);
+    height: clamp(14rem, 62vw, 16rem);
+  }
 `;
 
-const PreviewSvg = styled.svg`
-  width: 100%;
-  height: 100%;
-`;
+const ProfileTriangleChart = styled(TriangleChart)`
+  width: 16rem;
+  height: 16rem;
+  max-width: none;
 
-const ChartTypeLabel = styled.text`
-  fill: var(--accent-text);
-  font-size: 0.9375rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-`;
-
-const TriangleOutline = styled.polygon`
-  fill: none;
-  stroke: var(--accent-color);
-  stroke-width: 2.8;
-`;
-
-const TriangleFill = styled.polygon`
-  fill: var(--accent-fill);
-  opacity: 0.45;
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
 `;
 
 const CardFooter = styled.div`
@@ -248,12 +242,6 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
   if (!history.length) {
     return null;
   }
-
-  const center = { x: 50, y: 50 };
-  const radius = 46;
-  const vertexTop = toVertex(center, radius, -90);
-  const vertexLeft = toVertex(center, radius, 150);
-  const vertexRight = toVertex(center, radius, 30);
 
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [visibilityMap, setVisibilityMap] = useState<Record<string, number>>({});
@@ -432,15 +420,13 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
           onPointerCancel={handlePointerUp}
         >
           {history.map((item, index) => {
-            const ratio = applySmoothing(item.ratio);
-            const topPoint = toPoint(vertexTop, center, ratio.natural);
-            const leftPoint = toPoint(vertexLeft, center, ratio.wave);
-            const rightPoint = toPoint(vertexRight, center, ratio.straight);
-            const outlinePoints = `${vertexTop.x},${vertexTop.y} ${vertexLeft.x},${vertexLeft.y} ${vertexRight.x},${vertexRight.y}`;
-            const innerPoints = `${topPoint.x},${topPoint.y} ${leftPoint.x},${leftPoint.y} ${rightPoint.x},${rightPoint.y}`;
+            const ratio = applySmoothing({
+              natural: Number(item.ratio.natural),
+              wave: Number(item.ratio.wave),
+              straight: Number(item.ratio.straight),
+            });
             const labels = getBodyTypeLabels(item.type);
             const badgeText = getBodyTypeBadge(item.type);
-            const labelY = Math.max(vertexLeft.y, vertexRight.y) + 8;
             const codeText = item.id.includes("-")
               ? item.id
               : `${badgeText.charAt(0)}-${index + 1}`;
@@ -460,13 +446,16 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
                 {item.isLatest && <LatestBadge>LATEST</LatestBadge>}
                 <CardBody>
                   <Preview>
-                    <PreviewSvg viewBox="0 0 100 100" role="img" aria-label="Body type chart">
-                      <TriangleOutline points={outlinePoints} />
-                      <TriangleFill points={innerPoints} />
-                      <ChartTypeLabel x="50" y={labelY} textAnchor="middle" dominantBaseline="hanging">
-                        {badgeText}
-                      </ChartTypeLabel>
-                    </PreviewSvg>
+                    <ProfileTriangleChart
+                      data={[ratio.straight * 100, ratio.wave * 100, ratio.natural * 100]}
+                      labels={[" ", " ", " "]}
+                      customLabels={{
+                        enabled: true,
+                        alignments: ["center", "right", "left"],
+                      }}
+                      tooltip={{ enabled: false }}
+                      animate={false}
+                    />
                   </Preview>
                 </CardBody>
                 <CardFooter>

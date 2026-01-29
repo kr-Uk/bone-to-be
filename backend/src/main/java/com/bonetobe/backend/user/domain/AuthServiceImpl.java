@@ -2,12 +2,18 @@ package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.user.infrastructure.UserPrincipal;
+import com.bonetobe.backend.user.presentation.AuthMeResponse;
 import com.bonetobe.backend.user.presentation.PasswordReset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.naming.AuthenticationException;
 
 @Slf4j
 @Service
@@ -44,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
                 command.email(),
                 passwordEncoder.encode(command.password()),
                 command.nickname(),
-                "USER"
+                UserRole.USER
         );
         User savedUser = userRepository.save(user);
 
@@ -108,5 +114,14 @@ public class AuthServiceImpl implements AuthService {
         user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
 
         emailService.deleteResetToken(request.getToken());
+    }
+
+    @Override
+    public AuthMeResponse getMyInfo(UserPrincipal principal) {
+        // principal이 null일 경우 커스텀 예외 발생
+        if (principal == null) {
+            throw new AuthenticationCredentialsNotFoundException(ErrorCode.UNAUTHORIZED.getMessage());
+        }
+        return AuthMeResponse.from(principal);
     }
 }

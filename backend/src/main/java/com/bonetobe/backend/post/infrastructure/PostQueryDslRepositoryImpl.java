@@ -1,15 +1,15 @@
 package com.bonetobe.backend.post.infrastructure;
 
-import com.bonetobe.backend.user.domain.Gender;
+import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.post.domain.PostSort;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import com.bonetobe.backend.style.domain.StyleName;
+import com.bonetobe.backend.user.domain.Gender;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,6 +24,7 @@ import java.util.List;
 
 import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
 import static com.bonetobe.backend.post.domain.QPost.post;
+import static com.bonetobe.backend.post.domain.QPostLike.postLike;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
 import static com.bonetobe.backend.style.domain.QStyle.style;
 
@@ -38,6 +39,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
 
         BooleanExpression[] conditions = new BooleanExpression[]{
                 eqGender(c.gender()),
+                eqSkeletonType(c.skeletonType()),
                 betweenHeight(c.minHeight(), c.maxHeight()),
                 betweenWeight(c.minWeight(), c.maxWeight()),
                 inStyles(c.style())
@@ -71,6 +73,11 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 .join(post.storedFile, storedFile)
                 .leftJoin(postStyle).on(postStyle.post.eq(post))
                 .leftJoin(postStyle.style, style)
+                .leftJoin(postLike)
+                .on(
+                        postLike.post.eq(post),
+                        postLike.user.id.eq(c.viewerId())
+                )
                 .where(post.id.in(postIds))
                 .orderBy(orderSpecifiers.toArray(OrderSpecifier[]::new))
                 .transform(
@@ -84,7 +91,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                         GroupBy.list(style.styleName),
                                         post.height,
                                         post.weight,
-                                        Expressions.FALSE,
+                                        postLike.id.isNotNull(),
                                         post.createdAt
                                 )
                         )
@@ -113,6 +120,11 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
     private BooleanExpression eqGender(Gender gender) {
         return gender == null ? null : post.gender.eq(gender);
     }
+
+    private BooleanExpression eqSkeletonType(SkeletonType skeletonType) {
+        return skeletonType == null ? null : post.skeletonType.eq(skeletonType);
+    }
+
 
     private BooleanExpression betweenHeight(Integer min, Integer max) {
         if (min == null && max == null) return null;

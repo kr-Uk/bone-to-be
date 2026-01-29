@@ -46,13 +46,11 @@ export const checkEmail = async (email: string) => {
 };
 
 export const sendEmailValidation = async (email: string) => {
-  await axiosInstance.post("/auth/email/validate", { email });
+  await axiosInstance.post("/auth/email/verification", { email });
 };
 
 export const confirmEmailValidation = async (email: string, code: string) => {
-  await axiosInstance.get("/auth/email/validate", {
-    params: { email, code },
-  });
+  await axiosInstance.post("/auth/email/verification/check", { email, code });
 };
 
 export const checkNickname = async (nickname: string) => {

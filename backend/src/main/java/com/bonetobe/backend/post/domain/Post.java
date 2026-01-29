@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -50,6 +51,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private long likeCount = 0L;
 
+    // 양방향은 순환참조의 위험이 있음 -> Join으로
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<PostStyle> postStyles = new ArrayList<>();
 
@@ -74,25 +76,34 @@ public class Post extends BaseEntity {
         return post;
     }
 
-
     public void applyStyles(List<Style> styles) {
-        if (styles == null || styles.isEmpty()) return;
+        if (styles == null) return;
+        styles.stream()
+                .filter(Objects::nonNull)
+                .forEach(style ->
+                        postStyles.add(PostStyle.create(this, style))
+                );
 
-        for (Style style : styles) {
-            if (style == null) continue;
-            this.postStyles.add(PostStyle.create(this, style));
-        }
     }
 
-
-    public void increaseLike() {
-        this.likeCount++;
+    public void update(
+            String content,
+            Gender gender,
+            SkeletonType skeletonType,
+            List<Style> styles,
+            Integer height,
+            Integer weight
+    ) {
+        this.content = content;
+        this.gender = gender;
+        this.skeletonType = skeletonType;
+        this.height = height;
+        this.weight = weight;
+        updateStyles(styles);
     }
 
-    public void decreaseLike() {
-        if (this.likeCount == 0L) {
-            throw new BusinessException(ErrorCode.POST_LIST_INVALID_LIKE);
-        }
-        this.likeCount--;
+    public void updateStyles(List<Style> styles) {
+        postStyles.clear();
+        applyStyles(styles);
     }
 }

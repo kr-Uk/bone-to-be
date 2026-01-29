@@ -24,4 +24,20 @@ public class Reply extends BaseEntity {
     private User user;
 
     private String content;
+
+    @Column(nullable = false)
+    private long likeCount = 0L;
+
+    public static Reply create(
+            Post post,
+            User user,
+            String content
+    ){
+        Reply reply = new Reply();
+        reply.post = post;
+        reply.user = user;
+        reply.content = content;
+
+        return reply;
+    }
 }

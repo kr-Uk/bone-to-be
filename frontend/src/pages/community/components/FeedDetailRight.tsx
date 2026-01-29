@@ -419,10 +419,6 @@ const Username = styled.div`
   font-weight: 600;
 `;
 
-const SubInfo = styled.div`
-  color: #a1a1a1;
-`;
-
 const PostContent = styled.div`
   padding: 20px;
   display: inline-flex;

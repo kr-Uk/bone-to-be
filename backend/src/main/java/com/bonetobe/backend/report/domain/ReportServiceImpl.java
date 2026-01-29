@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReportServiceImpl implements ReportService {
     private final ReportStore reportStore;
     private final ReportReader reportReader;
@@ -41,5 +43,21 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<Report> getReportList(Long userId) {
         return reportReader.readReports(userId);
+    }
+
+    @Override
+    public Report isOwner(Long userId, Long reportId) {
+        Report report = reportReader.read(reportId);
+        if (!Objects.equals(report.getUser().getId(), userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+        return report;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Report report) {
+        report.softDelete();
+        reportStore.update(report);
     }
 }

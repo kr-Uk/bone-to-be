@@ -45,4 +45,9 @@ public class ReportFacade {
          */
         // reportService.sendEvent(result.reportId());
     }
+
+    public void authorizeAndDeleteReport(Long userId, Long reportId) {
+        Report report = reportService.isOwner(userId, reportId);
+        reportService.delete(report);
+    }
 }

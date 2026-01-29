@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,7 +17,7 @@ public class ReportReaderImpl implements ReportReader {
     private final ReportRepository reportRepository;
     @Override
     public Report read(Long reportId) {
-        return reportRepository.findById(reportId).orElseThrow();
+        return reportRepository.findByIdAndActive(reportId).orElseThrow();
     }
 
     @Override

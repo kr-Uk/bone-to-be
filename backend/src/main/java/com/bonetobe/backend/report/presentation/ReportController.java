@@ -96,4 +96,13 @@ public class ReportController {
             .status(HttpStatus.OK)
             .body(APIResponse.success(SuccessCode.UPDATED));
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<APIResponse<GetReport>> getRepresentative(
+        @PathVariable Long userId
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(APIResponse.success(SuccessCode.OK, GetReport.from(reportService.getRepresentativeReport(userId))));
+    }
 }

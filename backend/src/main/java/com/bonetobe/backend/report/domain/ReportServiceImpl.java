@@ -2,6 +2,7 @@ package com.bonetobe.backend.report.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.report.presentation.GetReport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,5 +66,10 @@ public class ReportServiceImpl implements ReportService {
     public void makeRepresentative(Report report) {
         report.makeRepresentative();
         reportStore.update(report);
+    }
+
+    @Override
+    public Report getRepresentativeReport(Long userId) {
+        return reportReader.readRepresentativeReport(userId);
     }
 }

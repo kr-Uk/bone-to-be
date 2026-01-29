@@ -50,8 +50,8 @@ public enum ErrorCode {
     // 5000번대 코드 : 리포트
     ALREADY_DELETED_EXCEPTION(5001, HttpStatus.BAD_REQUEST, "이미 삭제된 리포트입니다."),
     NOT_PENDING_REPORT(5002, HttpStatus.BAD_REQUEST, "이미 분석이 완료된 리포트입니다."),
-    ALREADY_REPRESENTATIVE_EXCEPTION(5003, HttpStatus.BAD_REQUEST, "이미 대표인 "),
-
+    ALREADY_REPRESENTATIVE_EXCEPTION(5003, HttpStatus.BAD_REQUEST, "이미 대표 리포트입니다"),
+    REPRESENTATION_NOT_FOUND_EXCEPTION(5004, HttpStatus.BAD_REQUEST, "대표 리포트를 찾을 수 없습니다."),
     // 10000 : 알 수 없는 예외
     UNKNOWN_ERROR(10000, HttpStatus.BAD_REQUEST, "알 수 없는 예외입니다,"),
     ENTITY_NOT_FOUND(10001, HttpStatus.BAD_REQUEST,"정보를 찾을 수 없습니다"),

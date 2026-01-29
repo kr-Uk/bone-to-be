@@ -37,4 +37,9 @@ public class ReportServiceImpl implements ReportService {
 
         return report;
     }
+
+    @Override
+    public List<Report> getReportList(Long userId) {
+        return reportReader.readReports(userId);
+    }
 }

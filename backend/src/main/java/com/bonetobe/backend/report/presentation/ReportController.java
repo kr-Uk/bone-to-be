@@ -14,8 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/reports")
 @RequiredArgsConstructor
 public class ReportController {
     private final FileService fileService;
@@ -56,6 +58,19 @@ public class ReportController {
             .status(HttpStatus.OK)
             .body(
                 APIResponse.success(SuccessCode.OK,
-                GetReport.from(reportService.getReport(reportId, userPrincipal.getId()))));
+                    GetReport.from(reportService.getReport(reportId, userPrincipal.getId()))));
+    }
+
+    @GetMapping
+    public ResponseEntity<APIResponse<List<GetReportList>>> getReportList(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(
+                APIResponse.success(SuccessCode.OK,
+                    reportService.getReportList(userPrincipal.getId()).stream()
+                        .map(GetReportList::from)
+                        .toList()));
     }
 }

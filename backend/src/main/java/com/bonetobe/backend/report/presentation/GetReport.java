@@ -4,6 +4,7 @@ import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.report.domain.AnalysisDetail;
 import com.bonetobe.backend.report.domain.Report;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record GetReport(
@@ -12,7 +13,8 @@ public record GetReport(
     Double straightRate,
     Double naturalRate,
     Double waveRate,
-    List<AnalysisDetail> details
+    List<AnalysisDetail> details,
+    LocalDateTime createdAt
 ) {
     public static GetReport from(Report report) {
         return new GetReport(
@@ -21,7 +23,8 @@ public record GetReport(
             report.getDiagnosis().getStraightRatio(),
             report.getDiagnosis().getNaturalRatio(),
             report.getDiagnosis().getWaveRatio(),
-            report.getAnalysisReport()
+            report.getAnalysisReport(),
+            report.getCreatedAt()
         );
     }
 }

@@ -21,7 +21,11 @@ type NavItem = {
   path?: string;
 };
 
-const baseNavItems: NavItem[] = [{ label: "ABOUT" }, { label: "FUNCTION" }, { label: "COMMUNITY" }];
+const baseNavItems: NavItem[] = [
+  { label: "ABOUT" },
+  { label: "FUNCTION" },
+  { label: "COMMUNITY", path: "/community" },
+];
 
 type TypographyToken = {
   fontSize: string;
@@ -42,7 +46,7 @@ const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
 export const MainHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isAuthEnabled = location.pathname !== "/";
+  const isAuthEnabled = !["/", "/community"].includes(location.pathname);
   const { isAuthLoading, isLoggedIn, me } = useAuth({ enabled: isAuthEnabled });
   const logoutMutation = useLogout();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

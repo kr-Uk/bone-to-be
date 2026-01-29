@@ -1,11 +1,9 @@
 package com.bonetobe.backend.report.presentation;
 
 import com.bonetobe.backend.common.SkeletonType;
-import com.bonetobe.backend.report.domain.AnalysisDetail;
 import com.bonetobe.backend.report.domain.Report;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record GetReportList(
     Long reportId,

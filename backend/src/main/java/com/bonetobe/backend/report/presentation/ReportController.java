@@ -7,6 +7,7 @@ import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.report.application.ReportFacade;
 import com.bonetobe.backend.report.domain.ReportService;
+import com.bonetobe.backend.report.presentation.dto.*;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -95,14 +96,5 @@ public class ReportController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(APIResponse.success(SuccessCode.UPDATED));
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<APIResponse<GetReport>> getRepresentative(
-        @PathVariable Long userId
-    ) {
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(APIResponse.success(SuccessCode.OK, GetReport.from(reportService.getRepresentativeReport(userId))));
     }
 }

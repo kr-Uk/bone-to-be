@@ -7,7 +7,7 @@ import com.bonetobe.backend.report.domain.ReportCommand;
 import com.bonetobe.backend.report.domain.ReportProducer;
 import com.bonetobe.backend.report.domain.ReportService;
 import com.bonetobe.backend.report.infrastructure.ReportMessage;
-import com.bonetobe.backend.report.presentation.ReportResult;
+import com.bonetobe.backend.report.presentation.dto.ReportResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.bonetobe.backend.report.presentation;
+package com.bonetobe.backend.report.presentation.dto;
 
 import com.bonetobe.backend.report.domain.BodyInfo;
 import com.bonetobe.backend.report.domain.ReportCommand;

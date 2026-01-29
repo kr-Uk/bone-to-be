@@ -68,4 +68,12 @@ public class Report extends BaseEntity {
         analysisReport = report;
         status = ReportStatus.COMPLETED;
     }
+
+    public Diagnosis getDiagnosis(ReportStatus status) {
+        if (status.equals(ReportStatus.PENDING)) {
+            return null;
+        }
+
+        return diagnosis;
+    }
 }

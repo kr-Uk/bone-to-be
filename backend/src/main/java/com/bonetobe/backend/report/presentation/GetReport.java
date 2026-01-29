@@ -2,7 +2,9 @@ package com.bonetobe.backend.report.presentation;
 
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.report.domain.AnalysisDetail;
+import com.bonetobe.backend.report.domain.Diagnosis;
 import com.bonetobe.backend.report.domain.Report;
+import com.bonetobe.backend.report.domain.ReportStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,16 +16,19 @@ public record GetReport(
     Double naturalRate,
     Double waveRate,
     List<AnalysisDetail> details,
+    ReportStatus status,
     LocalDateTime createdAt
 ) {
     public static GetReport from(Report report) {
+        Diagnosis diagnosis = report.getDiagnosis(report.getStatus());
         return new GetReport(
             report.getId(),
-            report.getDiagnosis().getFitType(),
-            report.getDiagnosis().getStraightRatio(),
-            report.getDiagnosis().getNaturalRatio(),
-            report.getDiagnosis().getWaveRatio(),
+            diagnosis == null ? null : diagnosis.getFitType(),
+            diagnosis == null ? 0 : diagnosis.getStraightRatio(),
+            diagnosis == null ? 0 :diagnosis.getNaturalRatio(),
+            diagnosis == null ? 0 :diagnosis.getWaveRatio(),
             report.getAnalysisReport(),
+            report.getStatus(),
             report.getCreatedAt()
         );
     }

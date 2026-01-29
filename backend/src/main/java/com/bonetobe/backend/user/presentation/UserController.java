@@ -1,6 +1,5 @@
 package com.bonetobe.backend.user.presentation;
 
-import com.bonetobe.backend.user.application.UserFacade;
 import com.bonetobe.backend.user.domain.query.UserFileSummary;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.common.exception.BusinessException;
@@ -8,6 +7,9 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.user.domain.UserService;
+import com.bonetobe.backend.user.presentation.dto.UpdateUser;
+import com.bonetobe.backend.user.presentation.dto.UserDetailDto;
+import com.bonetobe.backend.user.presentation.dto.UserFileDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +26,58 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    // 타인 프로필 조회
-    // @SecurityRequirements(value = {})
+    /**
+     * 마이페이지 기본 정보 조회
+     * GET /users/me
+     */
+    @GetMapping("/me")
+    public ResponseEntity<APIResponse<UserDetailDto>> getMyPageInfo(
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        if (principal == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
 
-    // 프로필 조회
-    @PostMapping("/image/presigned-url")
+        // 로그인한 사용자의 ID로 정보 조회
+        UserDetailDto response = userService.getUserDetail(principal.getId());
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, response));
+    }
+
+    /**
+     * 타인 프로필 조회
+     * GET /users/{userId}
+     */
+    @GetMapping("/{userId}")
+    public ResponseEntity<APIResponse<UserDetailDto>> getUserDetail(
+            @PathVariable Long userId
+    ) {
+        // 특정 유저의 ID로 정보 조회
+        UserDetailDto response = userService.getUserDetail(userId);
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, response));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<APIResponse<Void>> updateMyPage(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody @Valid UpdateUser.Request request
+    ) {
+        if (principal == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+
+        userService.updateMyPage(request.toCommand(principal.getId()));
+
+        return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
+    // 프로필 이미지 업로드
+    @PostMapping("/me/profile-image/presigned-url")
     public ResponseEntity<APIResponse<UserFileDto.Response>> issueProfilePresignedUrl(
             @RequestBody UserFileDto.Request request,
             @AuthenticationPrincipal UserPrincipal user
@@ -44,8 +93,6 @@ public class UserController {
                         .success(SuccessCode.OK,
                                 UserFileDto.Response.of(summary)));
     }
-
-    // 이미지 업로드
 
     // 마이페이지 수정
     //@PutMapping("/me")

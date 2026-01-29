@@ -15,4 +15,6 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
         AND (p.likeCount + :delta) >= 0
     """)
     int updateLikeCount(@Param("postId") Long postId, @Param("delta") long delta);
+
+    long countByUserId(Long userId);
 }

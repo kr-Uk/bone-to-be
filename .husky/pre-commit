@@ -1,6 +1,12 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Merge commit인 경우 skip
+if [ -f .git/MERGE_HEAD ]; then
+  echo "🔀 Merge commit detected. Skipping pre-commit hooks..."
+  exit 0
+fi
+
 echo "🔍 Running pre-commit checks..."
 
 # 변경된 파일 확인

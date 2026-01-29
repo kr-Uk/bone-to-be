@@ -9,13 +9,15 @@ public class MyPostListDto {
     public record Response(
             Long postId,
             String imageUrl,
-            Long likeCount
+            Long likeCount,
+            Long commentCount
     ) {
         public static Response of(MyPostSummary summary) {
             return new Response(
                     summary.postId(),
                     summary.imageUrl(),
-                    summary.likeCount()
+                    summary.likeCount(),
+                    summary.commentCount()
             );
         }
     }

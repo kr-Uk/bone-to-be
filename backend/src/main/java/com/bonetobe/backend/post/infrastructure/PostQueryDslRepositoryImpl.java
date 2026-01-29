@@ -95,6 +95,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                         post.height,
                                         post.weight,
                                         postLike.id.isNotNull(),
+                                        post.commentCount,
                                         post.createdAt
                                 )
                         )
@@ -115,7 +116,8 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                 MyPostSummaryRaw.class,
                                 post.id,
                                 storedFile.id,
-                                post.likeCount
+                                post.likeCount,
+                                post.commentCount
                         )
                 )
                 .from(post)
@@ -148,6 +150,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                         post.height,
                                         post.weight,
                                         Expressions.TRUE,
+                                        post.commentCount,
                                         post.createdAt
                                 )
                         )
@@ -181,6 +184,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                         post.height,
                                         post.weight,
                                         postLike.id.isNotNull(),
+                                        post.commentCount,
                                         post.createdAt
                                 )
                         )

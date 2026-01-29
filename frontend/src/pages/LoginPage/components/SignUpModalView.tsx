@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
+
 import {
   checkEmail,
   checkNickname,
@@ -13,11 +16,15 @@ import googleIcon from "@/assets/image/Google.png";
 import kakaoIcon from "@/assets/image/Kakao.png";
 
 
+
 type Props = {
   onSwitchToLogin: () => void;
 };
 
 export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
+
+  const navigate = useNavigate();
+
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [authCode, setAuthCode] = useState("");
@@ -178,6 +185,12 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
       });
   };
 
+    const handleGoogle = () => {
+    window.location.href = "/api/oauth2/authorization/google";
+  };
+    const handleKakao = () => {
+    window.location.href = "/api/oauth2/authorization/kakao";
+  };
   return (
     <S.RightPanel>
         <S.Brand>
@@ -346,11 +359,11 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
           </S.OrRow>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "5px" }}>
-            <S.SocialButton type="button">
+            <S.SocialButton type="button" onClick={handleGoogle}>
               <img alt="Google" src={googleIcon} width={16} height={16} />
               <span>Google</span>
             </S.SocialButton>
-            <S.SocialButtonKakao type="button">
+            <S.SocialButtonKakao type="button" onClick={handleKakao}>
               <img alt="Kakao" src={kakaoIcon} width={16} height={16} />
               <span>Kakao</span>
             </S.SocialButtonKakao>

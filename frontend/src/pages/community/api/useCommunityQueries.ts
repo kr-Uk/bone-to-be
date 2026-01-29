@@ -33,7 +33,18 @@ import type {
   FeedCreateRequest,
 } from "./community.types";
 
-const mapGenderToUi = (gender: "female" | "male"): "F" | "M" => (gender === "female" ? "F" : "M");
+const mapGenderToUi = (gender: "FEMALE" | "MALE"): "F" | "M" => (gender === "FEMALE" ? "F" : "M");
+
+const mapSkeletonTypeToUi = (
+  type: "STRAIGHT" | "WAVE" | "NATURAL",
+): "Straight" | "Wave" | "Natural" => {
+  const map = {
+    STRAIGHT: "Straight" as const,
+    WAVE: "Wave" as const,
+    NATURAL: "Natural" as const,
+  };
+  return map[type];
+};
 
 const mapContentToLines = (content: string) => {
   const lines = content
@@ -47,14 +58,14 @@ const mapContentToLines = (content: string) => {
 const mapFeedItemDtoToUi = (item: FeedListItemDto) => ({
   id: String(item.postId),
   imageUrl: item.imageUrl,
-  username: item.author.nickname,
-  bodyType: item.skeletonType,
+  username: "익명", // author 필드가 없으므로 기본값 제공
+  bodyType: mapSkeletonTypeToUi(item.skeletonType), // "NATURAL" → "Natural"
   height: item.height,
   weight: item.weight,
-  styles: item.style,
-  gender: mapGenderToUi(item.gender),
+  styles: item.style.map((s) => s.toLowerCase()), // ["MINIMAL", "STREET"] → ["minimal", "street"]
+  gender: mapGenderToUi(item.gender), // "FEMALE" → "F"
   isLiked: item.isLiked,
-  likeCount: item.likeCount,
+  likeCount: 0, // likeCount 필드가 없으므로 기본값 0 제공
   createdAt: item.createdAt,
 });
 
@@ -70,7 +81,7 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
   height: detail.height,
   weight: detail.weight,
   content: mapContentToLines(detail.content),
-  tags: detail.style,
+  tags: detail.style.map((s) => s.toLowerCase()), // 대문자 → 소문자 변환
   createdAt: detail.createdAt,
   isLiked: detail.isLiked,
   likeCount: detail.likeCount,
@@ -247,11 +258,13 @@ export function useFeedCreate() {
           fileId: presignedResponse.data.fileId,
           content: params.content,
           gender: params.gender === "F" ? "female" : "male",
-          skeletonType: params.bodyType.toLowerCase() as "natural" | "wave" | "straight",
-          style: params.styles.map((s) => s.toLowerCase()),
+          skeletonType: params.bodyType.toUpperCase() as "NATURAL" | "WAVE" | "STRAIGHT",
+          style: params.styles.map((s) => s.toUpperCase()),
           height: params.height,
           weight: params.weight,
         };
+
+        console.log("Creating feed with request:", feedRequest);
 
         return await createFeed(feedRequest);
       } catch (error) {

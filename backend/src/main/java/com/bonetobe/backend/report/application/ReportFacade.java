@@ -10,6 +10,7 @@ import com.bonetobe.backend.report.infrastructure.ReportMessage;
 import com.bonetobe.backend.report.presentation.dto.ReportResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -51,8 +52,9 @@ public class ReportFacade {
         reportService.delete(report);
     }
 
+    @Transactional
     public void authorizeAndRepresentReport(Long userId, Long reportId) {
         Report report = reportService.isOwner(userId, reportId);
-        reportService.makeRepresentative(report);
+        reportService.makeRepresentative(report, userId);
     }
 }

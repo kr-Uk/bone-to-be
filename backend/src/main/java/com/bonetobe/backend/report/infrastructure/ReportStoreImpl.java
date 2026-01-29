@@ -18,4 +18,9 @@ public class ReportStoreImpl implements ReportStore {
     public Report update(Report report) {
         return report;
     }
+
+    @Override
+    public void changeRepresentative(Long userId) {
+        reportRepository.clearRepresentative(userId);
+    }
 }

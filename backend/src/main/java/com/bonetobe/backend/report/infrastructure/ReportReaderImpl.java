@@ -1,5 +1,7 @@
 package com.bonetobe.backend.report.infrastructure;
 
+import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.report.domain.ReportReader;
 import com.bonetobe.backend.user.domain.User;
@@ -16,7 +18,7 @@ public class ReportReaderImpl implements ReportReader {
     private final ReportRepository reportRepository;
     @Override
     public Report read(Long reportId) {
-        return reportRepository.findByIdAndActive(reportId).orElseThrow();
+        return reportRepository.findByIdAndActive(reportId).orElseThrow(() -> new BusinessException(ErrorCode.NO_SUCH_REPPORT));
     }
 
     @Override

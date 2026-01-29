@@ -3,6 +3,7 @@ package com.bonetobe.backend.report.infrastructure;
 import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -32,4 +33,16 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             and r.representative = true
     """)
     Optional<Report> findRepresentativeReport(@Param("userId") Long userId);
+
+    /*
+     TODO 수정 필요
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+            update Report r
+            set r.representative = false
+            where r.user.id = :userId
+            and r.representative = true
+        """)
+    void clearRepresentative(@Param("userId") Long userId);
 }

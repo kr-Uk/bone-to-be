@@ -3,15 +3,16 @@ package com.bonetobe.backend.report.domain;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ReportServiceImpl implements ReportService {
     private final ReportStore reportStore;
     private final ReportReader reportReader;
@@ -31,6 +32,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Report getReport(Long reportId, Long userId) {
         Report report = reportReader.read(reportId);
         if (!report.getUser().getId().equals(userId)) {
@@ -41,6 +43,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Report> getReportList(Long userId) {
         return reportReader.readReports(userId);
     }
@@ -62,10 +65,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    @Transactional
-    public void makeRepresentative(Report report) {
-        reportReader.readRepresentativeReport(report.getUser().getId()).ifPresent(Report::revokeRepresentative);
-        report.makeRepresentative();
+    public void makeRepresentative(Report report, Long userId) {
+        if (!report.isRepresentative()) {
+            reportStore.changeRepresentative(userId);
+        }
+        report.toggleRepresentative();
         reportStore.update(report);
     }
 

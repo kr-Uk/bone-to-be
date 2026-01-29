@@ -554,8 +554,15 @@ const LikesOverlay = styled.div`
 `;
 
 const LikesPanel = styled.div`
+  --likes-item-height: 72px;
+  --likes-visible-count: 7;
   width: min(640px, 92vw);
-  max-height: 82vh;
+  height: calc(
+    var(--likes-item-height) * var(--likes-visible-count) + 56px
+  );
+  max-height: calc(
+    var(--likes-item-height) * var(--likes-visible-count) + 56px
+  );
   background: #202124;
   border: 1px solid #2f3033;
   border-radius: 18px;
@@ -599,7 +606,7 @@ const LikesList = styled.div`
   gap: 0;
   overflow-y: auto;
   padding: 6px 0;
-  max-height: 504px;
+  max-height: calc(var(--likes-item-height) * var(--likes-visible-count));
 `;
 
 const LikeItem = styled.div`

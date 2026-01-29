@@ -177,30 +177,30 @@ const mockFeedItems: FeedItem[] = [
 ];
 
 const mockLikeUsersPool: FeedLikeUser[] = [
-  { id: "u-1", username: "daily_urban", displayName: "데일리어반", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-2", username: "cozy_fan", displayName: "코지팬", bodyType: "Natural", location: "Daejeon, Korea", avatarUrl: null },
-  { id: "u-3", username: "tone_fit", displayName: "톤핏", bodyType: "Wave", location: "Gwangju, Korea", avatarUrl: null },
-  { id: "u-4", username: "street_lover", displayName: "스트릿러버", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-5", username: "cap_fan", displayName: "캡러버", bodyType: "Natural", location: "Daegu, Korea", avatarUrl: null },
-  { id: "u-6", username: "minimal_daily", displayName: "미니멀데일리", bodyType: "Wave", location: "Gwangju, Korea", avatarUrl: null },
-  { id: "u-7", username: "office_daily", displayName: "오피스데일리", bodyType: "Straight", location: "Incheon, Korea", avatarUrl: null },
-  { id: "u-8", username: "layered_look", displayName: "레이어드룩", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-9", username: "winter_style", displayName: "윈터스타일", bodyType: "Natural", location: "Suwon, Korea", avatarUrl: null },
-  { id: "u-10", username: "chic_vibe", displayName: "시크바이브", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-11", username: "sneaker_daily", displayName: "스니커데일리", bodyType: "Wave", location: "Jeju, Korea", avatarUrl: null },
-  { id: "u-12", username: "muffler_fan", displayName: "머플러러버", bodyType: "Natural", location: "Busan, Korea", avatarUrl: null },
-  { id: "u-13", username: "classic_fit", displayName: "클래식핏", bodyType: "Natural", location: "Ulsan, Korea", avatarUrl: null },
-  { id: "u-14", username: "city_walk", displayName: "시티워크", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-15", username: "street_mode", displayName: "스트릿모드", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-16", username: "daily_fit", displayName: "데일리핏", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-17", username: "comfort_first", displayName: "컴포트퍼스트", bodyType: "Natural", location: "Suwon, Korea", avatarUrl: null },
-  { id: "u-18", username: "scarf_mood", displayName: "스카프무드", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-19", username: "simple_style", displayName: "심플스타일", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-20", username: "pocket_detail", displayName: "포켓디테일", bodyType: "Natural", location: "Ulsan, Korea", avatarUrl: null },
-  { id: "u-21", username: "leather_fan", displayName: "레더팬", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-22", username: "tone_down", displayName: "톤다운", bodyType: "Wave", location: "Incheon, Korea", avatarUrl: null },
-  { id: "u-23", username: "handsome_hojung", displayName: "호정", bodyType: "Natural", location: "Seoul, Korea", avatarUrl: null },
-  { id: "u-24", username: "junyong_cute", displayName: "준영", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: null },
+  { id: "1", username: "daily_urban", displayName: "데일리어반", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/1.jpg", isFollowing: true },
+  { id: "2", username: "cozy_fan", displayName: "코지팬", bodyType: "Natural", location: "Daejeon, Korea", avatarUrl: "https://cdn.myapp.com/profile/2.jpg", isFollowing: false },
+  { id: "3", username: "tone_fit", displayName: "톤핏", bodyType: "Wave", location: "Gwangju, Korea", avatarUrl: "https://cdn.myapp.com/profile/3.jpg", isFollowing: true },
+  { id: "4", username: "street_lover", displayName: "스트릿러버", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/4.jpg", isFollowing: false },
+  { id: "5", username: "cap_fan", displayName: "캡러버", bodyType: "Natural", location: "Daegu, Korea", avatarUrl: "https://cdn.myapp.com/profile/5.jpg", isFollowing: true },
+  { id: "6", username: "minimal_daily", displayName: "미니멀데일리", bodyType: "Wave", location: "Gwangju, Korea", avatarUrl: "https://cdn.myapp.com/profile/6.jpg", isFollowing: false },
+  { id: "7", username: "office_daily", displayName: "오피스데일리", bodyType: "Straight", location: "Incheon, Korea", avatarUrl: "https://cdn.myapp.com/profile/7.jpg", isFollowing: true },
+  { id: "8", username: "layered_look", displayName: "레이어드룩", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/8.jpg", isFollowing: false },
+  { id: "9", username: "winter_style", displayName: "윈터스타일", bodyType: "Natural", location: "Suwon, Korea", avatarUrl: "https://cdn.myapp.com/profile/9.jpg", isFollowing: true },
+  { id: "10", username: "chic_vibe", displayName: "시크바이브", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/10.jpg", isFollowing: false },
+  { id: "11", username: "sneaker_daily", displayName: "스니커데일리", bodyType: "Wave", location: "Jeju, Korea", avatarUrl: "https://cdn.myapp.com/profile/11.jpg", isFollowing: true },
+  { id: "12", username: "muffler_fan", displayName: "머플러러버", bodyType: "Natural", location: "Busan, Korea", avatarUrl: "https://cdn.myapp.com/profile/12.jpg", isFollowing: false },
+  { id: "13", username: "classic_fit", displayName: "클래식핏", bodyType: "Natural", location: "Ulsan, Korea", avatarUrl: "https://cdn.myapp.com/profile/13.jpg", isFollowing: true },
+  { id: "14", username: "city_walk", displayName: "시티워크", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/14.jpg", isFollowing: false },
+  { id: "15", username: "street_mode", displayName: "스트릿모드", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/15.jpg", isFollowing: true },
+  { id: "16", username: "daily_fit", displayName: "데일리핏", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/16.jpg", isFollowing: false },
+  { id: "17", username: "comfort_first", displayName: "컴포트퍼스트", bodyType: "Natural", location: "Suwon, Korea", avatarUrl: "https://cdn.myapp.com/profile/17.jpg", isFollowing: true },
+  { id: "18", username: "scarf_mood", displayName: "스카프무드", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/18.jpg", isFollowing: false },
+  { id: "19", username: "simple_style", displayName: "심플스타일", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/19.jpg", isFollowing: true },
+  { id: "20", username: "pocket_detail", displayName: "포켓디테일", bodyType: "Natural", location: "Ulsan, Korea", avatarUrl: "https://cdn.myapp.com/profile/20.jpg", isFollowing: false },
+  { id: "21", username: "leather_fan", displayName: "레더팬", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/21.jpg", isFollowing: true },
+  { id: "22", username: "tone_down", displayName: "톤다운", bodyType: "Wave", location: "Incheon, Korea", avatarUrl: "https://cdn.myapp.com/profile/22.jpg", isFollowing: false },
+  { id: "23", username: "handsome_hojung", displayName: "호정", bodyType: "Natural", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/23.jpg", isFollowing: true },
+  { id: "24", username: "junyong_cute", displayName: "준영", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/24.jpg", isFollowing: false },
 ];
 
 const pickLikeUsers = (indexes: number[]) =>
@@ -209,6 +209,11 @@ const pickLikeUsers = (indexes: number[]) =>
     .filter((user): user is FeedLikeUser => Boolean(user));
 
 const mapGenderToDto = (gender: "M" | "F") => (gender === "F" ? "female" : "male");
+const mapGenderToBackend = (gender: "M" | "F") => (gender === "F" ? "FEMALE" : "MALE");
+const mapSkeletonTypeToBackend = (type: "Straight" | "Wave" | "Natural") =>
+  type.toUpperCase();
+const mapStyleToBackend = (styles: string[]) =>
+  styles.map((style) => style.toUpperCase());
 
 const toAuthorDto = (item: FeedItem, detail?: FeedDetail): FeedAuthorDto => ({
   memberId: Number(item.id),
@@ -275,18 +280,21 @@ const toCommentDto = (comment: {
 });
 
 const viewerLikeUser: FeedLikeUser = {
-  id: "me",
+  id: "999",
   username: "me",
   displayName: "나",
   bodyType: "Wave",
   location: "Seoul, Korea",
-  avatarUrl: null,
+  avatarUrl: "https://cdn.myapp.com/profile/999.jpg",
+  isFollowing: false,
 };
 
 const mockFeedDetails: Record<string, FeedDetail> = {
   "1": {
     id: "1",
     imageUrl: "https://placehold.co/800x1067?text=Feed_1",
+    height: 162,
+    weight: 50,
     author: {
       username: "fashion_lover",
       bodyType: "Wave",
@@ -308,6 +316,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "2": {
     id: "2",
     imageUrl: "https://placehold.co/800x1067?text=Feed_2",
+    height: 171,
+    weight: 58,
     author: {
       username: "user_name",
       bodyType: "Natural",
@@ -326,6 +336,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "3": {
     id: "3",
     imageUrl: "https://placehold.co/800x1067?text=Feed_3",
+    height: 175,
+    weight: 65,
     author: {
       username: "style_guru",
       bodyType: "Straight",
@@ -344,6 +356,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "4": {
     id: "4",
     imageUrl: "https://placehold.co/800x1067?text=Feed_4",
+    height: 165,
+    weight: 52,
     author: {
       username: "trendsetter",
       bodyType: "Wave",
@@ -362,6 +376,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "5": {
     id: "5",
     imageUrl: "https://placehold.co/800x1067?text=Feed_5",
+    height: 168,
+    weight: 55,
     author: {
       username: "cozy_vibes",
       bodyType: "Natural",
@@ -380,6 +396,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "6": {
     id: "6",
     imageUrl: "https://placehold.co/800x1067?text=Feed_6",
+    height: 180,
+    weight: 72,
     author: {
       username: "urban_style",
       bodyType: "Straight",
@@ -398,6 +416,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "7": {
     id: "7",
     imageUrl: "https://placehold.co/800x1067?text=Feed_7",
+    height: 160,
+    weight: 48,
     author: {
       username: "minimalist_me",
       bodyType: "Wave",
@@ -416,6 +436,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "8": {
     id: "8",
     imageUrl: "https://placehold.co/800x1067?text=Feed_8",
+    height: 176,
+    weight: 68,
     author: {
       username: "casual_king",
       bodyType: "Natural",
@@ -434,6 +456,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "9": {
     id: "9",
     imageUrl: "https://placehold.co/800x1067?text=Feed_9",
+    height: 169,
+    weight: 54,
     author: {
       username: "street_chic",
       bodyType: "Straight",
@@ -452,6 +476,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "10": {
     id: "10",
     imageUrl: "https://placehold.co/800x1067?text=Feed_10",
+    height: 173,
+    weight: 60,
     author: {
       username: "fashion_forward",
       bodyType: "Wave",
@@ -470,6 +496,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "11": {
     id: "11",
     imageUrl: "https://placehold.co/800x1067?text=Feed_11",
+    height: 182,
+    weight: 75,
     author: {
       username: "dapper_dan",
       bodyType: "Natural",
@@ -488,6 +516,8 @@ const mockFeedDetails: Record<string, FeedDetail> = {
   "12": {
     id: "12",
     imageUrl: "https://placehold.co/800x1067?text=Feed_12",
+    height: 162,
+    weight: 49,
     author: {
       username: "vibe_check",
       bodyType: "Straight",
@@ -949,6 +979,52 @@ export const communityHandlers = [
     return HttpResponse.json(response);
   }),
 
+  // GET /feeds/:feedId (피드 단일 조회 - 백엔드 스펙)
+  http.get("/feeds/:feedId", async ({ params }) => {
+    await delay(250);
+
+    const { feedId } = params;
+    const detail = mockFeedDetails[String(feedId)];
+
+    if (!detail) {
+      return HttpResponse.json(
+        { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
+        { status: 400 }
+      );
+    }
+
+    const item = mockFeedItems.find((feed) => feed.id === String(feedId));
+    if (!item) {
+      return HttpResponse.json(
+        { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
+        { status: 400 }
+      );
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: {
+        postId: Number(detail.id),
+        imageUrl: detail.imageUrl,
+        style: mapStyleToBackend(item.styles),
+        gender: mapGenderToBackend(item.gender),
+        height: item.height,
+        weight: item.weight,
+        skeletonType: mapSkeletonTypeToBackend(detail.author.bodyType),
+        content: detail.content.join("\n"),
+        likeCount: detail.likeCount,
+        isLiked: detail.isLiked,
+        author: {
+          userId: Number(item.id),
+          nickname: detail.author.username,
+          isFollowing: false,
+        },
+        createdAt: detail.createdAt,
+      },
+    });
+  }),
+
   // GET /api/feed/:feedId/likes (좋아요 유저 목록)
   http.get("/api/feed/:feedId/likes", async ({ params, request }) => {
     await delay(250);
@@ -977,6 +1053,31 @@ export const communityHandlers = [
     };
 
     return HttpResponse.json(response);
+  }),
+
+  // GET /feeds/:feedId/likes (좋아요 유저 목록 - 백엔드 스펙)
+  http.get("/feeds/:feedId/likes", async ({ params }) => {
+    await delay(250);
+
+    const { feedId } = params;
+    const detail = mockFeedDetails[String(feedId)];
+    if (!detail) {
+      return HttpResponse.json(
+        { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
+        { status: 400 }
+      );
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: detail.likeUsers.map((user) => ({
+        userId: Number(user.id),
+        nickname: user.username,
+        profileImageUrl: user.avatarUrl ?? null,
+        isFollowing: Boolean(user.isFollowing),
+      })),
+    });
   }),
 
   // GET /api/feed/:feedId/comments (댓글 리스트)
@@ -1008,6 +1109,35 @@ export const communityHandlers = [
     };
 
     return HttpResponse.json(response);
+  }),
+
+  // GET /feeds/:feedId/replies (댓글 리스트 - 백엔드 스펙)
+  http.get("/feeds/:feedId/replies", async ({ params, request }) => {
+    await delay(250);
+
+    const { feedId } = params;
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get("page") || "1");
+    const size = parseInt(url.searchParams.get("size") || "50");
+
+    const source = mockFeedComments[String(feedId)];
+    if (!source) {
+      return HttpResponse.json(
+        { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
+        { status: 400 }
+      );
+    }
+
+    const start = (page - 1) * size;
+    const end = start + size;
+    const items = source.items.slice(start, end);
+
+    return HttpResponse.json({
+      postId: Number(feedId),
+      commentCount: source.items.length,
+      hasNext: end < source.items.length,
+      comments: items.map(toCommentDto),
+    });
   }),
 
   // POST /api/feed/:feedId/comments (댓글 작성)
@@ -1051,5 +1181,47 @@ export const communityHandlers = [
 
     const response: FeedCommentDto = toCommentDto(newComment);
     return HttpResponse.json(response);
+  }),
+
+  // POST /feeds/:feedId/replies (댓글 작성 - 백엔드 스펙)
+  http.post("/feeds/:feedId/replies", async ({ params, request }) => {
+    await delay(200);
+
+    const { feedId } = params;
+    const source = mockFeedComments[String(feedId)];
+
+    if (!source) {
+      return HttpResponse.json(
+        { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
+        { status: 400 }
+      );
+    }
+
+    const body = (await request.json()) as {
+      text?: string;
+      parentCommentId?: string | null;
+    };
+
+    const text = (body.text ?? "").trim();
+    if (!text) {
+      return HttpResponse.json(
+        { code: 400, message: "댓글 내용을 입력해주세요.", data: null },
+        { status: 400 }
+      );
+    }
+
+    const newComment = {
+      id: `c-${Date.now()}`,
+      username: "me",
+      text,
+      createdAt: new Date().toISOString(),
+      isLiked: false,
+      likeCount: 0,
+      parentCommentId: body.parentCommentId ?? null,
+    };
+
+    source.items.push(newComment);
+
+    return HttpResponse.json(toCommentDto(newComment));
   }),
 ];

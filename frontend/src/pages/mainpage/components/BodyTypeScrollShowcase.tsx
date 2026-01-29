@@ -71,11 +71,12 @@ const Frame = styled.div`
   }
 `;
 
-const NavRail = styled.div<{ $show: boolean }>`
-  position: fixed;
-  top: 0;
+const NavRail = styled.div<{ $show: boolean; $mode: "fixed" | "absolute" }>`
+  position: ${({ $mode }) => ($mode === "fixed" ? "fixed" : "absolute")};
+  top: ${({ $mode }) => ($mode === "fixed" ? "0" : "auto")};
+  bottom: ${({ $mode }) => ($mode === "fixed" ? "auto" : "0")};
   right: 0;
-  height: 100vh;
+  height: ${({ $mode }) => ($mode === "fixed" ? "100vh" : "100%")};
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -84,7 +85,8 @@ const NavRail = styled.div<{ $show: boolean }>`
 
   opacity: ${({ $show }) => ($show ? 1 : 0)};
   transform: ${({ $show }) => ($show ? "translateY(0)" : "translateY(-8px)")};
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: ${({ $show }) =>
+    $show ? "opacity 0.2s ease, transform 0.2s ease" : "opacity 0s ease, transform 0s ease"};
 
   @media (max-width: 900px) {
     display: none;
@@ -467,6 +469,7 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
 };
 
 export function BodyTypeScrollShowcase() {
+  const wrapRef = useRef<HTMLElement | null>(null);
   const sections: BodyTypeSection[] = useMemo(
     () => [
       {
@@ -531,13 +534,23 @@ export function BodyTypeScrollShowcase() {
   }, [sections]);
 
   const [showNav, setShowNav] = useState(false);
+  const [navMode, setNavMode] = useState<"fixed" | "absolute">("fixed");
   useEffect(() => {
     const first = document.getElementById("body-type-straight");
     if (!first) return;
 
     const onScroll = () => {
+      if (!wrapRef.current) {
+        setShowNav(false);
+        return;
+      }
       const top = first.getBoundingClientRect().top;
-      setShowNav(top <= 0);
+      const wrapRect = wrapRef.current.getBoundingClientRect();
+      const hideOffset = 24;
+      const isInSection = wrapRect.top <= 0 && wrapRect.bottom > hideOffset;
+      const shouldPinToBottom = wrapRect.bottom <= window.innerHeight && wrapRect.bottom > 0;
+      setShowNav(top <= 0 && isInSection);
+      setNavMode(shouldPinToBottom ? "absolute" : "fixed");
     };
 
     onScroll();
@@ -546,8 +559,8 @@ export function BodyTypeScrollShowcase() {
   }, []);
 
   return (
-    <Wrap>
-      <NavRail $show={showNav}>
+    <Wrap ref={wrapRef}>
+      <NavRail $show={showNav} $mode={navMode}>
         <FloatingNav aria-label="Body type sections">
           {sections.map((section) => {
             const isActive = activeKey === section.key;

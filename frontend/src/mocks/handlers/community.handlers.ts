@@ -178,30 +178,222 @@ const mockFeedItems: FeedItem[] = [
 let uploadAttemptCount = 0;
 
 const mockLikeUsersPool: FeedLikeUser[] = [
-  { id: "1", username: "daily_urban", displayName: "데일리어반", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/1.jpg", isFollowing: true },
-  { id: "2", username: "cozy_fan", displayName: "코지팬", bodyType: "Natural", location: "Daejeon, Korea", avatarUrl: "https://cdn.myapp.com/profile/2.jpg", isFollowing: false },
-  { id: "3", username: "tone_fit", displayName: "톤핏", bodyType: "Wave", location: "Gwangju, Korea", avatarUrl: "https://cdn.myapp.com/profile/3.jpg", isFollowing: true },
-  { id: "4", username: "street_lover", displayName: "스트릿러버", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/4.jpg", isFollowing: false },
-  { id: "5", username: "cap_fan", displayName: "캡러버", bodyType: "Natural", location: "Daegu, Korea", avatarUrl: "https://cdn.myapp.com/profile/5.jpg", isFollowing: true },
-  { id: "6", username: "minimal_daily", displayName: "미니멀데일리", bodyType: "Wave", location: "Gwangju, Korea", avatarUrl: "https://cdn.myapp.com/profile/6.jpg", isFollowing: false },
-  { id: "7", username: "office_daily", displayName: "오피스데일리", bodyType: "Straight", location: "Incheon, Korea", avatarUrl: "https://cdn.myapp.com/profile/7.jpg", isFollowing: true },
-  { id: "8", username: "layered_look", displayName: "레이어드룩", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/8.jpg", isFollowing: false },
-  { id: "9", username: "winter_style", displayName: "윈터스타일", bodyType: "Natural", location: "Suwon, Korea", avatarUrl: "https://cdn.myapp.com/profile/9.jpg", isFollowing: true },
-  { id: "10", username: "chic_vibe", displayName: "시크바이브", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/10.jpg", isFollowing: false },
-  { id: "11", username: "sneaker_daily", displayName: "스니커데일리", bodyType: "Wave", location: "Jeju, Korea", avatarUrl: "https://cdn.myapp.com/profile/11.jpg", isFollowing: true },
-  { id: "12", username: "muffler_fan", displayName: "머플러러버", bodyType: "Natural", location: "Busan, Korea", avatarUrl: "https://cdn.myapp.com/profile/12.jpg", isFollowing: false },
-  { id: "13", username: "classic_fit", displayName: "클래식핏", bodyType: "Natural", location: "Ulsan, Korea", avatarUrl: "https://cdn.myapp.com/profile/13.jpg", isFollowing: true },
-  { id: "14", username: "city_walk", displayName: "시티워크", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/14.jpg", isFollowing: false },
-  { id: "15", username: "street_mode", displayName: "스트릿모드", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/15.jpg", isFollowing: true },
-  { id: "16", username: "daily_fit", displayName: "데일리핏", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/16.jpg", isFollowing: false },
-  { id: "17", username: "comfort_first", displayName: "컴포트퍼스트", bodyType: "Natural", location: "Suwon, Korea", avatarUrl: "https://cdn.myapp.com/profile/17.jpg", isFollowing: true },
-  { id: "18", username: "scarf_mood", displayName: "스카프무드", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/18.jpg", isFollowing: false },
-  { id: "19", username: "simple_style", displayName: "심플스타일", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/19.jpg", isFollowing: true },
-  { id: "20", username: "pocket_detail", displayName: "포켓디테일", bodyType: "Natural", location: "Ulsan, Korea", avatarUrl: "https://cdn.myapp.com/profile/20.jpg", isFollowing: false },
-  { id: "21", username: "leather_fan", displayName: "레더팬", bodyType: "Straight", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/21.jpg", isFollowing: true },
-  { id: "22", username: "tone_down", displayName: "톤다운", bodyType: "Wave", location: "Incheon, Korea", avatarUrl: "https://cdn.myapp.com/profile/22.jpg", isFollowing: false },
-  { id: "23", username: "handsome_hojung", displayName: "호정", bodyType: "Natural", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/23.jpg", isFollowing: true },
-  { id: "24", username: "junyong_cute", displayName: "준영", bodyType: "Wave", location: "Seoul, Korea", avatarUrl: "https://cdn.myapp.com/profile/24.jpg", isFollowing: false },
+  {
+    id: "1",
+    username: "daily_urban",
+    displayName: "데일리어반",
+    bodyType: "Straight",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/1.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "2",
+    username: "cozy_fan",
+    displayName: "코지팬",
+    bodyType: "Natural",
+    location: "Daejeon, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/2.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "3",
+    username: "tone_fit",
+    displayName: "톤핏",
+    bodyType: "Wave",
+    location: "Gwangju, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/3.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "4",
+    username: "street_lover",
+    displayName: "스트릿러버",
+    bodyType: "Straight",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/4.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "5",
+    username: "cap_fan",
+    displayName: "캡러버",
+    bodyType: "Natural",
+    location: "Daegu, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/5.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "6",
+    username: "minimal_daily",
+    displayName: "미니멀데일리",
+    bodyType: "Wave",
+    location: "Gwangju, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/6.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "7",
+    username: "office_daily",
+    displayName: "오피스데일리",
+    bodyType: "Straight",
+    location: "Incheon, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/7.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "8",
+    username: "layered_look",
+    displayName: "레이어드룩",
+    bodyType: "Wave",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/8.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "9",
+    username: "winter_style",
+    displayName: "윈터스타일",
+    bodyType: "Natural",
+    location: "Suwon, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/9.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "10",
+    username: "chic_vibe",
+    displayName: "시크바이브",
+    bodyType: "Straight",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/10.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "11",
+    username: "sneaker_daily",
+    displayName: "스니커데일리",
+    bodyType: "Wave",
+    location: "Jeju, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/11.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "12",
+    username: "muffler_fan",
+    displayName: "머플러러버",
+    bodyType: "Natural",
+    location: "Busan, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/12.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "13",
+    username: "classic_fit",
+    displayName: "클래식핏",
+    bodyType: "Natural",
+    location: "Ulsan, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/13.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "14",
+    username: "city_walk",
+    displayName: "시티워크",
+    bodyType: "Straight",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/14.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "15",
+    username: "street_mode",
+    displayName: "스트릿모드",
+    bodyType: "Straight",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/15.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "16",
+    username: "daily_fit",
+    displayName: "데일리핏",
+    bodyType: "Wave",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/16.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "17",
+    username: "comfort_first",
+    displayName: "컴포트퍼스트",
+    bodyType: "Natural",
+    location: "Suwon, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/17.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "18",
+    username: "scarf_mood",
+    displayName: "스카프무드",
+    bodyType: "Wave",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/18.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "19",
+    username: "simple_style",
+    displayName: "심플스타일",
+    bodyType: "Straight",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/19.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "20",
+    username: "pocket_detail",
+    displayName: "포켓디테일",
+    bodyType: "Natural",
+    location: "Ulsan, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/20.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "21",
+    username: "leather_fan",
+    displayName: "레더팬",
+    bodyType: "Straight",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/21.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "22",
+    username: "tone_down",
+    displayName: "톤다운",
+    bodyType: "Wave",
+    location: "Incheon, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/22.jpg",
+    isFollowing: false,
+  },
+  {
+    id: "23",
+    username: "handsome_hojung",
+    displayName: "호정",
+    bodyType: "Natural",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/23.jpg",
+    isFollowing: true,
+  },
+  {
+    id: "24",
+    username: "junyong_cute",
+    displayName: "준영",
+    bodyType: "Wave",
+    location: "Seoul, Korea",
+    avatarUrl: "https://cdn.myapp.com/profile/24.jpg",
+    isFollowing: false,
+  },
 ];
 
 const pickLikeUsers = (indexes: number[]) =>
@@ -211,10 +403,8 @@ const pickLikeUsers = (indexes: number[]) =>
 
 const mapGenderToDto = (gender: "M" | "F") => (gender === "F" ? "female" : "male");
 const mapGenderToBackend = (gender: "M" | "F") => (gender === "F" ? "FEMALE" : "MALE");
-const mapSkeletonTypeToBackend = (type: "Straight" | "Wave" | "Natural") =>
-  type.toUpperCase();
-const mapStyleToBackend = (styles: string[]) =>
-  styles.map((style) => style.toUpperCase());
+const mapSkeletonTypeToBackend = (type: "Straight" | "Wave" | "Natural") => type.toUpperCase();
+const mapStyleToBackend = (styles: string[]) => styles.map((style) => style.toUpperCase());
 
 const toAuthorDto = (item: FeedItem, detail?: FeedDetail): FeedAuthorDto => ({
   memberId: Number(item.id),
@@ -545,7 +735,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "자켓 정보 알 수 있을까요?",
         createdAt: "2026-01-20T12:10:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-2",
@@ -553,7 +743,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "대박 너무 이뻐요 진심;;",
         createdAt: "2026-01-20T12:40:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-3",
@@ -561,7 +751,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "핏이 정말 좋네요! :)",
         createdAt: "2026-01-20T13:05:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 3,
@@ -576,7 +766,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "코트 어디 제품인가요?",
         createdAt: "2026-01-19T16:10:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 1,
@@ -591,7 +781,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "셋업 컬러 너무 좋아요!",
         createdAt: "2026-01-21T09:05:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-6",
@@ -599,7 +789,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "로퍼 정보 궁금합니다.",
         createdAt: "2026-01-21T09:40:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 2,
@@ -614,7 +804,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "패딩 핏 좋네요!",
         createdAt: "2026-01-22T13:30:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-8",
@@ -622,7 +812,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "볼캡 어디 브랜드인가요?",
         createdAt: "2026-01-22T13:55:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-9",
@@ -630,7 +820,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "스트릿 감성 제대로!",
         createdAt: "2026-01-22T14:10:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 3,
@@ -645,7 +835,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "톤온톤 예쁩니다.",
         createdAt: "2026-01-18T15:10:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 1,
@@ -660,7 +850,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "블랙 코트 멋져요!",
         createdAt: "2026-01-17T10:05:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-12",
@@ -668,7 +858,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "도시 감성 뿜뿜입니다.",
         createdAt: "2026-01-17T10:22:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 2,
@@ -683,7 +873,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "액세서리 포인트 굿!",
         createdAt: "2026-01-21T16:30:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-14",
@@ -691,7 +881,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "색감 너무 잘 맞네요.",
         createdAt: "2026-01-21T16:50:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 2,
@@ -706,7 +896,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "편한 룩 최고죠!",
         createdAt: "2026-01-20T11:40:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 1,
@@ -721,7 +911,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "레더 재킷 멋져요.",
         createdAt: "2026-01-22T13:50:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-17",
@@ -729,7 +919,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "스트릿 느낌 완전 좋아요!",
         createdAt: "2026-01-22T14:05:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-18",
@@ -737,7 +927,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "색감 조합 최고.",
         createdAt: "2026-01-22T14:30:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 3,
@@ -752,7 +942,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "레이어드 잘하셨네요!",
         createdAt: "2026-01-23T10:30:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-20",
@@ -760,7 +950,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "머플러 색감 궁금해요.",
         createdAt: "2026-01-23T10:55:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-21",
@@ -768,7 +958,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "겨울 코디 참고할게요!",
         createdAt: "2026-01-23T11:10:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-22",
@@ -776,7 +966,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "핏 너무 예뻐요.",
         createdAt: "2026-01-23T11:25:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-23",
@@ -784,7 +974,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "색 조합 최고네요.",
         createdAt: "2026-01-23T11:40:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 5,
@@ -799,7 +989,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "클래식 무드 최고!",
         createdAt: "2026-01-16T16:10:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
       {
         id: "c-25",
@@ -807,7 +997,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "포켓치프 포인트 좋네요.",
         createdAt: "2026-01-16T16:35:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 2,
@@ -822,7 +1012,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         text: "스니커즈 매치 굿!",
         createdAt: "2026-01-19T08:15:00Z",
         isLiked: false,
-        likeCount: 0
+        likeCount: 0,
       },
     ],
     total: 1,
@@ -988,8 +1178,12 @@ export const communityHandlers = [
       id: String(mockFeedItems.length + 1),
       imageUrl: `https://placehold.co/400x533?text=NewFeed_${body.fileId}`,
       username: "current_user",
-      bodyType: body.skeletonType === "natural" ? "Natural" :
-                body.skeletonType === "wave" ? "Wave" : "Straight",
+      bodyType:
+        body.skeletonType === "natural"
+          ? "Natural"
+          : body.skeletonType === "wave"
+            ? "Wave"
+            : "Straight",
       height: body.height,
       weight: body.weight,
       styles: body.style,
@@ -1039,9 +1233,7 @@ export const communityHandlers = [
     if (minHeight && maxHeight) {
       const min = parseInt(minHeight);
       const max = parseInt(maxHeight);
-      filteredItems = filteredItems.filter(
-        (item) => item.height >= min && item.height <= max
-      );
+      filteredItems = filteredItems.filter((item) => item.height >= min && item.height <= max);
     }
 
     // 몸무게 범위 필터
@@ -1049,7 +1241,7 @@ export const communityHandlers = [
       const min = parseInt(minWeight);
       const max = parseInt(maxWeight);
       filteredItems = filteredItems.filter(
-        (item) => item.weight && item.weight >= min && item.weight <= max
+        (item) => item.weight && item.weight >= min && item.weight <= max,
       );
     }
 
@@ -1057,7 +1249,7 @@ export const communityHandlers = [
     if (styleParam) {
       const styles = styleParam.split(",").map((s) => s.trim().toLowerCase());
       filteredItems = filteredItems.filter((item) =>
-        item.styles.some((itemStyle) => styles.includes(itemStyle.toLowerCase()))
+        item.styles.some((itemStyle) => styles.includes(itemStyle.toLowerCase())),
       );
     }
 
@@ -1066,8 +1258,7 @@ export const communityHandlers = [
       filteredItems.sort((a, b) => b.likeCount - a.likeCount);
     } else if (sort === "latest") {
       filteredItems.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
     }
 
@@ -1077,9 +1268,7 @@ export const communityHandlers = [
     const paginatedItems = filteredItems.slice(start, end);
 
     const response: FeedListResponseDto = {
-      items: paginatedItems.map((item) =>
-        toFeedListItemDto(item, mockFeedDetails[item.id])
-      ),
+      items: paginatedItems.map((item) => toFeedListItemDto(item, mockFeedDetails[item.id])),
       total: filteredItems.length,
       page,
       hasMore: end < filteredItems.length,
@@ -1097,10 +1286,7 @@ export const communityHandlers = [
     const mockDetail = mockFeedDetails[String(feedId)];
 
     if (!mockItem) {
-      return HttpResponse.json(
-        { error: "피드를 찾을 수 없습니다." },
-        { status: 404 }
-      );
+      return HttpResponse.json({ error: "피드를 찾을 수 없습니다." }, { status: 404 });
     }
 
     // 좋아요 토글
@@ -1115,9 +1301,7 @@ export const communityHandlers = [
           mockDetail.likeUsers.unshift(viewerLikeUser);
         }
       } else {
-        mockDetail.likeUsers = mockDetail.likeUsers.filter(
-          (user) => user.id !== viewerLikeUser.id
-        );
+        mockDetail.likeUsers = mockDetail.likeUsers.filter((user) => user.id !== viewerLikeUser.id);
       }
       mockDetail.likeCount = mockDetail.likeUsers.length;
       mockItem.likeCount = mockDetail.likeCount;
@@ -1128,7 +1312,6 @@ export const communityHandlers = [
       isLiked: mockItem.isLiked,
       likeCount: mockItem.likeCount,
     });
-
   }),
 
   // GET /api/feeds/:feedId (피드 상세)
@@ -1139,18 +1322,12 @@ export const communityHandlers = [
     const detail = mockFeedDetails[String(feedId)];
 
     if (!detail) {
-      return HttpResponse.json(
-        { error: "피드를 찾을 수 없습니다." },
-        { status: 404 }
-      );
+      return HttpResponse.json({ error: "피드를 찾을 수 없습니다." }, { status: 404 });
     }
 
     const item = mockFeedItems.find((feed) => feed.id === String(feedId));
     if (!item) {
-      return HttpResponse.json(
-        { error: "피드를 찾을 수 없습니다." },
-        { status: 404 }
-      );
+      return HttpResponse.json({ error: "피드를 찾을 수 없습니다." }, { status: 404 });
     }
 
     const response: FeedDetailDto = toFeedDetailDto(item, detail);
@@ -1167,7 +1344,7 @@ export const communityHandlers = [
     if (!detail) {
       return HttpResponse.json(
         { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -1175,7 +1352,7 @@ export const communityHandlers = [
     if (!item) {
       return HttpResponse.json(
         { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -1210,10 +1387,7 @@ export const communityHandlers = [
     const { feedId } = params;
     const detail = mockFeedDetails[String(feedId)];
     if (!detail) {
-      return HttpResponse.json(
-        { error: "피드를 찾을 수 없습니다." },
-        { status: 404 }
-      );
+      return HttpResponse.json({ error: "피드를 찾을 수 없습니다." }, { status: 404 });
     }
 
     const url = new URL(request.url);
@@ -1242,7 +1416,7 @@ export const communityHandlers = [
     if (!detail) {
       return HttpResponse.json(
         { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -1269,10 +1443,7 @@ export const communityHandlers = [
 
     const source = mockFeedComments[String(feedId)];
     if (!source) {
-      return HttpResponse.json(
-        { error: "댓글을 찾을 수 없습니다." },
-        { status: 404 }
-      );
+      return HttpResponse.json({ error: "댓글을 찾을 수 없습니다." }, { status: 404 });
     }
 
     const start = (page - 1) * size;
@@ -1302,7 +1473,7 @@ export const communityHandlers = [
     if (!source) {
       return HttpResponse.json(
         { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -1326,10 +1497,7 @@ export const communityHandlers = [
     const source = mockFeedComments[String(feedId)];
 
     if (!source) {
-      return HttpResponse.json(
-        { error: "댓글을 찾을 수 없습니다." },
-        { status: 404 }
-      );
+      return HttpResponse.json({ error: "댓글을 찾을 수 없습니다." }, { status: 404 });
     }
 
     const body = (await request.json()) as {
@@ -1339,10 +1507,7 @@ export const communityHandlers = [
 
     const text = (body.text ?? "").trim();
     if (!text) {
-      return HttpResponse.json(
-        { error: "댓글 내용을 입력해주세요." },
-        { status: 400 }
-      );
+      return HttpResponse.json({ error: "댓글 내용을 입력해주세요." }, { status: 400 });
     }
 
     const newComment = {
@@ -1371,7 +1536,7 @@ export const communityHandlers = [
     if (!source) {
       return HttpResponse.json(
         { code: 400, message: "게시글을 찾을 수 없습니다.", data: null },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -1384,7 +1549,7 @@ export const communityHandlers = [
     if (!text) {
       return HttpResponse.json(
         { code: 400, message: "댓글 내용을 입력해주세요.", data: null },
-        { status: 400 }
+        { status: 400 },
       );
     }
 

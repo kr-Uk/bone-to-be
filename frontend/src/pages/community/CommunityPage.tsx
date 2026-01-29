@@ -4,12 +4,12 @@ import styled from "styled-components";
 
 import { useFeedList, useLikeToggle } from "./api";
 import { FeedCreateModal } from "./components/FeedCreateModal";
+import { FeedDetailModal } from "./components/FeedDetailModal";
 import { FeedFAB } from "./components/FeedFAB";
 import { FeedFilters } from "./components/FeedFilters";
 import { FeedGrid } from "./components/FeedGrid";
 import { FeedHeader } from "./components/FeedHeader";
 import { SelectedFilters } from "./components/SelectedFilters";
-import { FeedDetailModal } from "./components/FeedDetailModal";
 
 import type { FeedFilters as FeedFiltersType, SortBy } from "./api";
 

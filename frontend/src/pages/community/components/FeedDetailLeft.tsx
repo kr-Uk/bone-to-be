@@ -52,4 +52,3 @@ const Placeholder = styled.div`
   color: #a1a1a1;
   font-size: 14px;
 `;
-

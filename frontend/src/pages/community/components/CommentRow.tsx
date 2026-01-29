@@ -1,6 +1,7 @@
-import styled from "styled-components";
 import { useState } from "react";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+import styled from "styled-components";
+
 import { CommentItem } from "./CommentItem";
 
 interface Props {
@@ -43,7 +44,9 @@ const LikeButton = styled.button<{ liked: boolean }>`
   color: ${({ liked }) => (liked ? "#ef4444" : "#a1a1a1")};
 
   svg {
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease;
   }
 
   &:hover svg {

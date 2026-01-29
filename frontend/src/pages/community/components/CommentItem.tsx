@@ -18,9 +18,7 @@ export function CommentItem({ username, text, time, likeCount }: Props) {
         <CommentText>{text}</CommentText>
         <MetaRow>
           <Time>{time}</Time>
-          {likeCount > 0 ? (
-            <LikeCount>좋아요 {formatCount(likeCount)}개</LikeCount>
-          ) : null}
+          {likeCount > 0 ? <LikeCount>좋아요 {formatCount(likeCount)}개</LikeCount> : null}
         </MetaRow>
       </TextArea>
     </Wrapper>
@@ -58,7 +56,7 @@ const CommentText = styled.div`
   color: #e5e5e5;
   @media (max-width: 430px) {
     font-size: 14px;
-  }  
+  }
 `;
 
 const MetaRow = styled.div`

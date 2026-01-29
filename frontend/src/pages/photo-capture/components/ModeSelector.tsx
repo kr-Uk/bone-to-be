@@ -34,12 +34,10 @@ const TabButton = styled.button<{ $active: boolean }>`
   transition: all 0.3s ease;
   position: relative;
   background-color: transparent;
-  color: ${({ theme, $active }) =>
-    $active ? theme.colors.purple[600] : theme.colors.gray[400]};
+  color: ${({ theme, $active }) => ($active ? theme.colors.purple[600] : theme.colors.gray[400])};
 
   &:hover {
-    color: ${({ theme, $active }) =>
-      $active ? theme.colors.purple[600] : theme.colors.gray[300]};
+    color: ${({ theme, $active }) => ($active ? theme.colors.purple[600] : theme.colors.gray[300])};
   }
 
   &:focus {

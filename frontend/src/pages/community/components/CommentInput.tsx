@@ -1,6 +1,7 @@
-import styled from "styled-components";
-import type { KeyboardEvent } from "react";
 import { forwardRef } from "react";
+import styled from "styled-components";
+
+import type { KeyboardEvent } from "react";
 
 interface Props {
   value: string;

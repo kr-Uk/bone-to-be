@@ -1,5 +1,5 @@
-import { MdMyLocation } from 'react-icons/md';
-import styled from 'styled-components';
+import { MdMyLocation } from "react-icons/md";
+import styled from "styled-components";
 
 const Card = styled.div`
   background: rgba(38, 38, 38, 0.6);
@@ -60,9 +60,9 @@ const Bullet = styled.span`
 `;
 
 const guideItems = [
-  '머리부터 발끝까지 전신이 나오도록 촬영해주세요',
-  '몸의 체형이 드러나는 옷을 입고 촬영해주세요',
-  '양손은 보고 팔은 벌린 A-포즈 취해주세요',
+  "머리부터 발끝까지 전신이 나오도록 촬영해주세요",
+  "몸의 체형이 드러나는 옷을 입고 촬영해주세요",
+  "양손은 보고 팔은 벌린 A-포즈 취해주세요",
 ];
 
 export const ScanningGuideBullet = () => {

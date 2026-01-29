@@ -179,7 +179,10 @@ const ProfilePage = () => {
             {isOwner ? (
               <BodyTypeHistorySection history={profile.bodyTypeHistory} />
             ) : (
-              <SkeletalTypeSection bodyType={profile.bodyType} bodyTypeRatio={profile.bodyTypeRatio} />
+              <SkeletalTypeSection
+                bodyType={profile.bodyType}
+                bodyTypeRatio={profile.bodyTypeRatio}
+              />
             )}
             <PostsSection posts={profile.posts} saved={profile.saved} />
           </Content>

@@ -4,7 +4,8 @@ import { fetchFollowList } from "../api/profile.api";
 
 import type { FollowModalType, FollowUser } from "../api/profile.types";
 
-export const followListQueryKey = (type: FollowModalType) => ["profile", "followList", type] as const;
+export const followListQueryKey = (type: FollowModalType) =>
+  ["profile", "followList", type] as const;
 
 export const useFollowListQuery = (
   type: FollowModalType | null,

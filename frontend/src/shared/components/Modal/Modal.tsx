@@ -30,10 +30,8 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 
   return createPortal(
     <S.Overlay onClick={onClose}>
-      <S.Container onClick={(e) => e.stopPropagation()}>
-        {children}
-      </S.Container>
+      <S.Container onClick={(e) => e.stopPropagation()}>{children}</S.Container>
     </S.Overlay>,
-    document.body
+    document.body,
   );
 };

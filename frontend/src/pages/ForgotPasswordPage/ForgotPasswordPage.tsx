@@ -8,7 +8,6 @@ import LoginHeader from "@/pages/LoginPage/components/LoginHeader";
 import { NaturalShape, StraightShape, WaveShape } from "@/shared/components/BoneShapes";
 import { usePasswordResetRequest } from "@/shared/hooks/usePasswordResetRequest";
 
-
 type FormSectionProps = {
   email: string;
   emailTrimmed: string;
@@ -67,7 +66,11 @@ const ForgotPasswordFormSection = ({
     </Field>
 
     <ButtonRow>
-      <PrimaryButton type="button" onClick={onSubmit} disabled={!isEmailFormatValid || isSubmitting}>
+      <PrimaryButton
+        type="button"
+        onClick={onSubmit}
+        disabled={!isEmailFormatValid || isSubmitting}
+      >
         <PrimaryButtonText>{isSubmitting ? "전송 중..." : "링크 전송"}</PrimaryButtonText>
       </PrimaryButton>
     </ButtonRow>
@@ -277,7 +280,13 @@ const Header = styled.div`
 const Title = styled.h1`
   margin: 0;
   color: ${({ theme }) => theme.colors.gray[50]};
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 1.875rem;
   font-weight: 700;
   line-height: 2.25rem;
@@ -300,7 +309,13 @@ const DescGroup = styled.div`
 const Desc = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.colors.gray[500]};
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 0.875rem;
   font-weight: 300;
   line-height: 1.425rem;
@@ -328,7 +343,13 @@ const Field = styled.div`
 
 const Label = styled.span`
   color: ${({ theme }) => theme.colors.gray[500]};
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.0375rem;
@@ -348,7 +369,13 @@ const Input = styled.input`
   border: 1px solid ${({ theme }) => theme.colors.gray[700]};
   background: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.gray[50]};
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 0.875rem;
   outline: none;
 
@@ -406,7 +433,13 @@ const MailIcon = styled(LuMail)<{ $active: boolean; $invalid: boolean }>`
 const ErrorText = styled.p`
   margin: 0.25rem 0 0;
   color: #ef4444;
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 0.75rem;
   line-height: 1rem;
 `;
@@ -447,7 +480,13 @@ const PrimaryButton = styled.button`
 
 const PrimaryButtonText = styled.span`
   color: ${({ theme }) => theme.colors.gray[50]};
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.021875rem;
@@ -466,7 +505,13 @@ const LinkButton = styled.button`
   all: unset;
   cursor: pointer;
   color: ${({ theme }) => theme.colors.gray[500]};
-  font-family: "Pretendard", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family:
+    "Pretendard",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   font-size: 0.75rem;
   font-weight: 400;
   line-height: 1rem;

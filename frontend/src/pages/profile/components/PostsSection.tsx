@@ -36,7 +36,8 @@ const Tab = styled.button<{ $active?: boolean }>`
   align-items: center;
   gap: 0.625rem;
   padding-top: 0.2rem;
-  color: ${({ $active }) => ($active ? "var(--neutral-50, #fafafa)" : "var(--neutral-500, #737373)")};
+  color: ${({ $active }) =>
+    $active ? "var(--neutral-50, #fafafa)" : "var(--neutral-500, #737373)"};
   background: transparent;
 
   @media (max-width: 768px) {
@@ -51,8 +52,7 @@ const Tab = styled.button<{ $active?: boolean }>`
     left: 0;
     right: 0;
     height: 0.125rem;
-    background: ${({ $active }) =>
-      $active ? "var(--color-bg-brand, #9810fa)" : "transparent"};
+    background: ${({ $active }) => ($active ? "var(--color-bg-brand, #9810fa)" : "transparent")};
   }
 `;
 
@@ -99,7 +99,8 @@ const PostCard = styled.div<{ $variant: "dark" | "darker" }>`
   outline-offset: -0.0625rem;
 
   @media (max-width: 1024px) {
-    background: ${({ $variant }) => ($variant === "dark" ? "black" : "var(--neutral-900, #171717)")};
+    background: ${({ $variant }) =>
+      $variant === "dark" ? "black" : "var(--neutral-900, #171717)"};
     outline: 0.0625rem var(--neutral-600, #525252) solid;
   }
 `;

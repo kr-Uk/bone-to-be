@@ -2,7 +2,6 @@ import json
 from worker.rabbitmq import create_connection
 from worker.config import Config
 from worker.handlers.handler import handle
-
 def start_consumer():
     conn = create_connection()
     ch = conn.channel()
@@ -25,9 +24,8 @@ def start_consumer():
     def callback(ch, method, properties, body):
         message = json.loads(body)
         print(f"▶ {Config.REQUEST_QUEUE} received")
-
         handle(message)
-
+        print(f"✅ {Config.REQUEST_QUEUE} processed")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     ch.basic_consume(

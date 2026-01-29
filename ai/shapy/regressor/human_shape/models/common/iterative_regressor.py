@@ -640,12 +640,28 @@ class HMRLikeRegressor(nn.Module):
     ):
         batch_size = len(images)
         device, dtype = images.device, images.dtype
+        
+        # DEBUG: Check input images stats INSIDE forward
+        print(f"🔍 DEBUG - Input Images inside model: mean={images.mean().item():.4f}, std={images.std().item():.4f}")
 
         # Compute the features
         features = self.compute_features(images, extra_features=extra_features)
+        
+        # DEBUG: Check features stats
+        print(f"🔍 DEBUG - Model Features: mean={features.mean().item():.4f}, std={features.std().item():.4f}")
 
         regr_output = self.regressor(
             features, cond=cond, extra_features=extra_features)
+            
+        # DEBUG: Check regressor output stats
+        if torch.is_tensor(regr_output):
+             print(f"🔍 DEBUG - Regressor Output: mean={regr_output.mean().item():.4f}, std={regr_output.std().item():.4f}")
+        elif isinstance(regr_output, (tuple, list)):
+             r0 = regr_output[0]
+             if torch.is_tensor(r0):
+                 print(f"🔍 DEBUG - Regressor Output [0]: mean={r0.mean().item():.4f}, std={r0.std().item():.4f}")
+             elif isinstance(r0, list) and len(r0) > 0:
+                 print(f"🔍 DEBUG - Regressor Output [0][0]: mean={r0[0].mean().item():.4f}")
 
         if torch.is_tensor(regr_output):
             parameters = [regr_output]

@@ -93,15 +93,15 @@ def handle(message: dict):
     
     if yolo_model is None or shapy_runner is None:
         publish({
-            "report_id": message.get("report_id"),
+            "report_id": message.get("reportId"),
             "status": "FAILED",
             "error": "Models not initialized on worker"
         })
         return
 
     try:
-        # Extract backend message fields
-        report_id = message.get("report_id")
+        # Extract backend message fields (backend sends camelCase)
+        report_id = message.get("reportId")
         weight = message.get("weight")  # Integer (kg)
         height_cm = message.get("height")  # Integer (cm)
         gender = message.get("gender", "").lower()  # "male" or "female"
@@ -199,22 +199,39 @@ def handle(message: dict):
         print(f"🚀 Running Shapy inference...")
         output = shapy_runner.run(img, body25_keypoints, gender=gender, height=height)
         print(f"✅ Shapy inference completed")
+        
+        # DEBUG: Check Shapy output
+        vertices = output['stage_02']['vertices'][0]
+        joints = output['stage_02']['joints'][0]
+        measurements = output['measurements']
+        print(f"🔍 DEBUG - Shapy output: vertices_mean={vertices.mean():.4f}, joints[0]={joints[0]}, chest={measurements['chest'][0]:.4f}, waist={measurements['waist'][0]:.4f}")
 
         # 5. Body Type Analysis - Calculate 11 metrics
         print(f"📊 Calculating body type metrics...")
         from body_type_analyzer import BodyTypeAnalyzer
+        from smplx_joints import JOINT_INDICES
         
         try:
             analyzer = BodyTypeAnalyzer(
                 vertices=output['stage_02']['vertices'][0],  # (10475, 3)
                 joints=output['stage_02']['joints'][0],      # (127, 3)
-                measurements=output['measurements']
+                measurements=output['measurements'],
+                height=height  # Pass height for accurate calculations
             )
+            
+            # DEBUG: Log analyzer inputs
+            l_shoulder = analyzer.joints[JOINT_INDICES['left_shoulder']]
+            r_shoulder = analyzer.joints[JOINT_INDICES['right_shoulder']]
+            print(f"🔍 DEBUG - Analyzer inputs: l_shoulder={l_shoulder}, chest={analyzer.chest:.4f}, height={analyzer.height}")
+            
             body_type_metrics = analyzer.calculate_all_metrics()
             print(f"✅ Body type metrics calculated")
+            print(f"🔍 DEBUG - Metrics RIGHT AFTER calculation: shoulder_slope={body_type_metrics['shoulder_slope_angle']:.4f}, shoulder_width={body_type_metrics['shoulder_width_index']:.4f}")
+            print(f"🔍 DEBUG - Metrics dict id: {id(body_type_metrics)}")
             
             # Add metrics to output
             output['body_type_metrics'] = body_type_metrics
+            print(f"🔍 DEBUG - After adding to output: {id(output['body_type_metrics'])}")
         except Exception as e:
             print(f"⚠️ Warning: Body type analysis failed: {e}")
             # Continue without metrics if analysis fails
@@ -242,6 +259,11 @@ def handle(message: dict):
     
         # 9. Publish Result (flat structure for backend ReportResult)
         publish({
+            "report_id": report_id,
+            "body_metrics": output.get('body_type_metrics'),
+            "status": "COMPLETED"
+        })
+        print({
             "report_id": report_id,
             "body_metrics": output.get('body_type_metrics'),
             "status": "COMPLETED"

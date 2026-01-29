@@ -76,6 +76,12 @@ public class Post extends BaseEntity {
         return post;
     }
 
+    public static Post of(Long postId) {
+        Post post = new Post();
+        post.id = postId;
+        return post;
+    }
+
     public void applyStyles(List<Style> styles) {
         if (styles == null) return;
         styles.stream()

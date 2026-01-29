@@ -27,7 +27,7 @@ public record PostDetailSummaryRaw(
             String nickname
     ) {}
 
-    public PostDetailSummary toSummary(String imageUrl, String profileImmageUrl) {
+    public PostDetailSummary toSummary(String imageUrl, String profileImageUrl) {
         return new PostDetailSummary(
                 postId,
                 imageUrl,
@@ -41,7 +41,7 @@ public record PostDetailSummaryRaw(
                 isLiked,
                 new PostDetailSummary.AuthorSummary(
                         author.userId(),
-                        profileImmageUrl,
+                        profileImageUrl,
                         author.nickname()
                 ),
                 createdAt

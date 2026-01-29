@@ -50,11 +50,11 @@ export const LoginPage = () => {
   };
 
   const handleKakao = () => {
-    console.log("TODO: Kakao Login");
+    window.location.href=`${import.meta.env.BASE_URL}/oauth2/authorization/kakao`
   };
 
   const handleGoogle = () => {
-    console.log("TODO: Google Login");
+    window.location.href=`${import.meta.env.BASE_URL}/oauth2/authorization/kakao`
   };
 
   const handleSwitchToSignUp = () => {

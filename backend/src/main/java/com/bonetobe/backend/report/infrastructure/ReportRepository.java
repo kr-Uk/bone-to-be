@@ -1,4 +1,4 @@
-package com.bonetobe.backend.report.presentation;
+package com.bonetobe.backend.report.infrastructure;
 
 import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.user.domain.User;
@@ -19,9 +19,9 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
         from Report r
             join fetch r.user u
         where r.status in ("PENDING", "COMPLETED")
-            and r.id = :id
+                and r.id = :userId
     """)
-    Optional<Report> findByIdAndActive(@Param("userId") Long id);
+    Optional<Report> findByIdAndActive(@Param("userId") Long userId);
 
     @Query("""
         select r

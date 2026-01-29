@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { FaRegHeart, FaHeart, FaRegComment, FaRegBookmark, FaBookmark } from "react-icons/fa";
 
-import { useCreateFeedComment, useLikeToggle } from "../../api";
 import { CommentInput } from "../CommentInput";
 
 import { CommentSection } from "./CommentSection";
 import * as S from "./FeedDetailRight.styles";
+import { useFeedDetailState } from "./hooks/useFeedDetailState";
 import { LikesPanel } from "./LikesPanel";
 import { formatTimeAgo } from "./utils";
 
 import type { FeedDetailRightProps } from "./types";
-import type { FeedLikeUser } from "../../api";
+
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 
 export function FeedDetailRight({
   detail,
@@ -20,53 +21,31 @@ export function FeedDetailRight({
   isLoading,
   hasError,
 }: FeedDetailRightProps) {
-  const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-  const [likeUsers, setLikeUsers] = useState<FeedLikeUser[]>([]);
   const [isLikesOpen, setIsLikesOpen] = useState(false);
   const [commentInput, setCommentInput] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
   const [isInputVisible, setIsInputVisible] = useState(false);
   const commentInputRef = useRef<HTMLInputElement | null>(null);
-  const likeToggleMutation = useLikeToggle();
-  const createCommentMutation = useCreateFeedComment();
+  const isMobile = useMediaQuery("(max-width: 767px)");
+
+  const {
+    liked,
+    saved,
+    likeCount,
+    likeUsers,
+    handleLikeToggle,
+    handleSaveToggle,
+    handleCommentSubmit: submitComment,
+    isSubmittingComment,
+  } = useFeedDetailState({
+    feedId: detail?.id ?? "",
+    initialLiked: detail?.isLiked ?? false,
+    initialSaved: detail?.isSaved ?? false,
+    initialLikeCount: likeCountProp ?? detail?.likeCount ?? 0,
+    initialLikeUsers: likeUsersProp ?? detail?.likeUsers ?? [],
+  });
 
   useEffect(() => {
-    if (!detail) return;
-    setLiked(detail.isLiked);
-    setSaved(detail.isSaved);
-    setLikeCount(detail.likeCount);
-    setLikeUsers(detail.likeUsers ?? []);
-  }, [detail]);
-
-  useEffect(() => {
-    if (typeof likeCountProp === "number") {
-      setLikeCount(likeCountProp);
-    }
-  }, [likeCountProp]);
-
-  useEffect(() => {
-    if (likeUsersProp) {
-      setLikeUsers(likeUsersProp);
-    }
-  }, [likeUsersProp]);
-
-  useEffect(() => {
-    const updateDevice = () => {
-      setIsMobile(window.innerWidth <= 430);
-    };
-    updateDevice();
-    window.addEventListener("resize", updateDevice);
-    return () => window.removeEventListener("resize", updateDevice);
-  }, []);
-
-  useEffect(() => {
-    if (!isMobile) {
-      setIsInputVisible(true);
-      return;
-    }
-    setIsInputVisible(false);
+    setIsInputVisible(!isMobile);
   }, [isMobile, detail?.id]);
 
   const desktopMeta = detail?.height
@@ -75,43 +54,11 @@ export function FeedDetailRight({
       ? `몸무게 ${detail.weight}kg`
       : "정보 없음";
 
-  const handleLikeToggle = () => {
-    if (!detail) return;
-    const nextLiked = !liked;
-    setLiked(nextLiked);
-    setLikeCount((count) => (nextLiked ? count + 1 : count - 1));
-    setLikeUsers((users) => {
-      const exists = users.some((user) => user.id === "me");
-      if (nextLiked && !exists) {
-        return [
-          {
-            id: "me",
-            username: "me",
-            bodyType: "Wave",
-            location: "Seoul, Korea",
-            avatarUrl: null,
-          },
-          ...users,
-        ];
-      }
-      if (!nextLiked && exists) {
-        return users.filter((user) => user.id !== "me");
-      }
-      return users;
-    });
-    likeToggleMutation.mutate({ feedId: detail.id });
-  };
-
   const handleSubmitComment = () => {
-    if (!detail) return;
     const trimmed = commentInput.trim();
     if (!trimmed) return;
 
-    createCommentMutation.mutate({
-      feedId: detail.id,
-      text: trimmed,
-    });
-
+    submitComment(trimmed);
     setCommentInput("");
   };
 
@@ -171,7 +118,7 @@ export function FeedDetailRight({
               </S.IconButton>
             </S.LeftActions>
 
-            <S.IconButton onClick={() => setSaved((v) => !v)}>
+            <S.IconButton onClick={handleSaveToggle}>
               {saved ? <FaBookmark size={20} /> : <FaRegBookmark size={20} />}
             </S.IconButton>
           </S.ActionRow>
@@ -195,7 +142,7 @@ export function FeedDetailRight({
               onChange={setCommentInput}
               onSubmit={handleSubmitComment}
               placeholder={"댓글 달기 ..."}
-              disabled={createCommentMutation.isPending}
+              disabled={isSubmittingComment}
             />
           </S.FixedInput>
         )}

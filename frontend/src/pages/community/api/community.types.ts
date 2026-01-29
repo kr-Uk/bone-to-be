@@ -87,20 +87,34 @@ export interface FeedAuthorDto {
 export interface FeedListItemDto {
   postId: number;
   imageUrl: string;
-  style: string[];
-  gender: "female" | "male";
+  style: string[]; // 대문자: ["MINIMAL", "STREET"]
+  gender: "FEMALE" | "MALE"; // 대문자
   height: number;
   weight?: number;
-  skeletonType: "Straight" | "Wave" | "Natural";
-  likeCount: number;
-  commentCount?: number;
+  skeletonType: "STRAIGHT" | "WAVE" | "NATURAL"; // 대문자
   isLiked: boolean;
-  author: FeedAuthorDto;
   createdAt: string;
+  // 백엔드 응답에 없는 필드들 제거: likeCount, commentCount, author
 }
 
 /**
- * 백엔드 DTO - 피드 리스트 응답
+ * 백엔드 API 표준 응답 래퍼
+ */
+export interface ApiFeedListResponse {
+  code: number;
+  message: string;
+  data: {
+    content: FeedListItemDto[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    last: boolean;
+  };
+}
+
+/**
+ * 백엔드 DTO - 피드 리스트 응답 (변환 후 형태)
  */
 export interface FeedListResponseDto {
   items: FeedListItemDto[];
@@ -153,8 +167,8 @@ export interface FeedCreateRequest {
   fileId: number;
   content: string;
   gender: "female" | "male";
-  skeletonType: "natural" | "straight" | "wave";
-  style: string[];
+  skeletonType: "NATURAL" | "STRAIGHT" | "WAVE"; // 대문자
+  style: string[]; // 대문자: ["MINIMAL", "STREET"]
   height: number; // cm
   weight: number; // kg (필수)
 }

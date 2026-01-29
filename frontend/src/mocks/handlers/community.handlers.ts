@@ -5,7 +5,6 @@ import type {
   FeedDetail,
   FeedItem,
   FeedLikeUser,
-  FeedListResponseDto,
   FeedDetailDto,
   FeedAuthorDto,
   FeedListItemDto,
@@ -402,9 +401,12 @@ const pickLikeUsers = (indexes: number[]) =>
     .filter((user): user is FeedLikeUser => Boolean(user));
 
 const mapGenderToDto = (gender: "M" | "F") => (gender === "F" ? "female" : "male");
-const mapGenderToBackend = (gender: "M" | "F") => (gender === "F" ? "FEMALE" : "MALE");
-const mapSkeletonTypeToBackend = (type: "Straight" | "Wave" | "Natural") => type.toUpperCase();
-const mapStyleToBackend = (styles: string[]) => styles.map((style) => style.toUpperCase());
+const mapGenderToBackend = (gender: "M" | "F"): "FEMALE" | "MALE" =>
+  gender === "F" ? "FEMALE" : "MALE";
+const mapSkeletonTypeToBackend = (type: "Straight" | "Wave" | "Natural"): string =>
+  type.toUpperCase();
+const mapStyleToBackend = (styles: string[]): string[] =>
+  styles.map((style) => style.toUpperCase());
 
 const toAuthorDto = (item: FeedItem, detail?: FeedDetail): FeedAuthorDto => ({
   memberId: Number(item.id),
@@ -413,19 +415,17 @@ const toAuthorDto = (item: FeedItem, detail?: FeedDetail): FeedAuthorDto => ({
   isFollowing: false,
 });
 
-const toFeedListItemDto = (item: FeedItem, detail?: FeedDetail): FeedListItemDto => ({
+const toFeedListItemDto = (item: FeedItem): FeedListItemDto => ({
   postId: Number(item.id),
   imageUrl: item.imageUrl,
-  style: item.styles,
-  gender: mapGenderToDto(item.gender),
+  style: mapStyleToBackend(item.styles), // 대문자로 변환
+  gender: mapGenderToBackend(item.gender), // "FEMALE" / "MALE"
   height: item.height,
   weight: item.weight,
-  skeletonType: item.bodyType,
-  likeCount: item.likeCount,
-  commentCount: detail?.commentCount ?? 0,
+  skeletonType: mapSkeletonTypeToBackend(item.bodyType), // "STRAIGHT" / "WAVE" / "NATURAL"
   isLiked: item.isLiked,
-  author: toAuthorDto(item, detail),
   createdAt: item.createdAt,
+  // author, likeCount, commentCount 제거 (백엔드 응답에 없음)
 });
 
 const toFeedDetailDto = (item: FeedItem, detail: FeedDetail): FeedDetailDto => ({
@@ -1114,7 +1114,7 @@ export const communityHandlers = [
       fileId: number;
       content: string;
       gender: "female" | "male";
-      skeletonType: "natural" | "straight" | "wave";
+      skeletonType: "NATURAL" | "STRAIGHT" | "WAVE";
       style: string[];
       height: number;
       weight: number;
@@ -1147,16 +1147,16 @@ export const communityHandlers = [
 
     // 스타일 검증
     const validStyles = [
-      "street",
-      "minimal",
-      "casual",
-      "classic",
-      "formal",
-      "vintage",
-      "sporty",
-      "feminine",
+      "STREET",
+      "MINIMAL",
+      "CASUAL",
+      "CLASSIC",
+      "FORMAL",
+      "VINTAGE",
+      "SPORTY",
+      "FEMININE",
     ];
-    const invalidStyle = body.style.find((s) => !validStyles.includes(s.toLowerCase()));
+    const invalidStyle = body.style.find((s) => !validStyles.includes(s.toUpperCase()));
 
     if (invalidStyle) {
       console.log("[MSW] 유효하지 않은 스타일:", invalidStyle);
@@ -1179,14 +1179,14 @@ export const communityHandlers = [
       imageUrl: `https://placehold.co/400x533?text=NewFeed_${body.fileId}`,
       username: "current_user",
       bodyType:
-        body.skeletonType === "natural"
+        body.skeletonType === "NATURAL"
           ? "Natural"
-          : body.skeletonType === "wave"
+          : body.skeletonType === "WAVE"
             ? "Wave"
             : "Straight",
       height: body.height,
       weight: body.weight,
-      styles: body.style,
+      styles: body.style.map((s) => s.toLowerCase()),
       gender: body.gender === "female" ? "F" : "M",
       isLiked: false,
       likeCount: 0,
@@ -1267,14 +1267,19 @@ export const communityHandlers = [
     const end = start + size;
     const paginatedItems = filteredItems.slice(start, end);
 
-    const response: FeedListResponseDto = {
-      items: paginatedItems.map((item) => toFeedListItemDto(item, mockFeedDetails[item.id])),
-      total: filteredItems.length,
-      page,
-      hasMore: end < filteredItems.length,
-    };
-
-    return HttpResponse.json(response);
+    // 백엔드 표준 응답 구조로 래핑
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: {
+        content: paginatedItems.map((item) => toFeedListItemDto(item)),
+        pageNumber: page - 1, // 0-based index
+        pageSize: size,
+        totalElements: filteredItems.length,
+        totalPages: Math.ceil(filteredItems.length / size),
+        last: end >= filteredItems.length,
+      },
+    });
   }),
 
   // POST /api/feeds/:feedId/like (새로운 엔드포인트)

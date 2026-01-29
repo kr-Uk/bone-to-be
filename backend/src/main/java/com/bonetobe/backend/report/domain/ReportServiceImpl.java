@@ -62,13 +62,15 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional
     public void makeRepresentative(Report report) {
+        reportReader.readRepresentativeReport(report.getUser().getId()).ifPresent(Report::revokeRepresentative);
         report.makeRepresentative();
         reportStore.update(report);
     }
 
     @Override
     public Report getRepresentativeReport(Long userId) {
-        return reportReader.readRepresentativeReport(userId);
+        return reportReader.readRepresentativeReport(userId).orElseThrow(() -> new BusinessException(ErrorCode.REPRESENTATION_NOT_FOUND_EXCEPTION));
     }
 }

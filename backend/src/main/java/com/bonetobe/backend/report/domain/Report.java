@@ -93,4 +93,8 @@ public class Report extends BaseEntity {
 
         representative = true;
     }
+
+    public void revokeRepresentative() {
+        representative = false;
+    }
 }

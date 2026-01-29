@@ -14,4 +14,6 @@ public interface ReportService {
     Report isOwner(Long userId, Long reportId);
 
     void delete(Report reportId);
+
+    void makeRepresentative(Report report);
 }

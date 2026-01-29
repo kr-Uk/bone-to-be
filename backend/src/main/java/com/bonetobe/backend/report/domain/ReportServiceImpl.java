@@ -60,4 +60,10 @@ public class ReportServiceImpl implements ReportService {
         report.softDelete();
         reportStore.update(report);
     }
+
+    @Override
+    public void makeRepresentative(Report report) {
+        report.makeRepresentative();
+        reportStore.update(report);
+    }
 }

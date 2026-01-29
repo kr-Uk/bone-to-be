@@ -50,4 +50,9 @@ public class ReportFacade {
         Report report = reportService.isOwner(userId, reportId);
         reportService.delete(report);
     }
+
+    public void authorizeAndRepresentReport(Long userId, Long reportId) {
+        Report report = reportService.isOwner(userId, reportId);
+        reportService.makeRepresentative(report);
+    }
 }

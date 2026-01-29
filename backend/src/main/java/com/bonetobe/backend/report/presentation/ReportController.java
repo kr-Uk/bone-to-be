@@ -85,4 +85,15 @@ public class ReportController {
             .status(HttpStatus.OK)
             .body(APIResponse.success(SuccessCode.DELETED));
     }
+
+    @PutMapping("/{reportId}")
+    public ResponseEntity<APIResponse<Void>> makeReportRepresentative(
+        @AuthenticationPrincipal UserPrincipal userPrincipal,
+        @PathVariable Long reportId
+    ) {
+        reportFacade.authorizeAndRepresentReport(userPrincipal.getId(), reportId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(APIResponse.success(SuccessCode.UPDATED));
+    }
 }

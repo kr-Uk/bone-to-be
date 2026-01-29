@@ -85,4 +85,12 @@ public class Report extends BaseEntity {
         }
         status = ReportStatus.DELETED;
     }
+
+    public void makeRepresentative() {
+        if(isRepresentative()) {
+            throw new BusinessException(ErrorCode.ALREADY_REPRESENTATIVE_EXCEPTION);
+        }
+
+        representative = true;
+    }
 }

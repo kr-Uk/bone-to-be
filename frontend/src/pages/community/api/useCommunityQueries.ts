@@ -221,7 +221,7 @@ export function useLikeToggle() {
       // rollback을 위해 이전 상태 반환
       return { previousDetail };
     },
-    onError: (error, { feedId }, context) => {
+    onError: (_, { feedId }, context) => {
       // 에러 발생 시 이전 상태로 rollback
       if (context?.previousDetail) {
         queryClient.setQueryData(["feedDetail", feedId], context.previousDetail);

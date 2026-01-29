@@ -123,8 +123,8 @@ export default function CommunityPage() {
   }, []);
 
   const handleLike = useCallback(
-    (feedId: string) => {
-      likeToggleMutation.mutate({ feedId });
+    (feedId: string, isLiked: boolean) => {
+      likeToggleMutation.mutate({ feedId, isLiked });
     },
     [likeToggleMutation],
   );

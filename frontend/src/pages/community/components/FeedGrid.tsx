@@ -6,7 +6,7 @@ import type { FeedItem } from "../api";
 
 interface FeedGridProps {
   feedItems: FeedItem[];
-  onLike: (feedId: string) => void;
+  onLike: (feedId: string, isLiked: boolean) => void;
   onCardClick: (feedId: string) => void;
 }
 
@@ -35,7 +35,7 @@ export function FeedGrid({ feedItems, onLike, onCardClick }: FeedGridProps) {
         <FeedCard
           key={item.id}
           item={item}
-          onLike={() => onLike(item.id)}
+          onLike={() => onLike(item.id, item.isLiked)}
           onClick={() => onCardClick(item.id)}
         />
       ))}

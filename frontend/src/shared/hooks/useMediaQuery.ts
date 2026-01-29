@@ -1,23 +1,32 @@
 import { useEffect, useState } from "react";
 
-export const useMediaQuery = (query: string): boolean => {
+/**
+ * CSS 미디어 쿼리를 React 상태로 변환하는 훅
+ *
+ * @param query - CSS 미디어 쿼리 문자열 (예: "(max-width: 767px)")
+ * @returns 미디어 쿼리 매칭 여부
+ *
+ * @example
+ * const isMobile = useMediaQuery('(max-width: 767px)');
+ * const isDesktop = useMediaQuery('(min-width: 1024px)');
+ */
+export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia(query);
+    const mediaQuery = window.matchMedia(query);
 
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
+    const handler = () => setMatches(mediaQuery.matches);
 
-    const listener = (event: MediaQueryListEvent) => {
-      setMatches(event.matches);
-    };
+    // 초기값 설정
+    handler();
 
-    media.addEventListener("change", listener);
+    // 리스너 등록
+    mediaQuery.addEventListener("change", handler);
 
-    return () => media.removeEventListener("change", listener);
-  }, [matches, query]);
+    // 클린업
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, [query]);
 
   return matches;
-};
+}

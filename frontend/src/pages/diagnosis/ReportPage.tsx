@@ -10,7 +10,7 @@ import VirtualFittingSection from "./components/VirtualFittingSection";
 
 import { useReportDetail } from "@/pages/diagnosis/api";
 import { convertSkeletonTypeToBodyType } from "@/pages/diagnosis/api/diagnosis.types";
-import { BODY_TYPE_METADATA, type BodyTypeKey } from "@/shared/constants/reportMockData";
+import { BODY_TYPE_METADATA } from "@/shared/constants/reportMockData";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
@@ -113,8 +113,8 @@ const ErrorIcon = styled.div`
 `;
 
 const ErrorTitle = styled.div`
-  font-size: ${({ theme }) => theme.typography.heading.h3.fontSize};
-  font-weight: ${({ theme }) => theme.typography.heading.h3.fontWeight};
+  font-size: ${({ theme }) => theme.typography.heading.lg.fontSize};
+  font-weight: ${({ theme }) => theme.typography.heading.lg.fontWeight};
   color: ${({ theme }) => theme.colors.secondary};
 `;
 

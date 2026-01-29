@@ -8,11 +8,11 @@ public class SkeletonTypeAnalyzer {
     }
 
     public static SkeletonType shoulderWidthIndex(Double score) {
-        return SkeletonType.WAVE;
+        return SkeletonType.STRAIGHT;
     }
 
     public static SkeletonType hipWidthIndex(Double score) {
-        return SkeletonType.WAVE;
+        return SkeletonType.NATURAL;
     }
 
     public static SkeletonType shoulderHipRatio(Double score) {
@@ -20,11 +20,11 @@ public class SkeletonTypeAnalyzer {
     }
 
     public static SkeletonType upperBodyDepthIndex(Double score) {
-        return SkeletonType.WAVE;
+        return SkeletonType.STRAIGHT;
     }
 
     public static SkeletonType ribcageVolumeIndex(Double score) {
-        return SkeletonType.WAVE;
+        return SkeletonType.NATURAL;
     }
 
     public static SkeletonType waistCurvatureIndex(Double score) {
@@ -32,11 +32,11 @@ public class SkeletonTypeAnalyzer {
     }
 
     public static SkeletonType jointThicknessIndex(Double score) {
-        return SkeletonType.WAVE;
+        return SkeletonType.STRAIGHT;
     }
 
     public static SkeletonType armTorsoRatio(Double score) {
-        return SkeletonType.WAVE;
+        return SkeletonType.NATURAL;
     }
 
     public static SkeletonType linearityIndex(Double score) {
@@ -44,6 +44,6 @@ public class SkeletonTypeAnalyzer {
     }
 
     public static SkeletonType legLengthIndex(Double score) {
-        return SkeletonType.WAVE;
+        return SkeletonType.STRAIGHT;
     }
 }

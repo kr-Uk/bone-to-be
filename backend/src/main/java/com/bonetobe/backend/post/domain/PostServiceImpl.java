@@ -6,6 +6,7 @@ import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
 import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
 import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
+import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
@@ -84,6 +85,24 @@ public class PostServiceImpl implements PostService {
                 command.weight()
         );
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MyPostSummaryRaw> getMyPostList(Long userId) {
+        return postReader.findMyPostList(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostSummaryRaw> getLikedPostList(Long userId) {
+        return postReader.findLikedPostList(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostSummaryRaw> getScrappedPostList(Long userId) {
+        return postReader.findScrappedPostList(userId);
     }
 
 }

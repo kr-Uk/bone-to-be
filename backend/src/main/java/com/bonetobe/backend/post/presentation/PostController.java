@@ -4,6 +4,7 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.PaginatedResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.post.application.PostFacade;
+import com.bonetobe.backend.post.domain.query.MyPostSummary;
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
 import com.bonetobe.backend.post.domain.query.PostFileSummary;
 import com.bonetobe.backend.post.domain.query.PostSummary;
@@ -16,6 +17,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -99,5 +102,46 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK, response));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<APIResponse<List<MyPostListDto.Response>>> getMyPostList(
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        List<MyPostSummary> summaries = postFacade.getMyPostList(user.getId());
+        List<MyPostListDto.Response> responses = summaries.stream()
+                .map(MyPostListDto.Response::of)
+                .toList();
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, responses));
+    }
+
+    @GetMapping("/liked")
+    public ResponseEntity<APIResponse<List<PostListDto.Response>>> getLikedPostList(
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        List<PostSummary> summaries = postFacade.getLikedPostList(user.getId());
+        List<PostListDto.Response> responses = summaries.stream()
+                .map(PostListDto.Response::of)
+                .toList();
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, responses));
+    }
+
+    @GetMapping("/scrapped")
+    public ResponseEntity<APIResponse<List<PostListDto.Response>>> getScrappedPostList(
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        List<PostSummary> summaries = postFacade.getScrappedPostList(user.getId());
+        List<PostListDto.Response> responses = summaries.stream()
+                .map(PostListDto.Response::of)
+                .toList();
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, responses));
+    }
 
 }

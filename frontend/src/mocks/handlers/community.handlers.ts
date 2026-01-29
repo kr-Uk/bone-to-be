@@ -403,8 +403,9 @@ const pickLikeUsers = (indexes: number[]) =>
 const mapGenderToDto = (gender: "M" | "F") => (gender === "F" ? "female" : "male");
 const mapGenderToBackend = (gender: "M" | "F"): "FEMALE" | "MALE" =>
   gender === "F" ? "FEMALE" : "MALE";
-const mapSkeletonTypeToBackend = (type: "Straight" | "Wave" | "Natural"): string =>
-  type.toUpperCase();
+const mapSkeletonTypeToBackend = (
+  type: "Straight" | "Wave" | "Natural",
+): "STRAIGHT" | "WAVE" | "NATURAL" => type.toUpperCase() as "STRAIGHT" | "WAVE" | "NATURAL";
 const mapStyleToBackend = (styles: string[]): string[] =>
   styles.map((style) => style.toUpperCase());
 

@@ -6,6 +6,8 @@ import type {
   AnalysisRequest,
   AnalysisResponse,
   AnalysisResult,
+  ReportListResponse,
+  RepresentativeReportResponse,
 } from "@/pages/diagnosis/api";
 
 /**
@@ -86,5 +88,54 @@ export const diagnosisHandlers = [
     };
 
     return HttpResponse.json(result);
+  }),
+  // GET /api/reports - 본인 리포트 목록
+  http.get("/api/reports", () => {
+    const response: ReportListResponse = {
+      code: 200,
+      message: "요청 성공",
+      data: [
+        {
+          reportId: 6,
+          skeletonType: null,
+          reportStatus: "PENDING",
+          isRepresentative: true,
+          straightRate: 0,
+          naturalRate: 0,
+          waveRate: 0,
+          createdAt: "2026-01-29T22:23:19.89252",
+        },
+        {
+          reportId: 7,
+          skeletonType: null,
+          reportStatus: "PENDING",
+          isRepresentative: false,
+          straightRate: 0,
+          naturalRate: 0,
+          waveRate: 0,
+          createdAt: "2026-01-29T22:23:19.89252",
+        },
+      ],
+    };
+
+    return HttpResponse.json(response);
+  }),
+  // GET /api/users/:userId/representative - 타유저 대표 리포트
+  http.get<{ userId: string }>("/api/users/:userId/representative", () => {
+    const response: RepresentativeReportResponse = {
+      code: 200,
+      message: "요청 성공",
+      data: {
+        reportId: 6,
+        skeletonType: null,
+        isRepresentative: false,
+        straightRate: 0,
+        naturalRate: 0,
+        waveRate: 0,
+        createdAt: "2026-01-29T22:23:19.89252",
+      },
+    };
+
+    return HttpResponse.json(response);
   }),
 ];

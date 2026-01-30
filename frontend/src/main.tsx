@@ -9,6 +9,7 @@ import { QueryProvider } from "@/app/providers/QueryProvider";
 import { router } from "@/app/router/routes";
 import { GlobalStyle } from "@/shared/styles/globalStyle";
 import { theme } from "@/shared/styles/theme";
+import { AuthBootstrap } from "@/shared/components/AuthBootstrap";
 
 async function enableMocking() {
   if (import.meta.env.MODE !== "development") return;
@@ -38,7 +39,9 @@ async function bootstrap() {
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <QueryProvider>
-          <RouterProvider router={router} />
+          <AuthBootstrap>
+            <RouterProvider router={router} />
+          </AuthBootstrap>
         </QueryProvider>
       </ThemeProvider>
     </StrictMode>,

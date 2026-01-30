@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+﻿import { http, HttpResponse } from "msw";
 
 import { communityHandlers } from "./community.handlers";
 import { diagnosisHandlers } from "./diagnosis.handlers";
@@ -160,12 +160,54 @@ export const handlers = [
     mockAuthState = { isLoggedIn: false, me: null };
     return HttpResponse.json({ message: "회원 탈퇴 완료" });
   }),
+  http.post("/api/users/:userId/follow", () => {
+    return HttpResponse.json({ code: 200, message: "요청 성공", data: null });
+  }),
+  http.delete("/api/users/:userId/follow", () => {
+    return HttpResponse.json({ code: 200, message: "요청 성공", data: null });
+  }),
+
+  http.get("/api/users/me", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: {
+        profileImageUrl: null,
+        nickname: "???",
+        skeletonType: null,
+        postCount: 0,
+        followerCount: 0,
+        followingCount: 4,
+        bio: null,
+      },
+    });
+  }),
+  http.get("/api/users/:userId", ({ params }) => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: {
+        profileImageUrl: null,
+        nickname: String(params.userId ?? "user"),
+        skeletonType: null,
+        postCount: 0,
+        followerCount: 1,
+        followingCount: 0,
+        bio: null,
+        isFollowing: false,
+      },
+    });
+  }),
   http.get("/api/auth/me", () => {
     if (!mockAuthState.isLoggedIn || !mockAuthState.me) {
       return HttpResponse.json({ code: 401, message: "Unauthorized" }, { status: 401 });
     }
 
-    return HttpResponse.json(mockAuthState.me);
+    return HttpResponse.json({
+      code: 200,
+      message: "OK",
+      data: mockAuthState.me,
+    });
   }),
   http.post("/api/auth/signup", async ({ request }) => {
     const body = (await request.json()) as {
@@ -312,60 +354,81 @@ export const handlers = [
       ],
     });
   }),
-  http.get("/api/v1/users/following", () => {
-    return HttpResponse.json([
-      {
-        id: "1",
-        username: "hojung_handsome",
-        styleTag: "Straight",
-        bio: "미니멀룩",
-        avatarUrl: "https://placehold.co/100x100?text=H1",
-        isFollowing: true,
-      },
-      {
-        id: "2",
-        username: "hot_junyong",
-        styleTag: "Natural",
-        bio: "내추럴 무드 데일리",
-        avatarUrl: "https://placehold.co/100x100?text=H2",
-        isFollowing: true,
-      },
-      {
-        id: "3",
-        username: "daily_urban",
-        styleTag: "Wave",
-        bio: "도심 데일리룩",
-        avatarUrl: "https://placehold.co/100x100?text=H3",
-        isFollowing: true,
-      },
-    ]);
+  http.get("/api/users/me/followings", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: [
+        {
+          id: 1,
+          nickname: "관리자",
+          profileImage: "https://placehold.co/100x100?text=H1",
+          bodyType: "Straight",
+          bio: "미니멀룩",
+        },
+        {
+          id: 5,
+          nickname: "jiwonhan",
+          profileImage: "https://placehold.co/100x100?text=H2",
+          bodyType: null,
+          bio: null,
+        },
+      ],
+    });
   }),
-  http.get("/api/v1/users/followers", () => {
-    return HttpResponse.json([
-      {
-        id: "4",
-        username: "ssong_queen",
-        styleTag: "Wave",
-        bio: "힙블리 코디",
-        avatarUrl: "https://placehold.co/100x100?text=F1",
-        isFollowing: true,
-      },
-      {
-        id: "5",
-        username: "someone_new",
-        styleTag: "Straight",
-        bio: "스트릿",
-        avatarUrl: "https://placehold.co/100x100?text=F2",
-        isFollowing: false,
-      },
-      {
-        id: "6",
-        username: "natural_mood",
-        styleTag: "Natural",
-        bio: "내추럴한 무드",
-        avatarUrl: "https://placehold.co/100x100?text=F3",
-        isFollowing: false,
-      },
-    ]);
+  http.get("/api/users/me/followers", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: [
+        {
+          id: 7,
+          nickname: "조성현",
+          profileImage: "https://placehold.co/100x100?text=F1",
+          bodyType: "Wave",
+          bio: "힙블리 코디",
+          isFollowing: true,
+        },
+        {
+          id: 8,
+          nickname: "한지원",
+          profileImage: null,
+          bodyType: null,
+          bio: null,
+          isFollowing: false,
+        },
+      ],
+    });
+  }),
+  http.get("/api/users/:userId/followings", ({ params }) => {
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: [
+        {
+          id: 1,
+          nickname: `${String(params.userId ?? "user")}-follow1`,
+          profileImage: null,
+          bodyType: "Natural",
+          bio: "내추럴 무드",
+        },
+      ],
+    });
+  }),
+  http.get("/api/users/:userId/followers", ({ params }) => {
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: [
+        {
+          id: 3,
+          nickname: `${String(params.userId ?? "user")}-follower1`,
+          profileImageUrl: null,
+          bodyType: null,
+          bio: null,
+          isFollowing: false,
+        },
+      ],
+    });
   }),
 ];

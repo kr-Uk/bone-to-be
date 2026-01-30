@@ -1,14 +1,27 @@
-import { useMutation, useQueryClient, type UseMutationResult } from "@tanstack/react-query";
+import { useMutation, type UseMutationResult } from "@tanstack/react-query";
 
-import { login, type LoginPayload, type LoginResponse } from "@/shared/api/auth";
+import { getMe, login, type LoginPayload, type Me } from "@/shared/api/auth";
+import { useAuthStore } from "@/shared/stores/authStore";
 
-export const useLogin = (): UseMutationResult<LoginResponse, Error, LoginPayload> => {
-  const queryClient = useQueryClient();
+export const useLogin = (): UseMutationResult<Me, Error, LoginPayload> => {
+  const { setAuth, clearAuth, setAuthLoading } = useAuthStore();
 
   return useMutation({
-    mutationFn: login,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
+    mutationFn: async (payload) => {
+      await login(payload);
+      return await getMe();
+    },
+    onMutate: () => {
+      setAuthLoading(true);
+    },
+    onSuccess: (me) => {
+      setAuth(me);
+    },
+    onError: () => {
+      clearAuth();
+    },
+    onSettled: () => {
+      setAuthLoading(false);
     },
   });
 };

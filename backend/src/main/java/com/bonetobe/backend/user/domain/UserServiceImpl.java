@@ -1,7 +1,9 @@
 package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.file.domain.StoredFileReader;
@@ -12,12 +14,16 @@ import com.bonetobe.backend.user.domain.command.UpdateMyPageCommand;
 import com.bonetobe.backend.user.domain.command.UserFileCommand;
 import com.bonetobe.backend.user.domain.command.UserUpdateCommand;
 import com.bonetobe.backend.user.domain.query.UserFileSummary;
+import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.user.presentation.dto.UserDetailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Collections;
 import java.util.List;
@@ -119,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetailDto getUserDetail(Long targetUserId) {
+    public UserDetailDto getUserDetail(Long targetUserId, Long currentUserId) {
         User user = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -127,20 +133,23 @@ public class UserServiceImpl implements UserService {
         long followerCount = followRepository.countByFollowingId(targetUserId);
         long followingCount = followRepository.countByFollowerId(targetUserId);
 
+        // ✨ 팔로우 여부 확인 (본인 페이지라면 false 혹은 정책에 따라 처리)
+        boolean isFollowing = false;
+        if (currentUserId != null && !currentUserId.equals(targetUserId)) {
+            isFollowing = followRepository.existsByFollowerIdAndFollowingId(currentUserId, targetUserId);
+        }
+
         String profileImageUrl = null;
         if (user.getProfileImage() != null) {
             List<FileDownloadUrl.Query> queries = Collections.singletonList(
                     new FileDownloadUrl.Query(user.getProfileImage().getId())
             );
 
-            // .get(0) 대신 stream().findFirst()를 사용하면 리스트가 비어있어도 에러가 나지 않습니다.
+            // [방어 코드 적용] stream 사용
             profileImageUrl = fileService.getPublicDownloadUrls(queries).stream()
                     .findFirst()
                     .map(FileDownloadUrl.Result::presignedUrl)
-                    .orElseGet(() -> {
-                        log.warn("[File Missing] ID: {} 상태가 UPLOADED가 아니거나 파일이 없습니다.", user.getProfileImage().getId());
-                        return null; // 이미지가 없으면 null 반환 (프론트에서 기본 이미지 처리)
-                    });
+                    .orElse(null);
         }
 
         return new UserDetailDto(
@@ -150,7 +159,8 @@ public class UserServiceImpl implements UserService {
                 postCount,
                 followerCount,
                 followingCount,
-                user.getBio()
+                user.getBio(),
+                isFollowing // 추가
         );
     }
 }

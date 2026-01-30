@@ -28,7 +28,7 @@ const HeroContent = styled.div`
   z-index: 1;
   max-width: 56.25rem;
   margin: 0 auto;
-  padding-top: 5rem;
+  padding-top: 5 rem;
 
   @media (max-width: 1024px) {
     max-width: 42rem;

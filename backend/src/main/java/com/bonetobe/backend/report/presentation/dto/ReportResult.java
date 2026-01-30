@@ -1,6 +1,7 @@
-package com.bonetobe.backend.report.presentation;
+package com.bonetobe.backend.report.presentation.dto;
 
 import com.bonetobe.backend.report.domain.AnalysisDetail;
+import com.bonetobe.backend.report.domain.BodyMetrics;
 import com.bonetobe.backend.report.domain.ReportStatus;
 import com.bonetobe.backend.report.domain.ReportTypeMapper;
 

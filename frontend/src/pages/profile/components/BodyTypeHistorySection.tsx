@@ -243,11 +243,10 @@ const EmptyState = styled(Text)`
   font-size: 1rem;
   line-height: 1.5rem;
   text-align: center;
-  padding: 2.5rem 0;
-  border-radius: 0.9375rem;
-  background: var(--neutral-900, #171717);
-  outline: 0.0625rem var(--neutral-600, #525252) solid;
-  outline-offset: -0.0625rem;
+  min-height: 9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 interface BodyTypeHistorySectionProps {

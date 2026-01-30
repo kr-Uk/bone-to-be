@@ -7,6 +7,7 @@ import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.report.application.ReportFacade;
 import com.bonetobe.backend.report.domain.ReportService;
+import com.bonetobe.backend.report.presentation.dto.*;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -72,5 +73,38 @@ public class ReportController {
                     reportService.getReportList(userPrincipal.getId()).stream()
                         .map(GetReportList::from)
                         .toList()));
+    }
+
+
+    @DeleteMapping("/{reportId}")
+    public ResponseEntity<APIResponse<Void>> deleteReport(
+        @AuthenticationPrincipal UserPrincipal userPrincipal,
+        @PathVariable Long reportId
+    ) {
+        reportFacade.authorizeAndDeleteReport(userPrincipal.getId(), reportId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(APIResponse.success(SuccessCode.DELETED));
+    }
+
+    @PutMapping("/{reportId}")
+    public ResponseEntity<APIResponse<Void>> makeReportRepresentative(
+        @AuthenticationPrincipal UserPrincipal userPrincipal,
+        @PathVariable Long reportId
+    ) {
+        reportFacade.authorizeAndRepresentReport(userPrincipal.getId(), reportId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(APIResponse.success(SuccessCode.UPDATED));
+    }
+
+    @DeleteMapping("/representative")
+    public ResponseEntity<APIResponse<Void>> deleteRepresentative(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        reportService.clearRepresentativeReport(userPrincipal.getId());
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(APIResponse.success(SuccessCode.UPDATED));
     }
 }

@@ -7,9 +7,10 @@ import com.bonetobe.backend.report.domain.ReportCommand;
 import com.bonetobe.backend.report.domain.ReportProducer;
 import com.bonetobe.backend.report.domain.ReportService;
 import com.bonetobe.backend.report.infrastructure.ReportMessage;
-import com.bonetobe.backend.report.presentation.ReportResult;
+import com.bonetobe.backend.report.presentation.dto.ReportResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -44,5 +45,17 @@ public class ReportFacade {
             TODO : 프론트 구현 시 해제
          */
         // reportService.sendEvent(result.reportId());
+    }
+
+    public void authorizeAndDeleteReport(Long userId, Long reportId) {
+        Report report = reportService.isOwner(userId, reportId);
+        reportService.delete(report);
+    }
+
+    @Transactional
+    public void authorizeAndRepresentReport(Long userId, Long reportId) {
+        reportService.clearRepresentativeReport(userId);
+        Report report = reportService.isOwner(userId, reportId);
+        report.toggleRepresentative();
     }
 }

@@ -1,5 +1,7 @@
 package com.bonetobe.backend.user.domain;
 
+import com.bonetobe.backend.user.domain.query.UserSearchSummaryRaw;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,4 +15,6 @@ public interface UserRepository {
     User update(User user);
     List<User> findFollowingsByUserId(Long userId);
     List<User> findFollowersByUserId(Long userId);
+
+    List<UserSearchSummaryRaw> findUserSearch(String nickname, Long viewer);
 }

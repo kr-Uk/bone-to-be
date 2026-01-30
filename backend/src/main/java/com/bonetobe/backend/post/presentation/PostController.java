@@ -4,7 +4,7 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.PaginatedResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.post.application.PostFacade;
-import com.bonetobe.backend.post.domain.query.MyPostSummary;
+import com.bonetobe.backend.post.domain.query.UserPostSummary;
 import com.bonetobe.backend.post.domain.query.PostDetailSummary;
 import com.bonetobe.backend.post.domain.query.PostFileSummary;
 import com.bonetobe.backend.post.domain.query.PostSummary;
@@ -110,12 +110,12 @@ public class PostController {
 
     // 내가 쓴 게시글 목록
     @GetMapping("/me")
-    public ResponseEntity<APIResponse<List<MyPostListDto.Response>>> getMyPostList(
+    public ResponseEntity<APIResponse<List<UserPostListDto.Response>>> getMyPostList(
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        List<MyPostSummary> summaries = postFacade.getMyPostList(user.getId());
-        List<MyPostListDto.Response> responses = summaries.stream()
-                .map(MyPostListDto.Response::of)
+        List<UserPostSummary> summaries = postFacade.getUserPostList(user.getId());
+        List<UserPostListDto.Response> responses = summaries.stream()
+                .map(UserPostListDto.Response::of)
                 .toList();
 
         return ResponseEntity
@@ -154,10 +154,17 @@ public class PostController {
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<APIResponse<Void>> getUserPostList(
+    public ResponseEntity<APIResponse<List<UserPostListDto.Response>>> getUserPostList(
             @PathVariable Long userId
-    ){
-        return null;
+    ) {
+        List<UserPostSummary> summaries = postFacade.getUserPostList(userId);
+        List<UserPostListDto.Response> responses = summaries.stream()
+                .map(UserPostListDto.Response::of)
+                .toList();
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, responses));
     }
 
 }

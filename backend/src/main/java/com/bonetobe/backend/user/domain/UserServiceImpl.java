@@ -1,9 +1,7 @@
 package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
-import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
-import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.file.domain.StoredFileReader;
@@ -14,16 +12,13 @@ import com.bonetobe.backend.user.domain.command.UpdateMyPageCommand;
 import com.bonetobe.backend.user.domain.command.UserFileCommand;
 import com.bonetobe.backend.user.domain.command.UserUpdateCommand;
 import com.bonetobe.backend.user.domain.query.UserFileSummary;
-import com.bonetobe.backend.user.infrastructure.UserPrincipal;
+import com.bonetobe.backend.user.domain.query.UserSearchSummaryRaw;
 import com.bonetobe.backend.user.presentation.dto.UserDetailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Collections;
 import java.util.List;
@@ -89,7 +84,6 @@ public class UserServiceImpl implements UserService {
         StoredFile newProfileImage = user.getProfileImage();
         if (command.profileImageId() != null) {
             newProfileImage = fileReader.read(command.profileImageId()); // StoredFileReader 사용
-            newProfileImage.completeUpload();
         }
 
         // 4. 엔티티 업데이트 (더티 체킹)
@@ -118,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User getUserById(Long userId){
+    public User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 이미 탈퇴한 사용자입니다."));
     }
@@ -162,5 +156,11 @@ public class UserServiceImpl implements UserService {
                 user.getBio(),
                 isFollowing // 추가
         );
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<UserSearchSummaryRaw> getUserSearch(String nickname, Long viewerId) {
+        return userRepository.findUserSearch(nickname, viewerId);
     }
 }

@@ -11,6 +11,7 @@ import MainPage from "@/pages/mainpage/MainPage";
 import { PasswordResetPage } from "@/pages/PasswordResetPage";
 import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
 import ProfilePage from "@/pages/profile/profile";
+import AboutPage from "@/pages/AboutPage/AboutPage";
 import { WithdrawPage } from "@/pages/WithdrawPage";
 
 export const router = createBrowserRouter([
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
       {
         path: "community",
         element: <CommunityPage />,
+      },
+      {
+        path: "about",
+        element: <AboutPage />,
       },
     ],
   },

@@ -7,6 +7,7 @@ import { MainProgressSection } from "./components/MainProgressSection";
 import { MainSection } from "./components/MainSection";
 
 import type { AppTheme } from "@/shared/styles/theme";
+
 import { useAuth } from "@/shared/hooks/useAuth";
 
 type TypographyToken = {

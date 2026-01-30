@@ -3,11 +3,10 @@ import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import { Pose, POSE_CONNECTIONS, type Results, type Options as PoseOptions } from "@mediapipe/pose";
 import { useEffect, useRef, useState, type RefObject } from "react";
 
-import { size } from "../constants";
-
 export const usePoseDetection = (
   videoRef: RefObject<HTMLVideoElement | null>,
   canvasRef: RefObject<HTMLCanvasElement | null>,
+  previewWrapperRef: RefObject<HTMLDivElement | null>,
 ) => {
   const [cameraActive, setCameraActive] = useState<boolean>(false);
   const [latestLandmarks, setLatestLandmarks] = useState<Results | null>(null);
@@ -19,7 +18,7 @@ export const usePoseDetection = (
 
   useEffect(() => {
     // null check: DOM 요소가 마운트되었는지 확인
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current || !previewWrapperRef.current) return;
 
     // 1. Pose 인스턴스 설정
     const pose = new Pose({
@@ -38,28 +37,63 @@ export const usePoseDetection = (
     pose.onResults(onResults);
     poseRef.current = pose;
 
-    // 2. Camera 인스턴스 설정 (3:4 비율 - 세로가 긴 비율)
-    const camera = new Camera(videoRef.current, {
-      onFrame: async () => {
-        if (videoRef.current && poseRef.current) {
-          await poseRef.current.send({ image: videoRef.current });
-        }
-      },
-      width: size.width,
-      height: size.height,
+    // 2. Canvas 크기를 PreviewWrapper에 맞춤 (동적)
+    const updateCanvasSize = () => {
+      if (!canvasRef.current || !previewWrapperRef.current) return;
+
+      const wrapper = previewWrapperRef.current;
+      const rect = wrapper.getBoundingClientRect();
+
+      // Canvas 내부 크기를 CSS 렌더링 크기와 동일하게 설정
+      const newWidth = Math.floor(rect.width);
+      const newHeight = Math.floor(rect.height);
+
+      if (canvasRef.current.width !== newWidth || canvasRef.current.height !== newHeight) {
+        canvasRef.current.width = newWidth;
+        canvasRef.current.height = newHeight;
+
+        console.log("Canvas 크기 조정:", newWidth, "x", newHeight);
+      }
+    };
+
+    // 초기 크기 설정 (다음 프레임에서 실행)
+    const frameId = requestAnimationFrame(() => {
+      updateCanvasSize();
+
+      // 3. Camera 인스턴스 설정 (Canvas 크기 확정 후)
+      if (!videoRef.current || !canvasRef.current) return;
+
+      const camera = new Camera(videoRef.current, {
+        onFrame: async () => {
+          if (videoRef.current && poseRef.current) {
+            await poseRef.current.send({ image: videoRef.current });
+          }
+        },
+        width: canvasRef.current.width,
+        height: canvasRef.current.height,
+      });
+
+      cameraRef.current = camera;
+      camera.start();
+      setCameraActive(true);
     });
 
-    cameraRef.current = camera;
-    camera.start();
-    setCameraActive(true);
+    // 4. ResizeObserver로 반응형 대응
+    const resizeObserver = new ResizeObserver(() => {
+      updateCanvasSize();
+    });
 
-    // 3. Cleanup
+    resizeObserver.observe(previewWrapperRef.current);
+
+    // 5. Cleanup
     return () => {
+      cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
       cameraRef.current?.stop();
       poseRef.current?.close();
       setCameraActive(false);
     };
-  }, [videoRef, canvasRef]);
+  }, [videoRef, canvasRef, previewWrapperRef]);
 
   // 4. 결과 처리 함수 (Detection + Drawing 분리)
   const onResults = (results: Results) => {
@@ -74,10 +108,7 @@ export const usePoseDetection = (
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // 캔버스 크기 고정 (3:4 비율 - 세로가 긴 비율)
-    if (canvas.width !== 480) canvas.width = 480;
-    if (canvas.height !== 640) canvas.height = 640;
-
+    // Canvas 크기는 이미 PreviewWrapper 크기로 동적 설정됨
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 

@@ -56,7 +56,8 @@ const TwoCol = styled.div`
 
   @media (min-width: 768px) {
     flex-direction: row;
-    gap: 6rem;
+    align-items: center;
+    width: 100%;
   }
 `;
 
@@ -73,7 +74,7 @@ const Col = styled.div<{ $orderMobile: number; $orderDesktop: number }>`
 const OutlineNumber = styled.div`
   font-size: 6rem;
   font-weight: 900;
-  color: #9810FA;
+  color: #9810fa;
 
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
   line-height: 1;
@@ -135,15 +136,16 @@ const Li = styled.li`
   }
 `;
 
-const CanvasWrap = styled.div`
+const CanvasWrap = styled.div<{ $align: "start" | "end" }>`
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: ${({ $align }) => ($align === "start" ? "flex-start" : "flex-end")};
 `;
 
 const CanvasContainer = styled.div`
-  width: 100%;
+  width: 80%;
   height: 500px;
+  aspect-ratio: 4 / 4;
   position: relative;
   border-radius: 2rem;
   overflow: hidden;
@@ -250,7 +252,7 @@ export const TypeSection = ({
         </Col>
 
         <Col $orderMobile={canvasOrderMobile} $orderDesktop={canvasOrderDesktop}>
-          <CanvasWrap>
+          <CanvasWrap $align={reverse ? "start" : "end"}>
             <CanvasStage type={id} />
           </CanvasWrap>
         </Col>

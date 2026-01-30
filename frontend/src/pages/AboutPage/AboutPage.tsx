@@ -124,11 +124,6 @@ export default function AboutPage(): JSX.Element {
   return (
     <Page>
       <BackgroundEffects />
-
-      <HeaderWrap>
-        <MainHeader />
-      </HeaderWrap>
-
       <ScrollNav sectionIds={sectionIds} progress={progress} activeId={activeId} />
 
       <Main>

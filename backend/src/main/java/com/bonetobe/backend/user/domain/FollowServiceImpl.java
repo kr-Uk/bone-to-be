@@ -2,6 +2,8 @@ package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.file.domain.FileService;
+import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import com.bonetobe.backend.user.presentation.dto.FollowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ public class FollowServiceImpl implements FollowService{
 
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final FileService fileService;
 
     @Override
     @Transactional
@@ -49,17 +52,36 @@ public class FollowServiceImpl implements FollowService{
     }
 
     @Override
-    public List<FollowResponse> getFollowings(Long userId) {
-        // 2. 이미 구현한 FollowResponse.from() 메서드 활용
+    public List<FollowResponse> getFollowings(Long userId, Long currentUserId) {
         return userRepository.findFollowingsByUserId(userId).stream()
-                .map(FollowResponse::from)
+                .map(user -> toFollowResponse(user, currentUserId))
                 .toList();
     }
 
     @Override
-    public List<FollowResponse> getFollowers(Long userId) {
+    public List<FollowResponse> getFollowers(Long userId, Long currentUserId) {
         return userRepository.findFollowersByUserId(userId).stream()
-                .map(FollowResponse::from)
+                .map(user -> toFollowResponse(user, currentUserId))
                 .toList();
+    }
+
+    private FollowResponse toFollowResponse(User user, Long currentUserId) {
+        // 1. 팔로우 여부 체크
+        boolean isFollowing = (currentUserId != null) &&
+                followRepository.existsByFollowerIdAndFollowingId(currentUserId, user.getId());
+
+        // 2. 프로필 이미지 URL 조회
+        String profileImageUrl = null;
+        if (user.getProfileImage() != null) {
+            // FileServiceImpl의 getPublicDownloadUrls 호출
+            List<FileDownloadUrl.Query> queries = List.of(new FileDownloadUrl.Query(user.getProfileImage().getId()));
+
+            profileImageUrl = fileService.getPublicDownloadUrls(queries).stream()
+                    .findFirst()
+                    .map(FileDownloadUrl.Result::presignedUrl) // FileDownloadUrl.Result의 record/getter 확인 필요
+                    .orElse(null);
+        }
+
+        return FollowResponse.of(user, profileImageUrl, isFollowing);
     }
 }

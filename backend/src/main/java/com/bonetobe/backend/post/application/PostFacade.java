@@ -19,7 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -112,5 +113,80 @@ public class PostFacade {
                 res.uploadUrl()
         );
     }
+
+    @Transactional(readOnly = true)
+    public List<MyPostSummary> getMyPostList(Long userId) {
+
+        List<MyPostSummaryRaw> raws = postService.getMyPostList(userId);
+
+        if (raws.isEmpty()) return List.of();
+
+        List<Long> fileIds = raws.stream()
+                .map(MyPostSummaryRaw::fileId)
+                .distinct()
+                .toList();
+
+        Map<Long, String> urlMap = fileService.getPublicDownloadUrls(
+                        fileIds.stream().map(FileDownloadUrl.Query::new).toList()
+                ).stream()
+                .collect(Collectors.toMap(
+                        FileDownloadUrl.Result::fileId,
+                        FileDownloadUrl.Result::presignedUrl
+                ));
+
+        return raws.stream()
+                .map(r -> r.toSummary(urlMap.get(r.fileId())))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostSummary> getLikedPostList(Long userId) {
+
+        List<PostSummaryRaw> raws = postService.getLikedPostList(userId);
+        if (raws.isEmpty()) return List.of();
+
+        List<Long> fileIds = raws.stream()
+                .map(PostSummaryRaw::fileId)
+                .distinct()
+                .toList();
+
+        Map<Long, String> urlMap = fileService.getPublicDownloadUrls(
+                        fileIds.stream().map(FileDownloadUrl.Query::new).toList()
+                ).stream()
+                .collect(Collectors.toMap(
+                        FileDownloadUrl.Result::fileId,
+                        FileDownloadUrl.Result::presignedUrl
+                ));
+
+        return raws.stream()
+                .map(r -> r.toSummary(urlMap.get(r.fileId())))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostSummary> getScrappedPostList(Long userId) {
+
+        List<PostSummaryRaw> raws = postService.getScrappedPostList(userId);
+        if (raws.isEmpty()) return List.of();
+
+        List<Long> fileIds = raws.stream()
+                .map(PostSummaryRaw::fileId)
+                .distinct()
+                .toList();
+
+        Map<Long, String> urlMap = fileService.getPublicDownloadUrls(
+                        fileIds.stream().map(FileDownloadUrl.Query::new).toList()
+                ).stream()
+                .collect(Collectors.toMap(
+                        FileDownloadUrl.Result::fileId,
+                        FileDownloadUrl.Result::presignedUrl
+                ));
+
+        return raws.stream()
+                .map(r -> r.toSummary(urlMap.get(r.fileId())))
+                .toList();
+    }
+
+
 }
 

@@ -39,7 +39,7 @@ public class UserController {
         }
 
         // 로그인한 사용자의 ID로 정보 조회
-        UserDetailDto response = userService.getUserDetail(principal.getId());
+        UserDetailDto response = userService.getUserDetail(principal.getId(), principal.getId());
 
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
@@ -52,10 +52,17 @@ public class UserController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity<APIResponse<UserDetailDto>> getUserDetail(
-            @PathVariable Long userId
+            @PathVariable Long userId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
+        if (principal == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+
+        Long currentUserId = principal.getId();
+
         // 특정 유저의 ID로 정보 조회
-        UserDetailDto response = userService.getUserDetail(userId);
+        UserDetailDto response = userService.getUserDetail(userId, currentUserId);
 
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())

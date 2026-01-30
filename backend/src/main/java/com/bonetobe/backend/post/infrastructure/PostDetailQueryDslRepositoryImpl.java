@@ -56,6 +56,7 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
                                         post.skeletonType,
                                         post.content,
                                         post.likeCount,
+                                        post.commentCount,
                                         postLike.id.isNotNull(),
                                         Projections.constructor(
                                                 PostDetailSummaryRaw.AuthorSummary.class,

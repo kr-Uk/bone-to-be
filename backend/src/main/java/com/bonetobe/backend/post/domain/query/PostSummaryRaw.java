@@ -16,6 +16,7 @@ public record PostSummaryRaw(
         Integer height,
         Integer weight,
         boolean isLiked,
+        Long commentCount,
         LocalDateTime createdAt
 ) {
     public PostSummary toSummary(String imageUrl) {
@@ -28,6 +29,7 @@ public record PostSummaryRaw(
                 height,
                 weight,
                 isLiked,
+                commentCount,
                 createdAt
         );
     }

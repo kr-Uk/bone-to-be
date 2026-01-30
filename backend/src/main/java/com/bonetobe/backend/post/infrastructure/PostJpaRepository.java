@@ -16,5 +16,15 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
     """)
     int updateLikeCount(@Param("postId") Long postId, @Param("delta") long delta);
 
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+        UPDATE Post p
+        SET p.commentCount = p.commentCount + :delta
+        WHERE p.id = :postId
+        AND (p.commentCount + :delta) >= 0
+    """)
+    int updateCommentCount(@Param("postId") Long postId, @Param("delta") long delta);
+
+
     long countByUserId(Long userId);
 }

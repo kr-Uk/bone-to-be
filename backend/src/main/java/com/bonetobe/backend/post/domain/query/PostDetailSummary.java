@@ -17,6 +17,7 @@ public record PostDetailSummary(
         SkeletonType skeletonType,
         String content,
         Long likeCount,
+        Long commentCount,
         Boolean isLiked,
         AuthorSummary author,
         LocalDateTime createdAt

@@ -65,12 +65,6 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void makeRepresentative(Report report, Long userId) {
-        report.toggleRepresentative();
-        reportStore.update(report);
-    }
-
-    @Override
     public Report getRepresentativeReport(Long userId) {
         return reportReader.readRepresentativeReport(userId).orElseThrow(() -> new BusinessException(ErrorCode.REPRESENTATION_NOT_FOUND_EXCEPTION));
     }

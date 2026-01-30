@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
      * 프록시 내부 호출 문제를 방지하기 위해 userRepository를 직접 호출하는 private 메서드 사용
      */
     private void validateDuplication(String email, String nickname) {
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsActiveUserByEmail(email)) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL); // 이메일 중복 에러코드 활용
         }
         if (userRepository.existsByNickname(nickname)) {

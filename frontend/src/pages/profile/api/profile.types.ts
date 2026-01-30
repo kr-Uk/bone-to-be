@@ -29,6 +29,7 @@ export type BodyTypeHistoryItem = {
 };
 
 export type UserProfile = {
+  profileImageUrl?: string | null;
   username: string;
   postCount: number;
   follower: number;

@@ -1,6 +1,12 @@
 ﻿import axiosInstance from "../../../shared/api/axios";
 
-import type { BodyTypeRatio, FollowModalType, FollowUser, UserPost, UserProfile } from "./profile.types";
+import type {
+  BodyTypeRatio,
+  FollowModalType,
+  FollowUser,
+  UserPost,
+  UserProfile,
+} from "./profile.types";
 
 interface ApiResponse<T> {
   code: number;
@@ -156,7 +162,6 @@ export const followUser = async (userId: string): Promise<void> => {
 export const unfollowUser = async (userId: string): Promise<void> => {
   await axiosInstance.delete<ApiResponse<null>>(`/users/${userId}/follow`);
 };
-
 
 const mapFeedPost = (post: FeedPostDto | ScrappedPostDto): UserPost => ({
   postId: post.postId,

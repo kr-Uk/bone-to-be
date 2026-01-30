@@ -27,7 +27,11 @@ const sections: TypeSectionData[] = [
     subtitle: "Classic & High Class",
     description:
       '"입체적이고 탄탄한 바디 라인"\n\n상체에 두께감이 있고 허리 위치가 높은 것이 특징입니다.\n전체적으로 근육질의 탄탄한 느낌을 주며, 옆에서 보았을 때 입체감이 뚜렷합니다.',
-    bullets: ["두께감 있는 상체 (Cylindrical)", "높은 허리 위치, 긴 다리", "목이 다소 짧아 보일 수 있음"],
+    bullets: [
+      "두께감 있는 상체 (Cylindrical)",
+      "높은 허리 위치, 긴 다리",
+      "목이 다소 짧아 보일 수 있음",
+    ],
   },
   {
     id: "wave",
@@ -144,9 +148,7 @@ export default function AboutPage(): JSX.Element {
             </AnimatedSection>
           </Container>
         ))}
-
       </Main>
-
     </Page>
   );
 }

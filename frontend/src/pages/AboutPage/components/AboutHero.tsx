@@ -186,11 +186,9 @@ export const AboutHero = () => (
         <DescLine>
           내 스타일을 찾기 위해서는 <strong>내 골격을 먼저 이해해야 합니다.</strong>
         </DescLine>
-        <DescLine>
-          트렌드를 무작정 좇기보다, 타고난 프레임(Frame)을 먼저 파악하세요.
-        </DescLine>
-          본투비가 당신만의 고유한 골격을 찾아드립니다.
-        </DescWrap>
+        <DescLine>트렌드를 무작정 좇기보다, 타고난 프레임(Frame)을 먼저 파악하세요.</DescLine>
+        본투비가 당신만의 고유한 골격을 찾아드립니다.
+      </DescWrap>
     </HeroContent>
   </Section>
 );

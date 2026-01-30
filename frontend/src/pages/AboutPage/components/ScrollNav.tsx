@@ -63,7 +63,10 @@ const NavDot = styled.button<{ $active: boolean }>`
   border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.2);
   background: ${({ theme }) => theme.colors.primary};
-  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    background 200ms ease;
   cursor: pointer;
   padding: 0;
 

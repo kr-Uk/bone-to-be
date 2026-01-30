@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
-import { FullBodyGuideline } from "./FullBodyGuideline";
+import { ImageGuideline } from "./ImageGuideline";
 
 import type { Results } from "@mediapipe/pose";
 
@@ -149,7 +149,7 @@ const CameraPreview = ({
         <LandmarkCanvas ref={canvasRef} />
 
         {/* 전신 촬영 가이드라인 (촬영 전에만 표시) */}
-        <FullBodyGuideline show={!capturedImage && cameraActive} canvasRef={canvasRef} />
+        <ImageGuideline show={!capturedImage && cameraActive} />
 
         {/* 캡처된 이미지 오버레이 (있을 때만 보임) */}
         {capturedImage && (

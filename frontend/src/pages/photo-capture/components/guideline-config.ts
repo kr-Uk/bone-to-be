@@ -51,4 +51,11 @@ export const GUIDELINE_CONFIG = {
     enablePulse: false, // 펄스 효과 비활성화
     fadeInDuration: 0.4, // 페이드인 지속 시간 (초)
   },
+
+  // 이미지 가이드라인 설정 (guide2.png 기반)
+  image: {
+    opacity: 0.4, // 이미지 투명도
+    width: "80%", // 기본 너비
+    maxWidth: "320px", // 최대 너비
+  },
 } as const;

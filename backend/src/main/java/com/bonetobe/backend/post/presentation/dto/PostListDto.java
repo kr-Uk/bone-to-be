@@ -86,6 +86,7 @@ public class PostListDto {
             Integer height,
             Integer weight,
             Boolean isLiked,
+            Long commentCount,
             LocalDateTime createdAt
     ) {
         public static Response of(PostSummary summary) {
@@ -98,6 +99,7 @@ public class PostListDto {
                     summary.height(),
                     summary.weight(),
                     summary.isLiked(),
+                    summary.commentCount(),
                     summary.createdAt()
             );
         }

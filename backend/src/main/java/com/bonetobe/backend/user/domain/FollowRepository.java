@@ -10,4 +10,6 @@ public interface FollowRepository {
 
     long countByFollowingId(Long userId);
     long countByFollowerId(Long userId);
+
+    boolean existsByFollowerIdAndFollowingId(Long currentUserId, Long targetUserId);
 }

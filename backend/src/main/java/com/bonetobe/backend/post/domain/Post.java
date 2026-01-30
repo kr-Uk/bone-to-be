@@ -51,6 +51,10 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private long likeCount = 0L;
 
+    @Column(nullable = false)
+    private long commentCount = 0L;
+
+
     // 양방향은 순환참조의 위험이 있음 -> Join으로
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<PostStyle> postStyles = new ArrayList<>();

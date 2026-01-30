@@ -43,4 +43,9 @@ public class FollowRepositoryImpl implements FollowRepository {
         // 내가 팔로우하는 사람들의 수 (팔로잉)
         return jpaRepository.countByFollowerId(userId);
     }
+
+    @Override
+    public boolean existsByFollowerIdAndFollowingId(Long currentUserId, Long targetUserId) {
+        return jpaRepository.existsByFollowerIdAndFollowingId(currentUserId, targetUserId);
+    }
 }

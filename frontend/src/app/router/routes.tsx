@@ -45,6 +45,10 @@ export const router = createBrowserRouter([
         element: <ProfilePage />,
       },
       {
+        path: "profile/:nickname",
+        element: <ProfilePage />,
+      },
+      {
         path: "community",
         element: <CommunityPage />,
       },

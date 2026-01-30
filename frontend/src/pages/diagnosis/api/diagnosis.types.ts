@@ -29,6 +29,58 @@ export type CreatePresignedUrlResponse = ApiResponse<{
 }>;
 
 /**
+ * 체형분석목록 (본인)
+ */
+export type ReportSummaryDto = {
+  reportId: number;
+  skeletonType: SkeletonType | null;
+  reportStatus: ReportStatus;
+  isRepresentative: boolean;
+  straightRate: number;
+  naturalRate: number;
+  waveRate: number;
+  createdAt: string;
+};
+
+export type ReportListResponse = ApiResponse<ReportSummaryDto[]>;
+
+export type ReportSummary = {
+  reportId: number;
+  skeletonType: SkeletonType | null;
+  status: ReportStatus;
+  isRepresentative: boolean;
+  straightRate: number;
+  naturalRate: number;
+  waveRate: number;
+  createdAt: string;
+};
+
+/**
+ * 타유저 대표 리포트
+ */
+export type RepresentativeReportDto = {
+  reportId: number;
+  skeletonType: SkeletonType | null;
+  isRepresentative: boolean;
+  straightRate: number;
+  naturalRate: number;
+  waveRate: number;
+  createdAt: string;
+};
+
+export type RepresentativeReportResponse = ApiResponse<RepresentativeReportDto | null>;
+
+export type RepresentativeReport = {
+  reportId: number;
+  skeletonType: SkeletonType | null;
+  isRepresentative: boolean;
+  straightRate: number;
+  naturalRate: number;
+  waveRate: number;
+  createdAt: string;
+};
+
+/**
  * 리포트 생성 요청 (분석 시작)
  */
 export type CreateReportRequest = {

@@ -9,5 +9,6 @@ public record UserDetailDto(
         long postCount,
         long followerCount,
         long followingCount,
-        String bio
+        String bio,
+        boolean isFollowing
 ) {}

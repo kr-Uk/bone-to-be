@@ -16,6 +16,7 @@ public record PostSummary(
         Integer height,
         Integer weight,
         boolean isLiked,
+        Long commentCount,
         LocalDateTime createdAt
 ) {
 }

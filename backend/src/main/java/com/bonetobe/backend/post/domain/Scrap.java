@@ -8,6 +8,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(
+        name = "scrap",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_scrap_post_user",
+                        columnNames = {"post_id", "user_id"}
+                )
+        },
+        indexes = {
+                @Index(name = "idx_scrap_post_id", columnList = "post_id"),
+                @Index(name = "idx_scrap_user_id", columnList = "user_id")
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Scrap extends BaseEntity {

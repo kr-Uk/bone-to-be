@@ -25,7 +25,9 @@ axiosInstance.interceptors.response.use(
   },
   async function (error: AxiosError) {
     const status = error.response?.status;
-    if (status === 401) {
+    const requestUrl = error.config?.url ?? "";
+    const shouldSkipAuthRedirect = requestUrl.includes("/auth/me");
+    if (status === 401 && !shouldSkipAuthRedirect) {
       const currentPath = window.location.pathname;
       if (!currentPath.startsWith("/login")) {
         window.location.assign("/login");

@@ -8,6 +8,8 @@ import {
   createPresignedUrl,
   createReport,
   getReportDetail,
+  getMyReportList,
+  getRepresentativeReport,
 } from "./diagnosis.api";
 
 import type {
@@ -19,6 +21,8 @@ import type {
   CreateReportRequest,
   CreateReportResponse,
   ReportDetailResponse,
+  ReportSummary,
+  RepresentativeReport,
 } from "./diagnosis.types";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 
@@ -37,6 +41,35 @@ export function useCreatePresignedUrl(): UseMutationResult<
   return useMutation({
     mutationFn: ({ originalFileName, contentType, fileSize }) =>
       createPresignedUrl(originalFileName, contentType, fileSize),
+  });
+}
+
+/**
+ * 본인 분석 리포트 목록 조회
+ */
+export function useMyReportList(options?: {
+  enabled?: boolean;
+}): UseQueryResult<ReportSummary[], Error> {
+  return useQuery({
+    queryKey: ["reportList", "me"],
+    queryFn: () => getMyReportList(),
+    enabled: options?.enabled !== false,
+  });
+}
+
+/**
+ * 타유저 대표 리포트 조회
+ */
+export function useRepresentativeReport(
+  userId: string | null,
+  options?: {
+    enabled?: boolean;
+  },
+): UseQueryResult<RepresentativeReport | null, Error> {
+  return useQuery({
+    queryKey: ["reportRepresentative", userId],
+    queryFn: () => getRepresentativeReport(userId!),
+    enabled: options?.enabled !== false && !!userId,
   });
 }
 

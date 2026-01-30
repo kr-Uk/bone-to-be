@@ -1,6 +1,15 @@
 ﻿export type UserPost = {
   postId: number;
-  imageUrl: string;
+  imageUrl: string | null;
+  likeCount?: number;
+  commentCount?: number;
+  gender?: "MALE" | "FEMALE";
+  skeletonType?: "NATURAL" | "WAVE" | "STRAIGHT";
+  style?: string[];
+  height?: number;
+  weight?: number;
+  isLiked?: boolean;
+  createdAt?: string;
 };
 
 export type FollowModalType = "following" | "follower";

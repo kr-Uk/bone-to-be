@@ -1,5 +1,5 @@
-﻿import { useState } from "react";
-import { AiOutlineAppstore } from "react-icons/ai";
+﻿import { useEffect, useState } from "react";
+import { AiOutlineAppstore, AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
 import { CiBookmark } from "react-icons/ci";
 import styled from "styled-components";
 
@@ -145,6 +145,22 @@ const HoverOverlay = styled.div`
   transition: opacity 0.2s ease;
 `;
 
+const HoverStats = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const HoverStat = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--neutral-50, #fafafa);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+`;
+
 const HoverText = styled(Text)`
   color: var(--neutral-50, #fafafa);
   font-size: 1.125rem;
@@ -169,24 +185,39 @@ const PostCardInner = styled.div`
 interface PostsSectionProps {
   posts: UserPost[];
   saved: UserPost[];
+  showSaved?: boolean;
 }
 
-const PostsSection = ({ posts, saved }: PostsSectionProps) => {
+const PostsSection = ({ posts, saved, showSaved = true }: PostsSectionProps) => {
   const [activeTab, setActiveTab] = useState<"posts" | "saved">("posts");
-  const items = activeTab === "posts" ? posts : saved;
-  const emptyMessage = activeTab === "posts" ? "게시물이 없습니다." : "저장한 게시물이 없습니다.";
+  const resolvedTab = showSaved ? activeTab : "posts";
+  const items = resolvedTab === "posts" ? posts : saved;
+  const emptyMessage =
+    resolvedTab === "posts" ? "게시물이 없습니다." : "저장한 게시물이 없습니다.";
+
+  useEffect(() => {
+    if (!showSaved && activeTab !== "posts") {
+      setActiveTab("posts");
+    }
+  }, [showSaved, activeTab]);
 
   return (
     <Section>
       <TabBar>
-        <Tab $active={activeTab === "posts"} onClick={() => setActiveTab("posts")} type="button">
+        <Tab
+          $active={resolvedTab === "posts"}
+          onClick={() => setActiveTab("posts")}
+          type="button"
+        >
           <AiOutlineAppstore size={24} />
           <TabText>Posts</TabText>
         </Tab>
-        <Tab $active={activeTab === "saved"} onClick={() => setActiveTab("saved")} type="button">
-          <CiBookmark size={24} />
-          <TabText>Saved</TabText>
-        </Tab>
+        {showSaved ? (
+          <Tab $active={resolvedTab === "saved"} onClick={() => setActiveTab("saved")} type="button">
+            <CiBookmark size={24} />
+            <TabText>Saved</TabText>
+          </Tab>
+        ) : null}
       </TabBar>
       {items.length ? (
         <PostGrid>
@@ -199,7 +230,16 @@ const PostsSection = ({ posts, saved }: PostsSectionProps) => {
                   <PostLabel>{`IMG_${String(post.postId).padStart(2, "0")}`}</PostLabel>
                 )}
                 <HoverOverlay>
-                  <HoverText>LIKES</HoverText>
+                  <HoverStats>
+                    <HoverStat>
+                      <AiOutlineHeart size={18} />
+                      <HoverText as="span">{post.likeCount ?? 0}</HoverText>
+                    </HoverStat>
+                    <HoverStat>
+                      <AiOutlineMessage size={18} />
+                      <HoverText as="span">{post.commentCount ?? 0}</HoverText>
+                    </HoverStat>
+                  </HoverStats>
                 </HoverOverlay>
               </PostCardInner>
             </PostCard>
@@ -213,3 +253,4 @@ const PostsSection = ({ posts, saved }: PostsSectionProps) => {
 };
 
 export default PostsSection;
+

@@ -47,15 +47,17 @@ public enum ErrorCode {
     FILE_NOT_FOUND(4004, HttpStatus.BAD_REQUEST, "파일이 존재하지 않습니다"),
 
 
-    // 5000번대 코드 : AI
-    INTERNAL_SERVER_ERROR(5001, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
-
-
+    // 5000번대 코드 : 리포트
+    ALREADY_DELETED_EXCEPTION(5001, HttpStatus.BAD_REQUEST, "이미 삭제된 리포트입니다."),
+    NOT_PENDING_REPORT(5002, HttpStatus.BAD_REQUEST, "이미 분석이 완료된 리포트입니다."),
+    ALREADY_REPRESENTATIVE_EXCEPTION(5003, HttpStatus.BAD_REQUEST, "이미 대표 리포트입니다"),
+    REPRESENTATION_NOT_FOUND_EXCEPTION(5004, HttpStatus.BAD_REQUEST, "대표 리포트를 찾을 수 없습니다."),
+    NO_SUCH_REPPORT(5005, HttpStatus.BAD_REQUEST, "존재하지 않는 리포트입니다."),
     // 10000 : 알 수 없는 예외
     UNKNOWN_ERROR(10000, HttpStatus.BAD_REQUEST, "알 수 없는 예외입니다,"),
     ENTITY_NOT_FOUND(10001, HttpStatus.BAD_REQUEST,"정보를 찾을 수 없습니다"),
-    BAD_REQUEST(10002, HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
-
+    BAD_REQUEST(10002, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    INTERNAL_SERVER_ERROR(10003, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다.");
     private final Integer code;
     private final HttpStatus status;
     private final String message;

@@ -1,9 +1,9 @@
 package com.bonetobe.backend.report.domain;
 
 import com.bonetobe.backend.common.SkeletonType;
-import com.bonetobe.backend.report.presentation.BodyMetrics;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 

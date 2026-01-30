@@ -1,4 +1,4 @@
-package com.bonetobe.backend.report.presentation;
+package com.bonetobe.backend.report.domain;
 
 public record BodyMetrics(
         Double shoulderSlopeAngle,

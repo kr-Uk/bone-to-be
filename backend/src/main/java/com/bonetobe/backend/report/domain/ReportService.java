@@ -10,4 +10,12 @@ public interface ReportService {
     Report getReport(Long reportId, Long userId);
 
     List<Report> getReportList(Long id);
+
+    Report isOwner(Long userId, Long reportId);
+
+    void delete(Report reportId);
+
+    void clearRepresentativeReport(Long userId);
+
+    Report getRepresentativeReport(Long userId);
 }

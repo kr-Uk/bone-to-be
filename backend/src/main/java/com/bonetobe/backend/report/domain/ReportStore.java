@@ -4,4 +4,6 @@ public interface ReportStore {
     Report save(Report report);
 
     Report update(Report report);
+
+    void clearRepresentative(Long userId);
 }

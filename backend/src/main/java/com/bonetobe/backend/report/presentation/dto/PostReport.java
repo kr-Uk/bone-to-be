@@ -1,4 +1,4 @@
-package com.bonetobe.backend.report.presentation;
+package com.bonetobe.backend.report.presentation.dto;
 
 public record PostReport(Long reportId) {
     public static PostReport of(Long reportId) {

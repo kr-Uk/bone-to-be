@@ -13,7 +13,8 @@ const buildInitialState = (ids: readonly SectionId[]) =>
   }, {} as AnimationMap);
 
 export const useSectionAnimation = (sectionIds: readonly SectionId[]) => {
-  const ids = useMemo(() => [...sectionIds], [sectionIds]);
+  const idsKey = sectionIds.join("|");
+  const ids = useMemo(() => [...sectionIds], [idsKey]);
   const [state, setState] = useState<AnimationMap>(() => buildInitialState(ids));
 
   useEffect(() => {

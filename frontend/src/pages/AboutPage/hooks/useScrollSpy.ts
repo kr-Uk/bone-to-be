@@ -15,7 +15,8 @@ export const useScrollSpy = (sectionIds: readonly SectionId[]): ScrollSpyState =
     activeId: sectionIds[0],
   });
 
-  const ids = useMemo(() => [...sectionIds], [sectionIds]);
+  const idsKey = sectionIds.join("|");
+  const ids = useMemo(() => [...sectionIds], [idsKey]);
 
   useEffect(() => {
     const sections = ids

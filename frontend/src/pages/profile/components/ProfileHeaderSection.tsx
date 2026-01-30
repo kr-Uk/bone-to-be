@@ -79,6 +79,14 @@ const Avatar = styled.div`
   }
 `;
 
+const AvatarImage = styled.img`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
 const AvatarOverlay = styled.div`
   position: absolute;
   inset: 0;
@@ -365,15 +373,18 @@ const ActionText = styled(Text)`
 `;
 
 interface ProfileHeaderSectionProps {
+  profileImageUrl?: string | null;
   username: string;
   postCount: number;
   follower: number;
   following: number;
   bodyType?: string;
   isOwner?: boolean;
+  isFollowing?: boolean;
   bio?: string;
   onFollowerClick?: () => void;
   onFollowingClick?: () => void;
+  onFollowToggle?: () => void;
 }
 
 const formatCount = (value: number) => {
@@ -403,15 +414,18 @@ const formatBodyType = (value?: string) => {
 };
 
 const ProfileHeaderSection = ({
+  profileImageUrl,
   username,
   postCount,
   follower,
   following,
   bodyType,
   isOwner = false,
+  isFollowing = false,
   bio,
   onFollowerClick,
   onFollowingClick,
+  onFollowToggle,
 }: ProfileHeaderSectionProps) => {
   const bodyTypeLabel = formatBodyType(bodyType);
   const quoteText = bio?.trim() ? bio : "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~";
@@ -420,8 +434,14 @@ const ProfileHeaderSection = ({
     <Card>
       <AvatarWrap>
         <Avatar>
-          <AvatarOverlay />
-          <AvatarCore />
+          {profileImageUrl ? (
+            <AvatarImage src={profileImageUrl} alt={`${username} avatar`} />
+          ) : (
+            <>
+              <AvatarOverlay />
+              <AvatarCore />
+            </>
+          )}
         </Avatar>
       </AvatarWrap>
       <Info>
@@ -458,9 +478,11 @@ const ProfileHeaderSection = ({
             </>
           ) : (
             <>
-              <FollowButton type="button">
-                <ActionText $color="var(--neutral-50, #fafafa)">Follow</ActionText>
-                <IoAddSharp />
+              <FollowButton type="button" onClick={onFollowToggle}>
+                <ActionText $color="var(--neutral-50, #fafafa)">
+                  {isFollowing ? "Following" : "Follow"}
+                </ActionText>
+                {!isFollowing && <IoAddSharp />}
               </FollowButton>
               <MessageButton type="button">
                 <ActionText>Message</ActionText>

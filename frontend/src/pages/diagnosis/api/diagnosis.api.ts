@@ -9,6 +9,12 @@ import type {
   CreateReportRequest,
   CreateReportResponse,
   ReportDetailResponse,
+  ReportListResponse,
+  ReportSummary,
+  ReportSummaryDto,
+  RepresentativeReportResponse,
+  RepresentativeReport,
+  RepresentativeReportDto,
 } from "./diagnosis.types";
 
 import axios from "@/shared/api/axios";
@@ -34,6 +40,73 @@ export async function createPresignedUrl(
   const response = await axios.post<CreatePresignedUrlResponse>("/reports/createUrl", requestData);
 
   return response.data.data; // 래퍼 벗기기
+}
+
+const normalizeIsoString = (value: string): string => {
+  if (!value) return value;
+  if (!value.includes(".")) return value;
+  return value.replace(/\.(\d{3})\d+/, ".$1");
+};
+
+const formatReportDate = (value: string): string => {
+  const normalized = normalizeIsoString(value);
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  return `${year}.${month}.${day} (${dayNames[date.getDay()]})`;
+};
+
+const mapReportSummary = (report: ReportSummaryDto): ReportSummary => ({
+  reportId: report.reportId,
+  skeletonType: report.skeletonType,
+  status: report.reportStatus,
+  isRepresentative: report.isRepresentative,
+  straightRate: report.straightRate,
+  naturalRate: report.naturalRate,
+  waveRate: report.waveRate,
+  createdAt: formatReportDate(report.createdAt),
+});
+
+const mapRepresentativeReport = (
+  report: RepresentativeReportDto,
+): RepresentativeReport => ({
+  reportId: report.reportId,
+  skeletonType: report.skeletonType,
+  isRepresentative: report.isRepresentative,
+  straightRate: report.straightRate,
+  naturalRate: report.naturalRate,
+  waveRate: report.waveRate,
+  createdAt: formatReportDate(report.createdAt),
+});
+
+/**
+ * 본인 분석 리포트 목록 조회
+ */
+export async function getMyReportList(): Promise<ReportSummary[]> {
+  const response = await axios.get<ReportListResponse>("/reports");
+
+  return response.data.data.map(mapReportSummary);
+}
+
+/**
+ * 타유저 대표 리포트 조회
+ */
+export async function getRepresentativeReport(
+  userId: string,
+): Promise<RepresentativeReport | null> {
+  const response = await axios.get<RepresentativeReportResponse>(
+    `/users/${userId}/representative`,
+  );
+
+  const report = response.data.data;
+  if (!report) return null;
+
+  return mapRepresentativeReport(report);
 }
 
 /**

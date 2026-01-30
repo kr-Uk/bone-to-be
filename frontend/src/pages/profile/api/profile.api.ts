@@ -18,25 +18,43 @@ export interface UserProfileBaseDto {
   followerCount: number;
   followingCount: number;
   bio: string | null;
+  isFollowing?: boolean | null;
 }
 
 export interface FollowUserDto {
   id: string | number;
-  username: string;
+  nickname?: string;
+  username?: string;
+  bodyType?: string | null;
   styleTag?: string;
-  bio?: string;
-  avatarUrl?: string;
+  bio?: string | null;
+  profileImage?: string | null;
+  profileImageUrl?: string | null;
+  avatarUrl?: string | null;
   isFollowing?: boolean;
 }
 
-const mapFollowUser = (user: FollowUserDto): FollowUser => ({
-  id: String(user.id),
-  username: user.username,
-  styleTag: user.styleTag,
-  bio: user.bio,
-  avatarUrl: user.avatarUrl,
-  isFollowing: user.isFollowing,
-});
+const normalizeText = (value: string | null | undefined, fallback: string) => {
+  const trimmed = (value ?? "").trim();
+  return trimmed.length > 0 ? trimmed : fallback;
+};
+
+const mapFollowUser = (user: FollowUserDto): FollowUser => {
+  const username = user.nickname ?? user.username ?? "알 수 없음";
+  const styleTag = normalizeText(user.bodyType ?? user.styleTag, "비공개");
+  const bio = normalizeText(user.bio, "소개글이 없습니다.");
+  const avatarUrl =
+    user.profileImageUrl ?? user.profileImage ?? user.avatarUrl ?? null;
+
+  return {
+    id: String(user.id),
+    username,
+    styleTag,
+    bio,
+    avatarUrl,
+    isFollowing: user.isFollowing,
+  };
+};
 
 const getFallbackRatio = (bodyType?: string): BodyTypeRatio => {
   const normalizedType = bodyType?.toLowerCase() ?? "";
@@ -91,6 +109,7 @@ const mapBaseProfile = (profile: UserProfileBaseDto, isOwner: boolean): UserProf
     bodyTypeRatio: normalizeRatio(undefined, bodyType),
     bio: profile.bio ?? "소개글이 없습니다.",
     isOwner,
+    isFollowing: profile.isFollowing ?? false,
     bodyTypeHistory: [],
     posts: [],
     saved: [],
@@ -106,9 +125,8 @@ export const fetchMyProfile = async (): Promise<UserProfile> => {
 };
 
 export const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
-  const encodedUserId = encodeURIComponent(userId);
   const { data } = await axiosInstance.get<ApiResponse<UserProfileBaseDto>>(
-    `/users/${encodedUserId}`,
+    `/users/${userId}`,
   );
   if (!data?.data) {
     throw new Error("프로필 정보를 불러오지 못했습니다.");
@@ -116,14 +134,41 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile> => 
   return mapBaseProfile(data.data, false);
 };
 
-
-const followEndpoint: Record<FollowModalType, string> = {
-  following: "/v1/users/following",
-  follower: "/v1/users/followers",
+export const followUser = async (userId: string): Promise<void> => {
+  await axiosInstance.post<ApiResponse<null>>(`/users/${userId}/follow`);
 };
 
-export const fetchFollowList = async (type: FollowModalType): Promise<FollowUser[]> => {
-  const { data } = await axiosInstance.get<FollowUserDto[]>(followEndpoint[type]);
+export const unfollowUser = async (userId: string): Promise<void> => {
+  await axiosInstance.delete<ApiResponse<null>>(`/users/${userId}/follow`);
+};
 
-  return data.map(mapFollowUser);
+
+const myFollowEndpoint: Record<FollowModalType, string> = {
+  following: "/users/me/followings",
+  follower: "/users/me/followers",
+};
+
+const userFollowEndpoint = (userId: string): Record<FollowModalType, string> => {
+  return {
+    following: `/users/${userId}/followings`,
+    follower: `/users/${userId}/followers`,
+  };
+};
+
+const mapFollowResponse = (data?: ApiResponse<FollowUserDto[]>): FollowUser[] => {
+  if (!data?.data) {
+    throw new Error("팔로우 목록을 불러오지 못했습니다.");
+  }
+
+  return data.data.map(mapFollowUser);
+};
+
+export const fetchFollowList = async (
+  type: FollowModalType,
+  userId?: string,
+): Promise<FollowUser[]> => {
+  const endpoint = userId ? userFollowEndpoint(userId)[type] : myFollowEndpoint[type];
+  const { data } = await axiosInstance.get<ApiResponse<FollowUserDto[]>>(endpoint);
+
+  return mapFollowResponse(data);
 };

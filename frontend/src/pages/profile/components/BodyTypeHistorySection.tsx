@@ -238,15 +238,23 @@ const DateText = styled(Text)`
   font-family: Consolas;
 `;
 
+const EmptyState = styled(Text)`
+  color: var(--neutral-500, #737373);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  text-align: center;
+  padding: 2.5rem 0;
+  border-radius: 0.9375rem;
+  background: var(--neutral-900, #171717);
+  outline: 0.0625rem var(--neutral-600, #525252) solid;
+  outline-offset: -0.0625rem;
+`;
+
 interface BodyTypeHistorySectionProps {
   history: BodyTypeHistoryItem[];
 }
 
 const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
-  if (!history.length) {
-    return null;
-  }
-
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [visibilityMap, setVisibilityMap] = useState<Record<string, number>>({});
   const isDraggingRef = useRef(false);
@@ -411,7 +419,8 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
         <Title as="h2">나의 분석 리포트</Title>
         <Subtitle as="p">지난 체형 분석 데이터를 확인하세요.</Subtitle>
       </SectionHeader>
-      <Carousel>
+      {history.length ? (
+        <Carousel>
         <ArrowButton type="button" aria-label="Scroll left" onClick={() => scrollTrack("left")}>
           <IoChevronBackOutline size={20} />
         </ArrowButton>
@@ -476,7 +485,10 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
         <ArrowButton type="button" aria-label="Scroll right" onClick={() => scrollTrack("right")}>
           <IoChevronForwardOutline size={20} />
         </ArrowButton>
-      </Carousel>
+        </Carousel>
+      ) : (
+        <EmptyState as="p">분석 리포트가 없습니다.</EmptyState>
+      )}
     </Section>
   );
 };

@@ -101,11 +101,11 @@ function FollowRow({
   onUnfollow?: (userId: string) => void;
   onToggleFollow?: (userId: string) => void;
 }) {
-  const buttonLabel =
-    type === "following" ? "Following" : user.isFollowing ? "Following" : "Follow";
+  const isFollowing = user.isFollowing ?? type === "following";
+  const buttonLabel = isFollowing ? "Following" : "Follow";
 
   const handleClick = () => {
-    if (type === "following") {
+    if (isFollowing) {
       onUnfollow?.(user.id);
       return;
     }

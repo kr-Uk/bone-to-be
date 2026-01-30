@@ -38,6 +38,7 @@ export type UserProfile = {
   bodyTypeRatio: BodyTypeRatio;
   bio?: string;
   isOwner: boolean;
+  isFollowing?: boolean;
   bodyTypeHistory: BodyTypeHistoryItem[];
   posts: UserPost[];
   saved: UserPost[];

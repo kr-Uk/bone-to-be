@@ -1,10 +1,16 @@
-import axiosInstance from "@/shared/api/axios";
+﻿import axiosInstance from "@/shared/api/axios";
 
 export type Me = {
   email: string;
   nickname: string;
   role?: string;
   avatarUrl?: string | null;
+};
+
+type ApiResponse<T> = {
+  code: number;
+  message: string;
+  data: T;
 };
 
 export type LoginPayload = {
@@ -47,11 +53,11 @@ export type PasswordResetConfirmResponse = {
 };
 
 export const getMe = async (): Promise<Me> => {
-  const { data } = await axiosInstance.get<Me>("/auth/me");
-  if (!data) {
-    throw new Error("인증 정보가 없습니다");
+  const { data } = await axiosInstance.get<ApiResponse<Me>>("/auth/me");
+  if (!data?.data) {
+    throw new Error("Failed to load auth info.");
   }
-  return data;
+  return data.data;
 };
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {

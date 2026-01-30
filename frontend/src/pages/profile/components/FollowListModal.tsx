@@ -1,6 +1,7 @@
 ﻿import { useMemo, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
+import { IoAddSharp, IoCheckmark } from "react-icons/io5";
 import styled from "styled-components";
 
 import { Text } from "./ProfileCommon";
@@ -10,6 +11,7 @@ import type { FollowModalType, FollowUser } from "../api/profile.types";
 type Props = {
   type: FollowModalType;
   users: FollowUser[];
+  currentNickname?: string;
   onClose: () => void;
   onUnfollow?: (userId: string) => void;
   onToggleFollow?: (userId: string) => void;
@@ -20,6 +22,7 @@ type Props = {
 export const FollowListModal = ({
   type,
   users,
+  currentNickname,
   onClose,
   onUnfollow,
   onToggleFollow,
@@ -29,13 +32,21 @@ export const FollowListModal = ({
   const [query, setQuery] = useState("");
 
   const title = type === "following" ? "팔로잉" : "팔로워";
+  const orderedUsers = useMemo(() => {
+    if (!currentNickname) return users;
+    const index = users.findIndex((user) => user.username === currentNickname);
+    if (index <= 0) return users;
+    const next = [...users];
+    const [meUser] = next.splice(index, 1);
+    return [meUser, ...next];
+  }, [users, currentNickname]);
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return users;
-    return users.filter(
+    if (!q) return orderedUsers;
+    return orderedUsers.filter(
       (u) => u.username.toLowerCase().includes(q) || (u.bio ?? "").toLowerCase().includes(q),
     );
-  }, [query, users]);
+  }, [query, orderedUsers]);
 
   const statusMessage = errorMessage
     ? errorMessage
@@ -80,6 +91,7 @@ export const FollowListModal = ({
               key={user.id}
               type={type}
               user={user}
+              isMe={user.username === currentNickname}
               onUnfollow={onUnfollow}
               onToggleFollow={onToggleFollow}
             />
@@ -93,19 +105,22 @@ export const FollowListModal = ({
 function FollowRow({
   type,
   user,
+  isMe,
   onUnfollow,
   onToggleFollow,
 }: {
   type: FollowModalType;
   user: FollowUser;
+  isMe: boolean;
   onUnfollow?: (userId: string) => void;
   onToggleFollow?: (userId: string) => void;
 }) {
-  const buttonLabel =
-    type === "following" ? "Following" : user.isFollowing ? "Following" : "Follow";
+  const isFollowing = user.isFollowing ?? type === "following";
+  const buttonLabel = isFollowing ? "Following" : "Follow";
+  const buttonIcon = isFollowing ? <IoCheckmark /> : <IoAddSharp />;
 
   const handleClick = () => {
-    if (type === "following") {
+    if (isFollowing) {
       onUnfollow?.(user.id);
       return;
     }
@@ -135,9 +150,12 @@ function FollowRow({
         </Info>
       </RowLeft>
 
-      <ActionButton type="button" data-active={isActive} onClick={handleClick}>
-        {buttonLabel}
-      </ActionButton>
+      {isMe ? null : (
+        <ActionButton type="button" data-active={isActive} onClick={handleClick}>
+          {buttonLabel}
+          {buttonIcon}
+        </ActionButton>
+      )}
     </Row>
   );
 }
@@ -334,12 +352,14 @@ const ActionButton = styled.button`
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  gap: 0.25rem;
   cursor: pointer;
   color: var(--neutral-200, #e5e5e5);
   font-size: 0.75rem;
   font-family: Pretendard;
   font-weight: 700;
   line-height: 1rem;
+  white-space: nowrap;
 
   &[data-active="false"] {
     outline-color: var(--color-brand-primary-900, #59168b);

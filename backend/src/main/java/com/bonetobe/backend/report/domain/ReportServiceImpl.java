@@ -3,11 +3,14 @@ package com.bonetobe.backend.report.domain;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
@@ -29,6 +32,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Report getReport(Long reportId, Long userId) {
         Report report = reportReader.read(reportId);
         if (!report.getUser().getId().equals(userId)) {
@@ -39,7 +43,34 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Report> getReportList(Long userId) {
         return reportReader.readReports(userId);
+    }
+
+    @Override
+    public Report isOwner(Long userId, Long reportId) {
+        Report report = reportReader.read(reportId);
+        if (!Objects.equals(report.getUser().getId(), userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+        return report;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Report report) {
+        report.softDelete();
+        reportStore.update(report);
+    }
+
+    @Override
+    public Report getRepresentativeReport(Long userId) {
+        return reportReader.readRepresentativeReport(userId).orElseThrow(() -> new BusinessException(ErrorCode.REPRESENTATION_NOT_FOUND_EXCEPTION));
+    }
+
+    @Override
+    public void clearRepresentativeReport(Long userId) {
+        reportStore.clearRepresentative(userId);
     }
 }

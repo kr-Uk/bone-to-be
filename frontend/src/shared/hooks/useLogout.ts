@@ -1,16 +1,17 @@
-import { useMutation, useQueryClient, type UseMutationResult } from "@tanstack/react-query";
+import { useMutation, type UseMutationResult } from "@tanstack/react-query";
 
 import { logout } from "@/shared/api/auth";
+import { useAuthStore } from "@/shared/stores/authStore";
 
 type LogoutResponse = { message?: string };
 
 export const useLogout = (): UseMutationResult<LogoutResponse, Error, void> => {
-  const queryClient = useQueryClient();
+  const { clearAuth } = useAuthStore();
 
   return useMutation({
     mutationFn: logout,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
+    onSuccess: () => {
+      clearAuth();
     },
   });
 };

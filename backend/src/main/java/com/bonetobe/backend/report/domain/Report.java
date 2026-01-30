@@ -1,6 +1,8 @@
 package com.bonetobe.backend.report.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
+import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.user.domain.User;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -61,8 +63,8 @@ public class Report extends BaseEntity {
     }
 
     public void completeReport(List<AnalysisDetail> report) {
-        if (!status.equals(ReportStatus.PENDING)) {
-            throw new IllegalArgumentException("분석이 완료되었거나, 유효하지 않은 리포트 입니다.");
+        if (status != ReportStatus.PENDING) {
+            throw new BusinessException(ErrorCode.NOT_PENDING_REPORT);
         }
         diagnosis = Diagnosis.calculateRatio(report);
         analysisReport = report;
@@ -70,10 +72,30 @@ public class Report extends BaseEntity {
     }
 
     public Diagnosis getDiagnosis(ReportStatus status) {
-        if (status.equals(ReportStatus.PENDING)) {
+        if (status == ReportStatus.PENDING) {
             return null;
         }
 
         return diagnosis;
+    }
+
+    public void softDelete() {
+        if(status == ReportStatus.DELETED) {
+            throw new BusinessException(ErrorCode.ALREADY_DELETED_EXCEPTION);
+        }
+        status = ReportStatus.DELETED;
+    }
+
+    public void toggleRepresentative() {
+        if(isRepresentative()) {
+            representative = false;
+            return;
+        }
+
+        representative = true;
+    }
+
+    public void revokeRepresentative() {
+        representative = false;
     }
 }

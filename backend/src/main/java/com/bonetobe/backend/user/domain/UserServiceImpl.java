@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetailDto getUserDetail(Long targetUserId) {
+    public UserDetailDto getUserDetail(Long targetUserId, Long currentUserId) {
         User user = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -127,15 +127,23 @@ public class UserServiceImpl implements UserService {
         long followerCount = followRepository.countByFollowingId(targetUserId);
         long followingCount = followRepository.countByFollowerId(targetUserId);
 
+        // ✨ 팔로우 여부 확인 (본인 페이지라면 false 혹은 정책에 따라 처리)
+        boolean isFollowing = false;
+        if (currentUserId != null && !currentUserId.equals(targetUserId)) {
+            isFollowing = followRepository.existsByFollowerIdAndFollowingId(currentUserId, targetUserId);
+        }
+
         String profileImageUrl = null;
         if (user.getProfileImage() != null) {
             List<FileDownloadUrl.Query> queries = Collections.singletonList(
                     new FileDownloadUrl.Query(user.getProfileImage().getId())
             );
 
-            // .url()이나 .downloadUrl() 대신 .presignedUrl() 호출!
-            var result = fileService.getPublicDownloadUrls(queries).get(0);
-            profileImageUrl = result.presignedUrl();
+            // [방어 코드 적용] stream 사용
+            profileImageUrl = fileService.getPublicDownloadUrls(queries).stream()
+                    .findFirst()
+                    .map(FileDownloadUrl.Result::presignedUrl)
+                    .orElse(null);
         }
 
         return new UserDetailDto(
@@ -145,7 +153,8 @@ public class UserServiceImpl implements UserService {
                 postCount,
                 followerCount,
                 followingCount,
-                user.getBio()
+                user.getBio(),
+                isFollowing // 추가
         );
     }
 

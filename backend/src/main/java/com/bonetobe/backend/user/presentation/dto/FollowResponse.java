@@ -7,17 +7,19 @@ import com.bonetobe.backend.user.domain.User;
 public record FollowResponse(
         Long id,
         String nickname,
-        StoredFile profileImage,
+        String profileImageUrl, // 변경: 프론트에서 바로 쓸 수 있는 URL
         SkeletonType skeletonType,
-        String bio
+        String bio,
+        boolean isFollowing
 ) {
-    public static FollowResponse from(User user) {
+    public static FollowResponse of(User user, String profileImageUrl, boolean isFollowing) {
         return new FollowResponse(
                 user.getId(),
                 user.getNickname(),
-                user.getProfileImage(),
+                profileImageUrl,
                 user.getSkeletonType(),
-                user.getBio()
+                user.getBio(),
+                isFollowing
         );
     }
 }

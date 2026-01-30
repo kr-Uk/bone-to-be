@@ -238,15 +238,22 @@ const DateText = styled(Text)`
   font-family: Consolas;
 `;
 
+const EmptyState = styled(Text)`
+  color: var(--neutral-500, #737373);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  text-align: center;
+  min-height: 9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 interface BodyTypeHistorySectionProps {
   history: BodyTypeHistoryItem[];
 }
 
 const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
-  if (!history.length) {
-    return null;
-  }
-
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [visibilityMap, setVisibilityMap] = useState<Record<string, number>>({});
   const isDraggingRef = useRef(false);
@@ -411,72 +418,76 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
         <Title as="h2">나의 분석 리포트</Title>
         <Subtitle as="p">지난 체형 분석 데이터를 확인하세요.</Subtitle>
       </SectionHeader>
-      <Carousel>
-        <ArrowButton type="button" aria-label="Scroll left" onClick={() => scrollTrack("left")}>
-          <IoChevronBackOutline size={20} />
-        </ArrowButton>
-        <Track
-          ref={trackRef}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-        >
-          {history.map((item, index) => {
-            const ratio = applySmoothing({
-              natural: Number(item.ratio.natural),
-              wave: Number(item.ratio.wave),
-              straight: Number(item.ratio.straight),
-            });
-            const labels = getBodyTypeLabels(item.type);
-            const badgeText = getBodyTypeBadge(item.type);
-            const codeText = item.id.includes("-")
-              ? item.id
-              : `${badgeText.charAt(0)}-${index + 1}`;
-            const hasVisibility = Object.keys(visibilityMap).length > 0;
-            const intersectionRatio = visibilityMap[item.id] ?? 0;
-            const isDimmed = hasVisibility ? intersectionRatio < 0.999 : false;
-            const dimAlpha = isDimmed ? 0.75 : 0;
+      {history.length ? (
+        <Carousel>
+          <ArrowButton type="button" aria-label="Scroll left" onClick={() => scrollTrack("left")}>
+            <IoChevronBackOutline size={20} />
+          </ArrowButton>
+          <Track
+            ref={trackRef}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+          >
+            {history.map((item, index) => {
+              const ratio = applySmoothing({
+                natural: Number(item.ratio.natural),
+                wave: Number(item.ratio.wave),
+                straight: Number(item.ratio.straight),
+              });
+              const labels = getBodyTypeLabels(item.type);
+              const badgeText = getBodyTypeBadge(item.type);
+              const codeText = item.id.includes("-")
+                ? item.id
+                : `${badgeText.charAt(0)}-${index + 1}`;
+              const hasVisibility = Object.keys(visibilityMap).length > 0;
+              const intersectionRatio = visibilityMap[item.id] ?? 0;
+              const isDimmed = hasVisibility ? intersectionRatio < 0.999 : false;
+              const dimAlpha = isDimmed ? 0.75 : 0;
 
-            return (
-              <Card
-                key={item.id}
-                data-card-id={item.id}
-                $highlight={item.isLatest}
-                $dimmed={isDimmed}
-                style={{ "--dim-alpha": dimAlpha } as CSSProperties}
-              >
-                {item.isLatest && <LatestBadge>LATEST</LatestBadge>}
-                <CardBody>
-                  <Preview>
-                    <ProfileTriangleChart
-                      data={[ratio.straight * 100, ratio.wave * 100, ratio.natural * 100]}
-                      labels={[" ", " ", " "]}
-                      customLabels={{
-                        enabled: true,
-                        alignments: ["center", "right", "left"],
-                      }}
-                      tooltip={{ enabled: false }}
-                      animate={false}
-                    />
-                  </Preview>
-                </CardBody>
-                <CardFooter>
-                  <FooterRow>
-                    <TypeTitle as="span">{labels.title}</TypeTitle>
-                    <CodeText as="span">{codeText}</CodeText>
-                  </FooterRow>
-                  {item.date && <DateText as="span">{item.date}</DateText>}
-                </CardFooter>
-              </Card>
-            );
-          })}
-        </Track>
-        <ArrowButton type="button" aria-label="Scroll right" onClick={() => scrollTrack("right")}>
-          <IoChevronForwardOutline size={20} />
-        </ArrowButton>
-      </Carousel>
+              return (
+                <Card
+                  key={item.id}
+                  data-card-id={item.id}
+                  $highlight={item.isLatest}
+                  $dimmed={isDimmed}
+                  style={{ "--dim-alpha": dimAlpha } as CSSProperties}
+                >
+                  {item.isLatest && <LatestBadge>LATEST</LatestBadge>}
+                  <CardBody>
+                    <Preview>
+                      <ProfileTriangleChart
+                        data={[ratio.straight * 100, ratio.wave * 100, ratio.natural * 100]}
+                        labels={[" ", " ", " "]}
+                        customLabels={{
+                          enabled: true,
+                          alignments: ["center", "right", "left"],
+                        }}
+                        tooltip={{ enabled: false }}
+                        animate={false}
+                      />
+                    </Preview>
+                  </CardBody>
+                  <CardFooter>
+                    <FooterRow>
+                      <TypeTitle as="span">{labels.title}</TypeTitle>
+                      <CodeText as="span">{codeText}</CodeText>
+                    </FooterRow>
+                    {item.date && <DateText as="span">{item.date}</DateText>}
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </Track>
+          <ArrowButton type="button" aria-label="Scroll right" onClick={() => scrollTrack("right")}>
+            <IoChevronForwardOutline size={20} />
+          </ArrowButton>
+        </Carousel>
+      ) : (
+        <EmptyState as="p">분석 리포트가 없습니다.</EmptyState>
+      )}
     </Section>
   );
 };

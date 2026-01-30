@@ -1,27 +1,35 @@
 import { create } from "zustand";
 
-interface User {
-  id: string;
-  email: string;
-  name: string;
-}
+import type { Me } from "@/shared/api/auth";
 
 interface AuthState {
-  user: User | null;
+  me: Me | null;
   isAuthenticated: boolean;
+  isAuthLoading: boolean;
+  hasCheckedAuth: boolean;
   isLoginModalOpen: boolean;
-  login: (userInfo: User) => void;
+  setAuth: (me: Me) => void;
+  clearAuth: () => void;
+  setAuthLoading: (value: boolean) => void;
+  setHasCheckedAuth: (value: boolean) => void;
+  login: (userInfo: Me) => void;
   logout: () => void;
   openLoginModal: () => void;
   closeLoginModal: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+  me: null,
   isAuthenticated: false,
+  isAuthLoading: true,
+  hasCheckedAuth: false,
   isLoginModalOpen: false,
-  login: (userInfo) => set({ user: userInfo, isAuthenticated: true }),
-  logout: () => set({ user: null, isAuthenticated: false }),
+  setAuth: (me) => set({ me, isAuthenticated: true }),
+  clearAuth: () => set({ me: null, isAuthenticated: false }),
+  setAuthLoading: (value) => set({ isAuthLoading: value }),
+  setHasCheckedAuth: (value) => set({ hasCheckedAuth: value }),
+  login: (userInfo) => set({ me: userInfo, isAuthenticated: true }),
+  logout: () => set({ me: null, isAuthenticated: false }),
   openLoginModal: () => set({ isLoginModalOpen: true }),
   closeLoginModal: () => set({ isLoginModalOpen: false }),
 }));

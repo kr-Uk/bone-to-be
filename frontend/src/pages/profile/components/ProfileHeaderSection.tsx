@@ -1,4 +1,4 @@
-﻿import { IoAddSharp } from "react-icons/io5";
+import { IoAddSharp, IoCheckmark } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import styled from "styled-components";
 
@@ -77,6 +77,14 @@ const Avatar = styled.div`
     width: clamp(5rem, 18vw, 6.25rem);
     height: clamp(5rem, 18vw, 6.25rem);
   }
+`;
+
+const AvatarImage = styled.img`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const AvatarOverlay = styled.div`
@@ -190,6 +198,8 @@ const StatsRow = styled.div`
 `;
 
 const StatItem = styled(Stack)`
+  flex: 1;
+  min-width: 0;
   align-items: center;
   gap: 0.40625rem;
 
@@ -201,6 +211,8 @@ const StatItem = styled(Stack)`
 const StatButton = styled.button`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
   align-items: center;
   gap: 0.40625rem;
   background: none;
@@ -322,9 +334,10 @@ const SettingsButton = styled.button`
   }
 `;
 
-const FollowButton = styled.button`
+const FollowButton = styled.button<{ $active?: boolean }>`
   padding: 0.64625rem 1.25rem;
-  background: var(--color-bg-brand, #9810fa);
+  background: ${({ $active }) =>
+    $active ? "var(--neutral-700, #404040)" : "var(--color-bg-brand, #9810fa)"};
   border-radius: 0.5rem;
   color: var(--neutral-50, #fafafa);
   display: inline-flex;
@@ -365,15 +378,18 @@ const ActionText = styled(Text)`
 `;
 
 interface ProfileHeaderSectionProps {
+  profileImageUrl?: string | null;
   username: string;
   postCount: number;
   follower: number;
   following: number;
   bodyType?: string;
   isOwner?: boolean;
+  isFollowing?: boolean;
   bio?: string;
   onFollowerClick?: () => void;
   onFollowingClick?: () => void;
+  onFollowToggle?: () => void;
 }
 
 const formatCount = (value: number) => {
@@ -392,26 +408,24 @@ const formatBodyType = (value?: string) => {
     return "Natural Type";
   }
 
-  const isKorean = /[가-힣]/.test(normalizedValue);
-  const hasTypeSuffix = /type/i.test(normalizedValue);
 
-  if (isKorean || hasTypeSuffix) {
-    return normalizedValue;
-  }
 
   return `${normalizedValue} Type`;
 };
 
 const ProfileHeaderSection = ({
+  profileImageUrl,
   username,
   postCount,
   follower,
   following,
   bodyType,
   isOwner = false,
+  isFollowing = false,
   bio,
   onFollowerClick,
   onFollowingClick,
+  onFollowToggle,
 }: ProfileHeaderSectionProps) => {
   const bodyTypeLabel = formatBodyType(bodyType);
   const quoteText = bio?.trim() ? bio : "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~";
@@ -420,8 +434,14 @@ const ProfileHeaderSection = ({
     <Card>
       <AvatarWrap>
         <Avatar>
-          <AvatarOverlay />
-          <AvatarCore />
+          {profileImageUrl ? (
+            <AvatarImage src={profileImageUrl} alt={`${username} avatar`} />
+          ) : (
+            <>
+              <AvatarOverlay />
+              <AvatarCore />
+            </>
+          )}
         </Avatar>
       </AvatarWrap>
       <Info>
@@ -458,9 +478,11 @@ const ProfileHeaderSection = ({
             </>
           ) : (
             <>
-              <FollowButton type="button">
-                <ActionText $color="var(--neutral-50, #fafafa)">Follow</ActionText>
-                <IoAddSharp />
+              <FollowButton type="button" $active={isFollowing} onClick={onFollowToggle}>
+                <ActionText $color="var(--neutral-50, #fafafa)">
+                  {isFollowing ? "Following" : "Follow"}
+                </ActionText>
+                {isFollowing ? <IoCheckmark /> : <IoAddSharp />}
               </FollowButton>
               <MessageButton type="button">
                 <ActionText>Message</ActionText>

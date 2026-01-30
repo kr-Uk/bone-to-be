@@ -18,7 +18,7 @@ public interface UserService {
 
     User getUserById(Long userId);
 
-    UserDetailDto getUserDetail(Long userId);
+    UserDetailDto getUserDetail(Long userId, Long currentUserId);
 
     void updateMyPage(UpdateMyPageCommand command);
 

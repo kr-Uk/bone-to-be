@@ -122,6 +122,17 @@ const PostLabel = styled(Text)`
   font-family: Consolas;
 `;
 
+const EmptyState = styled(Text)`
+  color: var(--neutral-500, #737373);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  text-align: center;
+  min-height: 12rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const HoverOverlay = styled.div`
   position: absolute;
   inset: 0;
@@ -163,6 +174,7 @@ interface PostsSectionProps {
 const PostsSection = ({ posts, saved }: PostsSectionProps) => {
   const [activeTab, setActiveTab] = useState<"posts" | "saved">("posts");
   const items = activeTab === "posts" ? posts : saved;
+  const emptyMessage = activeTab === "posts" ? "게시물이 없습니다." : "저장한 게시물이 없습니다.";
 
   return (
     <Section>
@@ -176,22 +188,26 @@ const PostsSection = ({ posts, saved }: PostsSectionProps) => {
           <TabText>Saved</TabText>
         </Tab>
       </TabBar>
-      <PostGrid>
-        {items.map((post, index) => (
-          <PostCard key={post.postId} $variant={index % 2 === 0 ? "dark" : "darker"}>
-            <PostCardInner>
-              {post.imageUrl ? (
-                <PostImage src={post.imageUrl} alt={`Post ${post.postId}`} />
-              ) : (
-                <PostLabel>{`IMG_${String(post.postId).padStart(2, "0")}`}</PostLabel>
-              )}
-              <HoverOverlay>
-                <HoverText>LIKES</HoverText>
-              </HoverOverlay>
-            </PostCardInner>
-          </PostCard>
-        ))}
-      </PostGrid>
+      {items.length ? (
+        <PostGrid>
+          {items.map((post, index) => (
+            <PostCard key={post.postId} $variant={index % 2 === 0 ? "dark" : "darker"}>
+              <PostCardInner>
+                {post.imageUrl ? (
+                  <PostImage src={post.imageUrl} alt={`Post ${post.postId}`} />
+                ) : (
+                  <PostLabel>{`IMG_${String(post.postId).padStart(2, "0")}`}</PostLabel>
+                )}
+                <HoverOverlay>
+                  <HoverText>LIKES</HoverText>
+                </HoverOverlay>
+              </PostCardInner>
+            </PostCard>
+          ))}
+        </PostGrid>
+      ) : (
+        <EmptyState as="p">{emptyMessage}</EmptyState>
+      )}
     </Section>
   );
 };

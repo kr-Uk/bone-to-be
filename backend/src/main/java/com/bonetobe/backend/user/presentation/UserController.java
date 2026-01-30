@@ -4,6 +4,8 @@ import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.common.response.SuccessCode;
+import com.bonetobe.backend.report.domain.ReportService;
+import com.bonetobe.backend.report.presentation.dto.GetReport;
 import com.bonetobe.backend.user.application.UserFacade;
 import com.bonetobe.backend.user.domain.UserService;
 import com.bonetobe.backend.user.domain.query.UserFileSummary;
@@ -17,6 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +34,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final UserFacade userFacade;
+    private final ReportService reportService;
 
     /**
      * 마이페이지 기본 정보 조회
@@ -45,7 +49,7 @@ public class UserController {
         }
 
         // 로그인한 사용자의 ID로 정보 조회
-        UserDetailDto response = userService.getUserDetail(principal.getId());
+        UserDetailDto response = userService.getUserDetail(principal.getId(), principal.getId());
 
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
@@ -58,10 +62,17 @@ public class UserController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity<APIResponse<UserDetailDto>> getUserDetail(
-            @PathVariable Long userId
+            @PathVariable Long userId,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
+        if (principal == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+
+        Long currentUserId = principal.getId();
+
         // 특정 유저의 ID로 정보 조회
-        UserDetailDto response = userService.getUserDetail(userId);
+        UserDetailDto response = userService.getUserDetail(userId, currentUserId);
 
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
@@ -129,6 +140,15 @@ public class UserController {
 
         userService.deleteAccount(principal.getId());
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
+    @GetMapping("/{userId}/representative")
+    public ResponseEntity<APIResponse<GetReport>> getRepresentative(
+            @PathVariable Long userId
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(APIResponse.success(SuccessCode.OK, GetReport.from(reportService.getRepresentativeReport(userId))));
     }
 
     @GetMapping("/search")

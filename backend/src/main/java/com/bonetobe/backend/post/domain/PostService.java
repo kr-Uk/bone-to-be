@@ -4,6 +4,7 @@ import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
 import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
 import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
+import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
@@ -24,5 +25,12 @@ public interface PostService {
     void deletePost(PostDeleteCommand command);
 
     void updatePost(Long postId, PostUpdateCommand command, List<Style> styles);
+
+    List<MyPostSummaryRaw> getMyPostList(Long userId);
+
+    List<PostSummaryRaw> getLikedPostList(Long userId);
+
+    List<PostSummaryRaw> getScrappedPostList(Long userId);
+
 
 }

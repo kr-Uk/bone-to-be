@@ -51,7 +51,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private long likeCount = 0L;
 
-    // Post.java
     @Column(nullable = false)
     private long commentCount = 0L;
 

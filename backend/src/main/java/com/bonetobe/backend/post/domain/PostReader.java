@@ -20,6 +20,8 @@ public interface PostReader {
     long countByUserId(Long userId);
 
     List<MyPostSummaryRaw> findMyPostList(Long userId);
+
     List<PostSummaryRaw> findLikedPostList(Long userId);
+
     List<PostSummaryRaw> findScrappedPostList(Long userId);
 }

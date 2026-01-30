@@ -19,7 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -162,7 +163,6 @@ public class PostFacade {
                 .toList();
     }
 
-    // 2) Facade: PostFacade에 추가 (좋아요 목록과 동일 흐름)
     @Transactional(readOnly = true)
     public List<PostSummary> getScrappedPostList(Long userId) {
 

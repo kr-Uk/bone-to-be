@@ -27,6 +27,7 @@ public class PostController {
 
     private final PostFacade postFacade;
 
+    // 전체 게시글 목록
     @GetMapping
     public ResponseEntity<APIResponse<PaginatedResponse<PostListDto.Response>>> getPostList(
             @ModelAttribute PostListDto.Request request,
@@ -44,6 +45,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK, paginated));
     }
 
+    // 게시글 상세조회
     @GetMapping("/{feedId}")
     public ResponseEntity<APIResponse<PostDetailDto.Response>> getPostDetail(
             @PathVariable Long feedId,
@@ -57,6 +59,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK, response));
     }
 
+    // 게시글 생성
     @PostMapping
     public ResponseEntity<APIResponse<Void>> createPost(
             @RequestBody PostCreateDto.Request request,
@@ -68,6 +71,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK));
     }
 
+    // 게시글 삭제
     @DeleteMapping("/{postId}")
     public ResponseEntity<APIResponse<Void>> deletePost(
             @PathVariable Long postId,
@@ -80,6 +84,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK));
     }
 
+    // 게시글 수정
     @PutMapping("/{postId}")
     public ResponseEntity<APIResponse<Void>> updatePost(
             @PathVariable Long postId,
@@ -90,6 +95,7 @@ public class PostController {
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
     }
 
+    // presigned url 발급
     @PostMapping("/presigned-url")
     public ResponseEntity<APIResponse<PostFileDto.Response>> issuePresignedUrl(
             @RequestBody PostFileDto.Request request,
@@ -102,6 +108,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK, response));
     }
 
+    // 내가 쓴 게시글 목록
     @GetMapping("/me")
     public ResponseEntity<APIResponse<List<MyPostListDto.Response>>> getMyPostList(
             @AuthenticationPrincipal UserPrincipal user
@@ -116,6 +123,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK, responses));
     }
 
+    // 내가 좋아요 한 게시글 목록
     @GetMapping("/liked")
     public ResponseEntity<APIResponse<List<PostListDto.Response>>> getLikedPostList(
             @AuthenticationPrincipal UserPrincipal user
@@ -130,6 +138,7 @@ public class PostController {
                 .body(APIResponse.success(SuccessCode.OK, responses));
     }
 
+    // 내가 스크랩 한 게시글 목록
     @GetMapping("/scrapped")
     public ResponseEntity<APIResponse<List<PostListDto.Response>>> getScrappedPostList(
             @AuthenticationPrincipal UserPrincipal user
@@ -142,6 +151,13 @@ public class PostController {
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
                 .body(APIResponse.success(SuccessCode.OK, responses));
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<APIResponse<Void>> getUserPostList(
+            @PathVariable Long userId
+    ){
+        return null;
     }
 
 }

@@ -83,6 +83,7 @@ public class UserServiceImpl implements UserService {
         StoredFile newProfileImage = user.getProfileImage();
         if (command.profileImageId() != null) {
             newProfileImage = fileReader.read(command.profileImageId()); // StoredFileReader 사용
+            newProfileImage.completeUpload();
         }
 
         // 4. 엔티티 업데이트 (더티 체킹)
@@ -132,9 +133,14 @@ public class UserServiceImpl implements UserService {
                     new FileDownloadUrl.Query(user.getProfileImage().getId())
             );
 
-            // .url()이나 .downloadUrl() 대신 .presignedUrl() 호출!
-            var result = fileService.getPublicDownloadUrls(queries).get(0);
-            profileImageUrl = result.presignedUrl();
+            // .get(0) 대신 stream().findFirst()를 사용하면 리스트가 비어있어도 에러가 나지 않습니다.
+            profileImageUrl = fileService.getPublicDownloadUrls(queries).stream()
+                    .findFirst()
+                    .map(FileDownloadUrl.Result::presignedUrl)
+                    .orElseGet(() -> {
+                        log.warn("[File Missing] ID: {} 상태가 UPLOADED가 아니거나 파일이 없습니다.", user.getProfileImage().getId());
+                        return null; // 이미지가 없으면 null 반환 (프론트에서 기본 이미지 처리)
+                    });
         }
 
         return new UserDetailDto(

@@ -97,4 +97,14 @@ public class ReportController {
             .status(HttpStatus.OK)
             .body(APIResponse.success(SuccessCode.UPDATED));
     }
+
+    @DeleteMapping("/representative")
+    public ResponseEntity<APIResponse<Void>> deleteRepresentative(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        reportService.clearRepresentativeReport(userPrincipal.getId());
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(APIResponse.success(SuccessCode.UPDATED));
+    }
 }

@@ -20,7 +20,7 @@ public class ReportStoreImpl implements ReportStore {
     }
 
     @Override
-    public void changeRepresentative(Long userId) {
+    public void clearRepresentative(Long userId) {
         reportRepository.clearRepresentative(userId);
     }
 }

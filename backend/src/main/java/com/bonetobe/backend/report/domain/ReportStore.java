@@ -5,5 +5,5 @@ public interface ReportStore {
 
     Report update(Report report);
 
-    void changeRepresentative(Long userId);
+    void clearRepresentative(Long userId);
 }

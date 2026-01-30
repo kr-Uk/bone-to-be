@@ -34,15 +34,12 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     """)
     Optional<Report> findRepresentativeReport(@Param("userId") Long userId);
 
-    /*
-     TODO 수정 필요
-     */
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
             update Report r
             set r.representative = false
             where r.user.id = :userId
             and r.representative = true
-        """)
+    """)
     void clearRepresentative(@Param("userId") Long userId);
 }

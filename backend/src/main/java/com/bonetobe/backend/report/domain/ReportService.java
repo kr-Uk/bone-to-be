@@ -17,5 +17,7 @@ public interface ReportService {
 
     void makeRepresentative(Report report, Long userId);
 
+    void clearRepresentativeReport(Long userId);
+
     Report getRepresentativeReport(Long userId);
 }

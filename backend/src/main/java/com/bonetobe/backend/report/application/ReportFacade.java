@@ -54,7 +54,8 @@ public class ReportFacade {
 
     @Transactional
     public void authorizeAndRepresentReport(Long userId, Long reportId) {
+        reportService.clearRepresentativeReport(userId);
         Report report = reportService.isOwner(userId, reportId);
-        reportService.makeRepresentative(report, userId);
+        report.toggleRepresentative();
     }
 }

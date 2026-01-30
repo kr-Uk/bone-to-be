@@ -16,7 +16,6 @@ public class BodyInfo {
 
     private Integer height;
 
-    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     public static BodyInfo createBodyInfo(

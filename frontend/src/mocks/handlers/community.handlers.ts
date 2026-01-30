@@ -8,9 +8,7 @@ import type {
   FeedDetailDto,
   FeedAuthorDto,
   FeedListItemDto,
-  FeedLikesResponseDto,
   FeedLikeUserDto,
-  FeedCommentListResponseDto,
   FeedCommentDto,
 } from "@/pages/community/api";
 
@@ -446,7 +444,7 @@ const toFeedDetailDto = (item: FeedItem, detail: FeedDetail): FeedDetailDto => (
 });
 
 const toLikeUserDto = (user: FeedLikeUser): FeedLikeUserDto => ({
-  memberId: Number(user.id.replace(/\D/g, "")) || 0,
+  userId: Number(user.id.replace(/\D/g, "")) || 0,
   nickname: user.username,
   profileImageUrl: user.avatarUrl ?? null,
   isFollowing: Boolean(user.isFollowing),
@@ -458,14 +456,16 @@ const toCommentDto = (comment: {
   text: string;
   createdAt: string;
   isLiked: boolean;
+  isMine?: boolean;
 }): FeedCommentDto => ({
   replyId: Number(comment.id.replace(/\D/g, "")) || Date.now(),
-  replyContent: comment.text,
+  content: comment.text,
   likeCount: 0,
   isLiked: comment.isLiked,
+  isMine: comment.isMine ?? false,
   createdAt: comment.createdAt,
   author: {
-    memberId: Number(comment.id.replace(/\D/g, "")) || 0,
+    userId: Number(comment.id.replace(/\D/g, "")) || 0,
     nickname: comment.username,
     profileImageUrl: null,
   },
@@ -737,6 +737,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-20T12:10:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-2",
@@ -745,6 +746,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-20T12:40:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-3",
@@ -753,6 +755,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-20T13:05:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 3,
@@ -768,6 +771,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-19T16:10:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 1,
@@ -783,6 +787,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-21T09:05:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-6",
@@ -791,6 +796,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-21T09:40:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 2,
@@ -806,6 +812,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-22T13:30:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-8",
@@ -814,6 +821,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-22T13:55:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-9",
@@ -822,6 +830,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-22T14:10:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 3,
@@ -837,6 +846,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-18T15:10:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 1,
@@ -852,6 +862,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-17T10:05:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-12",
@@ -860,6 +871,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-17T10:22:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 2,
@@ -875,6 +887,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-21T16:30:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-14",
@@ -883,6 +896,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-21T16:50:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 2,
@@ -898,6 +912,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-20T11:40:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 1,
@@ -913,6 +928,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-22T13:50:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-17",
@@ -921,6 +937,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-22T14:05:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-18",
@@ -929,6 +946,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-22T14:30:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 3,
@@ -944,6 +962,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-23T10:30:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-20",
@@ -952,6 +971,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-23T10:55:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-21",
@@ -960,6 +980,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-23T11:10:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-22",
@@ -968,6 +989,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-23T11:25:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-23",
@@ -976,6 +998,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-23T11:40:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 5,
@@ -991,6 +1014,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-16T16:10:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
       {
         id: "c-25",
@@ -999,6 +1023,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-16T16:35:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 2,
@@ -1014,6 +1039,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
         createdAt: "2026-01-19T08:15:00Z",
         isLiked: false,
         likeCount: 0,
+        isMine: false,
       },
     ],
     total: 1,
@@ -1283,7 +1309,70 @@ export const communityHandlers = [
     });
   }),
 
-  // POST /api/feeds/:feedId/like (새로운 엔드포인트)
+  // POST /feeds/:feedId/likes (좋아요 추가 - 새 백엔드 스펙)
+  http.post("/feeds/:feedId/likes", async ({ params }) => {
+    await delay(200);
+
+    const { feedId } = params;
+    const mockItem = mockFeedItems.find((item) => item.id === feedId);
+    const mockDetail = mockFeedDetails[String(feedId)];
+
+    if (!mockItem || !mockDetail) {
+      return HttpResponse.json(
+        { code: 400, message: "잘못된 요청입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    // 좋아요 추가
+    mockItem.isLiked = true;
+    mockDetail.isLiked = true;
+
+    const exists = mockDetail.likeUsers.some((user) => user.id === viewerLikeUser.id);
+    if (!exists) {
+      mockDetail.likeUsers.unshift(viewerLikeUser);
+      mockDetail.likeCount = mockDetail.likeUsers.length;
+      mockItem.likeCount = mockDetail.likeCount;
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+
+  // DELETE /feeds/:feedId/likes (좋아요 취소 - 새 백엔드 스펙)
+  http.delete("/feeds/:feedId/likes", async ({ params }) => {
+    await delay(200);
+
+    const { feedId } = params;
+    const mockItem = mockFeedItems.find((item) => item.id === feedId);
+    const mockDetail = mockFeedDetails[String(feedId)];
+
+    if (!mockItem || !mockDetail) {
+      return HttpResponse.json(
+        { code: 400, message: "잘못된 요청입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    // 좋아요 취소
+    mockItem.isLiked = false;
+    mockDetail.isLiked = false;
+
+    mockDetail.likeUsers = mockDetail.likeUsers.filter((user) => user.id !== viewerLikeUser.id);
+    mockDetail.likeCount = mockDetail.likeUsers.length;
+    mockItem.likeCount = mockDetail.likeCount;
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+
+  // POST /api/feeds/:feedId/like (구 엔드포인트 - 호환성)
   http.post("/api/feeds/:feedId/like", async ({ params }) => {
     await delay(200);
 
@@ -1403,7 +1492,7 @@ export const communityHandlers = [
     const end = start + size;
     const likes = detail.likeUsers.slice(start, end);
 
-    const response: FeedLikesResponseDto = {
+    const response = {
       postId: Number(feedId),
       likeCount: detail.likeCount,
       hasNext: end < detail.likeUsers.length,
@@ -1456,7 +1545,7 @@ export const communityHandlers = [
     const end = start + size;
     const items = source.items.slice(start, end);
 
-    const response: FeedCommentListResponseDto = {
+    const response = {
       postId: Number(feedId),
       commentCount: source.items.length,
       hasNext: end < source.items.length,
@@ -1488,10 +1577,9 @@ export const communityHandlers = [
     const items = source.items.slice(start, end);
 
     return HttpResponse.json({
-      postId: Number(feedId),
-      commentCount: source.items.length,
-      hasNext: end < source.items.length,
-      comments: items.map(toCommentDto),
+      code: 200,
+      message: "요청 성공",
+      data: items.map(toCommentDto),
     });
   }),
 
@@ -1523,12 +1611,13 @@ export const communityHandlers = [
       createdAt: new Date().toISOString(),
       isLiked: false,
       likeCount: 0,
+      isMine: true,
       parentCommentId: body.parentCommentId ?? null,
     };
 
     source.items.push(newComment);
 
-    const response: FeedCommentDto = toCommentDto(newComment);
+    const response = toCommentDto(newComment);
     return HttpResponse.json(response);
   }),
 
@@ -1547,12 +1636,11 @@ export const communityHandlers = [
     }
 
     const body = (await request.json()) as {
-      text?: string;
-      parentCommentId?: string | null;
+      content?: string;
     };
 
-    const text = (body.text ?? "").trim();
-    if (!text) {
+    const content = (body.content ?? "").trim();
+    if (!content) {
       return HttpResponse.json(
         { code: 400, message: "댓글 내용을 입력해주세요.", data: null },
         { status: 400 },
@@ -1562,15 +1650,20 @@ export const communityHandlers = [
     const newComment = {
       id: `c-${Date.now()}`,
       username: "me",
-      text,
+      text: content,
       createdAt: new Date().toISOString(),
       isLiked: false,
       likeCount: 0,
-      parentCommentId: body.parentCommentId ?? null,
+      isMine: true,
+      parentCommentId: null,
     };
 
     source.items.push(newComment);
 
-    return HttpResponse.json(toCommentDto(newComment));
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
   }),
 ];

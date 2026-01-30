@@ -1,4 +1,13 @@
 /**
+ * 표준 API 응답 래퍼
+ */
+export interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+/**
  * 커뮤니티 피드 아이템
  */
 export interface FeedItem {
@@ -132,6 +141,7 @@ export interface LikeToggleRequest {
 
 /**
  * 좋아요 토글 응답
+ * @deprecated 새 백엔드 스펙에서는 사용하지 않음 (data: null 반환)
  */
 export interface LikeToggleResponse {
   feedId: string;
@@ -253,6 +263,7 @@ export interface FeedComment {
   createdAt: string;
   likeCount: number;
   isLiked: boolean;
+  isMine: boolean; // 새로 추가
   parentCommentId?: string | null;
 }
 
@@ -260,7 +271,7 @@ export interface FeedComment {
  * 백엔드 DTO - 댓글 작성자
  */
 export interface FeedCommentAuthorDto {
-  memberId: number;
+  userId: number; // memberId → userId
   nickname: string;
   profileImageUrl: string | null;
 }
@@ -270,9 +281,10 @@ export interface FeedCommentAuthorDto {
  */
 export interface FeedCommentDto {
   replyId: number;
-  replyContent: string;
+  content: string; // replyContent → content
   likeCount: number;
   isLiked: boolean;
+  isMine: boolean; // 새로 추가
   createdAt: string;
   author: FeedCommentAuthorDto;
 }
@@ -282,8 +294,7 @@ export interface FeedCommentDto {
  */
 export interface FeedCommentCreateRequest {
   feedId: string;
-  text: string;
-  parentCommentId?: string | null;
+  content: string;
 }
 
 /**
@@ -307,16 +318,20 @@ export interface FeedCommentListResponse {
 
 /**
  * 백엔드 DTO - 댓글 리스트 응답
+ * @deprecated 실제 API는 배열을 직접 반환 (ApiResponse<FeedCommentDto[]>)
  */
+/*
 export interface FeedCommentListResponseDto {
   postId: number;
   commentCount: number;
   hasNext: boolean;
   comments: FeedCommentDto[];
 }
+*/
 
 /**
  * 백엔드 DTO - 좋아요 토글 응답
+ * @deprecated 새 백엔드 스펙에서는 사용하지 않음 (data: null 반환)
  */
 export interface LikeToggleResponseDto {
   postId: number;
@@ -328,7 +343,7 @@ export interface LikeToggleResponseDto {
  * 백엔드 DTO - 좋아요 유저
  */
 export interface FeedLikeUserDto {
-  memberId: number;
+  userId: number; // memberId → userId
   nickname: string;
   profileImageUrl: string | null;
   isFollowing: boolean;
@@ -336,13 +351,16 @@ export interface FeedLikeUserDto {
 
 /**
  * 백엔드 DTO - 좋아요 리스트 응답
+ * @deprecated 실제 API는 배열을 직접 반환 (ApiResponse<FeedLikeUserDto[]>)
  */
+/*
 export interface FeedLikesResponseDto {
   postId: number;
   likeCount: number;
   hasNext: boolean;
   likes: FeedLikeUserDto[];
 }
+*/
 
 /**
  * 좋아요 리스트 요청
@@ -351,4 +369,12 @@ export interface FeedLikesRequest {
   feedId: string;
   page: number;
   limit: number;
+}
+
+/**
+ * 댓글 좋아요 토글 요청
+ */
+export interface CommentLikeToggleRequest {
+  replyId: string;
+  isLiked: boolean; // 현재 상태 (true면 DELETE, false면 POST)
 }

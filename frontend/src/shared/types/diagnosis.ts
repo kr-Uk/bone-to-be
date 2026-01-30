@@ -36,9 +36,9 @@ export type AnalysisRequestData = {
   imageKey: string;
 };
 
-// 분석 결과 데이터
+// 분석 결과 데이터 (업데이트: reportId 및 status 추가, null safety)
 export type AnalysisResultData = {
-  analysisId: string;
+  reportId: number; // 변경: analysisId (string) → reportId (number)
   bodyType: string;
   bodyTypeRatio: {
     natural: number;
@@ -49,9 +49,10 @@ export type AnalysisResultData = {
     shoulderWidth: number;
     waistWidth: number;
     hipWidth: number;
-  };
+  } | null; // 변경: null 가능
   recommendations: string[];
   processedAt: string;
+  status: "PENDING" | "COMPLETED" | "FAILED"; // 추가: 분석 상태
 };
 
 // 전체 진단 데이터 (Zustand 스토어용)

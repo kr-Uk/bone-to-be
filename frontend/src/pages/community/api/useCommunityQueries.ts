@@ -3,7 +3,8 @@ import axios from "axios";
 
 import {
   getFeedList,
-  toggleLike,
+  addFeedLike,
+  removeFeedLike,
   getPresignedUrl,
   uploadImageToS3,
   createFeed,
@@ -11,6 +12,7 @@ import {
   getFeedComments,
   getFeedDetail,
   getFeedLikes,
+  toggleCommentLike,
 } from "./community.api";
 
 import type {
@@ -21,16 +23,14 @@ import type {
   FeedListResponseDto,
   FeedListItemDto,
   FeedDetailDto,
-  FeedCommentListResponseDto,
   FeedCommentDto,
   FeedLikesRequest,
-  FeedLikesResponseDto,
   FeedLikeUserDto,
   FeedLikeUser,
   FeedListRequest,
   FeedListResponse,
-  LikeToggleRequest,
   FeedCreateRequest,
+  CommentLikeToggleRequest,
 } from "./community.types";
 
 const mapGenderToUi = (gender: "FEMALE" | "MALE"): "F" | "M" => (gender === "FEMALE" ? "F" : "M");
@@ -93,15 +93,16 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
 const mapFeedCommentDtoToUi = (comment: FeedCommentDto) => ({
   id: String(comment.replyId),
   username: comment.author.nickname,
-  text: comment.replyContent,
+  text: comment.content, // replyContent → content
   createdAt: comment.createdAt,
   likeCount: comment.likeCount,
   isLiked: comment.isLiked,
+  isMine: comment.isMine, // 새로 추가
   parentCommentId: null,
 });
 
 const mapFeedLikeUserDtoToUi = (user: FeedLikeUserDto): FeedLikeUser => ({
-  id: String(user.memberId),
+  id: String(user.userId), // memberId → userId
   username: user.nickname,
   displayName: user.nickname,
   avatarUrl: user.profileImageUrl,
@@ -142,16 +143,16 @@ export function useFeedDetail(feedId: string) {
  * 댓글 리스트 조회 쿼리
  */
 export function useFeedComments(request: FeedCommentListRequest) {
-  return useQuery<FeedCommentListResponseDto, Error, FeedCommentListResponse>({
+  return useQuery<FeedCommentDto[], Error, FeedCommentListResponse>({
     queryKey: ["feedComments", request.feedId, request.page, request.limit],
     queryFn: () => getFeedComments(request),
     enabled: Boolean(request.feedId),
     staleTime: 1000 * 30, // 30초
     select: (data) => ({
-      items: data.comments.map(mapFeedCommentDtoToUi),
-      total: data.commentCount,
+      items: data.map(mapFeedCommentDtoToUi),
+      total: data.length, // 실제 배열 길이
       page: request.page,
-      hasMore: data.hasNext,
+      hasMore: false, // API에서 페이징 정보 없음
     }),
   });
 }
@@ -160,20 +161,12 @@ export function useFeedComments(request: FeedCommentListRequest) {
  * 좋아요 리스트 조회 쿼리
  */
 export function useFeedLikes(request: FeedLikesRequest) {
-  return useQuery<
-    FeedLikesResponseDto,
-    Error,
-    { likeCount: number; likes: FeedLikeUser[]; hasMore: boolean }
-  >({
-    queryKey: ["feedLikes", request.feedId, request.page, request.limit],
+  return useQuery<FeedLikeUserDto[], Error, FeedLikeUser[]>({
+    queryKey: ["feedLikes", request.feedId],
     queryFn: () => getFeedLikes(request),
     enabled: Boolean(request.feedId),
     staleTime: 1000 * 30,
-    select: (data) => ({
-      likeCount: data.likeCount,
-      likes: data.likes.map(mapFeedLikeUserDtoToUi),
-      hasMore: data.hasNext,
-    }),
+    select: (data) => data.map(mapFeedLikeUserDtoToUi),
   });
 }
 
@@ -193,17 +186,68 @@ export function useCreateFeedComment() {
 }
 
 /**
- * 피드 좋아요 토글 뮤테이션
+ * 피드 좋아요 토글 뮤테이션 (Optimistic Updates 적용)
  */
 export function useLikeToggle() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: LikeToggleRequest) => toggleLike(request),
-    onSuccess: (_, request) => {
-      // 캐시 무효화
+    mutationFn: async ({ feedId, isLiked }: { feedId: string; isLiked: boolean }) => {
+      // 현재 좋아요 상태에 따라 추가/취소 API 호출
+      if (isLiked) {
+        await removeFeedLike(feedId);
+      } else {
+        await addFeedLike(feedId);
+      }
+    },
+    onMutate: async ({ feedId, isLiked }) => {
+      // 진행 중인 쿼리 취소 (낙관적 업데이트와 충돌 방지)
+      await queryClient.cancelQueries({ queryKey: ["feedDetail", feedId] });
+      await queryClient.cancelQueries({ queryKey: ["feedList"] });
+
+      // 이전 상태 스냅샷 저장
+      const previousDetail = queryClient.getQueryData<FeedDetailDto>(["feedDetail", feedId]);
+
+      // 낙관적 업데이트: 피드 상세의 좋아요 상태 즉시 변경
+      queryClient.setQueryData<FeedDetailDto>(["feedDetail", feedId], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          isLiked: !isLiked,
+          likeCount: isLiked ? old.likeCount - 1 : old.likeCount + 1,
+        };
+      });
+
+      // rollback을 위해 이전 상태 반환
+      return { previousDetail };
+    },
+    onError: (_, { feedId }, context) => {
+      // 에러 발생 시 이전 상태로 rollback
+      if (context?.previousDetail) {
+        queryClient.setQueryData(["feedDetail", feedId], context.previousDetail);
+      }
+    },
+    onSettled: (_, __, { feedId }) => {
+      // 성공/실패 무관하게 캐시 무효화하여 서버 상태 동기화
+      queryClient.invalidateQueries({ queryKey: ["feedDetail", feedId] });
       queryClient.invalidateQueries({ queryKey: ["feedList"] });
-      queryClient.invalidateQueries({ queryKey: ["feedDetail", request.feedId] });
+      queryClient.invalidateQueries({ queryKey: ["feedLikes", feedId] });
+    },
+  });
+}
+
+/**
+ * 댓글 좋아요 토글 뮤테이션
+ */
+export function useCommentLikeToggle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ replyId, isLiked }: CommentLikeToggleRequest) =>
+      toggleCommentLike(replyId, isLiked),
+    onSuccess: () => {
+      // 댓글 리스트 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["feedComments"] });
     },
   });
 }

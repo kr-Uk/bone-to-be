@@ -48,6 +48,14 @@ export const useDiagnosisStore = create<DiagnosisStore>()(
     {
       name: "diagnosis-storage",
       storage: createJSONStorage(() => sessionStorage), // 탭 닫으면 자동 삭제
+      partialize: (state) => ({
+        diagnosisData: {
+          basicInfo: state.diagnosisData.basicInfo,
+          photoData: null,
+          analysisResult: state.diagnosisData.analysisResult,
+        },
+        reportId: state.reportId,
+      }),
     },
   ),
 );

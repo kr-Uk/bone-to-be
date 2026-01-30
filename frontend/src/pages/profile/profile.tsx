@@ -8,6 +8,11 @@ import PostsSection from "./components/PostsSection";
 import ProfileHeaderSection from "./components/ProfileHeaderSection";
 import SkeletalTypeSection from "./components/SkeletalTypeSection";
 import { useFollowListQuery } from "./hooks/useFollowListQuery";
+import {
+  useMyFeedListQuery,
+  useMyScrappedFeedListQuery,
+  useUserFeedListQuery,
+} from "./hooks/useProfileFeedQueries";
 import { useProfileQuery } from "./hooks/useProfileQuery";
 
 import type { FollowModalType, FollowUser, UserProfile } from "./api/profile.types";
@@ -152,6 +157,13 @@ const ProfilePage = () => {
   const { data: representativeReport } = useRepresentativeReport(queryUserId ?? null, {
     enabled: isAuthReady && !isMe && !!queryUserId,
   });
+  const { data: myFeeds } = useMyFeedListQuery({ enabled: isAuthReady && isMe });
+  const { data: myScrappedFeeds } = useMyScrappedFeedListQuery({
+    enabled: isAuthReady && isMe,
+  });
+  const { data: userFeeds } = useUserFeedListQuery(queryUserId ?? null, {
+    enabled: isAuthReady && !isMe && !!queryUserId,
+  });
   const [followModalType, setFollowModalType] = useState<FollowModalType | null>(null);
   const {
     data: followUsers,
@@ -223,6 +235,9 @@ const ProfilePage = () => {
     : profile.bodyTypeRatio;
 
   const isOwner = profile.isOwner || isMe;
+  const posts = isOwner ? (myFeeds ?? []) : (userFeeds ?? []);
+  const saved = isOwner ? (myScrappedFeeds ?? []) : [];
+  const showSaved = isOwner;
   const updateFollowingCount = (delta: number) => {
     setLocalProfile((prev) => {
       if (!prev) return prev;
@@ -315,7 +330,7 @@ const ProfilePage = () => {
                 bodyTypeRatio={representativeRatio}
               />
             )}
-            <PostsSection posts={profile.posts} saved={profile.saved} />
+            <PostsSection posts={posts} saved={saved} showSaved={showSaved} />
           </Content>
         </ContentGrid>
       </Main>

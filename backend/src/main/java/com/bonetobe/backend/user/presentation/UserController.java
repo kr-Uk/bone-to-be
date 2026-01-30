@@ -1,15 +1,18 @@
 package com.bonetobe.backend.user.presentation;
 
-import com.bonetobe.backend.user.domain.query.UserFileSummary;
-import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.common.response.SuccessCode;
+import com.bonetobe.backend.user.application.UserFacade;
 import com.bonetobe.backend.user.domain.UserService;
+import com.bonetobe.backend.user.domain.query.UserFileSummary;
+import com.bonetobe.backend.user.domain.query.UserSearchSummary;
+import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.user.presentation.dto.UpdateUser;
 import com.bonetobe.backend.user.presentation.dto.UserDetailDto;
 import com.bonetobe.backend.user.presentation.dto.UserFileDto;
+import com.bonetobe.backend.user.presentation.dto.UserSearchDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final UserFacade userFacade;
 
     /**
      * 마이페이지 기본 정보 조회
@@ -123,5 +129,20 @@ public class UserController {
 
         userService.deleteAccount(principal.getId());
         return ResponseEntity.ok(APIResponse.success(SuccessCode.OK));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<APIResponse<List<UserSearchDto.Response>>> getPostLikeUsers(
+            @RequestParam(name = "nickname", required = false) String nickname,
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        List<UserSearchSummary> summaries = userFacade.getUserSearch(nickname, user.getId());
+        List<UserSearchDto.Response> response = summaries.stream()
+                .map(UserSearchDto.Response::of)
+                .toList();
+
+        return ResponseEntity
+                .status(SuccessCode.OK.getStatus())
+                .body(APIResponse.success(SuccessCode.OK, response));
     }
 }

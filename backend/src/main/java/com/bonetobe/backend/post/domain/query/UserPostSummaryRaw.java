@@ -1,13 +1,13 @@
 package com.bonetobe.backend.post.domain.query;
 
-public record MyPostSummaryRaw(
+public record UserPostSummaryRaw(
         Long postId,
         Long fileId,
         Long likeCount,
         Long commentCount
 ) {
-    public MyPostSummary toSummary(String imageUrl) {
-        return new MyPostSummary(
+    public UserPostSummary toSummary(String imageUrl) {
+        return new UserPostSummary(
                 postId,
                 imageUrl,
                 likeCount,

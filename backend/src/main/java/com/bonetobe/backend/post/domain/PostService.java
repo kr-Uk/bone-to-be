@@ -4,7 +4,7 @@ import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
 import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
 import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
-import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
+import com.bonetobe.backend.post.domain.query.UserPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
@@ -26,7 +26,7 @@ public interface PostService {
 
     void updatePost(Long postId, PostUpdateCommand command, List<Style> styles);
 
-    List<MyPostSummaryRaw> getMyPostList(Long userId);
+    List<UserPostSummaryRaw> getUserPostList(Long userId);
 
     List<PostSummaryRaw> getLikedPostList(Long userId);
 

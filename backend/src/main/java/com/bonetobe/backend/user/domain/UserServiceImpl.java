@@ -12,6 +12,7 @@ import com.bonetobe.backend.user.domain.command.UpdateMyPageCommand;
 import com.bonetobe.backend.user.domain.command.UserFileCommand;
 import com.bonetobe.backend.user.domain.command.UserUpdateCommand;
 import com.bonetobe.backend.user.domain.query.UserFileSummary;
+import com.bonetobe.backend.user.domain.query.UserSearchSummaryRaw;
 import com.bonetobe.backend.user.presentation.dto.UserDetailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -111,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User getUserById(Long userId){
+    public User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 이미 탈퇴한 사용자입니다."));
     }
@@ -146,5 +147,11 @@ public class UserServiceImpl implements UserService {
                 followingCount,
                 user.getBio()
         );
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<UserSearchSummaryRaw> getUserSearch(String nickname, Long viewerId) {
+        return userRepository.findUserSearch(nickname, viewerId);
     }
 }

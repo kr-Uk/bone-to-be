@@ -1,6 +1,6 @@
 package com.bonetobe.backend.post.domain;
 
-import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
+import com.bonetobe.backend.post.domain.query.UserPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
@@ -19,7 +19,7 @@ public interface PostReader {
 
     long countByUserId(Long userId);
 
-    List<MyPostSummaryRaw> findMyPostList(Long userId);
+    List<UserPostSummaryRaw> findUserPostList(Long userId);
 
     List<PostSummaryRaw> findLikedPostList(Long userId);
 

@@ -325,10 +325,10 @@ const ProfilePage = () => {
             <FollowListModal
               type={followModalType}
               users={localFollowUsers}
+              currentNickname={me?.nickname}
               onClose={() => setFollowModalType(null)}
               onUnfollow={(userId) => {
-                const shouldRemove = isOwner && followModalType === "following";
-                handleFollowAction(userId, false, shouldRemove);
+                handleFollowAction(userId, false, false);
               }}
               onToggleFollow={(userId) => {
                 const current = localFollowUsers.find((user) => user.id === userId);

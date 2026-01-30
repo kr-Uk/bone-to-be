@@ -1,4 +1,4 @@
-﻿import { IoAddSharp } from "react-icons/io5";
+import { IoAddSharp, IoCheckmark } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import styled from "styled-components";
 
@@ -198,6 +198,8 @@ const StatsRow = styled.div`
 `;
 
 const StatItem = styled(Stack)`
+  flex: 1;
+  min-width: 0;
   align-items: center;
   gap: 0.40625rem;
 
@@ -209,6 +211,8 @@ const StatItem = styled(Stack)`
 const StatButton = styled.button`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
   align-items: center;
   gap: 0.40625rem;
   background: none;
@@ -330,9 +334,10 @@ const SettingsButton = styled.button`
   }
 `;
 
-const FollowButton = styled.button`
+const FollowButton = styled.button<{ $active?: boolean }>`
   padding: 0.64625rem 1.25rem;
-  background: var(--color-bg-brand, #9810fa);
+  background: ${({ $active }) =>
+    $active ? "var(--neutral-700, #404040)" : "var(--color-bg-brand, #9810fa)"};
   border-radius: 0.5rem;
   color: var(--neutral-50, #fafafa);
   display: inline-flex;
@@ -403,12 +408,7 @@ const formatBodyType = (value?: string) => {
     return "Natural Type";
   }
 
-  const isKorean = /[가-힣]/.test(normalizedValue);
-  const hasTypeSuffix = /type/i.test(normalizedValue);
 
-  if (isKorean || hasTypeSuffix) {
-    return normalizedValue;
-  }
 
   return `${normalizedValue} Type`;
 };
@@ -478,11 +478,11 @@ const ProfileHeaderSection = ({
             </>
           ) : (
             <>
-              <FollowButton type="button" onClick={onFollowToggle}>
+              <FollowButton type="button" $active={isFollowing} onClick={onFollowToggle}>
                 <ActionText $color="var(--neutral-50, #fafafa)">
                   {isFollowing ? "Following" : "Follow"}
                 </ActionText>
-                {!isFollowing && <IoAddSharp />}
+                {isFollowing ? <IoCheckmark /> : <IoAddSharp />}
               </FollowButton>
               <MessageButton type="button">
                 <ActionText>Message</ActionText>

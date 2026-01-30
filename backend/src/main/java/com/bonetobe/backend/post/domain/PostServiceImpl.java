@@ -6,7 +6,7 @@ import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
 import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
 import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
-import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
+import com.bonetobe.backend.post.domain.query.UserPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
@@ -89,8 +89,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MyPostSummaryRaw> getMyPostList(Long userId) {
-        return postReader.findMyPostList(userId);
+    public List<UserPostSummaryRaw> getUserPostList(Long userId) {
+        return postReader.findUserPostList(userId);
     }
 
     @Override

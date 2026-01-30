@@ -1,6 +1,6 @@
 package com.bonetobe.backend.post.domain.query;
 
-public record MyPostSummary(
+public record UserPostSummary(
         Long postId,
         String imageUrl,
         Long likeCount,

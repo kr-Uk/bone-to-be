@@ -1,7 +1,5 @@
 ﻿import axiosInstance from "../../../shared/api/axios";
 
-import type { Me } from "@/shared/api/auth";
-
 import type { BodyTypeRatio, FollowModalType, FollowUser, UserProfile } from "./profile.types";
 
 interface ApiResponse<T> {
@@ -50,7 +48,7 @@ const mapFollowUser = (user: FollowUserDto): FollowUser => {
     username,
     styleTag,
     bio,
-    avatarUrl,
+    avatarUrl: avatarUrl ?? undefined,
     isFollowing: user.isFollowing,
   };
 };

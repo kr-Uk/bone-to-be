@@ -170,7 +170,7 @@ export const handlers = [
   http.get("/api/users/me", () => {
     return HttpResponse.json({
       code: 200,
-      message: "?? ??",
+      message: "성공적으로 데이터가 왔습니다",
       data: {
         profileImageUrl: null,
         nickname: "???",

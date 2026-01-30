@@ -2,6 +2,7 @@ package com.bonetobe.backend.post.infrastructure;
 
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.post.domain.PostSort;
+import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import com.bonetobe.backend.style.domain.StyleName;
@@ -10,6 +11,7 @@ import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -26,6 +28,7 @@ import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
 import static com.bonetobe.backend.post.domain.QPost.post;
 import static com.bonetobe.backend.post.domain.QPostLike.postLike;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
+import static com.bonetobe.backend.post.domain.QScrap.scrap;
 import static com.bonetobe.backend.style.domain.QStyle.style;
 
 @Repository
@@ -92,6 +95,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                                         post.height,
                                         post.weight,
                                         postLike.id.isNotNull(),
+                                        post.commentCount,
                                         post.createdAt
                                 )
                         )
@@ -103,6 +107,90 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 countQuery::fetchOne
         );
     }
+
+    @Override
+    public List<MyPostSummaryRaw> findMyPostList(Long userId) {
+        return qf
+                .select(
+                        Projections.constructor(
+                                MyPostSummaryRaw.class,
+                                post.id,
+                                storedFile.id,
+                                post.likeCount,
+                                post.commentCount
+                        )
+                )
+                .from(post)
+                .join(post.storedFile, storedFile)
+                .where(post.user.id.eq(userId))
+                .orderBy(post.createdAt.desc(), post.id.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<PostSummaryRaw> findLikedPostList(Long viewerId) {
+
+        return qf
+                .from(postLike)
+                .join(postLike.post, post)
+                .join(post.storedFile, storedFile)
+                .leftJoin(postStyle).on(postStyle.post.eq(post))
+                .leftJoin(postStyle.style, style)
+                .where(postLike.user.id.eq(viewerId))
+                .orderBy(post.createdAt.desc())
+                .transform(
+                        GroupBy.groupBy(post.id).list(
+                                Projections.constructor(
+                                        PostSummaryRaw.class,
+                                        post.id,
+                                        storedFile.id,
+                                        post.gender,
+                                        post.skeletonType,
+                                        GroupBy.list(style.styleName),
+                                        post.height,
+                                        post.weight,
+                                        Expressions.TRUE,
+                                        post.commentCount,
+                                        post.createdAt
+                                )
+                        )
+                );
+    }
+
+    @Override
+    public List<PostSummaryRaw> findScrappedPostList(Long viewerId) {
+
+        return qf
+                .from(scrap)
+                .join(scrap.post, post)
+                .join(post.storedFile, storedFile)
+                .leftJoin(postStyle).on(postStyle.post.eq(post))
+                .leftJoin(postStyle.style, style)
+                .leftJoin(postLike).on(
+                        postLike.post.eq(post),
+                        postLike.user.id.eq(viewerId)
+                )
+                .where(scrap.user.id.eq(viewerId))
+                .orderBy(post.createdAt.desc())
+                .transform(
+                        GroupBy.groupBy(post.id).list(
+                                Projections.constructor(
+                                        PostSummaryRaw.class,
+                                        post.id,
+                                        storedFile.id,
+                                        post.gender,
+                                        post.skeletonType,
+                                        GroupBy.list(style.styleName),
+                                        post.height,
+                                        post.weight,
+                                        postLike.id.isNotNull(),
+                                        post.commentCount,
+                                        post.createdAt
+                                )
+                        )
+                );
+    }
+
 
     private List<OrderSpecifier<?>> orderSpecifiers(PostSort sort) {
         List<OrderSpecifier<?>> specifiers = new ArrayList<>(List.of(

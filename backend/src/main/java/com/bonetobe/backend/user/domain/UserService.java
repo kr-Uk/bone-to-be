@@ -11,6 +11,6 @@ public interface UserService {
     void updatePassword(UserUpdateCommand command);
     void deleteAccount(Long userId);
     User getUserById(Long userId);
-    UserDetailDto getUserDetail(Long userId);
+    UserDetailDto getUserDetail(Long userId, Long currentUserId);
     void updateMyPage(UpdateMyPageCommand command);
 }

@@ -1,4 +1,4 @@
-import { memo, type RefObject, useEffect, useMemo, useState } from "react";
+import { memo, type RefObject, useMemo, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
 
 import { GUIDELINE_CONFIG } from "./guideline-config";
@@ -26,25 +26,9 @@ interface FullBodyGuidelineProps {
  * ```
  */
 export const FullBodyGuideline = memo<FullBodyGuidelineProps>(
-  ({ show, canvasRef }) => {
-    const [dimensions, setDimensions] = useState({ width: 640, height: 480 });
-
-    // 캔버스 크기 추적
-    useEffect(() => {
-      if (!canvasRef?.current) return;
-
-      const updateDimensions = () => {
-        if (!canvasRef.current) return;
-        setDimensions({
-          width: canvasRef.current.width,
-          height: canvasRef.current.height,
-        });
-      };
-
-      updateDimensions();
-      window.addEventListener("resize", updateDimensions);
-      return () => window.removeEventListener("resize", updateDimensions);
-    }, [canvasRef]);
+  ({ show }) => {
+    // Canvas 크기를 고정값으로 설정 (400×300)
+    const [dimensions] = useState({ width: 400, height: 300 });
 
     // SVG 경로 메모이제이션
     const paths = useMemo(() => {
@@ -124,12 +108,7 @@ export const FullBodyGuideline = memo<FullBodyGuidelineProps>(
 
     return (
       <GuidelineOverlay $show={show}>
-        <svg
-          width="100%"
-          height="100%"
-          viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
-          preserveAspectRatio="xMidYMid meet"
-        >
+        <svg width="100%" height="100%" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
           {/* 머리 */}
           <path d={paths.head} />
 

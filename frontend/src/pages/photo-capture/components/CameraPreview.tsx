@@ -115,14 +115,9 @@ const CameraPreview = ({
 }: CameraPreviewProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const previewWrapperRef = useRef<HTMLDivElement>(null);
 
   // 새로운 hook: 카메라 시작, 프레임 캡처, 랜드마크 그리기 모두 처리
-  const { cameraActive, latestLandmarks } = usePoseDetection(
-    videoRef,
-    canvasRef,
-    previewWrapperRef,
-  );
+  const { cameraActive, latestLandmarks } = usePoseDetection(videoRef, canvasRef);
 
   // 카메라 활성화 상태를 부모에게 전달
   useEffect(() => {
@@ -147,7 +142,7 @@ const CameraPreview = ({
 
   return (
     <Container>
-      <PreviewWrapper ref={previewWrapperRef}>
+      <PreviewWrapper>
         {/* 비디오는 숨겨져 있음 (hook이 canvas에 그림) */}
         <Video ref={videoRef} autoPlay playsInline muted />
         {/* 캔버스에 비디오 + 랜드마크가 그려짐 (항상 렌더링) */}

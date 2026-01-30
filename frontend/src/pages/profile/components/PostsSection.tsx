@@ -174,8 +174,7 @@ interface PostsSectionProps {
 const PostsSection = ({ posts, saved }: PostsSectionProps) => {
   const [activeTab, setActiveTab] = useState<"posts" | "saved">("posts");
   const items = activeTab === "posts" ? posts : saved;
-  const emptyMessage =
-    activeTab === "posts" ? "게시물이 없습니다." : "저장한 게시물이 없습니다.";
+  const emptyMessage = activeTab === "posts" ? "게시물이 없습니다." : "저장한 게시물이 없습니다.";
 
   return (
     <Section>

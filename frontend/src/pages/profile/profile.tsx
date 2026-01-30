@@ -27,9 +27,7 @@ const formatSkeletonTypeLabel = (value?: string | null): string | null => {
   return value;
 };
 
-const mapReportToHistoryItem = (
-  report: ReportSummary,
-): UserProfile["bodyTypeHistory"][number] => ({
+const mapReportToHistoryItem = (report: ReportSummary): UserProfile["bodyTypeHistory"][number] => ({
   id: String(report.reportId),
   type: formatSkeletonTypeLabel(report.skeletonType) ?? report.status,
   date: report.createdAt,
@@ -137,7 +135,6 @@ const FollowModalCard = styled.div`
   width: min(32rem, 100%);
   height: min(40rem, 90vh);
 `;
-
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -267,9 +264,7 @@ const ProfilePage = () => {
       setLocalFollowUsers((prev) => prev.filter((user) => user.id !== userId));
     } else {
       setLocalFollowUsers((prev) =>
-        prev.map((user) =>
-          user.id === userId ? { ...user, isFollowing: nextIsFollowing } : user,
-        ),
+        prev.map((user) => (user.id === userId ? { ...user, isFollowing: nextIsFollowing } : user)),
       );
     }
 

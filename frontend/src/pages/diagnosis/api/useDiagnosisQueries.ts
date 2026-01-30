@@ -47,11 +47,9 @@ export function useCreatePresignedUrl(): UseMutationResult<
 /**
  * 본인 분석 리포트 목록 조회
  */
-export function useMyReportList(
-  options?: {
-    enabled?: boolean;
-  },
-): UseQueryResult<ReportSummary[], Error> {
+export function useMyReportList(options?: {
+  enabled?: boolean;
+}): UseQueryResult<ReportSummary[], Error> {
   return useQuery({
     queryKey: ["reportList", "me"],
     queryFn: () => getMyReportList(),

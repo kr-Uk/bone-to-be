@@ -5,13 +5,7 @@ import { getMe } from "@/shared/api/auth";
 import { useAuthStore } from "@/shared/stores/authStore";
 
 export const useAuthBootstrap = () => {
-  const {
-    hasCheckedAuth,
-    setAuth,
-    clearAuth,
-    setAuthLoading,
-    setHasCheckedAuth,
-  } = useAuthStore();
+  const { hasCheckedAuth, setAuth, clearAuth, setAuthLoading, setHasCheckedAuth } = useAuthStore();
 
   useEffect(() => {
     if (hasCheckedAuth) {

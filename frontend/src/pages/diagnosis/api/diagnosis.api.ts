@@ -72,9 +72,7 @@ const mapReportSummary = (report: ReportSummaryDto): ReportSummary => ({
   createdAt: formatReportDate(report.createdAt),
 });
 
-const mapRepresentativeReport = (
-  report: RepresentativeReportDto,
-): RepresentativeReport => ({
+const mapRepresentativeReport = (report: RepresentativeReportDto): RepresentativeReport => ({
   reportId: report.reportId,
   skeletonType: report.skeletonType,
   isRepresentative: report.isRepresentative,
@@ -99,9 +97,7 @@ export async function getMyReportList(): Promise<ReportSummary[]> {
 export async function getRepresentativeReport(
   userId: string,
 ): Promise<RepresentativeReport | null> {
-  const response = await axios.get<RepresentativeReportResponse>(
-    `/users/${userId}/representative`,
-  );
+  const response = await axios.get<RepresentativeReportResponse>(`/users/${userId}/representative`);
 
   const report = response.data.data;
   if (!report) return null;

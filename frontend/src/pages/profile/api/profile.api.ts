@@ -43,8 +43,7 @@ const mapFollowUser = (user: FollowUserDto): FollowUser => {
   const username = user.nickname ?? user.username ?? "알 수 없음";
   const styleTag = normalizeText(user.bodyType ?? user.styleTag, "비공개");
   const bio = normalizeText(user.bio, "소개글이 없습니다.");
-  const avatarUrl =
-    user.profileImageUrl ?? user.profileImage ?? user.avatarUrl ?? null;
+  const avatarUrl = user.profileImageUrl ?? user.profileImage ?? user.avatarUrl ?? null;
 
   return {
     id: String(user.id),
@@ -125,9 +124,7 @@ export const fetchMyProfile = async (): Promise<UserProfile> => {
 };
 
 export const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
-  const { data } = await axiosInstance.get<ApiResponse<UserProfileBaseDto>>(
-    `/users/${userId}`,
-  );
+  const { data } = await axiosInstance.get<ApiResponse<UserProfileBaseDto>>(`/users/${userId}`);
   if (!data?.data) {
     throw new Error("프로필 정보를 불러오지 못했습니다.");
   }
@@ -141,7 +138,6 @@ export const followUser = async (userId: string): Promise<void> => {
 export const unfollowUser = async (userId: string): Promise<void> => {
   await axiosInstance.delete<ApiResponse<null>>(`/users/${userId}/follow`);
 };
-
 
 const myFollowEndpoint: Record<FollowModalType, string> = {
   following: "/users/me/followings",

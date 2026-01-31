@@ -169,6 +169,7 @@ const mockFeedItems: FeedItem[] = [
     likeCount: 4,
     createdAt: "2026-01-19T07:50:00Z",
   },
+
 ];
 
 // S3 업로드 재시도 테스트용 상태 (개발 환경에서만 사용)
@@ -391,6 +392,7 @@ const mockLikeUsersPool: FeedLikeUser[] = [
     avatarUrl: "https://cdn.myapp.com/profile/24.jpg",
     isFollowing: false,
   },
+
 ];
 
 const pickLikeUsers = (indexes: number[]) =>
@@ -1664,6 +1666,55 @@ export const communityHandlers = [
       code: 200,
       message: "요청 성공",
       data: null,
+    });
+  }),
+
+  http.get("/api/feeds/me", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: [
+        {
+          postId: 1,
+          imageUrl: "https://placehold.co/600x800?text=MY_01",
+          likeCount: 1,
+          commentCount: 0,
+        },
+      ],
+    });
+  }),
+  http.get("/api/feeds/scrapped", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: [
+        {
+          postId: 2,
+          imageUrl: "https://placehold.co/600x800?text=SAVE_01",
+          gender: "FEMALE",
+          skeletonType: "NATURAL",
+          style: ["CASUAL", "MINIMAL"],
+          height: 175,
+          weight: 68,
+          isLiked: false,
+          commentCount: 0,
+          createdAt: "2026-01-29T00:20:25.320899",
+        },
+      ],
+    });
+  }),
+  http.get("/api/feeds/users/:userId", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: [
+        {
+          postId: 3,
+          imageUrl: "https://placehold.co/600x800?text=USER_01",
+          likeCount: 1,
+          commentCount: 0,
+        },
+      ],
     });
   }),
 ];

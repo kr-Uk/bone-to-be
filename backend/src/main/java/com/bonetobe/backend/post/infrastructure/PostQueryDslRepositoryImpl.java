@@ -2,7 +2,7 @@ package com.bonetobe.backend.post.infrastructure;
 
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.post.domain.PostSort;
-import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
+import com.bonetobe.backend.post.domain.query.UserPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import com.bonetobe.backend.style.domain.StyleName;
@@ -109,11 +109,11 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
     }
 
     @Override
-    public List<MyPostSummaryRaw> findMyPostList(Long userId) {
+    public List<UserPostSummaryRaw> findUserPostList(Long userId) {
         return qf
                 .select(
                         Projections.constructor(
-                                MyPostSummaryRaw.class,
+                                UserPostSummaryRaw.class,
                                 post.id,
                                 storedFile.id,
                                 post.likeCount,

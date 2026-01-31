@@ -115,14 +115,14 @@ public class PostFacade {
     }
 
     @Transactional(readOnly = true)
-    public List<MyPostSummary> getMyPostList(Long userId) {
+    public List<UserPostSummary> getUserPostList(Long userId) {
 
-        List<MyPostSummaryRaw> raws = postService.getMyPostList(userId);
+        List<UserPostSummaryRaw> raws = postService.getUserPostList(userId);
 
         if (raws.isEmpty()) return List.of();
 
         List<Long> fileIds = raws.stream()
-                .map(MyPostSummaryRaw::fileId)
+                .map(UserPostSummaryRaw::fileId)
                 .distinct()
                 .toList();
 
@@ -186,7 +186,6 @@ public class PostFacade {
                 .map(r -> r.toSummary(urlMap.get(r.fileId())))
                 .toList();
     }
-
 
 }
 

@@ -3,7 +3,9 @@ import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import { Pose, POSE_CONNECTIONS, type Results, type Options as PoseOptions } from "@mediapipe/pose";
 import { useEffect, useRef, useState, type RefObject } from "react";
 
-import { size } from "../constants";
+// Canvas 크기를 최대 크기로 고정 (400×300, 4:3 비율)
+const CANVAS_WIDTH = 400;
+const CANVAS_HEIGHT = 300;
 
 export const usePoseDetection = (
   videoRef: RefObject<HTMLVideoElement | null>,
@@ -38,22 +40,29 @@ export const usePoseDetection = (
     pose.onResults(onResults);
     poseRef.current = pose;
 
-    // 2. Camera 인스턴스 설정 (3:4 비율 - 세로가 긴 비율)
+    // 2. Canvas 크기를 최대 크기로 고정 (400×300)
+    if (canvasRef.current) {
+      canvasRef.current.width = CANVAS_WIDTH;
+      canvasRef.current.height = CANVAS_HEIGHT;
+      console.log("Canvas 크기 고정:", CANVAS_WIDTH, "x", CANVAS_HEIGHT);
+    }
+
+    // 3. Camera 인스턴스 설정
     const camera = new Camera(videoRef.current, {
       onFrame: async () => {
         if (videoRef.current && poseRef.current) {
           await poseRef.current.send({ image: videoRef.current });
         }
       },
-      width: size.width,
-      height: size.height,
+      width: CANVAS_WIDTH,
+      height: CANVAS_HEIGHT,
     });
 
     cameraRef.current = camera;
     camera.start();
     setCameraActive(true);
 
-    // 3. Cleanup
+    // 4. Cleanup
     return () => {
       cameraRef.current?.stop();
       poseRef.current?.close();
@@ -74,10 +83,7 @@ export const usePoseDetection = (
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // 캔버스 크기 고정 (3:4 비율 - 세로가 긴 비율)
-    if (canvas.width !== 480) canvas.width = 480;
-    if (canvas.height !== 640) canvas.height = 640;
-
+    // Canvas 크기는 이미 PreviewWrapper 크기로 동적 설정됨
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 

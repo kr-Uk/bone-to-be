@@ -52,3 +52,30 @@ export type UserProfile = {
   posts: UserPost[];
   saved: UserPost[];
 };
+
+export type CreateProfileImagePresignedUrlRequest = {
+  originalFileName: string;
+  contentType: string;
+  fileSize: number;
+};
+
+export type CreateProfileImagePresignedUrlResponse = {
+  code: number;
+  message: string;
+  data: {
+    fileId: number;
+    uploadUrl: string;
+  };
+};
+
+export type UpdateMyProfileRequest = {
+  nickname: string;
+  bio: string;
+  profileImageId?: number;
+};
+
+export type UpdateMyProfileResponse = {
+  code: number;
+  message: string;
+  data: null;
+};

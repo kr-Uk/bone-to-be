@@ -1,6 +1,18 @@
-﻿import axiosInstance from "../../../shared/api/axios";
+﻿import axios from "axios";
 
-import type { BodyTypeRatio, FollowModalType, FollowUser, UserPost, UserProfile } from "./profile.types";
+import axiosInstance from "../../../shared/api/axios";
+
+import type {
+  BodyTypeRatio,
+  CreateProfileImagePresignedUrlRequest,
+  CreateProfileImagePresignedUrlResponse,
+  FollowModalType,
+  FollowUser,
+  UpdateMyProfileRequest,
+  UpdateMyProfileResponse,
+  UserPost,
+  UserProfile,
+} from "./profile.types";
 
 interface ApiResponse<T> {
   code: number;
@@ -224,4 +236,33 @@ export const fetchFollowList = async (
   const { data } = await axiosInstance.get<ApiResponse<FollowUserDto[]>>(endpoint);
 
   return mapFollowResponse(data);
+};
+
+export const createProfileImagePresignedUrl = async (
+  request: CreateProfileImagePresignedUrlRequest,
+): Promise<CreateProfileImagePresignedUrlResponse> => {
+  const { data } = await axiosInstance.post<CreateProfileImagePresignedUrlResponse>(
+    "/users/me/profile-image/presigned-url",
+    request,
+  );
+  return data;
+};
+
+export const uploadProfileImageToS3 = async (
+  uploadUrl: string,
+  file: File,
+  contentType: string,
+): Promise<void> => {
+  await axios.put(uploadUrl, file, {
+    headers: {
+      "Content-Type": contentType,
+    },
+  });
+};
+
+export const updateMyProfile = async (
+  request: UpdateMyProfileRequest,
+): Promise<UpdateMyProfileResponse> => {
+  const { data } = await axiosInstance.put<UpdateMyProfileResponse>("/users/me", request);
+  return data;
 };

@@ -10,6 +10,7 @@ import { LoginPage } from "@/pages/LoginPage";
 import MainPage from "@/pages/mainpage/MainPage";
 import { PasswordResetPage } from "@/pages/PasswordResetPage";
 import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
+import ProfileEditPage from "@/pages/profile/ProfileEditPage";
 import ProfilePage from "@/pages/profile/profile";
 import { WithdrawPage } from "@/pages/WithdrawPage";
 
@@ -69,5 +70,9 @@ export const router = createBrowserRouter([
   {
     path: "/withdraw",
     element: <WithdrawPage />,
+  },
+  {
+    path: "/profile/edit",
+    element: <ProfileEditPage />,
   },
 ]);

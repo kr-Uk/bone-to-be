@@ -316,6 +316,7 @@ const ProfilePage = () => {
               bio={profile.bio}
               isOwner={isOwner}
               isFollowing={profile.isFollowing}
+              onEditProfile={() => navigate("/profile/edit")}
               onFollowerClick={() => setFollowModalType("follower")}
               onFollowingClick={() => setFollowModalType("following")}
               onFollowToggle={handleHeaderFollowToggle}

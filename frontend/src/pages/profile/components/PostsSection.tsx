@@ -168,10 +168,14 @@ const HoverText = styled(Text)`
   line-height: 1.75rem;
 `;
 
-const PostCardInner = styled.div`
+const PostCardInner = styled.button<{ $clickable: boolean }>`
   position: relative;
   width: 100%;
   height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
 
   &:hover ${PostImage} {
     transform: scale(1.05);
@@ -186,14 +190,16 @@ interface PostsSectionProps {
   posts: UserPost[];
   saved: UserPost[];
   showSaved?: boolean;
+  onPostClick?: (postId: number) => void;
 }
 
-const PostsSection = ({ posts, saved, showSaved = true }: PostsSectionProps) => {
+const PostsSection = ({ posts, saved, showSaved = true, onPostClick }: PostsSectionProps) => {
   const [activeTab, setActiveTab] = useState<"posts" | "saved">("posts");
   const resolvedTab = showSaved ? activeTab : "posts";
   const items = resolvedTab === "posts" ? posts : saved;
   const emptyMessage =
     resolvedTab === "posts" ? "게시물이 없습니다." : "저장한 게시물이 없습니다.";
+  const isClickable = Boolean(onPostClick);
 
   useEffect(() => {
     if (!showSaved && activeTab !== "posts") {
@@ -223,7 +229,13 @@ const PostsSection = ({ posts, saved, showSaved = true }: PostsSectionProps) => 
         <PostGrid>
           {items.map((post, index) => (
             <PostCard key={post.postId} $variant={index % 2 === 0 ? "dark" : "darker"}>
-              <PostCardInner>
+              <PostCardInner
+                type="button"
+                $clickable={isClickable}
+                onClick={() => onPostClick?.(post.postId)}
+                aria-label={`커뮤니티 글 ${post.postId} 상세보기`}
+                disabled={!isClickable}
+              >
                 {post.imageUrl ? (
                   <PostImage src={post.imageUrl} alt={`Post ${post.postId}`} />
                 ) : (

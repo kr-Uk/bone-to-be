@@ -17,6 +17,7 @@ import { useProfileQuery } from "./hooks/useProfileQuery";
 
 import type { FollowModalType, FollowUser, UserProfile } from "./api/profile.types";
 import { followUser, unfollowUser } from "./api/profile.api";
+import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import type { ReportSummary } from "@/pages/diagnosis/api";
 import { useMyReportList, useRepresentativeReport } from "@/pages/diagnosis/api";
 import { useAuth } from "@/shared/hooks/useAuth";
@@ -173,6 +174,7 @@ const ProfilePage = () => {
   const [localFollowUsers, setLocalFollowUsers] = useState<FollowUser[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [localProfile, setLocalProfile] = useState<UserProfile | null>(null);
+  const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
   const profile: UserProfile | undefined = localProfile ?? data;
 
   useEffect(() => {
@@ -199,7 +201,7 @@ const ProfilePage = () => {
         <Main>
           <StatusMessage>Loading profile...</StatusMessage>
         </Main>
-            </Page>
+      </Page>
     );
   }
 
@@ -209,7 +211,7 @@ const ProfilePage = () => {
         <Main>
           <StatusMessage>Login required.</StatusMessage>
         </Main>
-            </Page>
+      </Page>
     );
   }
 
@@ -219,7 +221,7 @@ const ProfilePage = () => {
         <Main>
           <StatusMessage>Failed to load profile.</StatusMessage>
         </Main>
-            </Page>
+      </Page>
     );
   }
 
@@ -312,6 +314,9 @@ const ProfilePage = () => {
     setIsSettingsOpen(false);
     navigate("/withdraw");
   };
+  const handlePostClick = (postId: number) => {
+    setSelectedFeedId(String(postId));
+  };
   return (
     <Page>
       <Main>
@@ -343,7 +348,12 @@ const ProfilePage = () => {
                 bodyTypeRatio={representativeRatio}
               />
             )}
-            <PostsSection posts={posts} saved={saved} showSaved={showSaved} />
+            <PostsSection
+              posts={posts}
+              saved={saved}
+              showSaved={showSaved}
+              onPostClick={handlePostClick}
+            />
           </Content>
         </ContentGrid>
       </Main>
@@ -381,6 +391,9 @@ const ProfilePage = () => {
             </SettingsModalButton>
           </SettingsModalCard>
         </SettingsModalOverlay>
+      )}
+      {selectedFeedId && (
+        <FeedDetailModal feedId={selectedFeedId} onClose={() => setSelectedFeedId(null)} />
       )}
     </Page>
   );

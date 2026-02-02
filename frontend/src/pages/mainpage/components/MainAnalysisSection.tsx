@@ -342,12 +342,12 @@ export const MainAnalysisSection = () => {
         </Stack>
 
         <Content>
-          <Heading>
+          <Heading data-aos="fade-up" data-aos-delay="0">
             <TitleStrong>Beyond the Trend,</TitleStrong>
             <TitleLight>Back to Basic.</TitleLight>
           </Heading>
 
-          <Description>
+          <Description data-aos="fade-up" data-aos-delay="150">
             유행을 좇는 패션은 금방 지치기 마련입니다.
             <br />
             본투비는 당신이 가진 고유의 선을 이해하고,
@@ -356,21 +356,21 @@ export const MainAnalysisSection = () => {
           </Description>
 
           <List>
-            <ListItem>
+            <ListItem data-aos="fade-up" data-aos-delay="300">
               <CheckCircle>
                 <CheckIcon src={checkIcon} alt="" />
               </CheckCircle>
               <ItemText>체형별 맞춤 가상 피팅 서비스</ItemText>
             </ListItem>
 
-            <ListItem>
+            <ListItem data-aos="fade-up" data-aos-delay="450">
               <CheckCircle>
                 <CheckIcon src={checkIcon} alt="" />
               </CheckCircle>
               <ItemText>같은 체형 유저들과의 스타일 공유 커뮤니티</ItemText>
             </ListItem>
 
-            <ListItem>
+            <ListItem data-aos="fade-up" data-aos-delay="600">
               <CheckCircle>
                 <CheckIcon src={checkIcon} alt="" />
               </CheckCircle>
@@ -378,7 +378,7 @@ export const MainAnalysisSection = () => {
             </ListItem>
           </List>
 
-          <LinkRow>
+          <LinkRow data-aos="fade-up" data-aos-delay="750">
             <Link href="#">
               View Community <span>→</span>
             </Link>

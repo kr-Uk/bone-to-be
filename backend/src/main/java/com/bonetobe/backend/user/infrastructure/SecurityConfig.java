@@ -128,7 +128,7 @@ public class SecurityConfig {
 
         // 1. 프론트엔드 도메인 명시 (와일드카드 * 사용 불가)
         configuration.setAllowedOrigins(List.of("https://bonetobe.site", "http://localhost:5173", "http://localhost:5174"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
 
         // 2. 쿠키 전송 허용 (핵심!)

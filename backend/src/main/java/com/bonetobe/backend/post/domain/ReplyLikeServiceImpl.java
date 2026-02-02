@@ -12,33 +12,39 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReplyLikeServiceImpl implements ReplyLikeService {
 
     private final ReplyLikeStore replyLikeStore;
+    private final ReplyReader replyReader;
 
     @Override
     public void like(Long replyId, Long userId) {
+
+        // 댓글 존재 여부 확인
+        replyReader.getById(replyId);
+
+        // 이미 좋아요 누른 경우
         int inserted = replyLikeStore.insertLike(replyId, userId);
         if (inserted == 0) {
-            // 이미 좋아요 한 경우 등
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.REPLY_ALREADY_LIKED);
         }
 
-        int updated = replyLikeStore.updatePostLikeCount(replyId, +1);
-        if (updated != 1) {
-            // 게시물 없는 경우 등
-            throw new BusinessException(ErrorCode.POST_NOT_FOUND);
-        }
+        // 카운트 증가
+        replyLikeStore.updateReplyLikeCount(replyId, +1);
     }
+
 
     @Override
     public void unlike(Long replyId, Long userId) {
+
+        // 댓글 존재 여부 확인
+        replyReader.getById(replyId); // 없으면 REPLY_NOT_FOUND
+
+        // 좋아요 누른 적이 없는 경우
         int deleted = replyLikeStore.deleteLike(replyId, userId);
         if (deleted == 0) {
-            // 좋아요 안 했는데 취소
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.REPLY_LIKE_NOT_FOUND);
         }
 
-        int updated = replyLikeStore.updatePostLikeCount(replyId, -1);
-        if (updated != 1) {
-            throw new BusinessException(ErrorCode.POST_LIST_INVALID_LIKE);
-        }
+        // 카운트 감소
+        replyLikeStore.updateReplyLikeCount(replyId, -1);
     }
+
 }

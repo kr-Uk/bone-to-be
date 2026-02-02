@@ -5,22 +5,42 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class AnalysisDetail {
-    private String title;
-    private Double score;
+    private String key;
+    private String label;
     private SkeletonType skeletonType;
+    private Double score;
+    private Integer percent;
+    private String description;
+    private RangeMeta rangeMeta;
+    private Analysis analysis;
+    private List<Zone> zones;
 
     public static AnalysisDetail of(
-        String title,
+        String key,
+        String label,
+        SkeletonType skeletonType,
         Double score,
-        SkeletonType skeletonType
+        Integer percent,
+        String description,
+        RangeMeta rangeMeta,
+        Analysis analysis,
+        List<Zone> zones
     ) {
         AnalysisDetail detail = new AnalysisDetail();
-        detail.title = title;
-        detail.score = score;
+        detail.key = key;
+        detail.label = label;
         detail.skeletonType = skeletonType;
+        detail.score = score;
+        detail.percent = percent;
+        detail.description = description;
+        detail.rangeMeta = rangeMeta;
+        detail.analysis = analysis;
+        detail.zones = zones;
         return detail;
     }
 }

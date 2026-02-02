@@ -408,8 +408,6 @@ const formatBodyType = (value?: string) => {
     return "Natural Type";
   }
 
-
-
   return `${normalizedValue} Type`;
 };
 

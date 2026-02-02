@@ -1,4 +1,4 @@
-package com.bonetobe.backend.common.domain;
+package com.bonetobe.backend.notification.domain;
 
 public enum AlertType {
     DIAGNOSE,

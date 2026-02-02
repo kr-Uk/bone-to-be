@@ -1,4 +1,4 @@
-package com.bonetobe.backend.common.domain;
+package com.bonetobe.backend.notification.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.user.domain.User;

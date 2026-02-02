@@ -144,6 +144,9 @@ export const diagnosisHandlers = [
   http.get<{ id: string }>("/api/reports/:id", ({ params }) => {
     const { id } = params;
 
+    // 403 발생용 테스트 케이스
+    // return HttpResponse.json(null, { status: 403 });
+
     const response: ReportDetailResponse = {
       code: 200,
       message: "요청 성공",

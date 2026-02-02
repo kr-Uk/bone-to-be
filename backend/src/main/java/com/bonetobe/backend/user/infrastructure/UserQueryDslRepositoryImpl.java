@@ -6,7 +6,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -21,9 +20,6 @@ public class UserQueryDslRepositoryImpl implements UserQueryDslRepository {
 
     @Override
     public List<UserSearchSummaryRaw> findUserSearch(String nickname, Long viewerId) {
-
-        BooleanExpression nicknameCond =
-                StringUtils.hasText(nickname) ? user.nickname.contains(nickname) : null;
 
         BooleanExpression notMeCond =
                 (viewerId != null) ? user.id.ne(viewerId) : null;
@@ -42,7 +38,9 @@ public class UserQueryDslRepositoryImpl implements UserQueryDslRepository {
                         follow.follower.id.eq(viewerId),
                         follow.following.id.eq(user.id)
                 )
-                .where(nicknameCond, notMeCond)
+                .where(
+                        user.nickname.contains(nickname),
+                        notMeCond)
                 .fetch();
     }
 }

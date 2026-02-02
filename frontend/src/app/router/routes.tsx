@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import ErrorLayout from "@/app/layouts/ErrorLayout";
 import { MainLayout } from "@/layouts/MainLayout";
+import AboutPage from "@/pages/AboutPage/AboutPage";
 import CommunityPage from "@/pages/community/CommunityPage";
 import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
 import ReportPage from "@/pages/diagnosis/ReportPage";
@@ -11,9 +12,8 @@ import MainPage from "@/pages/mainpage/MainPage";
 import { PasswordChangePage } from "@/pages/PasswordChangePage";
 import { PasswordResetPage } from "@/pages/PasswordResetPage";
 import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
-import ProfileEditPage from "@/pages/profile/ProfileEditPage";
 import ProfilePage from "@/pages/profile/profile";
-import AboutPage from "@/pages/AboutPage/AboutPage";
+import ProfileEditPage from "@/pages/profile/ProfileEditPage";
 import { WithdrawPage } from "@/pages/WithdrawPage";
 
 export const router = createBrowserRouter([

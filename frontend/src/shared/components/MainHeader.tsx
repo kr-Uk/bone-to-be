@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { CgProfile } from "react-icons/cg";
 import { FaRegBell } from "react-icons/fa";
-import { FiUser, FiUsers } from "react-icons/fi";
+import { FiSearch, FiUser, FiUsers } from "react-icons/fi";
 import { IoMenu } from "react-icons/io5";
 import { LuUserCog } from "react-icons/lu";
 import { MdFavoriteBorder, MdLogout, MdOutlineClose } from "react-icons/md";
@@ -10,9 +11,12 @@ import { TbLineScan } from "react-icons/tb";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 
+import type { SearchUser } from "@/pages/profile/api/profile.types";
 import type { AppTheme } from "@/shared/styles/theme";
 
 import logo from "@/assets/image/MainLogo.svg";
+import { FollowListModal } from "@/pages/profile/components/FollowListModal";
+import { useUserSearch } from "@/pages/profile/hooks/useUserSearch";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useLogout } from "@/shared/hooks/useLogout";
 
@@ -50,6 +54,9 @@ export const MainHeader = () => {
   const logoutMutation = useLogout();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
   const profilePath = me?.nickname ? `/profile/${encodeURIComponent(me.nickname)}` : "/profile";
   const navItems: NavItem[] = isLoggedIn
@@ -65,6 +72,18 @@ export const MainHeader = () => {
 
   const displayName = me?.nickname ?? "User";
   const avatarInitial = displayName.slice(0, 1).toUpperCase();
+  const searchResult = useUserSearch(debouncedQuery, { enabled: isSearchOpen });
+  const searchedUsers: SearchUser[] = searchResult.data ?? [];
+  const isSearchLoading = searchResult.isLoading;
+  const isSearchError = searchResult.isError;
+  const searchUsers = useMemo(() => {
+    return searchedUsers.map((user) => ({
+      id: String(user.userId),
+      username: user.nickname,
+      avatarUrl: user.profileImageUrl ?? undefined,
+      isFollowing: user.isFollowing,
+    }));
+  }, [searchedUsers]);
   const handleNavigate = (path: string) => {
     setIsMobileMenuOpen(false);
     navigate(path);
@@ -101,6 +120,7 @@ export const MainHeader = () => {
   useEffect(() => {
     setIsProfileMenuOpen(false);
     setIsMobileMenuOpen(false);
+    setIsSearchOpen(false);
   }, [location.pathname, location.search, location.hash]);
 
   useEffect(() => {
@@ -113,7 +133,8 @@ export const MainHeader = () => {
   }, [isLoggedIn, me?.nickname, location.pathname, navigate]);
 
   useEffect(() => {
-    if (!isMobileMenuOpen) {
+    const shouldLockScroll = isMobileMenuOpen || isSearchOpen;
+    if (!shouldLockScroll) {
       return;
     }
 
@@ -123,7 +144,22 @@ export const MainHeader = () => {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, isSearchOpen]);
+
+  useEffect(() => {
+    if (!isSearchOpen) {
+      setSearchQuery("");
+      setDebouncedQuery("");
+      return;
+    }
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedQuery(searchQuery.trim());
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [isSearchOpen, searchQuery]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -179,6 +215,17 @@ export const MainHeader = () => {
           <AuthPlaceholder />
         ) : isLoggedIn ? (
           <AuthIcons>
+            <AuthIconButton
+              type="button"
+              aria-label="Search users"
+              aria-expanded={isSearchOpen}
+              onClick={() => {
+                setIsProfileMenuOpen(false);
+                setIsSearchOpen((prev) => !prev);
+              }}
+            >
+              <FiSearch size={24} />
+            </AuthIconButton>
             <AuthIconButton type="button" aria-label="Notifications">
               <FaRegBell size={26} />
             </AuthIconButton>
@@ -187,7 +234,10 @@ export const MainHeader = () => {
                 type="button"
                 aria-label="Profile"
                 aria-expanded={isProfileMenuOpen}
-                onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setIsProfileMenuOpen((prev) => !prev);
+                }}
               >
                 <CgProfile size={26} />
               </AuthIconButton>
@@ -274,6 +324,19 @@ export const MainHeader = () => {
                   </SideMenuRowButton>
                 );
               })}
+              <SideMenuRowButton
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsProfileMenuOpen(false);
+                  setIsSearchOpen(true);
+                }}
+              >
+                <SideMenuIconSlot aria-hidden="true">
+                  <FiSearch size={18} />
+                </SideMenuIconSlot>
+                <SideMenuRowText>SEARCH</SideMenuRowText>
+              </SideMenuRowButton>
             </SideMenuList>
 
             {isLoggedIn && (
@@ -329,6 +392,33 @@ export const MainHeader = () => {
           </SideMenuCloseButton>
         </SideMenuPanel>
       </SideMenuOverlay>
+      {isSearchOpen &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <SearchModalOverlay onClick={() => setIsSearchOpen(false)}>
+            <SearchModalCard onClick={(event) => event.stopPropagation()}>
+              <FollowListModal
+                type="following"
+                title="Search"
+                users={searchUsers}
+                currentNickname={me?.nickname}
+                onClose={() => setIsSearchOpen(false)}
+                isLoading={isSearchLoading}
+                errorMessage={isSearchError ? "불러오지 못했습니다." : undefined}
+                query={searchQuery}
+                onQueryChange={setSearchQuery}
+                searchPlaceholder="닉네임 검색"
+                enableLocalFilter={false}
+                showAction={false}
+                onUserClick={(user) => {
+                  setIsSearchOpen(false);
+                  navigate(`/profile/${encodeURIComponent(user.username)}`);
+                }}
+              />
+            </SearchModalCard>
+          </SearchModalOverlay>,
+          document.body,
+        )}
     </Header>
   );
 };
@@ -449,6 +539,22 @@ const AuthIcons = styled.div`
 
 const ProfileMenuWrap = styled.div`
   position: relative;
+`;
+
+const SearchModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1000;
+`;
+
+const SearchModalCard = styled.div`
+  width: min(32rem, 100%);
+  height: min(40rem, 90vh);
 `;
 
 const AuthIconButton = styled.button`

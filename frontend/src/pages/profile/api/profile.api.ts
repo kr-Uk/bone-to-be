@@ -8,6 +8,7 @@ import type {
   CreateProfileImagePresignedUrlResponse,
   FollowModalType,
   FollowUser,
+  SearchUser,
   UpdateMyProfileRequest,
   UpdateMyProfileResponse,
   UpdateMyPasswordRequest,
@@ -161,6 +162,18 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile> => 
     throw new Error("프로필 정보를 불러오지 못했습니다.");
   }
   return mapBaseProfile(data.data, false);
+};
+
+export const searchUsers = async (nickname?: string): Promise<SearchUser[]> => {
+  const trimmedNickname = nickname?.trim() ?? "";
+  const params = trimmedNickname ? { nickname: trimmedNickname } : undefined;
+  const { data } = await axiosInstance.get<ApiResponse<SearchUser[]>>("/users/search", {
+    params,
+  });
+  if (!data?.data) {
+    throw new Error("유저 검색 결과를 불러오지 못했습니다.");
+  }
+  return data.data;
 };
 
 export const followUser = async (userId: string): Promise<void> => {

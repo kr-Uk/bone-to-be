@@ -1,6 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { updateMyProfile } from "../api/profile.api";
+
 import { profileQueryKey } from "./useProfileQuery";
 
 type ProfileUpdateParams = {
@@ -19,3 +20,4 @@ export const useProfileUpdate = () => {
     },
   });
 };
+

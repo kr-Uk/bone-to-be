@@ -1,9 +1,10 @@
+﻿import { CheckCircle, MoveHorizontal } from "lucide-react";
 import { useEffect, useRef } from "react";
 import styled, { css, keyframes } from "styled-components";
-import { CheckCircle, MoveHorizontal } from "lucide-react";
 
-import type { AppTheme } from "@/shared/styles/theme";
 import type { SectionId } from "@/pages/AboutPage/hooks/useScrollSpy";
+import type { AppTheme } from "@/shared/styles/theme";
+
 import { createUltimateMannequin } from "@/pages/AboutPage/three/createUltimateMannequin";
 
 interface TypeSectionProps {
@@ -196,6 +197,7 @@ const CanvasStage = ({ type }: { type: SectionId }) => {
     }
 
     const cleanup = createUltimateMannequin(type, containerRef.current);
+
     return () => cleanup();
   }, [type]);
 

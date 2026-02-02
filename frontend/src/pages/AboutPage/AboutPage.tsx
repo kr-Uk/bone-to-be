@@ -1,12 +1,14 @@
-import styled, { keyframes } from "styled-components";
+﻿import styled, { keyframes } from "styled-components";
 
-import { useScrollSpy, type SectionId } from "@/pages/AboutPage/hooks/useScrollSpy";
-import { useSectionAnimation } from "@/pages/AboutPage/hooks/useSectionAnimation";
-import { BackgroundEffects } from "@/pages/AboutPage/components/BackgroundEffects";
-import { AboutHero } from "@/pages/AboutPage/components/AboutHero";
-import { TypeSection } from "@/pages/AboutPage/components/TypeSection";
-import { ScrollNav } from "@/pages/AboutPage/components/ScrollNav";
+import type { SectionId } from "@/pages/AboutPage/hooks/useScrollSpy";
 import type { JSX } from "react";
+
+import { AboutHero } from "@/pages/AboutPage/components/AboutHero";
+import { BackgroundEffects } from "@/pages/AboutPage/components/BackgroundEffects";
+import { ScrollNav } from "@/pages/AboutPage/components/ScrollNav";
+import { TypeSection } from "@/pages/AboutPage/components/TypeSection";
+import { useScrollSpy } from "@/pages/AboutPage/hooks/useScrollSpy";
+import { useSectionAnimation } from "@/pages/AboutPage/hooks/useSectionAnimation";
 
 interface TypeSectionData {
   id: SectionId;
@@ -112,7 +114,7 @@ const AnimatedSection = styled.div`
 `;
 
 export default function AboutPage(): JSX.Element {
-  const sectionIds = sections.map((section) => section.id) as SectionId[];
+  const sectionIds = sections.map((section) => section.id);
   const { progress, activeId } = useScrollSpy(sectionIds);
   const animationState = useSectionAnimation(sectionIds);
 

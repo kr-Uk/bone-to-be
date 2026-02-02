@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
 import { IoAddSharp, IoCheckmark } from "react-icons/io5";
@@ -17,6 +17,14 @@ type Props = {
   onToggleFollow?: (userId: string) => void;
   isLoading?: boolean;
   errorMessage?: string;
+  title?: string;
+  countOverride?: number;
+  query?: string;
+  onQueryChange?: (value: string) => void;
+  searchPlaceholder?: string;
+  enableLocalFilter?: boolean;
+  onUserClick?: (user: FollowUser) => void;
+  showAction?: boolean;
 };
 
 export const FollowListModal = ({
@@ -28,10 +36,20 @@ export const FollowListModal = ({
   onToggleFollow,
   isLoading = false,
   errorMessage,
+  title,
+  countOverride,
+  query,
+  onQueryChange,
+  searchPlaceholder = "검색",
+  enableLocalFilter = true,
+  onUserClick,
+  showAction = true,
 }: Props) => {
-  const [query, setQuery] = useState("");
+  const [localQuery, setLocalQuery] = useState("");
+  const resolvedQuery = query ?? localQuery;
 
-  const title = type === "following" ? "팔로잉" : "팔로워";
+  const resolvedTitle = title ?? (type === "following" ? "팔로잉" : "팔로워");
+  const count = countOverride ?? users.length;
   const orderedUsers = useMemo(() => {
     if (!currentNickname) return users;
     const index = users.findIndex((user) => user.username === currentNickname);
@@ -41,12 +59,13 @@ export const FollowListModal = ({
     return [meUser, ...next];
   }, [users, currentNickname]);
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    if (!enableLocalFilter) return orderedUsers;
+    const q = resolvedQuery.trim().toLowerCase();
     if (!q) return orderedUsers;
     return orderedUsers.filter(
       (u) => u.username.toLowerCase().includes(q) || (u.bio ?? "").toLowerCase().includes(q),
     );
-  }, [query, orderedUsers]);
+  }, [enableLocalFilter, orderedUsers, resolvedQuery]);
 
   const statusMessage = errorMessage
     ? errorMessage
@@ -54,16 +73,24 @@ export const FollowListModal = ({
       ? "불러오는 중..."
       : filtered.length
         ? null
-        : query
+        : resolvedQuery
           ? "검색 결과가 없습니다."
           : "표시할 사용자가 없습니다.";
 
+  const handleQueryChange = (value: string) => {
+    if (onQueryChange) {
+      onQueryChange(value);
+      return;
+    }
+    setLocalQuery(value);
+  };
+
   return (
-    <ModalRoot role="dialog" aria-modal="true" aria-label={`${title} 목록`}>
+    <ModalRoot role="dialog" aria-modal="true" aria-label={`${resolvedTitle} 목록`}>
       <Header>
         <HeaderLeft>
-          <Title as="span">{title}</Title>
-          <CountBadge as="span">{users.length}</CountBadge>
+          <Title as="span">{resolvedTitle}</Title>
+          <CountBadge as="span">{count}</CountBadge>
         </HeaderLeft>
 
         <IconButton type="button" onClick={onClose} aria-label="닫기">
@@ -75,9 +102,9 @@ export const FollowListModal = ({
         <SearchWrap>
           <IoIosSearch size={20} color="#9ca3af" />
           <SearchInput
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="검색"
+            value={resolvedQuery}
+            onChange={(event) => handleQueryChange(event.target.value)}
+            placeholder={searchPlaceholder}
           />
         </SearchWrap>
       </SearchSection>
@@ -94,6 +121,8 @@ export const FollowListModal = ({
               isMe={user.username === currentNickname}
               onUnfollow={onUnfollow}
               onToggleFollow={onToggleFollow}
+              onUserClick={onUserClick}
+              showAction={showAction}
             />
           ))
         )}
@@ -108,18 +137,24 @@ function FollowRow({
   isMe,
   onUnfollow,
   onToggleFollow,
+  onUserClick,
+  showAction,
 }: {
   type: FollowModalType;
   user: FollowUser;
   isMe: boolean;
   onUnfollow?: (userId: string) => void;
   onToggleFollow?: (userId: string) => void;
+  onUserClick?: (user: FollowUser) => void;
+  showAction?: boolean;
 }) {
   const isFollowing = user.isFollowing ?? type === "following";
   const buttonLabel = isFollowing ? "Following" : "Follow";
   const buttonIcon = isFollowing ? <IoCheckmark /> : <IoAddSharp />;
+  const isClickable = Boolean(onUserClick);
 
-  const handleClick = () => {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     if (isFollowing) {
       onUnfollow?.(user.id);
       return;
@@ -127,10 +162,30 @@ function FollowRow({
     onToggleFollow?.(user.id);
   };
 
+  const handleRowClick = () => {
+    onUserClick?.(user);
+  };
+
+  const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!isClickable) {
+      return;
+    }
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onUserClick?.(user);
+    }
+  };
+
   const isActive = buttonLabel === "Following";
 
   return (
-    <Row>
+    <Row
+      $clickable={isClickable}
+      onClick={isClickable ? handleRowClick : undefined}
+      onKeyDown={isClickable ? handleRowKeyDown : undefined}
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+    >
       <RowLeft>
         <Avatar>
           {user.avatarUrl ? (
@@ -150,7 +205,7 @@ function FollowRow({
         </Info>
       </RowLeft>
 
-      {isMe ? null : (
+      {!showAction || isMe ? null : (
         <ActionButton type="button" data-active={isActive} onClick={handleClick}>
           {buttonLabel}
           {buttonIcon}
@@ -266,12 +321,17 @@ const EmptyState = styled(Text)`
   padding: 1.5rem 0;
 `;
 
-const Row = styled.div`
+const Row = styled.div<{ $clickable: boolean }>`
   padding: 0.75rem;
   border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
+
+  &:hover {
+    background: ${({ $clickable }) => ($clickable ? "rgba(255, 255, 255, 0.04)" : "transparent")};
+  }
 `;
 
 const RowLeft = styled.div`

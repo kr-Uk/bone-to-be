@@ -17,9 +17,9 @@ import {
 import { useProfileQuery } from "./hooks/useProfileQuery";
 
 import type { FollowModalType, FollowUser, UserProfile } from "./api/profile.types";
-import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import type { ReportSummary } from "@/pages/diagnosis/api";
 
+import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import { useMyReportList, useRepresentativeReport } from "@/pages/diagnosis/api";
 import { useAuth } from "@/shared/hooks/useAuth";
 

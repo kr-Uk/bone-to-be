@@ -108,6 +108,37 @@ export type ReportStatus = "PENDING" | "COMPLETED" | "FAILED";
 export type SkeletonType = "NATURAL" | "WAVE" | "STRAIGHT";
 
 /**
+ * 리포트 상세 분석의 구간(Zone) 정의
+ */
+export type Zone = {
+  label: string; // 구간 레이블 (예: "좁음", "표준", "넓음")
+  skeletonType: SkeletonType; // 구간 타입 (색상 매핑용)
+  max: number; // 구간 최대값
+};
+
+/**
+ * 리포트 상세 분석 지표 (11개 골격 분석 지표)
+ */
+export type ReportDetailMetric = {
+  key: string; // 지표 ID (예: "shoulder_width_index")
+  label: string; // 지표 이름 (예: "어깨 너비 지수")
+  score: number; // 실제 측정값
+  percent: number; // 백분율 표시값 (0-100)
+  description: string; // 지표 설명
+  rangeMeta: {
+    min: number; // 범위 최소값
+    max: number; // 범위 최대값
+    leftLabel: string; // 왼쪽 레이블 (예: "좁음 (Wave)")
+    rightLabel: string; // 오른쪽 레이블 (예: "넓음 (Natural)")
+  };
+  analysis: {
+    resultType: SkeletonType; // 이 지표의 결과 타입 (STRAIGHT/NATURAL/WAVE)
+    resultText: string; // 결과 설명 (예: "어깨 너비가 표준적이에요.")
+  };
+  zones: Zone[]; // 3개 구간 정의
+};
+
+/**
  * 리포트 상세 조회 응답
  */
 export type ReportDetailResponse = ApiResponse<{
@@ -116,14 +147,7 @@ export type ReportDetailResponse = ApiResponse<{
   straightRate: number;
   naturalRate: number;
   waveRate: number;
-  details: {
-    measurements?: {
-      shoulderWidth: number;
-      waistWidth: number;
-      hipWidth: number;
-    };
-    recommendations?: string[];
-  } | null;
+  details: ReportDetailMetric[]; // 11개 골격 분석 지표 배열
   status: ReportStatus;
   createdAt: string;
 }>;

@@ -91,6 +91,12 @@ export const MainHeader = () => {
     setIsMobileMenuOpen(false);
     navigate(path);
   };
+  const handleProfileEditNavigate = () => {
+    setIsProfileMenuOpen(false);
+    setIsMobileMenuOpen(false);
+    setIsSearchOpen(false);
+    navigate("/profile/edit");
+  };
 
   const handleLogout = async () => {
     try {
@@ -248,7 +254,7 @@ export const MainHeader = () => {
                 </ProfileMenuHeader>
                 <ProfileMenuHeaderDivider />
                 <ProfileMenuList>
-                  <ProfileMenuItem type="button">
+                  <ProfileMenuItem type="button" onClick={handleProfileEditNavigate}>
                     <IconNudge>
                       <LuUserCog size={20} />
                     </IconNudge>
@@ -341,7 +347,7 @@ export const MainHeader = () => {
                   </SideMenuIconSlot>
                   <SideMenuRowText>알림함</SideMenuRowText>
                 </SideMenuRowButton>
-                <SideMenuRowButton type="button">
+                <SideMenuRowButton type="button" onClick={handleProfileEditNavigate}>
                   <SideMenuIconSlot aria-hidden="true">
                     <LuUserCog size={16} />
                   </SideMenuIconSlot>

@@ -146,7 +146,6 @@ const ProfileEditPage = () => {
       <Page>
         <LoginHeader />
         <Main>
-        
           <StatusMessage>프로필을 불러오는 중입니다...</StatusMessage>
         </Main>
       </Page>
@@ -158,7 +157,6 @@ const ProfileEditPage = () => {
       <Page>
         <LoginHeader />
         <Main>
-        
           <StatusMessage>프로필 정보를 불러오지 못했습니다.</StatusMessage>
         </Main>
       </Page>
@@ -169,7 +167,6 @@ const ProfileEditPage = () => {
     <Page>
       <LoginHeader />
       <Main>
-        
         <ShapesLayer aria-hidden="true">
           <StraightShape />
           <WaveShape />
@@ -258,7 +255,7 @@ const ProfileEditPage = () => {
             </Field>
             <Divider />
             <Divider />
-            
+
             <ActionRow>
               <GhostButton type="button" onClick={() => navigate(-1)} disabled={isSubmitting}>
                 취소
@@ -368,11 +365,10 @@ const ShapesLayer = styled.div`
   }
 `;
 
-
 const Divider = styled.hr`
   margin: 0.5rem 0;
   border: none;
-`
+`;
 
 const Card = styled.section`
   position: relative;

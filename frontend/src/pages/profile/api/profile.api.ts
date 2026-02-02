@@ -171,7 +171,6 @@ export const unfollowUser = async (userId: string): Promise<void> => {
   await axiosInstance.delete<ApiResponse<null>>(`/users/${userId}/follow`);
 };
 
-
 const mapFeedPost = (post: FeedPostDto | ScrappedPostDto): UserPost => ({
   postId: post.postId,
   imageUrl: post.imageUrl ?? null,
@@ -272,9 +271,6 @@ export const updateMyProfile = async (
 export const updateMyPassword = async (
   request: UpdateMyPasswordRequest,
 ): Promise<UpdateMyPasswordResponse> => {
-  const { data } = await axiosInstance.put<UpdateMyPasswordResponse>(
-    "/users/me/password",
-    request,
-  );
+  const { data } = await axiosInstance.put<UpdateMyPasswordResponse>("/users/me/password", request);
   return data;
 };

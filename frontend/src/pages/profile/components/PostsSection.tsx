@@ -197,8 +197,7 @@ const PostsSection = ({ posts, saved, showSaved = true, onPostClick }: PostsSect
   const [activeTab, setActiveTab] = useState<"posts" | "saved">("posts");
   const resolvedTab = showSaved ? activeTab : "posts";
   const items = resolvedTab === "posts" ? posts : saved;
-  const emptyMessage =
-    resolvedTab === "posts" ? "게시물이 없습니다." : "저장한 게시물이 없습니다.";
+  const emptyMessage = resolvedTab === "posts" ? "게시물이 없습니다." : "저장한 게시물이 없습니다.";
   const isClickable = Boolean(onPostClick);
 
   useEffect(() => {
@@ -210,16 +209,16 @@ const PostsSection = ({ posts, saved, showSaved = true, onPostClick }: PostsSect
   return (
     <Section>
       <TabBar>
-        <Tab
-          $active={resolvedTab === "posts"}
-          onClick={() => setActiveTab("posts")}
-          type="button"
-        >
+        <Tab $active={resolvedTab === "posts"} onClick={() => setActiveTab("posts")} type="button">
           <AiOutlineAppstore size={24} />
           <TabText>Posts</TabText>
         </Tab>
         {showSaved ? (
-          <Tab $active={resolvedTab === "saved"} onClick={() => setActiveTab("saved")} type="button">
+          <Tab
+            $active={resolvedTab === "saved"}
+            onClick={() => setActiveTab("saved")}
+            type="button"
+          >
             <CiBookmark size={24} />
             <TabText>Saved</TabText>
           </Tab>
@@ -265,4 +264,3 @@ const PostsSection = ({ posts, saved, showSaved = true, onPostClick }: PostsSect
 };
 
 export default PostsSection;
-

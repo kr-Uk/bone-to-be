@@ -169,7 +169,6 @@ const mockFeedItems: FeedItem[] = [
     likeCount: 4,
     createdAt: "2026-01-19T07:50:00Z",
   },
-
 ];
 
 // S3 업로드 재시도 테스트용 상태 (개발 환경에서만 사용)
@@ -392,7 +391,6 @@ const mockLikeUsersPool: FeedLikeUser[] = [
     avatarUrl: "https://cdn.myapp.com/profile/24.jpg",
     isFollowing: false,
   },
-
 ];
 
 const pickLikeUsers = (indexes: number[]) =>

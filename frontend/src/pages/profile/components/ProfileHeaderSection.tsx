@@ -1,4 +1,4 @@
-import { IoAddSharp, IoCheckmark } from "react-icons/io5";
+﻿import { IoAddSharp, IoCheckmark } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import styled from "styled-components";
 
@@ -277,9 +277,10 @@ const StatLabel = styled(Text)`
 
 const QuoteText = styled(Text)`
   color: var(--neutral-300, #d4d4d4);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.5rem;
+  margin: 0.5rem;
   text-align: inherit;
 `;
 

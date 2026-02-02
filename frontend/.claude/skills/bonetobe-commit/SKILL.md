@@ -24,6 +24,7 @@ This skill provides expert guidance for creating git commits that follow the Bon
 ```
 
 **Example:**
+
 ```
 feat(frontend): 사진 촬영 페이지 추가
 ```
@@ -66,14 +67,17 @@ Must use one of these types:
 ### Type Selection Guidelines
 
 **feat vs design:**
+
 - `feat` - Adds new functionality: `feat(frontend): 로그인 버튼 클릭 시 모달 표시`
 - `design` - Pure styling: `design(frontend): 버튼 색상 및 간격 조정`
 
 **refactor vs fix:**
+
 - `refactor` - No behavior change: `refactor(backend): 사용자 서비스 로직 분리`
 - `fix` - Fixes broken behavior: `fix(backend): 로그인 시 null 오류 수정`
 
 **style vs design:**
+
 - `style` - Code formatting: `style(frontend): ESLint 규칙 적용`
 - `design` - Visual styling: `design(frontend): 헤더 레이아웃 개선`
 
@@ -90,15 +94,18 @@ Must use one of these scopes:
 ### Scope Selection Guidelines
 
 **Single directory changes:**
+
 - Changes only in `frontend/` → `frontend`
 - Changes only in `backend/` → `backend`
 
 **Multiple directories:**
+
 - Changes in both frontend and backend → Consider splitting into 2 commits OR use `root`
 - Config files (docker-compose.yml, .gitlab-ci.yml) → `config`
 - Documentation at root (README.md, CLAUDE.md) → `root`
 
 **Dependencies:**
+
 - `pnpm install` in frontend → `deps`
 - Gradle dependency update → `deps`
 - Both → `deps` (use root scope)
@@ -108,15 +115,18 @@ Must use one of these scopes:
 **One logical change per commit**
 
 ✅ **Good examples:**
+
 - Single feature: `feat(frontend): 웹캠 통합한 사진 촬영 기능 추가`
 - Single bug fix: `fix(backend): RabbitMQ 연결 타임아웃 수정`
 - Single refactor: `refactor(frontend): 진단 페이지 컴포넌트 구조 개선`
 
 ❌ **Bad examples (too broad):**
+
 - `feat(frontend): 촬영 페이지 추가 및 진단 페이지 수정` (2 features - split it)
 - `fix(root): 여러 버그 수정` (vague - what bugs?)
 
 **When to split commits:**
+
 - Different features → Separate commits
 - Different scopes → Separate commits (frontend vs backend)
 - Unrelated changes → Separate commits
@@ -172,6 +182,7 @@ git diff HEAD       # See actual code changes
 ### Step 2: Determine Type and Scope
 
 Ask yourself:
+
 - **What changed?** → Determines type (feat/fix/design/etc.)
 - **Where did it change?** → Determines scope (frontend/backend/etc.)
 - **Is it a single logical change?** → Ensure atomic commit
@@ -206,7 +217,7 @@ npx commitlint --from HEAD~1
 
 ## Breaking Changes
 
-For breaking changes, add `!` after scope:
+For breaking changes, add **!** after scope:
 
 ```
 feat(backend)!: API 응답 형식 JSON으로 변경
@@ -230,6 +241,7 @@ Resolves #123
 If description exceeds 80 chars:
 
 **Option 1:** Simplify
+
 ```
 # Too long (95 chars)
 feat(frontend): 사용자 프로필 페이지에 아바타 업로드 및 크롭 기능 추가
@@ -239,6 +251,7 @@ feat(frontend): 프로필 아바타 업로드 및 크롭 추가
 ```
 
 **Option 2:** Use body for details
+
 ```
 feat(frontend): 프로필 아바타 업로드 추가
 
@@ -250,6 +263,7 @@ feat(frontend): 프로필 아바타 업로드 추가
 ### Multi-Scope Changes
 
 **Preferred:** Split into multiple commits
+
 ```
 # Commit 1
 feat(frontend): 로그인 UI 컴포넌트 추가
@@ -259,6 +273,7 @@ feat(backend): 로그인 API 엔드포인트 구현
 ```
 
 **Alternative:** Use `root` scope for truly integrated changes
+
 ```
 feat(root): JWT 기반 인증 시스템 구현
 ```
@@ -266,6 +281,7 @@ feat(root): JWT 기반 인증 시스템 구현
 ## Model Configuration
 
 This skill uses **Haiku model** for:
+
 - Fast execution
 - Cost-effective commits
 - Quick message generation
@@ -298,6 +314,7 @@ Before committing, verify:
 ## Integration with Commitlint
 
 This project has commitlint configured with:
+
 - Scope enforcement: frontend, backend, root, deps, config
 - Type enforcement: feat, fix, docs, style, refactor, test, chore, perf, ci, revert, init
 - Max length: 100 chars (we enforce stricter 80 chars)

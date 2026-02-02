@@ -20,32 +20,35 @@ public class PostLikeServiceImpl implements PostLikeService {
 
     @Override
     public void like(Long postId, Long userId) {
+
+        // 게시글 존재 여부 확인
+        postReader.getById(postId);
+
         int inserted = postLikeStore.insertLike(postId, userId);
+        // 이미 좋아요를 한 경우
         if (inserted == 0) {
-            // 이미 좋아요 한 경우 등
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.POST_ALREADY_LIKED);
         }
 
-        int updated = postLikeStore.updatePostLikeCount(postId, +1);
-        if (updated != 1) {
-            // 게시물 없는 경우 등
-            throw new BusinessException(ErrorCode.POST_NOT_FOUND);
-        }
+        postLikeStore.updatePostLikeCount(postId, +1);
     }
+
 
     @Override
     public void unlike(Long postId, Long userId) {
+
+        // 게시글 존재 여부 확인
+        postReader.getById(postId);
+
         int deleted = postLikeStore.deleteLike(postId, userId);
+        // 좋아요를 한 적이 없음
         if (deleted == 0) {
-            // 좋아요 안 했는데 취소
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.POST_LIKE_NOT_FOUND);
         }
 
-        int updated = postLikeStore.updatePostLikeCount(postId, -1);
-        if (updated != 1) {
-            throw new BusinessException(ErrorCode.POST_LIST_INVALID_LIKE);
-        }
+        postLikeStore.updatePostLikeCount(postId, -1);
     }
+
 
     @Transactional(readOnly = true)
     @Override

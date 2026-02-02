@@ -16,22 +16,24 @@ public class ScrapServiceImpl implements ScrapService {
 
     @Override
     public void scrap(Long postId, Long userId) {
-        // 게시글 존재 확인 (좋아요보다 더 명확하게)
-        postReader.getById(postId); // 없으면 POST_NOT_FOUND
+        // 게시글 없는 경우
+        postReader.getById(postId);
 
         int inserted = scrapStore.insertScrap(postId, userId);
         if (inserted == 0) {
             // 이미 스크랩했거나 실패
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.POST_ALREADY_SCRAPPED);
         }
     }
 
     @Override
     public void unscrap(Long postId, Long userId) {
+        postReader.getById(postId);
+
         int deleted = scrapStore.deleteScrap(postId, userId);
         if (deleted == 0) {
             // 스크랩 안 했는데 취소
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.POST_SCRAP_NOT_FOUND);
         }
     }
 }

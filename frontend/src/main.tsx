@@ -7,9 +7,9 @@ import "./index.css";
 
 import { QueryProvider } from "@/app/providers/QueryProvider";
 import { router } from "@/app/router/routes";
+import { AuthBootstrap } from "@/shared/components/AuthBootstrap";
 import { GlobalStyle } from "@/shared/styles/globalStyle";
 import { theme } from "@/shared/styles/theme";
-import { AuthBootstrap } from "@/shared/components/AuthBootstrap";
 
 async function enableMocking() {
   if (import.meta.env.MODE !== "development") return;

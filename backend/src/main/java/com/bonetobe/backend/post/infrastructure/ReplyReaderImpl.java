@@ -27,6 +27,6 @@ public class ReplyReaderImpl implements ReplyReader {
     @Override
     public Reply getById(Long replyId) {
         return replyJpaRepository.findById(replyId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.REPLY_NOT_FOUND));
     }
 }

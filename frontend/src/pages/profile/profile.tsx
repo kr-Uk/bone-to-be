@@ -2,6 +2,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import { followUser, unfollowUser } from "./api/profile.api";
 import BodyTypeHistorySection from "./components/BodyTypeHistorySection";
 import { FollowListModal } from "./components/FollowListModal";
 import PostsSection from "./components/PostsSection";
@@ -16,9 +17,9 @@ import {
 import { useProfileQuery } from "./hooks/useProfileQuery";
 
 import type { FollowModalType, FollowUser, UserProfile } from "./api/profile.types";
-import { followUser, unfollowUser } from "./api/profile.api";
 import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import type { ReportSummary } from "@/pages/diagnosis/api";
+
 import { useMyReportList, useRepresentativeReport } from "@/pages/diagnosis/api";
 import { useAuth } from "@/shared/hooks/useAuth";
 

@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
             element: <PhotoCapturePage />,
           },
           {
-            path: "report",
+            path: "report/:reportId",
             element: <ReportPage />,
           },
         ],

@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 
 import {
   getPresignedUrl,
@@ -106,8 +107,6 @@ export function useReportDetail(
   reportId: number | null,
   options?: {
     enabled?: boolean;
-    onSuccess?: (data: ReportDetailResponse["data"]) => void;
-    onError?: (error: Error) => void;
   },
 ): UseQueryResult<ReportDetailResponse["data"], Error> {
   return useQuery({
@@ -118,6 +117,12 @@ export function useReportDetail(
     // 핵심: 폴링 로직
     refetchInterval: (query) => {
       const data = query.state.data;
+      const error = query.state.error;
+
+      // 에러가 있으면 폴링 중지
+      if (error) {
+        return false;
+      }
 
       // PENDING 상태이면 2초마다 재조회
       if (data?.status === "PENDING") {
@@ -133,8 +138,8 @@ export function useReportDetail(
     // 에러 재시도 로직
     retry: (failureCount, error) => {
       // 4xx 에러는 재시도 안 함
-      if (error instanceof Error && "response" in error) {
-        const status = (error as any).response?.status;
+      if (isAxiosError(error)) {
+        const status = error.response?.status;
         if (status && status >= 400 && status < 500) {
           return false;
         }

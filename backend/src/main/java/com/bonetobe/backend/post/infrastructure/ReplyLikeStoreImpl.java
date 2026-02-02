@@ -22,7 +22,7 @@ public class ReplyLikeStoreImpl implements ReplyLikeStore {
     }
 
     @Override
-    public int updatePostLikeCount(Long replyId, int delta) {
+    public int updateReplyLikeCount(Long replyId, int delta) {
         return replyJpaRepository.updateLikeCount(replyId, delta);
     }
 }

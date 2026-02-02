@@ -40,8 +40,8 @@ public class ReplyQueryDslRepositoryImpl implements ReplyQueryDslRepository {
                 .from(reply)
                 .join(reply.user, user)
                 .leftJoin(replyLike).on(
-                        reply.id.eq(reply.id),
-                        user.id.eq(viewerId)
+                        replyLike.reply.id.eq(reply.id),
+                        replyLike.user.id.eq(viewerId)
                 )
                 .where(reply.post.id.eq(postId))
                 .orderBy(reply.createdAt.desc())

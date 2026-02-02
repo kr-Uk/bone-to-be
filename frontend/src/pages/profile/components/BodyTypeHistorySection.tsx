@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { applySmoothing, getBodyTypeBadge, getBodyTypeLabels } from "../hooks/useBodyTypeChart";
@@ -125,7 +126,7 @@ const Card = styled.article<{ $highlight?: boolean; $dimmed?: boolean }>`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  cursor: inherit;
+  cursor: pointer;
   scroll-snap-align: center;
   transition:
     transform 0.2s ease,
@@ -134,6 +135,16 @@ const Card = styled.article<{ $highlight?: boolean; $dimmed?: boolean }>`
   --accent-color: ${({ theme }) => theme.colors.purple[600]};
   --accent-fill: ${({ theme }) => theme.colors.purple[900]};
   --accent-text: ${({ theme }) => theme.colors.purple[600]};
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.purple[600]};
+    outline-offset: 2px;
+  }
 
   &::after {
     content: "";
@@ -168,6 +179,7 @@ const LatestBadge = styled.span`
   box-shadow:
     0 0.25rem 0.375rem -0.25rem rgba(0, 0, 0, 0.1),
     0 0.625rem 0.9375rem -0.1875rem rgba(0, 0, 0, 0.1);
+  pointer-events: none;
 `;
 
 const CardBody = styled.div`
@@ -176,12 +188,14 @@ const CardBody = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
+  pointer-events: none;
 `;
 
 const Preview = styled.div`
   width: 16rem;
   height: 16rem;
   position: relative;
+  pointer-events: none;
 
   @media (max-width: 768px) {
     width: clamp(14rem, 62vw, 16rem);
@@ -206,6 +220,7 @@ const CardFooter = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
+  pointer-events: none;
 `;
 
 const FooterRow = styled.div`
@@ -254,12 +269,14 @@ interface BodyTypeHistorySectionProps {
 }
 
 const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
+  const navigate = useNavigate();
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [visibilityMap, setVisibilityMap] = useState<Record<string, number>>({});
   const isDraggingRef = useRef(false);
   const dragStartX = useRef(0);
   const dragStartScroll = useRef(0);
   const dragMovedRef = useRef(false);
+  const clickStartPositionRef = useRef<{ x: number; time: number } | null>(null);
   const inertiaRef = useRef<number | null>(null);
   const velocityRef = useRef(0);
   const lastMoveRef = useRef<{ x: number; time: number } | null>(null);
@@ -349,6 +366,10 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
     dragMovedRef.current = false;
     dragStartX.current = event.clientX;
     dragStartScroll.current = trackRef.current.scrollLeft;
+    clickStartPositionRef.current = {
+      x: event.clientX,
+      time: performance.now(),
+    };
     lastMoveRef.current = { x: event.clientX, time: performance.now() };
     velocityRef.current = 0;
     trackRef.current.setPointerCapture(event.pointerId);
@@ -384,7 +405,39 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
     trackRef.current.releasePointerCapture(event.pointerId);
     lastMoveRef.current = null;
 
-    if (!dragMovedRef.current) {
+    const wasDragging = dragMovedRef.current;
+
+    // 클릭 처리: 드래그가 아니고 clickStartPositionRef가 있으면
+    if (!wasDragging && clickStartPositionRef.current) {
+      // pointer capture 때문에 event.target을 사용할 수 없음
+      // 대신 마우스 위치에서 실제 요소를 찾음
+      const elementAtPoint = document.elementFromPoint(event.clientX, event.clientY);
+      const card = elementAtPoint?.closest("[data-card-id]");
+
+      if (card) {
+        const reportId = card.getAttribute("data-card-id");
+        if (reportId) {
+          // 상태 초기화
+          dragMovedRef.current = false;
+          clickStartPositionRef.current = null;
+
+          // 네비게이션
+          navigate(`/diagnosis/report/${reportId}`);
+          return;
+        }
+      }
+
+      // 상태 초기화
+      dragMovedRef.current = false;
+      clickStartPositionRef.current = null;
+      return;
+    }
+
+    // 드래그인 경우: 상태 초기화 후 관성 스크롤
+    dragMovedRef.current = false;
+    clickStartPositionRef.current = null;
+
+    if (!wasDragging) {
       return;
     }
 
@@ -396,7 +449,7 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
       const deltaTime = time - lastTime;
       lastTime = time;
 
-      velocityRef.current *= 0.95;
+      velocityRef.current *= 0.97;
       const delta = velocityRef.current * deltaTime;
       track.scrollLeft -= delta;
 
@@ -409,6 +462,13 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
 
     if (Math.abs(startVelocity) > 0.03) {
       inertiaRef.current = requestAnimationFrame(step);
+    }
+  };
+
+  const handleCardKeyDown = (event: React.KeyboardEvent, reportId: string) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      navigate(`/diagnosis/report/${reportId}`);
     }
   };
 
@@ -454,6 +514,10 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
                   $highlight={item.isLatest}
                   $dimmed={isDimmed}
                   style={{ "--dim-alpha": dimAlpha } as CSSProperties}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${labels.title} 체형 리포트, ${item.date}, ${codeText}`}
+                  onKeyDown={(e) => handleCardKeyDown(e, item.id)}
                 >
                   {item.isLatest && <LatestBadge>LATEST</LatestBadge>}
                   <CardBody>

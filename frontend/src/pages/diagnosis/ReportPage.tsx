@@ -10,8 +10,10 @@ import VirtualFittingSection from "./components/VirtualFittingSection";
 
 import { useReportDetail } from "@/pages/diagnosis/api";
 import { convertSkeletonTypeToBodyType } from "@/pages/diagnosis/api/diagnosis.types";
+import ForbiddenErrorView from "@/shared/components/errors/ForbiddenErrorView";
 import { BODY_TYPE_METADATA } from "@/shared/constants/reportMockData";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
+import { isForbiddenError } from "@/shared/utils/errorUtils";
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -160,18 +162,14 @@ const ReportPage = () => {
     }
   }, [reportId, navigate]);
 
-  // 로딩 중
-  if (isLoading || !reportData) {
-    return (
-      <LoadingView>
-        <LoadingSpinner />
-        <LoadingText>분석 결과를 불러오는 중...</LoadingText>
-      </LoadingView>
-    );
-  }
-
-  // 에러 발생
+  // 에러 발생 - 로딩 체크보다 먼저 처리
   if (isError) {
+    // 403 Forbidden 에러 처리
+    if (isForbiddenError(error)) {
+      return <ForbiddenErrorView />;
+    }
+
+    // 기타 에러 처리
     return (
       <ErrorView>
         <ErrorIcon>⚠️</ErrorIcon>
@@ -181,6 +179,16 @@ const ReportPage = () => {
           처음부터 다시 시작
         </ErrorButton>
       </ErrorView>
+    );
+  }
+
+  // 로딩 중
+  if (isLoading || !reportData) {
+    return (
+      <LoadingView>
+        <LoadingSpinner />
+        <LoadingText>분석 결과를 불러오는 중...</LoadingText>
+      </LoadingView>
     );
   }
 

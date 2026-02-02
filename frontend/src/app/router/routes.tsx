@@ -49,7 +49,7 @@ export const router = createBrowserRouter([
         element: <ProfilePage />,
       },
       {
-        path: "profile/:nickname",
+        path: "profile/:userId",
         element: <ProfilePage />,
       },
       {

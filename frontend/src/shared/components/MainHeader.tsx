@@ -47,6 +47,9 @@ const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
   ${({ theme }) => applyTypography(getToken(theme as AppTheme))};
 `;
 
+const resolveProfilePath = (userId?: string) =>
+  userId ? `/profile/${encodeURIComponent(userId)}` : "/profile";
+
 export const MainHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,7 +61,7 @@ export const MainHeader = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
-  const profilePath = me?.nickname ? `/profile/${encodeURIComponent(me.nickname)}` : "/profile";
+  const profilePath = "/profile";
   const navItems: NavItem[] = isLoggedIn
     ? [...baseNavItems, { label: "MYPAGE", path: profilePath }]
     : baseNavItems;
@@ -122,15 +125,6 @@ export const MainHeader = () => {
     setIsMobileMenuOpen(false);
     setIsSearchOpen(false);
   }, [location.pathname, location.search, location.hash]);
-
-  useEffect(() => {
-    if (!isLoggedIn || !me?.nickname) {
-      return;
-    }
-    if (location.pathname === "/profile") {
-      navigate(`/profile/${encodeURIComponent(me.nickname)}`, { replace: true });
-    }
-  }, [isLoggedIn, me?.nickname, location.pathname, navigate]);
 
   useEffect(() => {
     const shouldLockScroll = isMobileMenuOpen || isSearchOpen;
@@ -412,7 +406,7 @@ export const MainHeader = () => {
                 showAction={false}
                 onUserClick={(user) => {
                   setIsSearchOpen(false);
-                  navigate(`/profile/${encodeURIComponent(user.username)}`);
+                  navigate(resolveProfilePath(user.id));
                 }}
               />
             </SearchModalCard>

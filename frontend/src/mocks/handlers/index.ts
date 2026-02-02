@@ -4,6 +4,7 @@ import { communityHandlers } from "./community.handlers";
 import { diagnosisHandlers } from "./diagnosis.handlers";
 
 type MockMe = {
+  userId: number;
   email: string;
   nickname: string;
   role?: string;
@@ -92,6 +93,7 @@ export const handlers = [
       mockAuthState = {
         isLoggedIn: true,
         me: {
+          userId: 1,
           email,
           nickname: email.split("@")[0] || "mock-user",
           role: "USER",

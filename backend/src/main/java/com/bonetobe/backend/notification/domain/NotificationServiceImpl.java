@@ -39,6 +39,18 @@ public class NotificationServiceImpl implements NotificationService {
         return emitter;
     }
 
+    @Override
+    public void send(Long userId, Object data) {
+        emitterRepository.findByUserId(userId)
+            .ifPresent(emitter -> {
+                try {
+                    emitter.send(data);
+                } catch (IOException e) {
+                    cleanup(userId, emitterRepository.findEmitterId(userId));
+                }
+            });
+    }
+
     private void cleanup(Long userId, String emitterId) {
         emitterRepository.remove(userId, emitterId);
     }

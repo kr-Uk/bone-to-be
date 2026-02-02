@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +28,7 @@ public class SseEmitterRepositoryImpl implements SseEmitterRepository {
 
     @Override
     public Optional<SseEmitter> findByUserId(Long userId) {
-        String emitterId = redisTemplate.opsForValue().get(redisKey(userId));
+        String emitterId = findEmitterId(userId);
 
         if (emitterId == null) {
             return Optional.empty();
@@ -40,6 +41,16 @@ public class SseEmitterRepositoryImpl implements SseEmitterRepository {
     public void remove(Long userId, String emitterId) {
         localEmitters.remove(emitterId);
         redisTemplate.delete(redisKey(userId));
+    }
+
+    @Override
+    public String findEmitterId(Long userId) {
+        return redisTemplate.opsForValue().get(redisKey(userId));
+    }
+
+    @Override
+    public Collection<SseEmitter> getAllEmitters() {
+        return localEmitters.values();
     }
 
     private String redisKey(Long userId) {

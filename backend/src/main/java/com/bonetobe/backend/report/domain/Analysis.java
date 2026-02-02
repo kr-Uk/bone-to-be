@@ -1,11 +1,10 @@
 package com.bonetobe.backend.report.domain;
 
 import com.bonetobe.backend.common.SkeletonType;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 public class Analysis {
     private SkeletonType resultType;

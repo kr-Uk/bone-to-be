@@ -28,7 +28,9 @@ public class Diagnosis {
         EnumMap<SkeletonType, Long> counts =
             details.stream()
                 .collect(Collectors.groupingBy(
-                    AnalysisDetail::getSkeletonType,
+                    detail -> {
+                        return detail.getAnalysis().resultType();
+                    },
                     () -> new EnumMap<>(SkeletonType.class),
                     Collectors.counting()
                 ));

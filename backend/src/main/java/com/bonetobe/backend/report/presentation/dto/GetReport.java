@@ -1,6 +1,5 @@
 package com.bonetobe.backend.report.presentation.dto;
 
-import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.report.domain.AnalysisDetail;
 import com.bonetobe.backend.report.domain.Diagnosis;
 import com.bonetobe.backend.report.domain.Report;
@@ -11,7 +10,6 @@ import java.util.List;
 
 public record GetReport(
     Long reportId,
-    SkeletonType skeletonType,
     Double straightRate,
     Double naturalRate,
     Double waveRate,
@@ -23,7 +21,6 @@ public record GetReport(
         Diagnosis diagnosis = report.getDiagnosis(report.getStatus());
         return new GetReport(
             report.getId(),
-            diagnosis == null ? null : diagnosis.getFitType(),
             diagnosis == null ? 0 : diagnosis.getStraightRatio(),
             diagnosis == null ? 0 :diagnosis.getNaturalRatio(),
             diagnosis == null ? 0 :diagnosis.getWaveRatio(),

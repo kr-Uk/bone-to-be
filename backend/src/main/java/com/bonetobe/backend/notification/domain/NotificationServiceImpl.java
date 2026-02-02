@@ -71,6 +71,11 @@ public class NotificationServiceImpl implements NotificationService {
         notification.read();
     }
 
+    @Override
+    public void save(Notification notification) {
+        notificationRepository.save(notification);
+    }
+
     private void cleanup(Long userId, String emitterId) {
         emitterRepository.remove(userId, emitterId);
     }

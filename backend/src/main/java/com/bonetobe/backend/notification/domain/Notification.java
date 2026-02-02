@@ -30,8 +30,6 @@ public class Notification extends BaseEntity {
 
     private Long domainId;
 
-    private String relatedUrl;
-
     @Column(nullable = false)
     private boolean isRead = false;
 

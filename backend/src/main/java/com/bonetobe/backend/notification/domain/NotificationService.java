@@ -14,4 +14,6 @@ public interface NotificationService {
     Notification getNotification(Long id);
 
     void deleteNotifications(Notification notification);
+
+    void save(Notification notification);
 }

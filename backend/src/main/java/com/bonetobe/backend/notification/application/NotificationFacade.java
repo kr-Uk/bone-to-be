@@ -7,7 +7,6 @@ import com.bonetobe.backend.notification.domain.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -21,5 +20,9 @@ public class NotificationFacade {
         }
 
         notificationService.deleteNotifications(notification);
+    }
+
+    public void saveAndSendNotification(Notification notification) {
+        notificationService.save(notification);
     }
 }

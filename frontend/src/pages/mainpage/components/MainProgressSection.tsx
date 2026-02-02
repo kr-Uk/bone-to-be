@@ -1,4 +1,3 @@
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useLayoutEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
@@ -7,7 +6,6 @@ import MainDataDrivenIcon2 from "@/assets/MainDataDrivenIcon2.svg";
 import MainDataDrivenIcon3 from "@/assets/MainDataDrivenIcon3.svg";
 
 export const MainProgressSection = () => {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
   const titleRefs = useRef<HTMLDivElement[]>([]);
   const [maxTitleHeight, setMaxTitleHeight] = useState<number>();
 
@@ -16,16 +14,10 @@ export const MainProgressSection = () => {
     setMaxTitleHeight(Math.max(...heights));
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 95%", "end 60%"],
-  });
-  const sectionOpacity = useTransform(scrollYProgress, [0.4, 0.65], [0, 1]);
-
   return (
-    <SectionWrap ref={sectionRef}>
+    <SectionWrap>
       <Container>
-        <Header>
+        <Header data-aos="fade-up" data-aos-delay="0">
           <HeaderLeft>
             <Eyebrow>How it works</Eyebrow>
             <TitleRow>
@@ -40,38 +32,29 @@ export const MainProgressSection = () => {
           </HeaderRight>
         </Header>
         <Cards>
-          {cardData.map((c, i) => {
-            const baseY = -48 + -i * 70;
-
-            const y = useTransform(scrollYProgress, [0.4, 0.65], [baseY, 0]);
-            return (
-              <motion.div
-                key={c.title}
-                style={{
-                  y,
-                  opacity: sectionOpacity,
-                }}
-              >
-                <Card>
-                  <IconWrap>
-                    <IconImg src={c.icon} alt="" />
-                  </IconWrap>
-                  <TextBlock>
-                    <CardTitle
-                      ref={(el) => {
-                        if (el) titleRefs.current[i] = el;
-                      }}
-                      $height={maxTitleHeight}
-                    >
-                      {c.title}
-                    </CardTitle>
-                    <CardDesc>{c.desc}</CardDesc>
-                  </TextBlock>
-                  <Divider />
-                </Card>
-              </motion.div>
-            );
-          })}
+          {cardData.map((c, i) => (
+            <Card
+              key={c.title}
+              data-aos="fade-up"
+              data-aos-delay={150 * (i + 1)}
+            >
+              <IconWrap>
+                <IconImg src={c.icon} alt="" />
+              </IconWrap>
+              <TextBlock>
+                <CardTitle
+                  ref={(el) => {
+                    if (el) titleRefs.current[i] = el;
+                  }}
+                  $height={maxTitleHeight}
+                >
+                  {c.title}
+                </CardTitle>
+                <CardDesc>{c.desc}</CardDesc>
+              </TextBlock>
+              <Divider />
+            </Card>
+          ))}
         </Cards>
       </Container>
     </SectionWrap>

@@ -1,3 +1,5 @@
+import AOS from "aos";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 
@@ -6,9 +8,8 @@ import { MainAnalysisSection } from "./components/MainAnalysisSection";
 import { MainProgressSection } from "./components/MainProgressSection";
 import { MainSection } from "./components/MainSection";
 
-import type { AppTheme } from "@/shared/styles/theme";
-
 import { useAuth } from "@/shared/hooks/useAuth";
+import type { AppTheme } from "@/shared/styles/theme";
 
 type TypographyToken = {
   fontSize: string;
@@ -41,6 +42,15 @@ const categoryItems = [
 const MainPage = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth({ enabled: false });
+
+  useEffect(() => {
+    AOS.init({
+      once: true,
+      duration: 600,
+      easing: "ease-out",
+    });
+    AOS.refresh();
+  }, []);
 
   const handleFinalCtaClick = () => {
     if (!isLoggedIn) {

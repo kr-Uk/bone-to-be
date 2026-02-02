@@ -2,6 +2,8 @@ package com.bonetobe.backend.report.domain;
 
 import com.bonetobe.backend.user.domain.Gender;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,7 @@ public class BodyInfo {
 
     private Integer height;
 
+    @Enumerated(value = EnumType.ORDINAL)
     private Gender gender;
 
     public static BodyInfo createBodyInfo(

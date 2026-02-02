@@ -17,9 +17,9 @@ import {
 import { useProfileQuery } from "./hooks/useProfileQuery";
 
 import type { FollowModalType, FollowUser, UserProfile } from "./api/profile.types";
-import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import type { ReportSummary } from "@/pages/diagnosis/api";
 
+import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import { useMyReportList, useRepresentativeReport } from "@/pages/diagnosis/api";
 import { useAuth } from "@/shared/hooks/useAuth";
 
@@ -145,13 +145,16 @@ const FollowModalCard = styled.div`
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { nickname: rawNickname } = useParams<{ nickname?: string }>();
-  const nickname = rawNickname ? decodeURIComponent(rawNickname) : undefined;
+  const { userId: rawUserId } = useParams<{ userId?: string }>();
+  const userId = rawUserId ? decodeURIComponent(rawUserId) : undefined;
   const { me, isAuthLoading, isLoggedIn } = useAuth();
   const isAuthReady = !isAuthLoading;
-  const isMe = Boolean(isAuthReady && nickname && me?.nickname && nickname === me.nickname);
-  const queryUserId = isMe ? undefined : nickname;
-  const shouldFetchProfile = Boolean(nickname) && isAuthReady;
+  const meUserId = me?.userId != null ? String(me.userId) : undefined;
+  const isMe = Boolean(
+    isAuthReady && isLoggedIn && (!userId || (meUserId && userId === meUserId)),
+  );
+  const queryUserId = isMe ? undefined : userId;
+  const shouldFetchProfile = isAuthReady && (Boolean(userId) || isLoggedIn);
   const { data, isLoading, isError } = useProfileQuery(queryUserId, {
     enabled: shouldFetchProfile,
   });
@@ -179,14 +182,6 @@ const ProfilePage = () => {
   const profile: UserProfile | undefined = localProfile ?? data;
 
   useEffect(() => {
-    if (!nickname && isAuthReady) {
-      if (me?.nickname) {
-        navigate(`/profile/${encodeURIComponent(me.nickname)}`, { replace: true });
-      }
-    }
-  }, [nickname, isAuthReady, me?.nickname, navigate]);
-
-  useEffect(() => {
     setLocalFollowUsers(followUsers ?? []);
   }, [followUsers]);
 
@@ -206,7 +201,7 @@ const ProfilePage = () => {
     );
   }
 
-  if (!nickname && !isLoggedIn) {
+  if (!userId && !isLoggedIn) {
     return (
       <Page>
         <Main>

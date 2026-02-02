@@ -1,11 +1,11 @@
-import axios, { type AxiosError } from "axios";
+import axios, { type AxiosError, type AxiosInstance } from "axios";
 
 export const baseURL =
   import.meta.env.VITE_API_MOCKING === "enabled"
     ? import.meta.env.VITE_MOCK_BASE_URL
     : import.meta.env.VITE_BASE_URL;
 
-const axiosInstance = axios.create({
+const axiosInstance: AxiosInstance = axios.create({
   baseURL,
   withCredentials: true,
 });

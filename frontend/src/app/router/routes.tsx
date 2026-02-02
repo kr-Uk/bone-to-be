@@ -14,6 +14,7 @@ import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
 import ProfileEditPage from "@/pages/profile/ProfileEditPage";
 import ProfilePage from "@/pages/profile/profile";
 import AboutPage from "@/pages/AboutPage/AboutPage";
+import ForbiddenPage from "@/pages/Forbidden/Forbidden";
 import { WithdrawPage } from "@/pages/WithdrawPage";
 import NotFound from "@/pages/NotFound/NotFound";
 
@@ -85,6 +86,10 @@ export const router = createBrowserRouter([
   {
     path: "/profile/edit",
     element: <ProfileEditPage />,
+  },
+  {
+    path: "/forbidden",
+    element: <ForbiddenPage />,
   },
   {
     path: "*",

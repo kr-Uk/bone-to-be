@@ -17,6 +17,7 @@ import {
 import { useProfileQuery } from "./hooks/useProfileQuery";
 
 import type { FollowModalType, FollowUser, UserProfile } from "./api/profile.types";
+import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import type { ReportSummary } from "@/pages/diagnosis/api";
 
 import { useMyReportList, useRepresentativeReport } from "@/pages/diagnosis/api";
@@ -172,7 +173,9 @@ const ProfilePage = () => {
     isError: isFollowError,
   } = useFollowListQuery(followModalType, queryUserId, !!followModalType);
   const [localFollowUsers, setLocalFollowUsers] = useState<FollowUser[]>([]);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [localProfile, setLocalProfile] = useState<UserProfile | null>(null);
+  const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
   const profile: UserProfile | undefined = localProfile ?? data;
 
   useEffect(() => {
@@ -302,6 +305,19 @@ const ProfilePage = () => {
     }
   };
 
+  const handleOpenSettings = () => setIsSettingsOpen(true);
+  const handleCloseSettings = () => setIsSettingsOpen(false);
+  const handleGoPasswordReset = () => {
+    setIsSettingsOpen(false);
+    navigate("/profile/password");
+  };
+  const handleGoWithdraw = () => {
+    setIsSettingsOpen(false);
+    navigate("/withdraw");
+  };
+  const handlePostClick = (postId: number) => {
+    setSelectedFeedId(String(postId));
+  };
   return (
     <Page>
       <Main>
@@ -317,6 +333,8 @@ const ProfilePage = () => {
               bio={profile.bio}
               isOwner={isOwner}
               isFollowing={profile.isFollowing}
+              onEditProfile={() => navigate("/profile/edit")}
+              onOpenSettings={handleOpenSettings}
               onFollowerClick={() => setFollowModalType("follower")}
               onFollowingClick={() => setFollowModalType("following")}
               onFollowToggle={handleHeaderFollowToggle}
@@ -331,7 +349,12 @@ const ProfilePage = () => {
                 bodyTypeRatio={representativeRatio}
               />
             )}
-            <PostsSection posts={posts} saved={saved} showSaved={showSaved} />
+            <PostsSection
+              posts={posts}
+              saved={saved}
+              showSaved={showSaved}
+              onPostClick={handlePostClick}
+            />
           </Content>
         </ContentGrid>
       </Main>
@@ -357,8 +380,65 @@ const ProfilePage = () => {
           </FollowModalCard>
         </FollowModalOverlay>
       )}
+      {isSettingsOpen && (
+        <SettingsModalOverlay onClick={handleCloseSettings}>
+          <SettingsModalCard onClick={(event) => event.stopPropagation()}>
+            <SettingsModalTitle>설정</SettingsModalTitle>
+            <SettingsModalButton type="button" onClick={handleGoPasswordReset}>
+              비밀번호 변경
+            </SettingsModalButton>
+            <SettingsModalButton type="button" onClick={handleGoWithdraw}>
+              회원 탈퇴
+            </SettingsModalButton>
+          </SettingsModalCard>
+        </SettingsModalOverlay>
+      )}
+      {selectedFeedId && (
+        <FeedDetailModal feedId={selectedFeedId} onClose={() => setSelectedFeedId(null)} />
+      )}
     </Page>
   );
 };
 
 export default ProfilePage;
+
+const SettingsModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1200;
+`;
+
+const SettingsModalCard = styled.div`
+  width: min(20rem, 90vw);
+  background: ${({ theme }) => theme.colors.gray[900]};
+  border: 1px solid ${({ theme }) => theme.colors.gray[700]};
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.45);
+`;
+
+const SettingsModalTitle = styled.h3`
+  margin: 0 0 0.5rem;
+  color: ${({ theme }) => theme.colors.gray[50]};
+  font-size: 1.1rem;
+  font-weight: 700;
+`;
+
+const SettingsModalButton = styled.button`
+  width: 100%;
+  height: 2.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.gray[700]};
+  background: ${({ theme }) => theme.colors.gray[900]};
+  color: ${({ theme }) => theme.colors.gray[100]};
+  cursor: pointer;
+  font-weight: 600;
+`;

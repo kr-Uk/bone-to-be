@@ -8,8 +8,10 @@ import ReportPage from "@/pages/diagnosis/ReportPage";
 import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage";
 import { LoginPage } from "@/pages/LoginPage";
 import MainPage from "@/pages/mainpage/MainPage";
+import { PasswordChangePage } from "@/pages/PasswordChangePage";
 import { PasswordResetPage } from "@/pages/PasswordResetPage";
 import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
+import ProfileEditPage from "@/pages/profile/ProfileEditPage";
 import ProfilePage from "@/pages/profile/profile";
 import { WithdrawPage } from "@/pages/WithdrawPage";
 
@@ -67,7 +69,15 @@ export const router = createBrowserRouter([
     element: <PasswordResetPage />,
   },
   {
+    path: "/profile/password",
+    element: <PasswordChangePage />,
+  },
+  {
     path: "/withdraw",
     element: <WithdrawPage />,
+  },
+  {
+    path: "/profile/edit",
+    element: <ProfileEditPage />,
   },
 ]);

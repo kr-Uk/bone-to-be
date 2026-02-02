@@ -390,6 +390,8 @@ interface ProfileHeaderSectionProps {
   onFollowerClick?: () => void;
   onFollowingClick?: () => void;
   onFollowToggle?: () => void;
+  onOpenSettings?: () => void;
+  onEditProfile?: () => void;
 }
 
 const formatCount = (value: number) => {
@@ -424,6 +426,8 @@ const ProfileHeaderSection = ({
   onFollowerClick,
   onFollowingClick,
   onFollowToggle,
+  onEditProfile,
+  onOpenSettings,
 }: ProfileHeaderSectionProps) => {
   const bodyTypeLabel = formatBodyType(bodyType);
   const quoteText = bio?.trim() ? bio : "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~";
@@ -467,10 +471,10 @@ const ProfileHeaderSection = ({
         <Actions>
           {isOwner ? (
             <>
-              <EditButton type="button">
+              <EditButton type="button" onClick={onEditProfile}>
                 <EditButtonText>프로필 편집</EditButtonText>
               </EditButton>
-              <SettingsButton type="button" aria-label="Profile settings">
+              <SettingsButton type="button" aria-label="Profile settings" onClick={onOpenSettings}>
                 <MdOutlineSettings size={24} color="#FAFAFA" />
               </SettingsButton>
             </>

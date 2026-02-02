@@ -9,8 +9,8 @@ public class ReplyCreateDto {
             String content
     ){
         public ReplyCreateCommand toCommand(Long postId, Long userId){
-            if (postId == null || userId == null){
-                throw new BusinessException(ErrorCode.BAD_REQUEST);
+            if (content == null || content.isEmpty()){
+                throw new BusinessException(ErrorCode.REPLY_CREATE_CONTENT_REQUIRED);
             }
 
             return new ReplyCreateCommand(

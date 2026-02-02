@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserService {
         StoredFile newProfileImage = user.getProfileImage();
         if (command.profileImageId() != null) {
             newProfileImage = fileReader.read(command.profileImageId()); // StoredFileReader 사용
+            newProfileImage.completeUpload();
         }
 
         // 4. 엔티티 업데이트 (더티 체킹)

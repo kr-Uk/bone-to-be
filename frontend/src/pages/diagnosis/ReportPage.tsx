@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import AnalysisDetailsSection from "./components/AnalysisDetailsSection";
@@ -11,7 +11,6 @@ import VirtualFittingSection from "./components/VirtualFittingSection";
 
 import { useReportDetail } from "@/pages/diagnosis/api";
 import { convertSkeletonTypeToBodyType } from "@/pages/diagnosis/api/diagnosis.types";
-import ForbiddenErrorView from "@/shared/components/errors/ForbiddenErrorView";
 import { BODY_TYPE_METADATA } from "@/shared/constants/reportMockData";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { isForbiddenError } from "@/shared/utils/errorUtils";
@@ -167,7 +166,7 @@ const ReportPage = () => {
   if (isError) {
     // 403 Forbidden 에러 처리
     if (isForbiddenError(error)) {
-      return <ForbiddenErrorView />;
+      return <Navigate to="/forbidden" replace state={{ fromForbidden: true }} />;
     }
 
     // 기타 에러 처리

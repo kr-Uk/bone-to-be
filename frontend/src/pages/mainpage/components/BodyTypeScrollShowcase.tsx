@@ -425,6 +425,7 @@ type PinnedSectionProps = {
 
 const PinnedSection = ({ section, index }: PinnedSectionProps) => {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const copyBlockId = `body-type-copy-${section.key.toLowerCase()}`;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
@@ -440,22 +441,62 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
         {/* <ScrollWash style={{ y: washY }} /> */}
         <PinnedContent style={{ opacity, y }}>
           <Frame>
-            <CopyBlock>
-              <Kicker initial={false} animate={{ opacity: 1 }}>
+            <CopyBlock id={copyBlockId}>
+              <Kicker
+                initial={false}
+                animate={{ opacity: 1 }}
+                data-aos="fade-up"
+                data-aos-easing="linear"
+                data-aos-duration="1500"
+                data-aos-delay="0"
+                data-aos-anchor={`#${copyBlockId}`}
+                data-aos-anchor-placement="top-center"
+              >
                 BODY TYPE {String(index + 1).padStart(2, "0")}
               </Kicker>
-              <Title initial={false} animate={{ opacity: 1 }}>
+              <Title
+                initial={false}
+                animate={{ opacity: 1 }}
+                data-aos="fade-up"
+                data-aos-easing="linear"
+                data-aos-duration="1500"
+                data-aos-delay="150"
+                data-aos-anchor={`#${copyBlockId}`}
+                data-aos-anchor-placement="top-center"
+              >
                 {section.labelKo}
               </Title>
-              <Desc initial={false} animate={{ opacity: 1 }}>
+              <Desc
+                initial={false}
+                animate={{ opacity: 1 }}
+                data-aos="fade-up"
+                data-aos-easing="linear"
+                data-aos-duration="1500"
+                data-aos-delay="300"
+                data-aos-anchor={`#${copyBlockId}`}
+                data-aos-anchor-placement="top-center"
+              >
                 {section.headline} <hr />
                 {section.desc}
               </Desc>
-              <Cta href={ctaHrefMap[section.key]}>
+              <Cta
+                href={ctaHrefMap[section.key]}
+                data-aos="fade-up"
+                data-aos-easing="linear"
+                data-aos-duration="1500"
+                data-aos-delay="500"
+                data-aos-anchor={`#${copyBlockId}`}
+                data-aos-anchor-placement="top-center"
+              >
                 {section.cta} <FaArrowRightLong />
               </Cta>
             </CopyBlock>
-            <VisualBlock>
+            <VisualBlock
+              data-aos="zoom-in"
+              data-aos-delay="300"
+              data-aos-anchor={`#${copyBlockId}`}
+              data-aos-anchor-placement="top-center"
+            >
               <ModelPhotos section={section} />
             </VisualBlock>
           </Frame>

@@ -24,33 +24,33 @@ const sections: TypeSectionData[] = [
     id: "straight",
     index: "01",
     title: "Straight Type",
-    subtitle: "Classic & High Class",
+    subtitle: "Firm & Straight",
     description:
       '"입체적이고 탄탄한 바디 라인"\n\n상체에 두께감이 있고 허리 위치가 높은 것이 특징입니다.\n전체적으로 근육질의 탄탄한 느낌을 주며, 옆에서 보았을 때 입체감이 뚜렷합니다.',
     bullets: [
-      "두께감 있는 상체 (Cylindrical)",
-      "높은 허리 위치, 긴 다리",
-      "목이 다소 짧아 보일 수 있음",
+      "두께감 있는 상체와 둥근 어깨",
+      "높은 허리 위치와 긴 다리",
+      "근육이 덮여 잘 보이지 않는 쇄골",
     ],
   },
   {
     id: "wave",
     index: "02",
     title: "Wave Type",
-    subtitle: "Soft & Romantic",
+    subtitle: "Soft & Curved",
     description:
-      '"부드러운 곡선과 여리여리한 실루엣"\n\n상체가 얇고 화려하지 않으며, 하체(골반) 쪽으로 무게 중심이 쏠려 있습니다.\n허리가 길고 가늘며, 옆에서 보았을 때 몸이 납작한 편입니다.',
-    bullets: ["얇은 상체, 넓은 골반 (Pear Shape)", "낮은 허리 위치", "부드러운 근육 질감"],
+      '"부드러운 곡선과 여리여리한 실루엣"\n\n상체가 얇고 화려하지 않으며, 몸의 밸런스가 하체에 실려 있습니다.\n허리가 길고 가늘며, 옆에서 보았을 때 몸이 납작한 편입니다.',
+    bullets: ["두께감 없는 처진 느낌의 어깨", "낮은 허리 위치", "길고 가는 목"],
     reverse: true,
   },
   {
     id: "natural",
     index: "03",
     title: "Natural Type",
-    subtitle: "Stylish & Free",
+    subtitle: "Linear & Structured",
     description:
-      '"프레임이 뚜렷하고 멋스러운 모델 체형"\n\n어깨가 넓고 쇄골, 무릎 등 관절 뼈가 도드라집니다.\n근육이나 지방감보다는 뼈대(프레임) 자체가 강조되는 사각형 체형입니다.',
-    bullets: ["넓고 각진 어깨 (Frame)", "도드라지는 쇄골과 관절", "긴 팔다리, 중성적인 매력"],
+      '"프레임이 뚜렷하고 멋스러운 모델 체형"\n\n어깨가 넓고 쇄골, 무릎 등 관절 뼈가 도드라집니다.\n근육이나 지방감보다는 뼈대 자체가 강조되는 체형입니다.',
+    bullets: ["넓고 각진 어깨", "도드라지는 쇄골과 관절", "긴 팔다리, 중성적인 매력"],
   },
 ];
 

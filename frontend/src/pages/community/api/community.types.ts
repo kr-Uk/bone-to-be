@@ -61,10 +61,11 @@ export interface FeedListRequest {
 export interface FeedListApiParams {
   sort?: ApiSortBy;
   gender?: "male" | "female";
-  min_height?: number;
-  max_height?: number;
-  min_weight?: number;
-  max_weight?: number;
+  skeletonType?: string;
+  minHeight?: number;
+  maxHeight?: number;
+  minWeight?: number;
+  maxWeight?: number;
   style?: string; // 쉼표 구분 문자열 (예: "casual,street")
   page?: number;
   size?: number;

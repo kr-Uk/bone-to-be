@@ -31,7 +31,6 @@ import { validateImagePose } from "@/shared/utils/validateImagePose";
 // Layout containers
 const PageContainer = styled.div`
   min-height: 100vh;
-  margin-top: 80px;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.secondary};
   display: flex;

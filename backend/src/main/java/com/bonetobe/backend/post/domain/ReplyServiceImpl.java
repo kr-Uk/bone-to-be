@@ -23,6 +23,7 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     @Transactional(readOnly = true)
     public List<ReplySummaryRaw> getReplyList(Long postId, Long viewerId) {
+        postReader.getById(postId);
         return replyReader.findReplyList(postId, viewerId);
     }
 
@@ -45,14 +46,14 @@ public class ReplyServiceImpl implements ReplyService {
         Reply reply = replyReader.getById(command.replyId());
 
         if (!reply.getUser().getId().equals(command.userId())) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
+            throw new BusinessException(ErrorCode.REPLY_DELETE_FORBIDDEN);
         }
 
         replyStore.delete(reply);
 
         int updated = replyStore.updatePostCommentCount(command.postId(), -1);
         if (updated != 1) {
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.POST_NOT_FOUND);
         }
     }
 }

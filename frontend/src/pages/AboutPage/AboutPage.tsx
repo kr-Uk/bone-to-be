@@ -1,6 +1,5 @@
 import styled, { keyframes } from "styled-components";
 
-import { MainHeader } from "@/shared/components/MainHeader";
 import { useScrollSpy, type SectionId } from "@/pages/AboutPage/hooks/useScrollSpy";
 import { useSectionAnimation } from "@/pages/AboutPage/hooks/useSectionAnimation";
 import { BackgroundEffects } from "@/pages/AboutPage/components/BackgroundEffects";
@@ -69,14 +68,6 @@ const Page = styled.div`
     Helvetica,
     Arial,
     sans-serif;
-`;
-
-const HeaderWrap = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
 `;
 
 const Main = styled.main`

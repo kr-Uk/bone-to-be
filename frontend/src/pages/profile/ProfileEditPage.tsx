@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+﻿import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { LuChevronLeft } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import { useProfileImageUpdate } from "./hooks/useProfileImageUpdate";
+import { useProfileQuery } from "./hooks/useProfileQuery";
+import { useProfileUpdate } from "./hooks/useProfileUpdate";
+
+import { checkNickname } from "@/pages/LoginPage/api/authApi";
 import LoginHeader from "@/pages/LoginPage/components/LoginHeader";
 import { NaturalShape, StraightShape, WaveShape } from "@/shared/components/BoneShapes";
-
-import { useProfileQuery } from "./hooks/useProfileQuery";
-import { useProfileImageUpdate } from "./hooks/useProfileImageUpdate";
-import { useProfileUpdate } from "./hooks/useProfileUpdate";
-import { checkNickname } from "@/pages/LoginPage/api/authApi";
 
 const extractProfileImageId = (url?: string | null): number | null => {
   if (!url) return null;

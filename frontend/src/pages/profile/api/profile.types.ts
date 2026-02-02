@@ -23,6 +23,13 @@ export type FollowUser = {
   isFollowing?: boolean;
 };
 
+export type SearchUser = {
+  userId: number;
+  nickname: string;
+  profileImageUrl: string | null;
+  isFollowing: boolean;
+};
+
 export type BodyTypeRatio = {
   natural: number;
   wave: number;

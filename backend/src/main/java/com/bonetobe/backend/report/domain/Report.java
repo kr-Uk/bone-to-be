@@ -5,12 +5,12 @@ import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.user.domain.User;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class Report extends BaseEntity {
     @Column(name = "is_representative", nullable = false)
     private boolean representative = false;
 
-    @Type(JsonBinaryType.class)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private List<AnalysisDetail> analysisReport;
 
@@ -93,9 +93,5 @@ public class Report extends BaseEntity {
         }
 
         representative = true;
-    }
-
-    public void revokeRepresentative() {
-        representative = false;
     }
 }

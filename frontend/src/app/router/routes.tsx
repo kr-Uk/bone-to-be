@@ -15,6 +15,7 @@ import ProfileEditPage from "@/pages/profile/ProfileEditPage";
 import ProfilePage from "@/pages/profile/profile";
 import AboutPage from "@/pages/AboutPage/AboutPage";
 import { WithdrawPage } from "@/pages/WithdrawPage";
+import NotFound from "@/pages/NotFound/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -84,5 +85,9 @@ export const router = createBrowserRouter([
   {
     path: "/profile/edit",
     element: <ProfileEditPage />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);

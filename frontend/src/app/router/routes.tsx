@@ -15,6 +15,7 @@ import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
 import ProfilePage from "@/pages/profile/profile";
 import ProfileEditPage from "@/pages/profile/ProfileEditPage";
 import { WithdrawPage } from "@/pages/WithdrawPage";
+import NotFound from "@/pages/NotFound/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -84,5 +85,9 @@ export const router = createBrowserRouter([
   {
     path: "/profile/edit",
     element: <ProfileEditPage />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);

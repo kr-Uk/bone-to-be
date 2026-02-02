@@ -154,10 +154,6 @@ public enum BodyMetricType {
     private final Map<SkeletonType, Integer> typeWeights;
 
     // --- Helper Methods ---
-    public static BodyMetricType findByKey(String key) {
-        return Arrays.stream(values()).filter(t -> t.key.equals(key)).findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Invalid key: " + key));
-    }
 
     public SkeletonType analyze(Double score) {
         return (score == null) ? STRAIGHT : analyzer.apply(score);
@@ -167,10 +163,6 @@ public enum BodyMetricType {
         if (score == null) return 0;
         double ratio = (score - min) / (max - min);
         return (int) Math.round(Math.min(Math.max(ratio, 0.0), 1.0) * 100);
-    }
-
-    public int getWeightForType(SkeletonType type) {
-        return typeWeights.getOrDefault(type, 0);
     }
 
     public AnalysisDetail mapToDetail(BodyMetrics bodyMetrics) {
@@ -184,7 +176,7 @@ public enum BodyMetricType {
             getPercent(score),
             guideText,
             new RangeMeta(min, max, leftLabel, rightLabel),
-            new Analysis(skeletonType, resultMessages.get(skeletonType)),
+            Analysis.from(skeletonType, resultMessages.get(skeletonType)),
             zones
         );
     }

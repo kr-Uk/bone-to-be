@@ -29,7 +29,7 @@ public class Diagnosis {
             details.stream()
                 .collect(Collectors.groupingBy(
                     detail -> {
-                        return detail.getAnalysis().resultType();
+                        return detail.getAnalysis().getResultType();
                     },
                     () -> new EnumMap<>(SkeletonType.class),
                     Collectors.counting()

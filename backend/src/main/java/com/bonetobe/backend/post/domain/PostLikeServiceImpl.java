@@ -21,7 +21,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Override
     public void like(Long postId, Long userId) {
 
-        // 게시글 없는 경우
+        // 게시글 존재 여부 확인
         postReader.getById(postId);
 
         int inserted = postLikeStore.insertLike(postId, userId);
@@ -37,18 +37,13 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Override
     public void unlike(Long postId, Long userId) {
 
-        // 게시글이 없는 경우
-        Post post = postReader.getById(postId);
+        // 게시글 존재 여부 확인
+        postReader.getById(postId);
 
         int deleted = postLikeStore.deleteLike(postId, userId);
         // 좋아요를 한 적이 없음
         if (deleted == 0) {
             throw new BusinessException(ErrorCode.POST_LIKE_NOT_FOUND);
-        }
-        
-        // 음수인 경우
-        if (post.getLikeCount() <= 0) {
-            throw new BusinessException(ErrorCode.POST_LIST_INVALID_LIKE);
         }
 
         postLikeStore.updatePostLikeCount(postId, -1);

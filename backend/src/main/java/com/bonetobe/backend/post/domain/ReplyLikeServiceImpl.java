@@ -17,7 +17,7 @@ public class ReplyLikeServiceImpl implements ReplyLikeService {
     @Override
     public void like(Long replyId, Long userId) {
 
-        // 댓글 없는 경우
+        // 댓글 존재 여부 확인
         replyReader.getById(replyId);
 
         // 이미 좋아요 누른 경우
@@ -34,18 +34,13 @@ public class ReplyLikeServiceImpl implements ReplyLikeService {
     @Override
     public void unlike(Long replyId, Long userId) {
 
-        // 댓글 없는 경우
-        Reply reply = replyReader.getById(replyId); // 없으면 REPLY_NOT_FOUND
+        // 댓글 존재 여부 확인
+        replyReader.getById(replyId); // 없으면 REPLY_NOT_FOUND
 
         // 좋아요 누른 적이 없는 경우
         int deleted = replyLikeStore.deleteLike(replyId, userId);
         if (deleted == 0) {
             throw new BusinessException(ErrorCode.REPLY_LIKE_NOT_FOUND);
-        }
-
-        // 음수 방지
-        if (reply.getLikeCount() <= 0) {
-            throw new BusinessException(ErrorCode.REPLY_LIST_INVALID_LIKE);
         }
 
         // 카운트 감소

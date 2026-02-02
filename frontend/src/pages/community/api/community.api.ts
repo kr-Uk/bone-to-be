@@ -37,24 +37,29 @@ function buildFeedApiParams(request: FeedListRequest): FeedListApiParams {
     params.gender = request.filters.gender === "F" ? "female" : "male";
   }
 
-  // 3. 스타일 필터 (소문자로 변환하여 쉼표로 결합)
+  // 3. 골격 유형 필터
+  if (request.filters.bodyType) {
+    params.skeletonType = request.filters.bodyType.toUpperCase();
+  }
+
+  // 4. 스타일 필터 (소문자로 변환하여 쉼표로 결합)
   if (request.filters.styles && request.filters.styles.length > 0) {
     params.style = request.filters.styles.map((s) => s.toLowerCase()).join(",");
   }
 
-  // 4. 키 범위 필터
+  // 5. 키 범위 필터
   if (request.filters.heightRange) {
-    params.min_height = request.filters.heightRange.min;
-    params.max_height = request.filters.heightRange.max;
+    params.minHeight = request.filters.heightRange.min;
+    params.maxHeight = request.filters.heightRange.max;
   }
 
-  // 5. 몸무게 범위 필터
+  // 6. 몸무게 범위 필터
   if (request.filters.weightRange) {
-    params.min_weight = request.filters.weightRange.min;
-    params.max_weight = request.filters.weightRange.max;
+    params.minWeight = request.filters.weightRange.min;
+    params.maxWeight = request.filters.weightRange.max;
   }
 
-  // 6. 페이징 파라미터
+  // 7. 페이징 파라미터
   params.page = request.page;
   params.size = request.limit;
 

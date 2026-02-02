@@ -1,4 +1,5 @@
 import type { Me } from "@/shared/api/auth";
+
 import { useAuthStore } from "@/shared/stores/authStore";
 
 type UseAuthResult = {

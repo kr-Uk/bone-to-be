@@ -114,7 +114,7 @@ public class UserController {
     // 마이페이지 수정
     //@PutMapping("/me")
 
-    @PatchMapping("/me/password")
+    @PutMapping("/me/password")
     public ResponseEntity<APIResponse<Void>> updatePassword(
             @AuthenticationPrincipal UserPrincipal principal, // UserPrincipal로 변경
             @RequestBody @Valid UpdateUser.PasswordRequest request) {

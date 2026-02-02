@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import AnalysisResultCard from "./components/AnalysisResultCard";
@@ -10,9 +10,10 @@ import VirtualFittingSection from "./components/VirtualFittingSection";
 
 import { useReportDetail } from "@/pages/diagnosis/api";
 import { convertSkeletonTypeToBodyType } from "@/pages/diagnosis/api/diagnosis.types";
+import ForbiddenErrorView from "@/shared/components/errors/ForbiddenErrorView";
 import { BODY_TYPE_METADATA } from "@/shared/constants/reportMockData";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
-import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
+import { isForbiddenError } from "@/shared/utils/errorUtils";
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -147,31 +148,28 @@ const ErrorButton = styled.button`
 
 const ReportPage = () => {
   const navigate = useNavigate();
-  const reportId = useDiagnosisStore((state) => state.reportId);
+  const { reportId: reportIdParam } = useParams();
+  const reportId = reportIdParam ? parseInt(reportIdParam, 10) : null;
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   // 실시간 리포트 조회 (폴링)
   const { data: reportData, isLoading, isError, error } = useReportDetail(reportId);
 
-  // reportId 없으면 리다이렉트
+  // reportId가 유효하지 않으면 홈으로 리다이렉트
   useEffect(() => {
-    if (!reportId) {
-      navigate("/diagnosis/basic-info");
+    if (!reportId || isNaN(reportId) || reportId <= 0) {
+      navigate("/", { replace: true });
     }
   }, [reportId, navigate]);
 
-  // 로딩 중
-  if (isLoading || !reportData) {
-    return (
-      <LoadingView>
-        <LoadingSpinner />
-        <LoadingText>분석 결과를 불러오는 중...</LoadingText>
-      </LoadingView>
-    );
-  }
-
-  // 에러 발생
+  // 에러 발생 - 로딩 체크보다 먼저 처리
   if (isError) {
+    // 403 Forbidden 에러 처리
+    if (isForbiddenError(error)) {
+      return <ForbiddenErrorView />;
+    }
+
+    // 기타 에러 처리
     return (
       <ErrorView>
         <ErrorIcon>⚠️</ErrorIcon>
@@ -181,6 +179,16 @@ const ReportPage = () => {
           처음부터 다시 시작
         </ErrorButton>
       </ErrorView>
+    );
+  }
+
+  // 로딩 중
+  if (isLoading || !reportData) {
+    return (
+      <LoadingView>
+        <LoadingSpinner />
+        <LoadingText>분석 결과를 불러오는 중...</LoadingText>
+      </LoadingView>
     );
   }
 

@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -162,6 +163,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public List<UserSearchSummaryRaw> getUserSearch(String nickname, Long viewerId) {
+        if (!StringUtils.hasText(nickname)) {
+            return Collections.emptyList();
+        }
         return userRepository.findUserSearch(nickname, viewerId);
     }
 }

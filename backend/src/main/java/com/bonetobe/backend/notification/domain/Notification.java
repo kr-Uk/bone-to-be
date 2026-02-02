@@ -26,8 +26,7 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private String message;
+    private Long domainId;
 
     private String relatedUrl;
 
@@ -37,4 +36,6 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "alert_type", nullable = false)
     private AlertType alertType;
+
+    private String uuid;
 }

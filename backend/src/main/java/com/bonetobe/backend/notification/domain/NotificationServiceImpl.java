@@ -1,11 +1,13 @@
 package com.bonetobe.backend.notification.domain;
 
 import com.bonetobe.backend.notification.infrastructure.SseEmitterRepository;
+import com.bonetobe.backend.report.infrastructure.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -14,6 +16,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final long SSE_TIMEOUT_MS = 60_000L;
     private final long REDIS_TTL_MS = 80_000L;
     private final SseEmitterRepository emitterRepository;
+    private final NotificationRepository notificationRepository;
 
     public SseEmitter subscribe(Long userId) {
         // 1. 항상 새 emitter 생성
@@ -49,6 +52,11 @@ public class NotificationServiceImpl implements NotificationService {
                     cleanup(userId, emitterRepository.findEmitterId(userId));
                 }
             });
+    }
+
+    @Override
+    public List<Notification> getNotifications(Long id) {
+        return notificationRepository.getNotificationsUnread(id);
     }
 
     private void cleanup(Long userId, String emitterId) {

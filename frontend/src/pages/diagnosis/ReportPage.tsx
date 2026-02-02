@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import AnalysisDetailsSection from "./components/AnalysisDetailsSection";
 import AnalysisResultCard from "./components/AnalysisResultCard";
 import FitReferenceSection from "./components/FitReferenceSection";
 import RecommendationSection from "./components/RecommendationSection";
@@ -269,21 +270,30 @@ const ReportPage = () => {
 
           <FitReferenceSection fitReferences={metadata.fitReferences} />
 
+          {/* 상세 골격 분석 섹션 (11개 지표) */}
+          {reportData.details &&
+            Array.isArray(reportData.details) &&
+            reportData.details.length > 0 && (
+              <AnalysisDetailsSection metrics={reportData.details} />
+            )}
+
           <RecommendationSection
             doRecommendations={metadata.doRecommendations}
             dontRecommendations={metadata.dontRecommendations}
           />
 
           {/* VirtualFittingSection은 details 데이터가 있을 때만 표시 */}
-          {reportData.details && (
-            <VirtualFittingSection
-              imageUrl={"/images/virtual-fitting-placeholder.png"}
-              title="가상 피팅 준비 중"
-              description="곧 이용하실 수 있습니다"
-              tags={[]}
-              onTryAnother={() => {}}
-            />
-          )}
+          {reportData.details &&
+            Array.isArray(reportData.details) &&
+            reportData.details.length > 0 && (
+              <VirtualFittingSection
+                imageUrl={"/images/virtual-fitting-placeholder.png"}
+                title="가상 피팅 준비 중"
+                description="곧 이용하실 수 있습니다"
+                tags={[]}
+                onTryAnother={() => {}}
+              />
+            )}
         </ContentWrapper>
       </MainContent>
     </PageContainer>

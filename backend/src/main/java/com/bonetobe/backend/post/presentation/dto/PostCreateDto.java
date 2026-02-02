@@ -29,18 +29,6 @@ public class PostCreateDto {
                 throw new BusinessException(ErrorCode.POST_CREATE_FILE_REQUIRED);
             }
 
-            if (gender == null){
-                throw new BusinessException(ErrorCode.POST_CREATE_GENDER_REQUIRED);
-            }
-
-            if (height == null){
-                throw new BusinessException(ErrorCode.POST_CREATE_HEIGHT_REQUIRED);
-            }
-
-            if (weight == null){
-                throw new BusinessException(ErrorCode.POST_CREATE_WEIGHT_REQUIRED);
-            }
-
             Gender parsedGender = PostRequestParser.parseGender(gender);
             SkeletonType parsedSkeletonType = PostRequestParser.parseSkeletonType(skeletonType);
             List<StyleName> parsedStyles = PostRequestParser.parseStyles(style);

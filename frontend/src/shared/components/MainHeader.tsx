@@ -22,7 +22,7 @@ type NavItem = {
 };
 
 const baseNavItems: NavItem[] = [
-  { label: "ABOUT" },
+  { label: "ABOUT", path: "/about" },
   { label: "FUNCTION" },
   { label: "COMMUNITY", path: "/community" },
 ];

@@ -1,5 +1,5 @@
-﻿import { useEffect } from "react";
-import axios from "axios";
+﻿import axios from "axios";
+import { useEffect } from "react";
 
 import { getMe } from "@/shared/api/auth";
 import { useAuthStore } from "@/shared/stores/authStore";

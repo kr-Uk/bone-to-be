@@ -10,6 +10,8 @@ import type {
   FollowUser,
   UpdateMyProfileRequest,
   UpdateMyProfileResponse,
+  UpdateMyPasswordRequest,
+  UpdateMyPasswordResponse,
   UserPost,
   UserProfile,
 } from "./profile.types";
@@ -264,5 +266,15 @@ export const updateMyProfile = async (
   request: UpdateMyProfileRequest,
 ): Promise<UpdateMyProfileResponse> => {
   const { data } = await axiosInstance.put<UpdateMyProfileResponse>("/users/me", request);
+  return data;
+};
+
+export const updateMyPassword = async (
+  request: UpdateMyPasswordRequest,
+): Promise<UpdateMyPasswordResponse> => {
+  const { data } = await axiosInstance.put<UpdateMyPasswordResponse>(
+    "/users/me/password",
+    request,
+  );
   return data;
 };

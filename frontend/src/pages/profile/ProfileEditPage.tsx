@@ -305,8 +305,6 @@ const BackButton = styled.button`
   left: 1.25rem;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.colors.gray[700]};
   background: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.gray[100]};
   display: inline-flex;
@@ -437,7 +435,7 @@ const Form = styled.div`
 const Field = styled.div`
   display: flex;
   flex-direction: column;
-
+  margin-bottom: 0.6rem;
 `;
 
 const ImageField = styled(Field)`
@@ -505,7 +503,7 @@ const ImageActions = styled.div`
 
 const Input = styled.input`
   width: 100%;
-  height: 3.25rem;
+  height: 2.5rem;
   padding: 0 0.9rem;
   border-radius: 0.35rem;
   border: 1px solid ${({ theme }) => theme.colors.gray[700]};
@@ -562,7 +560,7 @@ const PrimaryButton = styled.button`
 
 const CheckButton = styled.button`
   min-width: 6.5rem;
-  
+  height: 2.5rem;
   padding: 0.56rem 1.25rem;
   border-radius: 0.5rem;
   border: 1px solid ${({ theme }) => theme.colors.gray[600]};

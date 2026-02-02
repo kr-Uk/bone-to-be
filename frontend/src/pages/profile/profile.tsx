@@ -308,7 +308,7 @@ const ProfilePage = () => {
   const handleCloseSettings = () => setIsSettingsOpen(false);
   const handleGoPasswordReset = () => {
     setIsSettingsOpen(false);
-    navigate("/password-reset");
+    navigate("/profile/password");
   };
   const handleGoWithdraw = () => {
     setIsSettingsOpen(false);

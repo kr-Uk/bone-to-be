@@ -79,3 +79,15 @@ export type UpdateMyProfileResponse = {
   message: string;
   data: null;
 };
+
+export type UpdateMyPasswordRequest = {
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirm: string;
+};
+
+export type UpdateMyPasswordResponse = {
+  code: number;
+  message: string;
+  data: null;
+};

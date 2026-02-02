@@ -50,7 +50,9 @@ public enum ErrorCode {
     // 5000번대 코드 : AI
     INTERNAL_SERVER_ERROR(5001, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
 
-
+    // 6000번대 코드 : 알림
+    NOT_FOUND_NOTIFICATION(6001, HttpStatus.BAD_REQUEST, "존재하지 않는 알림입니다."),
+    ALREADY_READ_NOTIFICATION(6002, HttpStatus.BAD_REQUEST, "이미 읽은 알림입니다."),
     // 10000 : 알 수 없는 예외
     UNKNOWN_ERROR(10000, HttpStatus.BAD_REQUEST, "알 수 없는 예외입니다,"),
     ENTITY_NOT_FOUND(10001, HttpStatus.BAD_REQUEST,"정보를 찾을 수 없습니다"),

@@ -1,5 +1,7 @@
 package com.bonetobe.backend.notification.domain;
 
+import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.notification.infrastructure.SseEmitterRepository;
 import com.bonetobe.backend.report.infrastructure.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,16 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> getNotifications(Long id) {
         return notificationRepository.getNotificationsUnread(id);
+    }
+
+    @Override
+    public Notification getNotification(Long id) {
+        return notificationRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
+    }
+
+    @Override
+    public void deleteNotifications(Notification notification) {
+        notification.read();
     }
 
     private void cleanup(Long userId, String emitterId) {

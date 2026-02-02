@@ -9,5 +9,9 @@ public interface NotificationService {
 
     void send(Long userId, Object data);
 
-    List<Notification> getNotifications(Long id);
+    List<Notification> getNotifications(Long userId);
+
+    Notification getNotification(Long id);
+
+    void deleteNotifications(Notification notification);
 }

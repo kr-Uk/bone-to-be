@@ -240,23 +240,22 @@ export const Label = styled.div`
 
 export const Input = styled.input`
   height: 36px;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   color: ${loginPalette.slate100};
   border: 0;
-  padding: 10px 12px;
-  border-radius: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 6px 2px;
+  border-radius: 0;
   font-size: 15px;
   outline: none;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: none;
 
   &::placeholder {
     color: rgba(148, 163, 184, 0.65);
   }
 
   &:focus {
-    box-shadow:
-      inset 0 0 0 1px rgba(152, 16, 250, 0.6),
-      0 0 0 4px rgba(152, 16, 250, 0.15);
+    border-bottom-color: ${loginPalette.primary};
   }
 
   &:disabled {
@@ -280,7 +279,7 @@ export const PrimaryButton = styled.button`
   padding: 12px 16px;
   background: ${loginPalette.primary};
   color: #fff;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 15px;
   cursor: pointer;
   box-shadow: 0 14px 28px -10px rgba(152, 16, 250, 0.55);
@@ -313,7 +312,7 @@ export const OrLine = styled.div`
 
 export const OrText = styled.div`
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: ${loginPalette.slate400};
@@ -332,7 +331,7 @@ export const SocialButtonKakao = styled.button`
   background: #fee500;
   border: 0;
   color: #191919;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 13px;
   cursor: pointer;
   margin-bottom: 0.5rem;
@@ -363,7 +362,7 @@ export const SocialButtonGoogle = styled.button`
   background: #fff;
   border: 0;
   color: ${loginPalette.cardDark};
-  font-weight: 900;
+  font-weight: 700;
   font-size: 13px;
   cursor: pointer;
 
@@ -434,6 +433,27 @@ export const InputRow = styled.div`
   display: flex;
   gap: 8px;
   align-items: flex-start;
+  position: relative;
+  padding-bottom: 6px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  &:focus-within::after {
+    background: ${loginPalette.primary};
+  }
+
+  ${Input} {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
 `;
 
 export const InputGroupBtn = styled.button`
@@ -521,7 +541,7 @@ export const DarkBtn = styled.button`
   background: rgba(255, 255, 255, 0.08);
   color: ${loginPalette.slate100};
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 700;
   border: 0;
   cursor: pointer;
 

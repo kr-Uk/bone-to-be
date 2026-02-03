@@ -33,7 +33,7 @@ function ForbiddenErrorView({
   };
 
   const handleMyReportsClick = (): void => {
-    navigate("/profile");
+    navigate("/profile", { state: { fromInternalNav: true } });
   };
 
   const handleLoginClick = (): void => {

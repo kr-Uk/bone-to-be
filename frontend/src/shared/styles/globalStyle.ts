@@ -24,6 +24,38 @@ export const GlobalStyle = createGlobalStyle`
     background: ${({ theme }) => theme.colors.background};
   }
 
+  /* =========================================
+     SCROLLBAR V2: Dynamic Capsule
+     ========================================= */
+
+  /* 1. 스크롤바 전체 영역 (클릭 감지 범위 확보) */
+  ::-webkit-scrollbar {
+    width: 14px;  /* 마우스가 닿기 편하도록 넓게 잡음 */
+  }
+
+  /* 2. 스크롤바 트랙 (완전 투명) */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* 3. 스크롤바 핸들 (평소 상태: 얇고 은은함) */
+  ::-webkit-scrollbar-thumb {
+    /* 핵심: border를 사용하여 실제 보이는 영역을 축소시킴 */
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 99px;
+    border: 5px solid transparent; /* 투명 테두리로 핸들 두께를 얇게 만듦 */
+    background-clip: content-box; /* 배경색을 테두리 안쪽으로만 제한 */
+    transition: background-color 0.3s, border-width 0.3s;
+  }
+
+  /* 4. 스크롤바 핸들 호버 (활성 상태: 확장 & 브랜드 컬러) */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #9810FA; /* 브랜드 컬러 */
+    border: 2px solid transparent; /* 테두리를 얇게 줄여서 핸들을 뚱뚱하게 만듦 */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5); /* 내부 그림자로 입체감 */
+  }
+
+
   /* Remove default button styles */
   button {
     font-family: inherit;

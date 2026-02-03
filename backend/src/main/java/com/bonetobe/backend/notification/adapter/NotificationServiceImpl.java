@@ -1,8 +1,8 @@
-package com.bonetobe.backend.notification.domain;
+package com.bonetobe.backend.notification.adapter;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
-import com.bonetobe.backend.notification.infrastructure.SseEmitterRepository;
+import com.bonetobe.backend.notification.domain.Notification;
 import com.bonetobe.backend.report.infrastructure.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,11 +45,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void send(Long userId, Object data) {
+    public void send(Long userId, Notification data) {
         emitterRepository.findByUserId(userId)
             .ifPresent(emitter -> {
                 try {
-                    emitter.send(data);
+                    emitter.send(NotificationMessage.of(data));
                 } catch (IOException e) {
                     cleanup(userId, emitterRepository.findEmitterId(userId));
                 }

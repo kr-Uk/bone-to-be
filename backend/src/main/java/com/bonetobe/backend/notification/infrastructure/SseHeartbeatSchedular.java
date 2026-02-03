@@ -1,5 +1,6 @@
 package com.bonetobe.backend.notification.infrastructure;
 
+import com.bonetobe.backend.notification.adapter.SseEmitterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

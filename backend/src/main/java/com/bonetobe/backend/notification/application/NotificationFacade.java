@@ -3,7 +3,7 @@ package com.bonetobe.backend.notification.application;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.notification.domain.Notification;
-import com.bonetobe.backend.notification.domain.NotificationService;
+import com.bonetobe.backend.notification.adapter.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -24,5 +24,6 @@ public class NotificationFacade {
 
     public void saveAndSendNotification(Notification notification) {
         notificationService.save(notification);
+        notificationService.send(notification.getUser().getId(), notification);
     }
 }

@@ -3,7 +3,7 @@ package com.bonetobe.backend.notification.presentation;
 import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.notification.application.NotificationFacade;
-import com.bonetobe.backend.notification.domain.NotificationService;
+import com.bonetobe.backend.notification.adapter.NotificationService;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,5 +1,6 @@
-package com.bonetobe.backend.notification.domain;
+package com.bonetobe.backend.notification.adapter;
 
+import com.bonetobe.backend.notification.domain.Notification;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 public interface NotificationService {
     SseEmitter subscribe(Long userId);
 
-    void send(Long userId, Object data);
+    void send(Long userId, Notification data);
 
     List<Notification> getNotifications(Long userId);
 

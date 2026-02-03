@@ -1,4 +1,4 @@
-package com.bonetobe.backend.notification.infrastructure;
+package com.bonetobe.backend.notification.adapter;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 

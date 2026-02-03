@@ -42,12 +42,12 @@ public class NotificationController {
                         .map(GetNotification::of).toList()));
     }
 
-    @PutMapping("/{notificationId}")
+    @PutMapping
     public ResponseEntity<APIResponse<Void>> deleteNotification(
         @AuthenticationPrincipal UserPrincipal user,
-        @PathVariable Long notificationId
+        @RequestParam String uuid
     ) {
-        notificationFacade.deleteNotifications(user.getId(), notificationId);
+        notificationFacade.deleteNotifications(user.getId(), uuid);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(APIResponse.success(

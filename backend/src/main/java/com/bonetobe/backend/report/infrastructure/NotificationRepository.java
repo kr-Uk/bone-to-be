@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
@@ -18,4 +19,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         order by n.createdAt desc
     """)
     List<Notification> getNotificationsUnread(@Param("userId") Long userId);
+
+    Optional<Notification> findByUuid(String uuid);
 }

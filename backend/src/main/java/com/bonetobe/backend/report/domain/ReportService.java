@@ -7,9 +7,9 @@ public interface ReportService {
 
     Report saveResult(Long reportId, List<AnalysisDetail> report);
 
-    Report getReport(Long reportId, Long userId);
+    Report getReportWithFile(Long reportId, Long userId);
 
-    Report getReport(Long reportId);
+    Report getReportWithFile(Long reportId);
 
     List<Report> getReportList(Long id);
 

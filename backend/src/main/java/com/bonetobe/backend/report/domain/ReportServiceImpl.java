@@ -20,7 +20,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     @Transactional
     public Report saveReport(ReportCommand command) {
-        return reportStore.save(Report.startReport(command.user(), command.bodyInfo()));
+        return reportStore.save(Report.startReport(command.user(), command.bodyInfo(), command.fileId()));
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public Report getReport(Long reportId, Long userId) {
+    public Report getReportWithFile(Long reportId, Long userId) {
         Report report = reportReader.read(reportId);
         if (!report.getUser().getId().equals(userId)) {
             throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -43,7 +43,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Report getReport(Long reportId) {
+    public Report getReportWithFile(Long reportId) {
         return reportReader.read(reportId);
     }
 

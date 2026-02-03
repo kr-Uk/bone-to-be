@@ -4,5 +4,6 @@ public enum DomainCategory {
     PROFILE,
     FEED,
     DIAGNOSE_PICTURE,
-    AFTER_TRY_ME
+    AFTER_TRY_ME,
+    CLOTH
 }

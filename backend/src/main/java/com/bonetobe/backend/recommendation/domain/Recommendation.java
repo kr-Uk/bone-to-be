@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Recommendation extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_id")
     private Report report;
 
@@ -47,6 +47,24 @@ public class Recommendation extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private TryOnStatus status = TryOnStatus.PENDING;
+
+    public static Recommendation start(
+        Report report,
+        User user,
+        StoredFile bestPicture,
+        StoredFile worstPicture,
+        Cloth bestCloth,
+        Cloth worstCloth
+    ) {
+        Recommendation recommendation = new Recommendation();
+        recommendation.report = report;
+        recommendation.user = user;
+        recommendation.bestPicture = bestPicture;
+        recommendation.worstPicture = worstPicture;
+        recommendation.bestCloth = bestCloth;
+        recommendation.worstCloth = worstCloth;
+        return recommendation;
+    }
 
     public void complete() {
         status = TryOnStatus.COMPLETE;

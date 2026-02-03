@@ -30,4 +30,9 @@ public class ReportReaderImpl implements ReportReader {
     public Optional<Report> readRepresentativeReport(Long userId) {
         return reportRepository.findRepresentativeReport(userId);
     }
+
+    @Override
+    public Report readWithFile(Long reportId) {
+        return reportRepository.findByIdAndActiveWithFile(reportId).orElseThrow(() -> new BusinessException(ErrorCode.NO_SUCH_REPPORT));
+    }
 }

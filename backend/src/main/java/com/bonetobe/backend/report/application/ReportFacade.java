@@ -45,13 +45,17 @@ public class ReportFacade {
         return report.getId();
     }
 
-    public void saveResultAndSendEvent(ReportResult result) {
+    public Report saveResultAndSendEvent(ReportResult result) {
+        Report report = null;
+
         try {
-            Report report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
+            report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
             notificationFacade.saveAndSendNotification(Notification.create(report.getUser().getId(), report.getId(), AlertType.DIAGNOSE));
+
         } catch (BusinessException e) {
             log.error("리포트 저장 중 에러 발생 :{}", e.getMessage());
         }
+        return report;
     }
 
     public void authorizeAndDeleteReport(Long userId, Long reportId) {

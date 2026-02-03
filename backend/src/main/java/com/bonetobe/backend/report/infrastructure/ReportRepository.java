@@ -42,4 +42,12 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             and r.representative = true
     """)
     void clearRepresentative(@Param("userId") Long userId);
+
+    @Query("""
+        select r
+        from Report r
+            join fetch StoredFile f
+        where r.id = :reportId
+    """)
+    Optional<Report> findByIdAndActiveWithFile(@Param("userId") Long reportId);
 }

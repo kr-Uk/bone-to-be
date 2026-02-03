@@ -97,7 +97,10 @@ public enum ErrorCode {
     ALREADY_READ_NOTIFICATION(6002, HttpStatus.BAD_REQUEST, "이미 읽은 알림입니다."),
 
     // 7000 번대 코드 : try me
-    NOT_FOUND_RECOMMENDATION(6003, HttpStatus.BAD_REQUEST, "존재하지 않는 가상피팅 입니다."),
+    NOT_FOUND_RECOMMENDATION(7001, HttpStatus.BAD_REQUEST, "존재하지 않는 가상피팅 입니다."),
+
+    // 8000번대 코드 : 의류
+    NOT_FOUND_CLOTH(8001, HttpStatus.BAD_REQUEST, "존재하지 않는 의상입니다."),
     // 10000 : 알 수 없는 예외
 
     // ================================

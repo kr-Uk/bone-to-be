@@ -1,6 +1,8 @@
 package com.bonetobe.backend.report.presentation;
 
+import com.bonetobe.backend.recommendation.application.TryOnFacade;
 import com.bonetobe.backend.report.application.ReportFacade;
+import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.report.presentation.dto.ReportResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RabbitReportConsumer {
     private final ReportFacade reportFacade;
+    private final TryOnFacade tryOnFacade;
     private final ObjectMapper objectMapper = JsonMapper.builder()
         .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
         .addModule(new JavaTimeModule())
@@ -32,11 +35,9 @@ public class RabbitReportConsumer {
         ReportResult result = objectMapper.readValue(body, ReportResult.class);
 
         // 결과 저장 및 알림 발송
-        reportFacade.saveResultAndSendEvent(result);
+        Report report = reportFacade.saveResultAndSendEvent(result);
 
-        // 추천 로직 실행
-        /*
-            TODO : recommendationFacade.recommend(result) 추가
-         */
+        // 옷 가상피팅 실행
+        tryOnFacade.startTryOn(report.getId());
     }
 }

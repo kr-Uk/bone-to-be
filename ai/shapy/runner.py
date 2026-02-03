@@ -68,11 +68,11 @@ class ShapyRunner:
         # Note: Gender parameter is primarily used by attributes module
         # The base model uses 'neutral' by default, but we pass it for future use
         
-        # EXPERIMENT: Force backbone to train mode to use batch stats instead of running stats
-        # This is to debug why features are saturating to 0.0001
+        # [FIX] Force backbone to train mode to use batch stats (Instance Normalization)
+        # This fixes the issue where pretrained backbone running stats are incompatible/broken
+        # causing features to saturate to 0 in eval mode.
         if hasattr(self.model, 'backbone'):
             self.model.backbone.train()
-            print("🔧 DEBUG: Forced backbone to TRAIN mode")
             
         output = self.model(
             body_imgs,

@@ -200,16 +200,13 @@ def handle(message: dict):
         output = shapy_runner.run(img, body25_keypoints, gender=gender, height=height)
         print(f"✅ Shapy inference completed")
         
-        # DEBUG: Check Shapy output
-        vertices = output['stage_02']['vertices'][0]
-        joints = output['stage_02']['joints'][0]
+        # DEBUG:        # Shapy output simple debug log
         measurements = output['measurements']
-        print(f"🔍 DEBUG - Shapy output: vertices_mean={vertices.mean():.4f}, joints[0]={joints[0]}, chest={measurements['chest'][0]:.4f}, waist={measurements['waist'][0]:.4f}")
+        print(f"🔍 DEBUG - Shapy output: chest={measurements['chest'][0]:.4f}, waist={measurements['waist'][0]:.4f}")
 
         # 5. Body Type Analysis - Calculate 11 metrics
         print(f"📊 Calculating body type metrics...")
         from body_type_analyzer import BodyTypeAnalyzer
-        from smplx_joints import JOINT_INDICES
         
         try:
             analyzer = BodyTypeAnalyzer(
@@ -219,19 +216,11 @@ def handle(message: dict):
                 height=height  # Pass height for accurate calculations
             )
             
-            # DEBUG: Log analyzer inputs
-            l_shoulder = analyzer.joints[JOINT_INDICES['left_shoulder']]
-            r_shoulder = analyzer.joints[JOINT_INDICES['right_shoulder']]
-            print(f"🔍 DEBUG - Analyzer inputs: l_shoulder={l_shoulder}, chest={analyzer.chest:.4f}, height={analyzer.height}")
-            
             body_type_metrics = analyzer.calculate_all_metrics()
             print(f"✅ Body type metrics calculated")
-            print(f"🔍 DEBUG - Metrics RIGHT AFTER calculation: shoulder_slope={body_type_metrics['shoulder_slope_angle']:.4f}, shoulder_width={body_type_metrics['shoulder_width_index']:.4f}")
-            print(f"🔍 DEBUG - Metrics dict id: {id(body_type_metrics)}")
             
             # Add metrics to output
             output['body_type_metrics'] = body_type_metrics
-            print(f"🔍 DEBUG - After adding to output: {id(output['body_type_metrics'])}")
         except Exception as e:
             print(f"⚠️ Warning: Body type analysis failed: {e}")
             # Continue without metrics if analysis fails

@@ -106,9 +106,6 @@ def preprocess_image(
     # -----------------------------------------------------
     crop = (crop - MEAN) / STD
     crop = torch.tensor(crop, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0)
-    
-    # DEBUG: Check crop tensor stats
-    print(f"🔍 DEBUG - Preprocessed Crop Tensor: mean={crop.mean():.4f}, std={crop.std():.4f}")
 
     body_imgs = crop.to(device)
 

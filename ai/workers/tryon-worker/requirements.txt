@@ -1,2 +1,7 @@
 pika==1.3.2
 python-dotenv==1.0.1
+requests
+numpy
+# Google Gemini
+google-generativeai
+pillow

@@ -33,5 +33,7 @@ def start_consumer():
         on_message_callback=callback
     )
 
-    print(f"🚀 Analysis worker started - listening on {Config.REQUEST_QUEUE}")
+    print(f"🚀 Analysis worker started")
+    print(f"📡 Connected to RabbitMQ at: {Config.RABBITMQ_HOST}:{Config.RABBITMQ_PORT}")
+    print(f"👂 Listening on {Config.REQUEST_QUEUE}")
     ch.start_consuming()

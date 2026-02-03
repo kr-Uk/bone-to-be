@@ -19,5 +19,10 @@ public class Cloth extends BaseEntity {
     private ClothType clothType;
 
     @Enumerated(value = EnumType.STRING)
-    private SkeletonType skeletonType;
+    @Column(name = "best_skeleton_type")
+    private SkeletonType bestSkeletonType;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "worst_skeleton_type")
+    private SkeletonType worstSkeletonType;
 }

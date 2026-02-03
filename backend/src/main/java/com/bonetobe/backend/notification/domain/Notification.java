@@ -39,6 +39,18 @@ public class Notification extends BaseEntity {
 
     private String uuid;
 
+    public static Notification create(
+        Long userId,
+        Long domainId,
+        AlertType alertType
+    ) {
+        Notification notification = new Notification();
+        notification.user = User.of(userId);
+        notification.domainId = domainId;
+        notification.alertType = alertType;
+        return notification;
+    }
+
     public void read() {
         if (isRead) {
             throw new BusinessException(ErrorCode.ALREADY_READ_NOTIFICATION);

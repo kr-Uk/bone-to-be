@@ -43,6 +43,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public Report getReport(Long reportId) {
+        return reportReader.read(reportId);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Report> getReportList(Long userId) {
         return reportReader.readReports(userId);

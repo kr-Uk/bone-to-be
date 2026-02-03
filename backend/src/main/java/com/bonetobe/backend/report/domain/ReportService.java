@@ -9,6 +9,8 @@ public interface ReportService {
 
     Report getReport(Long reportId, Long userId);
 
+    Report getReport(Long reportId);
+
     List<Report> getReportList(Long id);
 
     Report isOwner(Long userId, Long reportId);

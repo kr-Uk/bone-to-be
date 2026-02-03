@@ -19,6 +19,7 @@ import { FollowListModal } from "@/pages/profile/components/FollowListModal";
 import { useUserSearch } from "@/pages/profile/hooks/useUserSearch";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useLogout } from "@/shared/hooks/useLogout";
+import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 type NavItem = {
   label: string;
@@ -52,6 +53,7 @@ const resolveProfilePath = (userId?: string) =>
 
 export const MainHeader = () => {
   const navigate = useNavigate();
+  const protectedNavigate = useProtectedNavigate();
   const location = useLocation();
   const { isAuthLoading, isLoggedIn, me } = useAuth();
   const logoutMutation = useLogout();
@@ -89,13 +91,13 @@ export const MainHeader = () => {
   }, [searchedUsers]);
   const handleNavigate = (path: string) => {
     setIsMobileMenuOpen(false);
-    navigate(path);
+    protectedNavigate(path);
   };
   const handleProfileEditNavigate = () => {
     setIsProfileMenuOpen(false);
     setIsMobileMenuOpen(false);
     setIsSearchOpen(false);
-    navigate("/profile/edit");
+    protectedNavigate("/profile/edit");
   };
 
   const handleLogout = async () => {
@@ -412,7 +414,7 @@ export const MainHeader = () => {
                 showAction={false}
                 onUserClick={(user) => {
                   setIsSearchOpen(false);
-                  navigate(resolveProfilePath(user.id));
+                  protectedNavigate(resolveProfilePath(user.id));
                 }}
               />
             </SearchModalCard>

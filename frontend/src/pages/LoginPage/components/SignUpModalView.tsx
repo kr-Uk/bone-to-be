@@ -191,10 +191,9 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
 
       <S.Form>
         <S.Field>
-          <S.Label>닉네임</S.Label>
           <S.InputRow>
             <S.Input
-              placeholder="닉네임을 입력하세요"
+              placeholder="닉네임"
               value={nickname}
               onChange={(e) => {
                 const nextValue = e.target.value;
@@ -232,11 +231,10 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
         </S.Field>
 
         <S.Field>
-          <S.Label>이메일</S.Label>
           <S.InputRow>
             <S.Input
               type="email"
-              placeholder="example@email.com"
+              placeholder="이메일"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -300,10 +298,9 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
         )}
 
         <S.Field>
-          <S.Label>비밀번호</S.Label>
           <S.Input
             type="password"
-            placeholder="비밀번호를 입력하세요"
+            placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -316,10 +313,9 @@ export const SignUpModalView = ({ onSwitchToLogin }: Props) => {
         </S.Field>
 
         <S.Field>
-          <S.Label>비밀번호 확인</S.Label>
           <S.Input
             type="password"
-            placeholder="비밀번호를 다시 입력하세요"
+            placeholder="비밀번호 확인"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={!isPasswordValid}

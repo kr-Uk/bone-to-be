@@ -1,6 +1,7 @@
 package com.bonetobe.backend.report.presentation;
 
 import com.bonetobe.backend.report.application.ReportFacade;
+import com.bonetobe.backend.report.presentation.dto.ReportResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

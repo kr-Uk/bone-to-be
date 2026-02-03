@@ -1,6 +1,21 @@
-﻿import axiosInstance from "../../../shared/api/axios";
+﻿import axios from "axios";
 
-import type { BodyTypeRatio, FollowModalType, FollowUser, UserProfile } from "./profile.types";
+import axiosInstance from "../../../shared/api/axios";
+
+import type {
+  BodyTypeRatio,
+  CreateProfileImagePresignedUrlRequest,
+  CreateProfileImagePresignedUrlResponse,
+  FollowModalType,
+  FollowUser,
+  SearchUser,
+  UpdateMyProfileRequest,
+  UpdateMyProfileResponse,
+  UpdateMyPasswordRequest,
+  UpdateMyPasswordResponse,
+  UserPost,
+  UserProfile,
+} from "./profile.types";
 
 interface ApiResponse<T> {
   code: number;
@@ -36,6 +51,26 @@ const normalizeText = (value: string | null | undefined, fallback: string) => {
   const trimmed = (value ?? "").trim();
   return trimmed.length > 0 ? trimmed : fallback;
 };
+
+export interface FeedPostDto {
+  postId: number;
+  imageUrl: string | null;
+  likeCount: number;
+  commentCount: number;
+}
+
+export interface ScrappedPostDto {
+  postId: number;
+  imageUrl: string | null;
+  gender: "MALE" | "FEMALE";
+  skeletonType: "NATURAL" | "WAVE" | "STRAIGHT";
+  style: string[];
+  height: number;
+  weight: number;
+  isLiked: boolean;
+  commentCount: number;
+  createdAt: string;
+}
 
 const mapFollowUser = (user: FollowUserDto): FollowUser => {
   const username = user.nickname ?? user.username ?? "알 수 없음";
@@ -129,12 +164,62 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile> => 
   return mapBaseProfile(data.data, false);
 };
 
+export const searchUsers = async (nickname?: string): Promise<SearchUser[]> => {
+  const trimmedNickname = nickname?.trim() ?? "";
+  const params = trimmedNickname ? { nickname: trimmedNickname } : undefined;
+  const { data } = await axiosInstance.get<ApiResponse<SearchUser[]>>("/users/search", {
+    params,
+  });
+  if (!data?.data) {
+    throw new Error("유저 검색 결과를 불러오지 못했습니다.");
+  }
+  return data.data;
+};
+
 export const followUser = async (userId: string): Promise<void> => {
   await axiosInstance.post<ApiResponse<null>>(`/users/${userId}/follow`);
 };
 
 export const unfollowUser = async (userId: string): Promise<void> => {
   await axiosInstance.delete<ApiResponse<null>>(`/users/${userId}/follow`);
+};
+
+const mapFeedPost = (post: FeedPostDto | ScrappedPostDto): UserPost => ({
+  postId: post.postId,
+  imageUrl: post.imageUrl ?? null,
+  likeCount: "likeCount" in post ? post.likeCount : undefined,
+  commentCount: post.commentCount,
+  gender: "gender" in post ? post.gender : undefined,
+  skeletonType: "skeletonType" in post ? post.skeletonType : undefined,
+  style: "style" in post ? post.style : undefined,
+  height: "height" in post ? post.height : undefined,
+  weight: "weight" in post ? post.weight : undefined,
+  isLiked: "isLiked" in post ? post.isLiked : undefined,
+  createdAt: "createdAt" in post ? post.createdAt : undefined,
+});
+
+export const fetchMyFeeds = async (): Promise<UserPost[]> => {
+  const { data } = await axiosInstance.get<ApiResponse<FeedPostDto[]>>("/feeds/me");
+  if (!data?.data) {
+    throw new Error("게시글 목록을 불러오지 못했습니다.");
+  }
+  return data.data.map(mapFeedPost);
+};
+
+export const fetchMyScrappedFeeds = async (): Promise<UserPost[]> => {
+  const { data } = await axiosInstance.get<ApiResponse<ScrappedPostDto[]>>("/feeds/scrapped");
+  if (!data?.data) {
+    throw new Error("스크랩 목록을 불러오지 못했습니다.");
+  }
+  return data.data.map(mapFeedPost);
+};
+
+export const fetchUserFeeds = async (userId: string): Promise<UserPost[]> => {
+  const { data } = await axiosInstance.get<ApiResponse<FeedPostDto[]>>(`/feeds/users/${userId}`);
+  if (!data?.data) {
+    throw new Error("게시글 목록을 불러오지 못했습니다.");
+  }
+  return data.data.map(mapFeedPost);
 };
 
 const myFollowEndpoint: Record<FollowModalType, string> = {
@@ -165,4 +250,40 @@ export const fetchFollowList = async (
   const { data } = await axiosInstance.get<ApiResponse<FollowUserDto[]>>(endpoint);
 
   return mapFollowResponse(data);
+};
+
+export const createProfileImagePresignedUrl = async (
+  request: CreateProfileImagePresignedUrlRequest,
+): Promise<CreateProfileImagePresignedUrlResponse> => {
+  const { data } = await axiosInstance.post<CreateProfileImagePresignedUrlResponse>(
+    "/users/me/profile-image/presigned-url",
+    request,
+  );
+  return data;
+};
+
+export const uploadProfileImageToS3 = async (
+  uploadUrl: string,
+  file: File,
+  contentType: string,
+): Promise<void> => {
+  await axios.put(uploadUrl, file, {
+    headers: {
+      "Content-Type": contentType,
+    },
+  });
+};
+
+export const updateMyProfile = async (
+  request: UpdateMyProfileRequest,
+): Promise<UpdateMyProfileResponse> => {
+  const { data } = await axiosInstance.put<UpdateMyProfileResponse>("/users/me", request);
+  return data;
+};
+
+export const updateMyPassword = async (
+  request: UpdateMyPasswordRequest,
+): Promise<UpdateMyPasswordResponse> => {
+  const { data } = await axiosInstance.put<UpdateMyPasswordResponse>("/users/me/password", request);
+  return data;
 };

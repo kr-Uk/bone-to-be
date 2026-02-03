@@ -6,12 +6,13 @@ import com.bonetobe.backend.file.domain.StoredFile;
 import com.bonetobe.backend.post.domain.command.PostCreateCommand;
 import com.bonetobe.backend.post.domain.command.PostDeleteCommand;
 import com.bonetobe.backend.post.domain.command.PostUpdateCommand;
-import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
+import com.bonetobe.backend.post.domain.query.UserPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
 import com.bonetobe.backend.style.domain.Style;
 import com.bonetobe.backend.user.domain.User;
+import com.bonetobe.backend.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
     private final PostReader postReader;
     private final PostStore postStore;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -36,6 +38,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public PostDetailSummaryRaw getPostDetail(Long postId, Long viewerId) {
+        postReader.getById(postId);
         return postReader.findPostDetail(postId, viewerId);
     }
 
@@ -62,7 +65,7 @@ public class PostServiceImpl implements PostService {
         Post post = postReader.getById(command.postId());
 
         if (!post.getUser().getId().equals(command.userId())) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
+            throw new BusinessException(ErrorCode.POST_DELETE_FORBIDDEN);
         }
 
         postStore.delete(post);
@@ -73,7 +76,7 @@ public class PostServiceImpl implements PostService {
         Post post = postReader.getById(postId);
 
         if (!post.getUser().getId().equals(command.userId())) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
+            throw new BusinessException(ErrorCode.POST_UPDATE_FORBIDDEN);
         }
 
         post.update(
@@ -89,19 +92,22 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MyPostSummaryRaw> getMyPostList(Long userId) {
-        return postReader.findMyPostList(userId);
+    public List<UserPostSummaryRaw> getUserPostList(Long userId) {
+        userRepository.findById(userId);
+        return postReader.findUserPostList(userId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PostSummaryRaw> getLikedPostList(Long userId) {
+        userRepository.findById(userId);
         return postReader.findLikedPostList(userId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PostSummaryRaw> getScrappedPostList(Long userId) {
+        userRepository.findById(userId);
         return postReader.findScrappedPostList(userId);
     }
 

@@ -31,7 +31,6 @@ import { validateImagePose } from "@/shared/utils/validateImagePose";
 // Layout containers
 const PageContainer = styled.div`
   min-height: 100vh;
-  margin-top: 80px;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   color: ${({ theme }) => theme.colors.secondary};
   display: flex;
@@ -437,7 +436,7 @@ const PhotoCapturePage = () => {
       setReportId(reportData.reportId); // 핵심: reportId 저장
 
       // 폴링은 ReportPage에서 처리하므로 즉시 navigate
-      navigate("/diagnosis/report");
+      navigate(`/diagnosis/report/${reportData.reportId}`);
     } catch (error) {
       console.error("Analysis failed:", error);
       alert("분석에 실패했습니다. 다시 시도해주세요.");

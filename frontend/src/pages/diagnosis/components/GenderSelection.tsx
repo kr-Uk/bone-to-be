@@ -57,11 +57,19 @@ const GenderSelection = ({ gender, onGenderChange }: GenderSelectionProps) => {
     <Container>
       <Label>성별</Label>
       <GenderGrid>
-        <GenderButton $selected={gender === "women"} onClick={() => onGenderChange("women")}>
+        <GenderButton
+          type="button"
+          $selected={gender === "women"}
+          onClick={() => onGenderChange("women")}
+        >
           <GenderLetter>W</GenderLetter>
           <GenderText>Women</GenderText>
         </GenderButton>
-        <GenderButton $selected={gender === "men"} onClick={() => onGenderChange("men")}>
+        <GenderButton
+          type="button"
+          $selected={gender === "men"}
+          onClick={() => onGenderChange("men")}
+        >
           <GenderLetter>M</GenderLetter>
           <GenderText>Men</GenderText>
         </GenderButton>

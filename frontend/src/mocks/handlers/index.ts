@@ -1,9 +1,10 @@
-﻿import { http, HttpResponse } from "msw";
+import { http, HttpResponse } from "msw";
 
 import { communityHandlers } from "./community.handlers";
 import { diagnosisHandlers } from "./diagnosis.handlers";
 
 type MockMe = {
+  userId: number;
   email: string;
   nickname: string;
   role?: string;
@@ -13,6 +14,16 @@ type MockMe = {
 let mockAuthState: { isLoggedIn: boolean; me: MockMe | null } = {
   isLoggedIn: false,
   me: null,
+};
+
+let mockMyProfile = {
+  profileImageUrl: null as string | null,
+  nickname: "홍길동",
+  skeletonType: null as string | null,
+  postCount: 0,
+  followerCount: 0,
+  followingCount: 4,
+  bio: null as string | null,
 };
 
 export const handlers = [
@@ -82,6 +93,7 @@ export const handlers = [
       mockAuthState = {
         isLoggedIn: true,
         me: {
+          userId: 1,
           email,
           nickname: email.split("@")[0] || "mock-user",
           role: "USER",
@@ -104,7 +116,7 @@ export const handlers = [
     const email = body?.email ?? "";
 
     if (!email) {
-      return HttpResponse.json({ code: 400, message: "?붿껌 ?ㅽ뙣", data: null }, { status: 400 });
+      return HttpResponse.json({ code: 400, message: "요청 실패", data: null }, { status: 400 });
     }
 
     const isUnknown =
@@ -117,7 +129,7 @@ export const handlers = [
       );
     }
 
-    return HttpResponse.json({ code: 200, message: "?붿껌 ?깃났", data: null });
+    return HttpResponse.json({ code: 200, message: "요청 성공", data: null });
   }),
   http.get("/api/auth/password/reset/verify", ({ request }) => {
     const url = new URL(request.url);
@@ -154,7 +166,7 @@ export const handlers = [
   }),
   http.post("/api/auth/logout", () => {
     mockAuthState = { isLoggedIn: false, me: null };
-    return HttpResponse.json({ message: "濡쒓렇?꾩썐 ?꾨즺" });
+    return HttpResponse.json({ message: "로그아웃 완료" });
   }),
   http.delete("/api/users/me", () => {
     mockAuthState = { isLoggedIn: false, me: null };
@@ -167,25 +179,77 @@ export const handlers = [
     return HttpResponse.json({ code: 200, message: "요청 성공", data: null });
   }),
 
+  http.post("/api/users/me/profile-image/presigned-url", async ({ request }) => {
+    const body = (await request.json()) as {
+      originalFileName?: string;
+      contentType?: string;
+      fileSize?: number;
+    };
+
+    if (!body?.originalFileName || !body?.contentType || !body?.fileSize) {
+      return HttpResponse.json({ code: 400, message: "요청 실패", data: null }, { status: 400 });
+    }
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (body.fileSize > MAX_FILE_SIZE) {
+      return HttpResponse.json(
+        { code: 400, message: "파일 크기는 10MB 이하만 가능합니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
+    if (!validTypes.includes(body.contentType)) {
+      return HttpResponse.json(
+        { code: 400, message: "지원하지 않는 파일 형식입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    const fileId = Math.floor(Math.random() * 1000) + 1;
+    const timestamp = Date.now();
+    const uploadUrl = `https://bone-to-be-image-bucket.s3.amazonaws.com/profile/${fileId}/${timestamp}-${body.originalFileName}?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=mock&X-Amz-Date=20260201T000000Z&X-Amz-Expires=600&X-Amz-Signature=mocksignature`;
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: {
+        fileId,
+        uploadUrl,
+      },
+    });
+  }),
+  http.put("/api/users/me", async ({ request }) => {
+    const body = (await request.json()) as {
+      nickname?: string;
+      bio?: string;
+      profileImageId?: number;
+    };
+
+    if (!body?.nickname || body.profileImageId == null) {
+      return HttpResponse.json({ code: 400, message: "요청 실패", data: null }, { status: 400 });
+    }
+
+    mockMyProfile = {
+      ...mockMyProfile,
+      nickname: body.nickname,
+      bio: body.bio ?? null,
+      profileImageUrl: `https://bone-to-be-image-bucket.s3.amazonaws.com/profile/${body.profileImageId}/profile.png`,
+    };
+
+    return HttpResponse.json({ code: 200, message: "요청 성공", data: null });
+  }),
   http.get("/api/users/me", () => {
     return HttpResponse.json({
       code: 200,
-      message: "성공적으로 데이터가 왔습니다",
-      data: {
-        profileImageUrl: null,
-        nickname: "???",
-        skeletonType: null,
-        postCount: 0,
-        followerCount: 0,
-        followingCount: 4,
-        bio: null,
-      },
+      message: "요청 성공",
+      data: mockMyProfile,
     });
   }),
   http.get("/api/users/:userId", ({ params }) => {
     return HttpResponse.json({
       code: 200,
-      message: "?? ??",
+      message: "요청 성공",
       data: {
         profileImageUrl: null,
         nickname: String(params.userId ?? "user"),

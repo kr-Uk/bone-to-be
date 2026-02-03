@@ -1,4 +1,4 @@
-﻿import { IoAddSharp } from "react-icons/io5";
+﻿import { IoAddSharp, IoCheckmark } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import styled from "styled-components";
 
@@ -198,6 +198,8 @@ const StatsRow = styled.div`
 `;
 
 const StatItem = styled(Stack)`
+  flex: 1;
+  min-width: 0;
   align-items: center;
   gap: 0.40625rem;
 
@@ -209,6 +211,8 @@ const StatItem = styled(Stack)`
 const StatButton = styled.button`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
   align-items: center;
   gap: 0.40625rem;
   background: none;
@@ -273,9 +277,10 @@ const StatLabel = styled(Text)`
 
 const QuoteText = styled(Text)`
   color: var(--neutral-300, #d4d4d4);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.5rem;
+  margin: 0.5rem;
   text-align: inherit;
 `;
 
@@ -330,9 +335,10 @@ const SettingsButton = styled.button`
   }
 `;
 
-const FollowButton = styled.button`
+const FollowButton = styled.button<{ $active?: boolean }>`
   padding: 0.64625rem 1.25rem;
-  background: var(--color-bg-brand, #9810fa);
+  background: ${({ $active }) =>
+    $active ? "var(--neutral-700, #404040)" : "var(--color-bg-brand, #9810fa)"};
   border-radius: 0.5rem;
   color: var(--neutral-50, #fafafa);
   display: inline-flex;
@@ -385,6 +391,8 @@ interface ProfileHeaderSectionProps {
   onFollowerClick?: () => void;
   onFollowingClick?: () => void;
   onFollowToggle?: () => void;
+  onOpenSettings?: () => void;
+  onEditProfile?: () => void;
 }
 
 const formatCount = (value: number) => {
@@ -403,13 +411,6 @@ const formatBodyType = (value?: string) => {
     return "Natural Type";
   }
 
-  const isKorean = /[가-힣]/.test(normalizedValue);
-  const hasTypeSuffix = /type/i.test(normalizedValue);
-
-  if (isKorean || hasTypeSuffix) {
-    return normalizedValue;
-  }
-
   return `${normalizedValue} Type`;
 };
 
@@ -426,6 +427,8 @@ const ProfileHeaderSection = ({
   onFollowerClick,
   onFollowingClick,
   onFollowToggle,
+  onEditProfile,
+  onOpenSettings,
 }: ProfileHeaderSectionProps) => {
   const bodyTypeLabel = formatBodyType(bodyType);
   const quoteText = bio?.trim() ? bio : "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~";
@@ -469,20 +472,20 @@ const ProfileHeaderSection = ({
         <Actions>
           {isOwner ? (
             <>
-              <EditButton type="button">
+              <EditButton type="button" onClick={onEditProfile}>
                 <EditButtonText>프로필 편집</EditButtonText>
               </EditButton>
-              <SettingsButton type="button" aria-label="Profile settings">
+              <SettingsButton type="button" aria-label="Profile settings" onClick={onOpenSettings}>
                 <MdOutlineSettings size={24} color="#FAFAFA" />
               </SettingsButton>
             </>
           ) : (
             <>
-              <FollowButton type="button" onClick={onFollowToggle}>
+              <FollowButton type="button" $active={isFollowing} onClick={onFollowToggle}>
                 <ActionText $color="var(--neutral-50, #fafafa)">
                   {isFollowing ? "Following" : "Follow"}
                 </ActionText>
-                {!isFollowing && <IoAddSharp />}
+                {isFollowing ? <IoCheckmark /> : <IoAddSharp />}
               </FollowButton>
               <MessageButton type="button">
                 <ActionText>Message</ActionText>

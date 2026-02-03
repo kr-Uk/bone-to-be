@@ -4,7 +4,7 @@ import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.post.domain.Post;
 import com.bonetobe.backend.post.domain.PostReader;
-import com.bonetobe.backend.post.domain.query.MyPostSummaryRaw;
+import com.bonetobe.backend.post.domain.query.UserPostSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostDetailSummaryRaw;
 import com.bonetobe.backend.post.domain.query.PostListQuery;
 import com.bonetobe.backend.post.domain.query.PostSummaryRaw;
@@ -44,8 +44,8 @@ public class PostReaderImpl implements PostReader {
     }
 
     @Override
-    public List<MyPostSummaryRaw> findMyPostList(Long userId) {
-        return postQueryDslRepository.findMyPostList(userId);
+    public List<UserPostSummaryRaw> findUserPostList(Long userId) {
+        return postQueryDslRepository.findUserPostList(userId);
     }
 
     @Override

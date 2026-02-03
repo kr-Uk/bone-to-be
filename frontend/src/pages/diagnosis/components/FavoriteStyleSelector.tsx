@@ -71,6 +71,7 @@ const FavoriteStyleSelector = ({
         {styleOptions.map((style) => (
           <StyleButton
             key={style}
+            type="button"
             $selected={styles.includes(style)}
             onClick={() => onToggleStyle(style)}
           >

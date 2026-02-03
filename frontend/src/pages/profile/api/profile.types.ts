@@ -1,6 +1,15 @@
 ﻿export type UserPost = {
   postId: number;
-  imageUrl: string;
+  imageUrl: string | null;
+  likeCount?: number;
+  commentCount?: number;
+  gender?: "MALE" | "FEMALE";
+  skeletonType?: "NATURAL" | "WAVE" | "STRAIGHT";
+  style?: string[];
+  height?: number;
+  weight?: number;
+  isLiked?: boolean;
+  createdAt?: string;
 };
 
 export type FollowModalType = "following" | "follower";
@@ -12,6 +21,13 @@ export type FollowUser = {
   bio?: string;
   avatarUrl?: string;
   isFollowing?: boolean;
+};
+
+export type SearchUser = {
+  userId: number;
+  nickname: string;
+  profileImageUrl: string | null;
+  isFollowing: boolean;
 };
 
 export type BodyTypeRatio = {
@@ -42,4 +58,43 @@ export type UserProfile = {
   bodyTypeHistory: BodyTypeHistoryItem[];
   posts: UserPost[];
   saved: UserPost[];
+};
+
+export type CreateProfileImagePresignedUrlRequest = {
+  originalFileName: string;
+  contentType: string;
+  fileSize: number;
+};
+
+export type CreateProfileImagePresignedUrlResponse = {
+  code: number;
+  message: string;
+  data: {
+    fileId: number;
+    uploadUrl: string;
+  };
+};
+
+export type UpdateMyProfileRequest = {
+  nickname: string;
+  bio: string;
+  profileImageId?: number;
+};
+
+export type UpdateMyProfileResponse = {
+  code: number;
+  message: string;
+  data: null;
+};
+
+export type UpdateMyPasswordRequest = {
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirm: string;
+};
+
+export type UpdateMyPasswordResponse = {
+  code: number;
+  message: string;
+  data: null;
 };

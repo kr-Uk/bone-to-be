@@ -1,6 +1,7 @@
 ﻿import axiosInstance from "@/shared/api/axios";
 
 export type Me = {
+  userId: number;
   email: string;
   nickname: string;
   role?: string;

@@ -2,6 +2,7 @@ package com.bonetobe.backend.user.infrastructure;
 
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserRepository;
+import com.bonetobe.backend.user.domain.query.UserSearchSummaryRaw;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository jpaRepository;
+    private final UserQueryDslRepository userQueryDslRepository;
 
     @Override
     public Optional<User> findById(Long id) {
@@ -59,5 +61,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> findFollowersByUserId(Long userId) {
         return jpaRepository.findFollowersByUserId(userId);
+    }
+
+    @Override
+    public List<UserSearchSummaryRaw> findUserSearch(String nickname, Long viewerId) {
+        return userQueryDslRepository.findUserSearch(nickname, viewerId);
     }
 }

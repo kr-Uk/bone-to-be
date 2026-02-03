@@ -1,5 +1,6 @@
 package com.bonetobe.backend.report.application;
 
+import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import com.bonetobe.backend.report.domain.Report;
@@ -7,12 +8,15 @@ import com.bonetobe.backend.report.domain.ReportCommand;
 import com.bonetobe.backend.report.domain.ReportProducer;
 import com.bonetobe.backend.report.domain.ReportService;
 import com.bonetobe.backend.report.infrastructure.ReportMessage;
-import com.bonetobe.backend.report.presentation.ReportResult;
+import com.bonetobe.backend.report.presentation.dto.ReportResult;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReportFacade {
@@ -38,11 +42,26 @@ public class ReportFacade {
     }
 
     public void saveResultAndSendEvent(ReportResult result) {
-        Report report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
-
+        try {
+            Report report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
+        } catch (BusinessException e) {
+            log.error("리포트 저장 중 에러 발생 :{}", e.getMessage());
+        }
         /*
             TODO : 프론트 구현 시 해제
          */
         // reportService.sendEvent(result.reportId());
+    }
+
+    public void authorizeAndDeleteReport(Long userId, Long reportId) {
+        Report report = reportService.isOwner(userId, reportId);
+        reportService.delete(report);
+    }
+
+    @Transactional
+    public void authorizeAndRepresentReport(Long userId, Long reportId) {
+        reportService.clearRepresentativeReport(userId);
+        Report report = reportService.isOwner(userId, reportId);
+        report.toggleRepresentative();
     }
 }

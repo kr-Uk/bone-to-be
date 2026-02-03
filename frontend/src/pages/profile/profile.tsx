@@ -2,17 +2,24 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import { followUser, unfollowUser } from "./api/profile.api";
 import BodyTypeHistorySection from "./components/BodyTypeHistorySection";
 import { FollowListModal } from "./components/FollowListModal";
 import PostsSection from "./components/PostsSection";
 import ProfileHeaderSection from "./components/ProfileHeaderSection";
 import SkeletalTypeSection from "./components/SkeletalTypeSection";
 import { useFollowListQuery } from "./hooks/useFollowListQuery";
+import {
+  useMyFeedListQuery,
+  useMyScrappedFeedListQuery,
+  useUserFeedListQuery,
+} from "./hooks/useProfileFeedQueries";
 import { useProfileQuery } from "./hooks/useProfileQuery";
 
 import type { FollowModalType, FollowUser, UserProfile } from "./api/profile.types";
-import { followUser, unfollowUser } from "./api/profile.api";
 import type { ReportSummary } from "@/pages/diagnosis/api";
+
+import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import { useMyReportList, useRepresentativeReport } from "@/pages/diagnosis/api";
 import { useAuth } from "@/shared/hooks/useAuth";
 
@@ -138,18 +145,28 @@ const FollowModalCard = styled.div`
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { nickname: rawNickname } = useParams<{ nickname?: string }>();
-  const nickname = rawNickname ? decodeURIComponent(rawNickname) : undefined;
+  const { userId: rawUserId } = useParams<{ userId?: string }>();
+  const userId = rawUserId ? decodeURIComponent(rawUserId) : undefined;
   const { me, isAuthLoading, isLoggedIn } = useAuth();
   const isAuthReady = !isAuthLoading;
-  const isMe = Boolean(isAuthReady && nickname && me?.nickname && nickname === me.nickname);
-  const queryUserId = isMe ? undefined : nickname;
-  const shouldFetchProfile = Boolean(nickname) && isAuthReady;
+  const meUserId = me?.userId != null ? String(me.userId) : undefined;
+  const isMe = Boolean(
+    isAuthReady && isLoggedIn && (!userId || (meUserId && userId === meUserId)),
+  );
+  const queryUserId = isMe ? undefined : userId;
+  const shouldFetchProfile = isAuthReady && (Boolean(userId) || isLoggedIn);
   const { data, isLoading, isError } = useProfileQuery(queryUserId, {
     enabled: shouldFetchProfile,
   });
   const { data: myReportList } = useMyReportList({ enabled: isAuthReady && isMe });
   const { data: representativeReport } = useRepresentativeReport(queryUserId ?? null, {
+    enabled: isAuthReady && !isMe && !!queryUserId,
+  });
+  const { data: myFeeds } = useMyFeedListQuery({ enabled: isAuthReady && isMe });
+  const { data: myScrappedFeeds } = useMyScrappedFeedListQuery({
+    enabled: isAuthReady && isMe,
+  });
+  const { data: userFeeds } = useUserFeedListQuery(queryUserId ?? null, {
     enabled: isAuthReady && !isMe && !!queryUserId,
   });
   const [followModalType, setFollowModalType] = useState<FollowModalType | null>(null);
@@ -159,16 +176,10 @@ const ProfilePage = () => {
     isError: isFollowError,
   } = useFollowListQuery(followModalType, queryUserId, !!followModalType);
   const [localFollowUsers, setLocalFollowUsers] = useState<FollowUser[]>([]);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [localProfile, setLocalProfile] = useState<UserProfile | null>(null);
+  const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
   const profile: UserProfile | undefined = localProfile ?? data;
-
-  useEffect(() => {
-    if (!nickname && isAuthReady) {
-      if (me?.nickname) {
-        navigate(`/profile/${encodeURIComponent(me.nickname)}`, { replace: true });
-      }
-    }
-  }, [nickname, isAuthReady, me?.nickname, navigate]);
 
   useEffect(() => {
     setLocalFollowUsers(followUsers ?? []);
@@ -190,7 +201,7 @@ const ProfilePage = () => {
     );
   }
 
-  if (!nickname && !isLoggedIn) {
+  if (!userId && !isLoggedIn) {
     return (
       <Page>
         <Main>
@@ -223,6 +234,9 @@ const ProfilePage = () => {
     : profile.bodyTypeRatio;
 
   const isOwner = profile.isOwner || isMe;
+  const posts = isOwner ? (myFeeds ?? []) : (userFeeds ?? []);
+  const saved = isOwner ? (myScrappedFeeds ?? []) : [];
+  const showSaved = isOwner;
   const updateFollowingCount = (delta: number) => {
     setLocalProfile((prev) => {
       if (!prev) return prev;
@@ -286,6 +300,19 @@ const ProfilePage = () => {
     }
   };
 
+  const handleOpenSettings = () => setIsSettingsOpen(true);
+  const handleCloseSettings = () => setIsSettingsOpen(false);
+  const handleGoPasswordReset = () => {
+    setIsSettingsOpen(false);
+    navigate("/profile/password");
+  };
+  const handleGoWithdraw = () => {
+    setIsSettingsOpen(false);
+    navigate("/withdraw");
+  };
+  const handlePostClick = (postId: number) => {
+    setSelectedFeedId(String(postId));
+  };
   return (
     <Page>
       <Main>
@@ -301,6 +328,8 @@ const ProfilePage = () => {
               bio={profile.bio}
               isOwner={isOwner}
               isFollowing={profile.isFollowing}
+              onEditProfile={() => navigate("/profile/edit")}
+              onOpenSettings={handleOpenSettings}
               onFollowerClick={() => setFollowModalType("follower")}
               onFollowingClick={() => setFollowModalType("following")}
               onFollowToggle={handleHeaderFollowToggle}
@@ -315,7 +344,12 @@ const ProfilePage = () => {
                 bodyTypeRatio={representativeRatio}
               />
             )}
-            <PostsSection posts={profile.posts} saved={profile.saved} />
+            <PostsSection
+              posts={posts}
+              saved={saved}
+              showSaved={showSaved}
+              onPostClick={handlePostClick}
+            />
           </Content>
         </ContentGrid>
       </Main>
@@ -325,10 +359,10 @@ const ProfilePage = () => {
             <FollowListModal
               type={followModalType}
               users={localFollowUsers}
+              currentNickname={me?.nickname}
               onClose={() => setFollowModalType(null)}
               onUnfollow={(userId) => {
-                const shouldRemove = isOwner && followModalType === "following";
-                handleFollowAction(userId, false, shouldRemove);
+                handleFollowAction(userId, false, false);
               }}
               onToggleFollow={(userId) => {
                 const current = localFollowUsers.find((user) => user.id === userId);
@@ -341,8 +375,65 @@ const ProfilePage = () => {
           </FollowModalCard>
         </FollowModalOverlay>
       )}
+      {isSettingsOpen && (
+        <SettingsModalOverlay onClick={handleCloseSettings}>
+          <SettingsModalCard onClick={(event) => event.stopPropagation()}>
+            <SettingsModalTitle>설정</SettingsModalTitle>
+            <SettingsModalButton type="button" onClick={handleGoPasswordReset}>
+              비밀번호 변경
+            </SettingsModalButton>
+            <SettingsModalButton type="button" onClick={handleGoWithdraw}>
+              회원 탈퇴
+            </SettingsModalButton>
+          </SettingsModalCard>
+        </SettingsModalOverlay>
+      )}
+      {selectedFeedId && (
+        <FeedDetailModal feedId={selectedFeedId} onClose={() => setSelectedFeedId(null)} />
+      )}
     </Page>
   );
 };
 
 export default ProfilePage;
+
+const SettingsModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1200;
+`;
+
+const SettingsModalCard = styled.div`
+  width: min(20rem, 90vw);
+  background: ${({ theme }) => theme.colors.gray[900]};
+  border: 1px solid ${({ theme }) => theme.colors.gray[700]};
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.45);
+`;
+
+const SettingsModalTitle = styled.h3`
+  margin: 0 0 0.5rem;
+  color: ${({ theme }) => theme.colors.gray[50]};
+  font-size: 1.1rem;
+  font-weight: 700;
+`;
+
+const SettingsModalButton = styled.button`
+  width: 100%;
+  height: 2.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.gray[700]};
+  background: ${({ theme }) => theme.colors.gray[900]};
+  color: ${({ theme }) => theme.colors.gray[100]};
+  cursor: pointer;
+  font-weight: 600;
+`;

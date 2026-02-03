@@ -1666,4 +1666,53 @@ export const communityHandlers = [
       data: null,
     });
   }),
+
+  http.get("/api/feeds/me", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: [
+        {
+          postId: 1,
+          imageUrl: "https://placehold.co/600x800?text=MY_01",
+          likeCount: 1,
+          commentCount: 0,
+        },
+      ],
+    });
+  }),
+  http.get("/api/feeds/scrapped", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: [
+        {
+          postId: 2,
+          imageUrl: "https://placehold.co/600x800?text=SAVE_01",
+          gender: "FEMALE",
+          skeletonType: "NATURAL",
+          style: ["CASUAL", "MINIMAL"],
+          height: 175,
+          weight: 68,
+          isLiked: false,
+          commentCount: 0,
+          createdAt: "2026-01-29T00:20:25.320899",
+        },
+      ],
+    });
+  }),
+  http.get("/api/feeds/users/:userId", () => {
+    return HttpResponse.json({
+      code: 200,
+      message: "?? ??",
+      data: [
+        {
+          postId: 3,
+          imageUrl: "https://placehold.co/600x800?text=USER_01",
+          likeCount: 1,
+          commentCount: 0,
+        },
+      ],
+    });
+  }),
 ];

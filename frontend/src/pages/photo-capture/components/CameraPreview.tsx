@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
+import { ImageGuideline } from "./ImageGuideline";
+
 import type { Results } from "@mediapipe/pose";
 
 import { usePoseDetection } from "@/shared/hooks/usePoseDetection";
@@ -16,7 +18,7 @@ const PreviewWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 400px;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 3;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   border-radius: 1rem;
   overflow: hidden;
@@ -32,7 +34,7 @@ const CapturedImage = styled.img<{ $show: boolean }>`
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   opacity: ${({ $show }) => ($show ? 1 : 0)};
   pointer-events: ${({ $show }) => ($show ? "auto" : "none")};
   z-index: ${({ $show }) => ($show ? 2 : 0)};
@@ -145,6 +147,9 @@ const CameraPreview = ({
         <Video ref={videoRef} autoPlay playsInline muted />
         {/* 캔버스에 비디오 + 랜드마크가 그려짐 (항상 렌더링) */}
         <LandmarkCanvas ref={canvasRef} />
+
+        {/* 전신 촬영 가이드라인 (촬영 전에만 표시) */}
+        <ImageGuideline show={!capturedImage && cameraActive} />
 
         {/* 캡처된 이미지 오버레이 (있을 때만 보임) */}
         {capturedImage && (

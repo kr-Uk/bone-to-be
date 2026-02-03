@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { LoginModalView } from "./LoginModalView";
 import { SignUpModalView } from "./SignUpModalView";
@@ -10,8 +11,9 @@ import { useLogin } from "@/shared/hooks";
 import { useAuthStore } from "@/shared/stores/authStore";
 
 export const LoginModalContainer = () => {
-  const { isLoginModalOpen, closeLoginModal } = useAuthStore();
+  const { isLoginModalOpen, closeLoginModal, authRequiredReturnPath } = useAuthStore();
   const loginMutation = useLogin();
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<"LOGIN" | "SIGNUP">("LOGIN");
 
   const [email, setEmail] = useState("");
@@ -23,6 +25,14 @@ export const LoginModalContainer = () => {
     try {
       await loginMutation.mutateAsync({ email, password });
       closeLoginModal();
+
+      // 로그인 성공 후 원래 페이지로 복귀
+      if (authRequiredReturnPath) {
+        navigate(authRequiredReturnPath, {
+          replace: true,
+          state: { fromInternalNav: true },
+        });
+      }
     } catch (error) {
       const status = (error as AxiosError).response?.status;
       if (status === 401) {

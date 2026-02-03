@@ -1,6 +1,8 @@
 import { Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
+import { LoginModalContainer } from "@/pages/LoginPage/components/LoginModalContainer";
+import { AuthRequiredModal } from "@/shared/components/AuthRequiredModal";
 import { MainHeader } from "@/shared/components/MainHeader";
 
 export const MainLayout = () => {
@@ -12,6 +14,8 @@ export const MainLayout = () => {
       <Main>
         <Outlet />
       </Main>
+      <LoginModalContainer />
+      <AuthRequiredModal />
     </Wrapper>
   );
 };

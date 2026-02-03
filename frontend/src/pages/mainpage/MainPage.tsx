@@ -1,6 +1,5 @@
 import AOS from "aos";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 import { BodyTypeScrollShowcase } from "./components/BodyTypeScrollShowcase";
@@ -8,8 +7,9 @@ import { MainAnalysisSection } from "./components/MainAnalysisSection";
 import { MainProgressSection } from "./components/MainProgressSection";
 import { MainSection } from "./components/MainSection";
 
-import { useAuth } from "@/shared/hooks/useAuth";
 import type { AppTheme } from "@/shared/styles/theme";
+
+import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 type TypographyToken = {
   fontSize: string;
@@ -40,8 +40,7 @@ const categoryItems = [
 ];
 
 const MainPage = () => {
-  const navigate = useNavigate();
-  const { isLoggedIn } = useAuth({ enabled: false });
+  const protectedNavigate = useProtectedNavigate();
 
   useEffect(() => {
     AOS.init({
@@ -53,12 +52,7 @@ const MainPage = () => {
   }, []);
 
   const handleFinalCtaClick = () => {
-    if (!isLoggedIn) {
-      window.alert("로그인이 필요한 서비스입니다.");
-      navigate("/login");
-      return;
-    }
-    navigate("/diagnosis/basic-info");
+    protectedNavigate("/diagnosis/basic-info");
   };
 
   return (

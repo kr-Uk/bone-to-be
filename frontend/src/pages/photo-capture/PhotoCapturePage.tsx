@@ -330,7 +330,7 @@ const PhotoCapturePage = () => {
   // Redirect if no basic info
   useEffect(() => {
     if (!diagnosisData.basicInfo) {
-      navigate("/diagnosis/basic-info", { replace: true });
+      navigate("/diagnosis/basic-info", { replace: true, state: { fromInternalNav: true } });
     }
   }, [diagnosisData.basicInfo, navigate]);
 
@@ -455,7 +455,7 @@ const PhotoCapturePage = () => {
   };
 
   const handleBack = () => {
-    navigate("/diagnosis/basic-info");
+    navigate("/diagnosis/basic-info", { state: { fromInternalNav: true } });
   };
 
   return (

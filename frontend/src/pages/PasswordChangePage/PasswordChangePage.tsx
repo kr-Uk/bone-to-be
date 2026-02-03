@@ -55,7 +55,7 @@ export const PasswordChangePage = () => {
         throw new Error("Failed to update password");
       }
       alert("비밀번호 변경이 완료되었습니다.");
-      navigate("/profile");
+      navigate("/profile", { state: { fromInternalNav: true } });
     } catch {
       alert("비밀번호 변경에 실패했습니다.");
     }
@@ -83,7 +83,10 @@ export const PasswordChangePage = () => {
           canSubmit={canSubmit}
           onSubmit={handleSubmit}
           links={
-            <LinkButton type="button" onClick={() => navigate("/profile")}>
+            <LinkButton
+              type="button"
+              onClick={() => navigate("/profile", { state: { fromInternalNav: true } })}
+            >
               마이페이지로 돌아가기
             </LinkButton>
           }

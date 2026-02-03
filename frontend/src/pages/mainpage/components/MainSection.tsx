@@ -1,11 +1,10 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import styled, { css, keyframes, useTheme } from "styled-components";
 
 import type { AppTheme } from "@/shared/styles/theme";
 
 import { NaturalShape, StraightShape, WaveShape } from "@/shared/components/BoneShapes";
-import { useAuth } from "@/shared/hooks/useAuth";
+import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 type TypographyToken = {
   fontSize: string;
@@ -32,16 +31,10 @@ export const MainSection = ({ categoryItems }: Props) => {
   const lineColor = theme.colors.brand;
   const lineOpacity = 0.5;
   const dotColor = theme.colors.brand;
-  const navigate = useNavigate();
-  const { isLoggedIn } = useAuth({ enabled: false });
+  const protectedNavigate = useProtectedNavigate();
 
   const handleCtaClick = () => {
-    if (!isLoggedIn) {
-      window.alert("로그인이 필요한 서비스입니다.");
-      navigate("/login");
-      return;
-    }
-    navigate("/diagnosis/basic-info");
+    protectedNavigate("/diagnosis/basic-info");
   };
 
   return (

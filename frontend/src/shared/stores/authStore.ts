@@ -8,6 +8,8 @@ interface AuthState {
   isAuthLoading: boolean;
   hasCheckedAuth: boolean;
   isLoginModalOpen: boolean;
+  isAuthRequiredModalOpen: boolean;
+  authRequiredReturnPath: string | null;
   setAuth: (me: Me) => void;
   clearAuth: () => void;
   setAuthLoading: (value: boolean) => void;
@@ -16,6 +18,8 @@ interface AuthState {
   logout: () => void;
   openLoginModal: () => void;
   closeLoginModal: () => void;
+  openAuthRequiredModal: (returnPath?: string) => void;
+  closeAuthRequiredModal: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -24,6 +28,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthLoading: true,
   hasCheckedAuth: false,
   isLoginModalOpen: false,
+  isAuthRequiredModalOpen: false,
+  authRequiredReturnPath: null,
   setAuth: (me) => set({ me, isAuthenticated: true }),
   clearAuth: () => set({ me: null, isAuthenticated: false }),
   setAuthLoading: (value) => set({ isAuthLoading: value }),
@@ -32,4 +38,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => set({ me: null, isAuthenticated: false }),
   openLoginModal: () => set({ isLoginModalOpen: true }),
   closeLoginModal: () => set({ isLoginModalOpen: false }),
+  openAuthRequiredModal: (returnPath) =>
+    set({
+      isAuthRequiredModalOpen: true,
+      isLoginModalOpen: false,
+      authRequiredReturnPath: returnPath || null,
+    }),
+  closeAuthRequiredModal: () =>
+    set({ isAuthRequiredModalOpen: false, authRequiredReturnPath: null }),
 }));

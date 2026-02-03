@@ -150,9 +150,7 @@ const ProfilePage = () => {
   const { me, isAuthLoading, isLoggedIn } = useAuth();
   const isAuthReady = !isAuthLoading;
   const meUserId = me?.userId != null ? String(me.userId) : undefined;
-  const isMe = Boolean(
-    isAuthReady && isLoggedIn && (!userId || (meUserId && userId === meUserId)),
-  );
+  const isMe = Boolean(isAuthReady && isLoggedIn && (!userId || (meUserId && userId === meUserId)));
   const queryUserId = isMe ? undefined : userId;
   const shouldFetchProfile = isAuthReady && (Boolean(userId) || isLoggedIn);
   const { data, isLoading, isError } = useProfileQuery(queryUserId, {
@@ -304,11 +302,11 @@ const ProfilePage = () => {
   const handleCloseSettings = () => setIsSettingsOpen(false);
   const handleGoPasswordReset = () => {
     setIsSettingsOpen(false);
-    navigate("/profile/password");
+    navigate("/profile/password", { state: { fromInternalNav: true } });
   };
   const handleGoWithdraw = () => {
     setIsSettingsOpen(false);
-    navigate("/withdraw");
+    navigate("/withdraw", { state: { fromInternalNav: true } });
   };
   const handlePostClick = (postId: number) => {
     setSelectedFeedId(String(postId));
@@ -328,7 +326,7 @@ const ProfilePage = () => {
               bio={profile.bio}
               isOwner={isOwner}
               isFollowing={profile.isFollowing}
-              onEditProfile={() => navigate("/profile/edit")}
+              onEditProfile={() => navigate("/profile/edit", { state: { fromInternalNav: true } })}
               onOpenSettings={handleOpenSettings}
               onFollowerClick={() => setFollowModalType("follower")}
               onFollowingClick={() => setFollowModalType("following")}

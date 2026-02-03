@@ -45,6 +45,19 @@ const MainContent = styled.main<{ $isDesktop: boolean }>`
   }
 `;
 
+const SectionStack = styled.section`
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 64px 1.5rem 0;
+
+  @media (min-width: 1024px) {
+    padding-top: 80px;
+  }
+`;
+
 const LeftSection = styled.aside`
   width: 480px;
   flex-shrink: 0;
@@ -269,32 +282,33 @@ const ReportPage = () => {
 
           <FitReferenceSection fitReferences={metadata.fitReferences} />
 
-          {/* 상세 골격 분석 섹션 (11개 지표) */}
-          {reportData.details &&
-            Array.isArray(reportData.details) &&
-            reportData.details.length > 0 && (
-              <AnalysisDetailsSection metrics={reportData.details} />
-            )}
-
-          <RecommendationSection
-            doRecommendations={metadata.doRecommendations}
-            dontRecommendations={metadata.dontRecommendations}
-          />
-
-          {/* VirtualFittingSection은 details 데이터가 있을 때만 표시 */}
-          {reportData.details &&
-            Array.isArray(reportData.details) &&
-            reportData.details.length > 0 && (
-              <VirtualFittingSection
-                imageUrl={"/images/virtual-fitting-placeholder.png"}
-                title="가상 피팅 준비 중"
-                description="곧 이용하실 수 있습니다"
-                tags={[]}
-                onTryAnother={() => {}}
-              />
-            )}
         </ContentWrapper>
       </MainContent>
+
+      <SectionStack>
+        {/* 상세 골격 분석 섹션 (11개 지표) */}
+        {reportData.details &&
+          Array.isArray(reportData.details) &&
+          reportData.details.length > 0 && <AnalysisDetailsSection metrics={reportData.details} />}
+
+        <RecommendationSection
+          doRecommendations={metadata.doRecommendations}
+          dontRecommendations={metadata.dontRecommendations}
+        />
+
+        {/* VirtualFittingSection은 details 데이터가 있을 때만 표시 */}
+        {reportData.details &&
+          Array.isArray(reportData.details) &&
+          reportData.details.length > 0 && (
+            <VirtualFittingSection
+              imageUrl={"/images/virtual-fitting-placeholder.png"}
+              title="가상 피팅 준비 중"
+              description="곧 이용하실 수 있습니다"
+              tags={[]}
+              onTryAnother={() => {}}
+            />
+          )}
+      </SectionStack>
     </PageContainer>
   );
 };

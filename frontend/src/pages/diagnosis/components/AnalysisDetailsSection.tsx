@@ -1,19 +1,38 @@
-import { motion } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef } from "react";
 import styled from "styled-components";
+import { ChevronDown } from "lucide-react";
 
 import MetricRangeIndicator from "./MetricRangeIndicator";
 
 import type { ReportDetailMetric } from "../api/diagnosis.types";
 
-import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 
 // ===== 상수 =====
 
-const DISPLAY_STEPS = {
-  mobile: [3, 7], // 3 → 7 → 전체
-  desktop: [6], // 6 → 전체
-} as const;
+const METRIC_GROUPS = [
+  {
+    key: "line",
+    title: "Line Specs",
+    keys: ["shoulder_slope_angle", "waist_curvature_index", "linearity_index"],
+  },
+  {
+    key: "volume",
+    title: "Volume Specs",
+    keys: [
+      "shoulder_width_index",
+      "hip_width_index",
+      "upper_body_depth_index",
+      "ribcage_volume_index",
+      "joint_thickness_index",
+    ],
+  },
+  {
+    key: "balance",
+    title: "Balance Specs",
+    keys: ["shoulder_hip_ratio", "arm_torso_ratio", "leg_length_index"],
+  },
+] as const;
 
 // ===== 스타일 컴포넌트 =====
 
@@ -23,35 +42,6 @@ const SectionContainer = styled.section`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.xl};
   scroll-margin-top: ${({ theme }) => theme.spacing.xxl};
-`;
-
-const SectionHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const SectionTitle = styled.h2`
-  font-size: ${({ theme }) => theme.typography.heading.lg.fontSize};
-  font-weight: ${({ theme }) => theme.typography.heading.lg.fontWeight};
-  color: ${({ theme }) => theme.colors.gray[100]};
-  margin: 0;
-
-  @media (min-width: 768px) {
-    font-size: ${({ theme }) => theme.typography.heading["2xl"].fontSize};
-  }
-`;
-
-const SectionDescription = styled.p`
-  font-size: ${({ theme }) => theme.typography.body.lg.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.lg.regular.fontWeight};
-  color: ${({ theme }) => theme.colors.gray[400]};
-  line-height: 1.6;
-  margin: 0;
-
-  @media (min-width: 768px) {
-    font-size: ${({ theme }) => theme.typography.body.lg.medium.fontSize};
-  }
 `;
 
 const MetricsGrid = styled(motion.div)`
@@ -70,89 +60,154 @@ const MetricsGrid = styled(motion.div)`
   }
 `;
 
-const ToggleButtonContainer = styled.div`
+const AccordionContainer = styled.div`
   width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing.xl};
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.gray[800]};
+  background: ${({ theme }) => theme.colors.gray[900]};
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
 `;
 
 interface ArrowIconProps {
   $isOpen: boolean;
 }
 
-const ToggleButton = styled(motion.button)`
+const AccordionHint = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 2px ${({ theme }) => theme.spacing.sm};
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: ${({ theme }) => theme.colors.gray[400]};
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+`;
+
+const AccordionButton = styled.button`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.xl}`};
-  background-color: ${({ theme }) => theme.colors.brand};
+  justify-content: space-between;
+  width: 100%;
+  gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => `${theme.spacing.lg} ${theme.spacing.xl}`};
+  background: rgba(255, 255, 255, 0.04);
   color: ${({ theme }) => theme.colors.gray[50]};
-  font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
   border: none;
-  border-radius: 24px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.purple[700]};
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.16);
   }
 
-  &:active {
-    background-color: ${({ theme }) => theme.colors.purple[800]};
+  &:hover ${AccordionHint} {
+    color: ${({ theme }) => theme.colors.brand};
+    background-color: rgba(152, 16, 250, 0.2);
   }
 
   @media (min-width: 768px) {
-    font-size: ${({ theme }) => theme.typography.body.lg.semibold.fontSize};
-    padding: ${({ theme }) => `${theme.spacing.lg} ${theme.spacing.xxl}`};
+    padding: ${({ theme }) => `${theme.spacing.xl} ${theme.spacing.xxl}`};
   }
 `;
 
-const ArrowIcon = styled.span<ArrowIconProps>`
-  font-size: 0.875rem;
+const AccordionTitle = styled.h2`
+  font-size: 20px;
+  font-weight: ${({ theme }) => theme.typography.heading.lg.fontWeight};
+  color: ${({ theme }) => theme.colors.gray[50]};
+  line-height: 32px;
+  margin: 0;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 36px;
+  }
+`;
+
+const AccordionTitleRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing.sm};
+`;
+
+const AccordionMeta = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const MetricCount = styled.span`
+  font-size: 16px;
+  font-weight: 300;
+  color: ${({ theme }) => theme.colors.gray[300]};
+`;
+
+const ArrowIcon = styled(ChevronDown)<ArrowIconProps>`
+  width: 20px;
+  height: 20px;
+  color: ${({ theme }) => theme.colors.gray[500]};
   transition: transform 0.3s ease;
   transform: ${({ $isOpen }) => ($isOpen ? "rotate(180deg)" : "rotate(0deg)")};
 `;
 
-const ProgressBadge = styled.span`
-  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
-  color: ${({ theme }) => theme.colors.gray[300]};
-  margin-left: ${({ theme }) => theme.spacing.xs};
-  opacity: 0.8;
+const AccordionContent = styled(motion.div)`
+  overflow: hidden;
+  padding: 48px ${({ theme }) => theme.spacing.xl} ${({ theme }) => theme.spacing.xl};
 `;
 
-// ===== 헬퍼 함수 =====
+const GroupSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.lg};
+  padding-top: ${({ theme }) => theme.spacing.lg};
 
-interface ButtonTextConfig {
-  displayStep: number;
-  stepsLength: number;
-  nextStepCount: number;
-}
-
-function getButtonText({ displayStep, stepsLength, nextStepCount }: ButtonTextConfig): string {
-  // 전체 표시 상태
-  if (displayStep === stepsLength) {
-    return "접기";
+  &:first-child {
+    padding-top: 0;
   }
+`;
 
-  // 마지막 단계 전 (전체보기로 가는 버튼)
-  if (displayStep === stepsLength - 1) {
-    return `나머지 ${nextStepCount}개 전체보기`;
-  }
+const GroupTitle = styled.h3`
+  font-size: ${({ theme }) => theme.typography.body.lg.semibold.fontSize};
+  font-weight: ${({ theme }) => theme.typography.body.lg.semibold.fontWeight};
+  color: ${({ theme }) => theme.colors.gray[100]};
+  margin: 0;
+`;
 
-  // 중간 단계 (더보기 버튼)
-  return `${nextStepCount}개 더보기`;
-}
+function groupMetrics(metrics: ReportDetailMetric[]) {
+  const groups = METRIC_GROUPS.map((group) => ({
+    ...group,
+    metrics: metrics.filter((metric) =>
+      (group.keys as readonly string[]).includes(metric.key),
+    ),
+  }));
 
-function getProgressText(
-  displayStep: number,
-  stepsLength: number,
-  currentDisplayCount: number,
-  metricsLength: number,
-): string {
-  // 전체 표시 시 진행 상황 숨김
-  return displayStep === stepsLength ? "" : `(${currentDisplayCount}/${metricsLength})`;
+  const groupedKeys = new Set<string>(
+    METRIC_GROUPS.flatMap((group) => group.keys as readonly string[]),
+  );
+  const remaining = metrics.filter((metric) => !groupedKeys.has(metric.key));
+
+  return remaining.length > 0
+    ? [
+        ...groups,
+        {
+          key: "others",
+          title: "기타",
+          keys: [],
+          metrics: remaining,
+        },
+      ]
+    : groups;
 }
 
 // ===== 메인 컴포넌트 =====
@@ -168,144 +223,62 @@ const AnalysisDetailsSection = ({ metrics }: AnalysisDetailsSectionProps) => {
   }
 
   // 상태 관리
-  const [displayStep, setDisplayStep] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const prevDisplayCountRef = useRef(0);
-
-  // 반응형 브레이크포인트
-  const isTabletOrDesktop = useMediaQuery("(min-width: 768px)");
-
-  // 단계별 표시 개수 설정
-  const steps = isTabletOrDesktop ? DISPLAY_STEPS.desktop : DISPLAY_STEPS.mobile;
-  const stepsWithFinal = [...steps, metrics.length]; // 마지막 단계는 전체
-  const currentDisplayCount = stepsWithFinal[displayStep];
-  const displayedMetrics = metrics.slice(0, currentDisplayCount);
-
-  // 다음 단계에서 추가될 개수
-  const nextStepCount =
-    displayStep < stepsWithFinal.length - 1
-      ? stepsWithFinal[displayStep + 1] - currentDisplayCount
-      : 0;
-
-  // 더보기 버튼 표시 여부
-  const shouldShowButton = metrics.length > steps[0];
-
-  // 버튼 텍스트 생성
-  const buttonText = getButtonText({
-    displayStep,
-    stepsLength: stepsWithFinal.length - 1,
-    nextStepCount,
-  });
-
-  const progressText = getProgressText(
-    displayStep,
-    stepsWithFinal.length - 1,
-    currentDisplayCount,
-    metrics.length,
-  );
-
-  // 토글 핸들러
-  const handleToggle = () => {
-    if (displayStep === stepsWithFinal.length - 1) {
-      // 접기: 초기 상태로
-      setDisplayStep(0);
-
-      // 섹션 상단으로 스크롤
-      setTimeout(() => {
-        sectionRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-          inline: "nearest",
-        });
-      }, 100);
-    } else {
-      // 다음 단계로
-      setDisplayStep((prev) => prev + 1);
-    }
-  };
-
-  // Phase 2: 새 콘텐츠로 스크롤 조정
-  useEffect(() => {
-    // 더보기 클릭으로 콘텐츠가 추가된 경우
-    if (currentDisplayCount > prevDisplayCountRef.current && prevDisplayCountRef.current > 0) {
-      // 새로 추가된 첫 번째 항목 찾기
-      const newItemIndex = prevDisplayCountRef.current;
-      const newItemElement = document.querySelector(`[data-metric-index="${newItemIndex}"]`);
-
-      if (newItemElement) {
-        // 새 콘텐츠로 부드럽게 스크롤 (애니메이션 시간 고려)
-        setTimeout(() => {
-          newItemElement.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: "nearest",
-          });
-        }, 400); // stagger 애니메이션 완료 대기
-      }
-    }
-
-    // 현재 표시 개수 저장
-    prevDisplayCountRef.current = currentDisplayCount;
-  }, [currentDisplayCount]);
+  const groupedMetrics = groupMetrics(metrics);
+  const metricCountLabel = `측정된 데이터를 기반으로 분석된 ${metrics.length}가지 상세 지표입니다.`;
 
   return (
     <SectionContainer ref={sectionRef}>
-      <SectionHeader>
-        <SectionTitle>상세 골격 분석</SectionTitle>
-        <SectionDescription>
-          11가지 주요 지표를 통해 당신의 골격 특성을 분석했어요.
-        </SectionDescription>
-      </SectionHeader>
+      <AccordionContainer>
+        <AccordionButton
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          aria-expanded={isOpen}
+          aria-controls="metrics-accordion-content"
+        >
+          <AccordionTitleRow>
+            <AccordionTitle>상세 수치 분석</AccordionTitle>
+            <MetricCount>{metricCountLabel}</MetricCount>
+          </AccordionTitleRow>
+          <AccordionMeta>
+            <AccordionHint>{isOpen ? "Click to hide" : "Click to view"}</AccordionHint>
+            <ArrowIcon $isOpen={isOpen} aria-hidden="true" />
+          </AccordionMeta>
+        </AccordionButton>
 
-      <MetricsGrid id="metrics-grid" role="region" aria-label="골격 분석 메트릭 목록">
-        {displayedMetrics.map((metric, index) => {
-          // 이미 표시되었던 항목인지 확인
-          const wasVisible = index < prevDisplayCountRef.current;
-
-          // 새로운 항목의 인덱스 계산 (0부터 시작)
-          const newItemIndex = index - prevDisplayCountRef.current;
-
-          // Stagger delay 계산: 새 항목만 0.1초 간격으로 지연
-          const delay = wasVisible ? 0 : Math.max(0, newItemIndex) * 0.1;
-
-          return (
-            <motion.div
-              key={metric.key}
-              initial={
-                wasVisible
-                  ? { y: 0, scale: 1 } // 기존 항목: 애니메이션 없음
-                  : { y: 20, scale: 0.95 } // 새 항목: 시작 위치
-              }
-              animate={{ y: 0, scale: 1 }} // 최종 위치
-              transition={{
-                duration: 0.4, // 400ms 애니메이션
-                delay, // 계산된 지연
-                ease: "easeOut", // 부드러운 감속 곡선
-              }}
-              data-metric-index={index}
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <AccordionContent
+              id="metrics-accordion-content"
+              role="region"
+              aria-label="골격 분석 메트릭 목록"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <MetricRangeIndicator metric={metric} />
-            </motion.div>
-          );
-        })}
-      </MetricsGrid>
-
-      {shouldShowButton && (
-        <ToggleButtonContainer>
-          <ToggleButton
-            onClick={handleToggle}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label={`${metrics.length}개 메트릭 중 ${currentDisplayCount}개 표시 중. ${buttonText}`}
-            aria-expanded={displayStep === stepsWithFinal.length - 1}
-            aria-controls="metrics-grid"
-          >
-            {buttonText}
-            <ArrowIcon $isOpen={displayStep === stepsWithFinal.length - 1}>▼</ArrowIcon>
-            {progressText && <ProgressBadge>{progressText}</ProgressBadge>}
-          </ToggleButton>
-        </ToggleButtonContainer>
-      )}
+              {groupedMetrics.map((group) => (
+                <GroupSection key={group.key}>
+                  <GroupTitle>{group.title}</GroupTitle>
+                  <MetricsGrid role="list" aria-label={`${group.title} 메트릭 목록`}>
+                    {group.metrics.map((metric) => (
+                      <motion.div
+                        key={metric.key}
+                        initial={{ y: 16, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                      >
+                        <MetricRangeIndicator metric={metric} isOpen={isOpen} />
+                      </motion.div>
+                    ))}
+                  </MetricsGrid>
+                </GroupSection>
+              ))}
+            </AccordionContent>
+          )}
+        </AnimatePresence>
+      </AccordionContainer>
     </SectionContainer>
   );
 };

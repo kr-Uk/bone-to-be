@@ -135,7 +135,7 @@ const BasicInfoPage = () => {
     setBasicInfo(apiData);
 
     // 다음 단계로 이동
-    navigate("/diagnosis/photo-capture");
+    navigate("/diagnosis/photo-capture", { state: { fromInternalNav: true } });
   };
 
   const variant = isMobile ? "mobile" : isTablet ? "tablet" : "desktop";

@@ -11,9 +11,12 @@ import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.notification.application.NotificationFacade;
 import com.bonetobe.backend.notification.domain.AlertType;
 import com.bonetobe.backend.notification.domain.Notification;
-import com.bonetobe.backend.recommendation.domain.*;
+import com.bonetobe.backend.recommendation.domain.Recommendation;
+import com.bonetobe.backend.recommendation.domain.RecommendationMessage;
+import com.bonetobe.backend.recommendation.domain.TryOnProducer;
+import com.bonetobe.backend.recommendation.domain.TryOnService;
+import com.bonetobe.backend.recommendation.presentation.GetTryOnPicture;
 import com.bonetobe.backend.recommendation.presentation.TryOnResult;
-import com.bonetobe.backend.report.application.ReportFacade;
 import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.report.domain.ReportService;
 import com.bonetobe.backend.user.domain.User;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +38,6 @@ public class TryOnFacade {
     private final ClothService clothService;
     private final TryOnProducer tryOnProducer;
     private final FileService fileService;
-    private final ReportFacade reportFacade;
 
     @Transactional
     public void saveResultAndSendEvent(TryOnResult result) {
@@ -92,5 +95,20 @@ public class TryOnFacade {
                 bestUrl.uploadUrl(),
                 clothDownloadPresignedUrls.worstClothUrl(),
                 worstUrl.uploadUrl()));
+    }
+
+    public GetTryOnPicture getTryOnPicture(Long reportId, Long userId) {
+        Recommendation recommendation = tryOnService.get(reportId, userId);
+        String worst = fileService.getPrivateDownloadUrls(
+            List.of(
+                new FileDownloadUrl.Query(recommendation.getWorstPicture().getId())),
+            userId).get(0).presignedUrl();
+
+        String best = fileService.getPrivateDownloadUrls(
+            List.of(
+                new FileDownloadUrl.Query(recommendation.getBestPicture().getId())),
+            userId).get(0).presignedUrl();
+
+        return new GetTryOnPicture(reportId, best, worst);
     }
 }

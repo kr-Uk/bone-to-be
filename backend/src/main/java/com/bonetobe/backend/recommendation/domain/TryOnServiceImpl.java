@@ -2,10 +2,12 @@ package com.bonetobe.backend.recommendation.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
-import com.bonetobe.backend.file.domain.FileService;
+import com.bonetobe.backend.recommendation.infrastructure.RecommendationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -23,5 +25,14 @@ public class TryOnServiceImpl implements TryOnService {
     @Override
     public Recommendation save(Recommendation recommendation) {
         return recommendationRepository.save(recommendation);
+    }
+
+    @Override
+    public Recommendation get(Long reportId, Long userId) {
+        Recommendation recommendation = recommendationRepository.findByReportIdAndFileJoined(reportId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RECOMMENDATION));
+        if (!Objects.equals(recommendation.getUser().getId(), userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+        return recommendation;
     }
 }

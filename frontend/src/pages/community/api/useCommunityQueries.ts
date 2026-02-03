@@ -232,6 +232,9 @@ export function useLikeToggle() {
       queryClient.invalidateQueries({ queryKey: ["feedDetail", feedId] });
       queryClient.invalidateQueries({ queryKey: ["feedList"] });
       queryClient.invalidateQueries({ queryKey: ["feedLikes", feedId] });
+
+      // Profile page 캐시도 무효화하여 좋아요 동기화
+      queryClient.invalidateQueries({ queryKey: ["profile", "feeds"] });
     },
   });
 }

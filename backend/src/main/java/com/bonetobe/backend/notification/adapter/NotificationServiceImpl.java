@@ -62,8 +62,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification getNotification(Long id) {
-        return notificationRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
+    public Notification getNotification(String id) {
+        return notificationRepository.findByUuid(id).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
     }
 
     @Override

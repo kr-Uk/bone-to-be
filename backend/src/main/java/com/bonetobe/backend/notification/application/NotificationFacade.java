@@ -13,7 +13,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class NotificationFacade {
     private final NotificationService notificationService;
-    public void deleteNotifications(Long userId, Long notificationId) {
+    public void deleteNotifications(Long userId, String notificationId) {
         Notification notification = notificationService.getNotification(notificationId);
         if (Objects.equals(notification.getUser().getId(), userId)) {
             throw new BusinessException(ErrorCode.FORBIDDEN);

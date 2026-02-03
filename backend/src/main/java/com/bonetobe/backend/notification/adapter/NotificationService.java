@@ -12,7 +12,7 @@ public interface NotificationService {
 
     List<Notification> getNotifications(Long userId);
 
-    Notification getNotification(Long id);
+    Notification getNotification(String id);
 
     void deleteNotifications(Notification notification);
 

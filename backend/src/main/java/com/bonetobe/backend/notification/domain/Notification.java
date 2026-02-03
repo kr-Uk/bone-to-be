@@ -1,6 +1,8 @@
-package com.bonetobe.backend.common.domain;
+package com.bonetobe.backend.notification.domain;
 
 import com.bonetobe.backend.common.BaseEntity;
+import com.bonetobe.backend.common.exception.BusinessException;
+import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -26,10 +28,7 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private String message;
-
-    private String relatedUrl;
+    private Long domainId;
 
     @Column(nullable = false)
     private boolean isRead = false;
@@ -37,4 +36,14 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "alert_type", nullable = false)
     private AlertType alertType;
+
+    private String uuid;
+
+    public void read() {
+        if (isRead) {
+            throw new BusinessException(ErrorCode.ALREADY_READ_NOTIFICATION);
+        }
+
+        isRead = true;
+    }
 }

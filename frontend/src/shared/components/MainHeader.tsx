@@ -18,7 +18,10 @@ import logo from "@/assets/image/MainLogo.svg";
 import { FollowListModal } from "@/pages/profile/components/FollowListModal";
 import { useUserSearch } from "@/pages/profile/hooks/useUserSearch";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { useNotificationsQuery } from "@/shared/hooks/useNotificationsQuery";
 import { useLogout } from "@/shared/hooks/useLogout";
+import { NotificationToggleButton } from "@/shared/components/NotificationToggleButton";
+import { useNotificationStore } from "@/shared/stores/notification.store";
 
 type NavItem = {
   label: string;
@@ -58,9 +61,11 @@ export const MainHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const notificationMenuRef = useRef<HTMLDivElement | null>(null);
   const profilePath = "/profile";
   const navItems: NavItem[] = isLoggedIn
     ? [...baseNavItems, { label: "MYPAGE", path: profilePath }]
@@ -79,6 +84,11 @@ export const MainHeader = () => {
   const searchedUsers: SearchUser[] = searchResult.data ?? [];
   const isSearchLoading = searchResult.isLoading;
   const isSearchError = searchResult.isError;
+  const notificationsQuery = useNotificationsQuery(isNotificationOpen);
+  const notifications = useNotificationStore((state) => state.notifications);
+  const setNotifications = useNotificationStore((state) => state.setNotifications);
+  const isNotificationLoading = notificationsQuery.isLoading;
+  const isNotificationError = notificationsQuery.isError;
   const searchUsers = useMemo(() => {
     return searchedUsers.map((user) => ({
       id: String(user.userId),
@@ -127,9 +137,28 @@ export const MainHeader = () => {
   }, [isProfileMenuOpen]);
 
   useEffect(() => {
+    if (!isNotificationOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!notificationMenuRef.current) {
+        return;
+      }
+      if (!notificationMenuRef.current.contains(event.target as Node)) {
+        setIsNotificationOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isNotificationOpen]);
+
+  useEffect(() => {
     setIsProfileMenuOpen(false);
     setIsMobileMenuOpen(false);
     setIsSearchOpen(false);
+    setIsNotificationOpen(false);
   }, [location.pathname, location.search, location.hash]);
 
   useEffect(() => {
@@ -160,6 +189,13 @@ export const MainHeader = () => {
       window.clearTimeout(timeoutId);
     };
   }, [isSearchOpen, searchQuery]);
+
+  useEffect(() => {
+    if (!notificationsQuery.data) {
+      return;
+    }
+    setNotifications(notificationsQuery.data);
+  }, [notificationsQuery.data, setNotifications]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -221,14 +257,48 @@ export const MainHeader = () => {
               aria-expanded={isSearchOpen}
               onClick={() => {
                 setIsProfileMenuOpen(false);
+                setIsNotificationOpen(false);
                 setIsSearchOpen((prev) => !prev);
               }}
             >
               <FiSearch size={24} />
             </AuthIconButton>
-            <AuthIconButton type="button" aria-label="Notifications">
-              <FaRegBell size={26} />
-            </AuthIconButton>
+            <NotificationMenuWrap ref={notificationMenuRef}>
+              <AuthIconButton
+                type="button"
+                aria-label="Notifications"
+                aria-expanded={isNotificationOpen}
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setIsProfileMenuOpen(false);
+                  setIsNotificationOpen((prev) => !prev);
+                }}
+              >
+                <FaRegBell size={26} />
+              </AuthIconButton>
+              <NotificationMenu $isOpen={isNotificationOpen}>
+                <NotificationToggleButton />
+                <NotificationList>
+                  {isNotificationLoading ? (
+                    <NotificationEmpty>알림을 불러오는 중...</NotificationEmpty>
+                  ) : isNotificationError ? (
+                    <NotificationEmpty>알림을 불러오지 못했습니다.</NotificationEmpty>
+                  ) : notifications.length ? (
+                    notifications.map((notification) => (
+                      <NotificationItem key={notification.id}>
+                        <NotificationMeta>
+                          <NotificationType>{notification.type}</NotificationType>
+                          <NotificationTime>{notification.createdAt}</NotificationTime>
+                        </NotificationMeta>
+                        <NotificationMessage>{notification.message}</NotificationMessage>
+                      </NotificationItem>
+                    ))
+                  ) : (
+                    <NotificationEmpty>알림이 없습니다.</NotificationEmpty>
+                  )}
+                </NotificationList>
+              </NotificationMenu>
+            </NotificationMenuWrap>
             <ProfileMenuWrap ref={profileMenuRef}>
               <AuthIconButton
                 type="button"
@@ -236,6 +306,7 @@ export const MainHeader = () => {
                 aria-expanded={isProfileMenuOpen}
                 onClick={() => {
                   setIsSearchOpen(false);
+                  setIsNotificationOpen(false);
                   setIsProfileMenuOpen((prev) => !prev);
                 }}
               >
@@ -535,6 +606,81 @@ const AuthIcons = styled.div`
   @media (max-width: 1023px) {
     display: none;
   }
+`;
+
+const NotificationMenuWrap = styled.div`
+  position: relative;
+`;
+
+const NotificationMenu = styled.div<{ $isOpen: boolean }>`
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  min-width: 14.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
+  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  display: ${({ $isOpen }) => ($isOpen ? "grid" : "none")};
+  gap: 0.75rem;
+  z-index: 10;
+`;
+
+const NotificationList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 18rem;
+  overflow: auto;
+  padding-right: 0.15rem;
+`;
+
+const NotificationItem = styled.div`
+  padding: 0.65rem 0.7rem;
+  border-radius: 0.6rem;
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
+  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[700]};
+  display: grid;
+  gap: 0.35rem;
+`;
+
+const NotificationMeta = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+`;
+
+const NotificationType = styled.span`
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[700]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[100]};
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+`;
+
+const NotificationTime = styled.span`
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[400]};
+  font-size: 0.65rem;
+  font-weight: 500;
+`;
+
+const NotificationMessage = styled.p`
+  margin: 0;
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[100]};
+  font-size: 0.78rem;
+  line-height: 1.1rem;
+  word-break: keep-all;
+`;
+
+const NotificationEmpty = styled.span`
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[400]};
+  font-size: 0.78rem;
+  text-align: center;
+  padding: 0.75rem 0;
 `;
 
 const ProfileMenuWrap = styled.div`

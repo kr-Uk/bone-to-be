@@ -1,6 +1,7 @@
 import { useMutation, type UseMutationResult } from "@tanstack/react-query";
 
 import { logout } from "@/shared/api/auth";
+import { disconnect } from "@/shared/notifications/sseClient";
 import { useAuthStore } from "@/shared/stores/authStore";
 
 type LogoutResponse = { message?: string };
@@ -11,6 +12,7 @@ export const useLogout = (): UseMutationResult<LogoutResponse, Error, void> => {
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      disconnect();
       clearAuth();
     },
   });

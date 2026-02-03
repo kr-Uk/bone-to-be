@@ -9,4 +9,6 @@ public interface ReportReader {
     List<Report> readReports(Long id);
 
     Optional<Report> readRepresentativeReport(Long userId);
+
+    Report readWithFile(Long reportId);
 }

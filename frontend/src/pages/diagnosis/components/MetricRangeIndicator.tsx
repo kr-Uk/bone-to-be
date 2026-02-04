@@ -34,11 +34,7 @@ const getZoneWidths = (metric: ReportDetailMetric): number[] => {
   });
 };
 
-const MetricRangeIndicator = ({
-  metric,
-  isOpen,
-  selectedIndex,
-}: MetricRangeIndicatorProps) => {
+const MetricRangeIndicator = ({ metric, isOpen, selectedIndex }: MetricRangeIndicatorProps) => {
   const metricKeyLabel = metric.key.replace(/_/g, " ");
   const resolvedIndex = selectedIndex ?? getZoneIndex(metric);
   const zoneWidths = getZoneWidths(metric);

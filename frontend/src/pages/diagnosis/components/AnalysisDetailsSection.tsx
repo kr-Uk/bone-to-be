@@ -1,12 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { useState, useRef } from "react";
 import styled from "styled-components";
-import { ChevronDown } from "lucide-react";
 
 import MetricRangeIndicator from "./MetricRangeIndicator";
 
 import type { ReportDetailMetric } from "../api/diagnosis.types";
-
 
 // ===== 상수 =====
 
@@ -101,7 +100,9 @@ const AccordionButton = styled.button`
   border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(16px);
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.06);
@@ -202,9 +203,7 @@ const GroupTitle = styled.h3`
 function groupMetrics(metrics: ReportDetailMetric[]) {
   const groups = METRIC_GROUPS.map((group) => ({
     ...group,
-    metrics: metrics.filter((metric) =>
-      (group.keys as readonly string[]).includes(metric.key),
-    ),
+    metrics: metrics.filter((metric) => (group.keys as readonly string[]).includes(metric.key)),
   }));
 
   const groupedKeys = new Set<string>(

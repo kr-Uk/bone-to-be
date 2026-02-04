@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Stack } from "./ProfileCommon";
 
 import { Skeleton } from "@/shared/components/Skeleton/Skeleton";
-import { SkeletonAvatar } from "@/shared/components/Skeleton/SkeletonAvatar";
 import { SkeletonText } from "@/shared/components/Skeleton/SkeletonText";
 
 const Card = styled.section`
@@ -43,7 +42,6 @@ const AvatarWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
 
   @media (max-width: 1024px) {
     width: 12.5rem;
@@ -53,6 +51,23 @@ const AvatarWrap = styled.div`
   @media (max-width: 768px) {
     width: clamp(5rem, 18vw, 6.25rem);
     height: clamp(5rem, 18vw, 6.25rem);
+  }
+`;
+
+const AvatarSkeleton = styled(Skeleton)`
+  width: 9rem !important;
+  height: 9rem !important;
+  border-radius: 624.9375rem;
+  overflow: hidden;
+
+  @media (max-width: 1024px) {
+    width: 12.5rem !important;
+    height: 12.5rem !important;
+  }
+
+  @media (max-width: 768px) {
+    width: clamp(5rem, 18vw, 6.25rem) !important;
+    height: clamp(5rem, 18vw, 6.25rem) !important;
   }
 `;
 
@@ -186,7 +201,7 @@ export const ProfileHeaderSkeleton: React.FC = () => {
     <Card aria-label="Loading profile header">
       {/* Avatar skeleton */}
       <AvatarWrap>
-        <SkeletonAvatar size="9rem" />
+        <AvatarSkeleton variant="circular" />
       </AvatarWrap>
 
       <Info>

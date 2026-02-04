@@ -56,9 +56,10 @@ const ChartWrap = styled.div`
 `;
 
 const ChartSkeleton = styled(Skeleton)`
+  /* Match actual ChartInner size */
   @media (max-width: 480px) {
-    width: 12rem !important;
-    height: 12rem !important;
+    width: 14rem !important;
+    height: 14rem !important;
   }
 `;
 
@@ -100,7 +101,7 @@ export const SkeletalTypeSkeleton = () => {
       </SectionHeader>
       <Card>
         <ChartWrap>
-          <ChartSkeleton variant="circular" width="14rem" height="14rem" />
+          <ChartSkeleton variant="circular" width="16rem" height="16rem" />
         </ChartWrap>
         <Details>
           <BadgeSkeleton width="6.5rem" height="1.5625rem" />

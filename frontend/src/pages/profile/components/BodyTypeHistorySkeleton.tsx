@@ -40,7 +40,14 @@ const Track = styled.div`
   flex: 1;
   display: flex;
   gap: 1.51875rem;
-  overflow: hidden;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    height: 0;
+    display: none;
+  }
 `;
 
 const Card = styled.div`
@@ -49,11 +56,6 @@ const Card = styled.div`
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-
-  @media (max-width: 768px) {
-    min-width: clamp(14rem, 78vw, 18rem);
-    height: clamp(20rem, 85vw, 24rem);
-  }
 `;
 
 const CardContent = styled.div`

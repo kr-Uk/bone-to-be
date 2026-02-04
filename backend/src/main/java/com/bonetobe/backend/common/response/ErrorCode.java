@@ -40,6 +40,7 @@ public enum ErrorCode {
     POST_CREATE_GENDER_REQUIRED(2012, HttpStatus.BAD_REQUEST, "게시글에는 성별 정보가 반드시 필요합니다."),
     POST_CREATE_HEIGHT_REQUIRED(2013, HttpStatus.BAD_REQUEST, "게시글에는 키 정보가 반드시 필요합니다."),
     POST_CREATE_WEIGHT_REQUIRED(2014, HttpStatus.BAD_REQUEST, "게시글에는 몸무게 정보가 반드시 필요합니다."),
+    POST_CREATE_CONTENT_LENGTH(2015, HttpStatus.BAD_REQUEST, "게시글 본문은 500자를 넘을 수 없습니다."),
 
     // 2020~2029 : 게시글 목록 조회 조건 검증
     POST_LIST_INVALID_SORT(2020, HttpStatus.BAD_REQUEST, "유효하지 않은 정렬 조건입니다."),

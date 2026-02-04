@@ -10,6 +10,8 @@ import * as S from "./FeedDetailModal.styles";
 
 import type { FeedDetailModalProps } from "./types";
 
+import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
+
 export function FeedDetailModal({
   onClose,
   feedId,
@@ -34,6 +36,7 @@ export function FeedDetailModal({
     : detail?.weight
       ? `몸무게 ${detail.weight}kg`
       : "정보 없음";
+  const protectedNavigate = useProtectedNavigate();
 
   useEffect(() => {
     // 모달 열릴 때 뒤 페이지 스크롤 막기
@@ -44,6 +47,10 @@ export function FeedDetailModal({
       document.body.style.overflow = "auto";
     };
   }, []);
+
+  const handleMobileAuthorClick = detail?.author.userId
+    ? () => protectedNavigate(`/profile/${detail.author.userId}`)
+    : undefined;
 
   return (
     <S.Overlay onClick={onClose}>
@@ -84,13 +91,19 @@ export function FeedDetailModal({
       <S.ModalWrapper onClick={(e) => e.stopPropagation()}>
         <S.MobileHeader>
           {detail?.author.avatarUrl ? (
-            <S.MobileAvatar src={detail.author.avatarUrl} alt="profile" />
+            <S.MobileAvatar
+              src={detail.author.avatarUrl}
+              alt="profile"
+              onClick={handleMobileAuthorClick}
+            />
           ) : (
-            <S.MobileAvatarFallback />
+            <S.MobileAvatarFallback onClick={handleMobileAuthorClick} />
           )}
           <div>
             <S.MobileNameRow>
-              <S.MobileName>{detail?.author.username ?? "Loading..."}</S.MobileName>
+              <S.MobileName onClick={handleMobileAuthorClick}>
+                {detail?.author.username ?? "Loading..."}
+              </S.MobileName>
               {detail?.author.bodyType ? (
                 <S.BodyTypeBadge>{detail.author.bodyType}</S.BodyTypeBadge>
               ) : null}

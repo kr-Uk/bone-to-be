@@ -82,12 +82,14 @@ export const LikeAvatar = styled.div`
   border-radius: 50%;
   background: #525252;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const LikeName = styled.div`
   color: #fafafa;
   font-weight: 600;
   font-size: 15px;
+  cursor: pointer;
 `;
 
 export const LikeMeta = styled.div`

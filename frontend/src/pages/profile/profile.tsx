@@ -22,6 +22,7 @@ import type { ReportSummary } from "@/pages/diagnosis/api";
 import { FeedDetailModal } from "@/pages/community/components/FeedDetailModal";
 import { useMyReportList, useRepresentativeReport } from "@/pages/diagnosis/api";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 const formatSkeletonTypeLabel = (value?: string | null): string | null => {
   if (!value) return null;
@@ -149,6 +150,7 @@ const ProfilePage = () => {
   const userId = rawUserId ? decodeURIComponent(rawUserId) : undefined;
   const { me, isAuthLoading, isLoggedIn } = useAuth();
   const isAuthReady = !isAuthLoading;
+  const protectedNavigate = useProtectedNavigate();
   const meUserId = me?.userId != null ? String(me.userId) : undefined;
   const isMe = Boolean(isAuthReady && isLoggedIn && (!userId || (meUserId && userId === meUserId)));
   const queryUserId = isMe ? undefined : userId;
@@ -359,6 +361,11 @@ const ProfilePage = () => {
               users={localFollowUsers}
               currentNickname={me?.nickname}
               onClose={() => setFollowModalType(null)}
+              onUserClick={(user) => {
+                setFollowModalType(null);
+                protectedNavigate(`/profile/${user.id}`);
+              }}
+              rowClickable={false}
               onUnfollow={(userId) => {
                 handleFollowAction(userId, false, false);
               }}

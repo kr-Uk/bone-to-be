@@ -85,7 +85,7 @@ export interface FeedListResponse {
  * 백엔드 DTO - 작성자
  */
 export interface FeedAuthorDto {
-  memberId: number;
+  userId: number;
   profileImageUrl: string | null;
   nickname: string;
   isFollowing: boolean;
@@ -197,6 +197,7 @@ export interface FeedCreateResponse {
  * 피드 상세 작성자 정보
  */
 export interface FeedAuthor {
+  userId: string;
   username: string;
   bodyType: "Straight" | "Wave" | "Natural";
   location: string;
@@ -259,6 +260,7 @@ export interface FeedDetailDto {
  */
 export interface FeedComment {
   id: string;
+  userId: string;
   username: string;
   text: string;
   createdAt: string;

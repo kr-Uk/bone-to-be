@@ -5,10 +5,12 @@ import styled from "styled-components";
 import { CommentItem } from "./CommentItem";
 
 interface Props {
+  userId: string;
   username: string;
   text: string;
   time: string;
   likeCount: number;
+  onUserClick?: (userId: string) => void;
 }
 
 export function CommentRow(props: Props) {
@@ -22,7 +24,13 @@ export function CommentRow(props: Props) {
 
   return (
     <Row>
-      <CommentItem {...props} likeCount={count} />
+      <CommentItem
+        username={props.username}
+        text={props.text}
+        time={props.time}
+        likeCount={count}
+        onUserClick={() => props.onUserClick?.(props.userId)}
+      />
       <LikeButton liked={liked} onClick={handleLikeClick}>
         {liked ? <FaHeart /> : <FaRegHeart />}
       </LikeButton>

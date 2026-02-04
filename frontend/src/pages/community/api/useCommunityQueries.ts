@@ -73,6 +73,7 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
   id: String(detail.postId),
   imageUrl: detail.imageUrl,
   author: {
+    userId: String(detail.author.userId),
     username: detail.author.nickname,
     bodyType: detail.skeletonType,
     location: "Unknown",
@@ -92,6 +93,7 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
 
 const mapFeedCommentDtoToUi = (comment: FeedCommentDto) => ({
   id: String(comment.replyId),
+  userId: String(comment.author.userId),
   username: comment.author.nickname,
   text: comment.content, // replyContent → content
   createdAt: comment.createdAt,

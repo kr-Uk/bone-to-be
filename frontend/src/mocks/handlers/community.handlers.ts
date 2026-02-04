@@ -408,7 +408,7 @@ const mapStyleToBackend = (styles: string[]): string[] =>
   styles.map((style) => style.toUpperCase());
 
 const toAuthorDto = (item: FeedItem, detail?: FeedDetail): FeedAuthorDto => ({
-  memberId: Number(item.id),
+  userId: Number(item.id),
   profileImageUrl: detail?.author.avatarUrl ?? null,
   nickname: detail?.author.username ?? item.username,
   isFollowing: false,
@@ -488,6 +488,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 162,
     weight: 50,
     author: {
+      userId: "1",
       username: "fashion_lover",
       bodyType: "Wave",
       location: "Seoul, Korea",
@@ -511,6 +512,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 171,
     weight: 58,
     author: {
+      userId: "2",
       username: "user_name",
       bodyType: "Natural",
       location: "Busan, Korea",
@@ -531,6 +533,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 175,
     weight: 65,
     author: {
+      userId: "3",
       username: "style_guru",
       bodyType: "Straight",
       location: "Incheon, Korea",
@@ -551,6 +554,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 165,
     weight: 52,
     author: {
+      userId: "4",
       username: "trendsetter",
       bodyType: "Wave",
       location: "Daegu, Korea",
@@ -571,6 +575,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 168,
     weight: 55,
     author: {
+      userId: "5",
       username: "cozy_vibes",
       bodyType: "Natural",
       location: "Daejeon, Korea",
@@ -591,6 +596,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 180,
     weight: 72,
     author: {
+      userId: "6",
       username: "urban_style",
       bodyType: "Straight",
       location: "Seoul, Korea",
@@ -611,6 +617,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 160,
     weight: 48,
     author: {
+      userId: "7",
       username: "minimalist_me",
       bodyType: "Wave",
       location: "Gwangju, Korea",
@@ -631,6 +638,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 176,
     weight: 68,
     author: {
+      userId: "8",
       username: "casual_king",
       bodyType: "Natural",
       location: "Suwon, Korea",
@@ -651,6 +659,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 169,
     weight: 54,
     author: {
+      userId: "9",
       username: "street_chic",
       bodyType: "Straight",
       location: "Seoul, Korea",
@@ -671,6 +680,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 173,
     weight: 60,
     author: {
+      userId: "10",
       username: "fashion_forward",
       bodyType: "Wave",
       location: "Seoul, Korea",
@@ -691,6 +701,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 182,
     weight: 75,
     author: {
+      userId: "11",
       username: "dapper_dan",
       bodyType: "Natural",
       location: "Ulsan, Korea",
@@ -711,6 +722,7 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     height: 162,
     weight: 49,
     author: {
+      userId: "12",
       username: "vibe_check",
       bodyType: "Straight",
       location: "Jeju, Korea",
@@ -726,12 +738,12 @@ const mockFeedDetails: Record<string, FeedDetail> = {
     isSaved: false,
   },
 };
-
 const mockFeedComments: Record<string, FeedCommentListResponse> = {
   "1": {
     items: [
       {
         id: "c-1",
+        userId: "1000",
         username: "handsome_hojung",
         text: "자켓 정보 알 수 있을까요?",
         createdAt: "2026-01-20T12:10:00Z",
@@ -741,6 +753,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-2",
+        userId: "1001",
         username: "junyong_cute",
         text: "대박 너무 이뻐요 진심;;",
         createdAt: "2026-01-20T12:40:00Z",
@@ -750,6 +763,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-3",
+        userId: "1002",
         username: "daily_urban",
         text: "핏이 정말 좋네요! :)",
         createdAt: "2026-01-20T13:05:00Z",
@@ -766,6 +780,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-4",
+        userId: "1003",
         username: "street_chic",
         text: "코트 어디 제품인가요?",
         createdAt: "2026-01-19T16:10:00Z",
@@ -782,6 +797,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-5",
+        userId: "1004",
         username: "office_daily",
         text: "셋업 컬러 너무 좋아요!",
         createdAt: "2026-01-21T09:05:00Z",
@@ -791,6 +807,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-6",
+        userId: "1005",
         username: "tone_down",
         text: "로퍼 정보 궁금합니다.",
         createdAt: "2026-01-21T09:40:00Z",
@@ -807,6 +824,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-7",
+        userId: "1006",
         username: "daily_urban",
         text: "패딩 핏 좋네요!",
         createdAt: "2026-01-22T13:30:00Z",
@@ -816,6 +834,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-8",
+        userId: "1007",
         username: "cap_fan",
         text: "볼캡 어디 브랜드인가요?",
         createdAt: "2026-01-22T13:55:00Z",
@@ -825,6 +844,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-9",
+        userId: "1008",
         username: "street_lover",
         text: "스트릿 감성 제대로!",
         createdAt: "2026-01-22T14:10:00Z",
@@ -841,6 +861,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-10",
+        userId: "1009",
         username: "cozy_fan",
         text: "톤온톤 예쁩니다.",
         createdAt: "2026-01-18T15:10:00Z",
@@ -857,6 +878,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-11",
+        userId: "1010",
         username: "city_walk",
         text: "블랙 코트 멋져요!",
         createdAt: "2026-01-17T10:05:00Z",
@@ -866,6 +888,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-12",
+        userId: "1011",
         username: "simple_style",
         text: "도시 감성 뿜뿜입니다.",
         createdAt: "2026-01-17T10:22:00Z",
@@ -882,6 +905,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-13",
+        userId: "1012",
         username: "minimal_daily",
         text: "액세서리 포인트 굿!",
         createdAt: "2026-01-21T16:30:00Z",
@@ -891,6 +915,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-14",
+        userId: "1013",
         username: "tone_fit",
         text: "색감 너무 잘 맞네요.",
         createdAt: "2026-01-21T16:50:00Z",
@@ -907,6 +932,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-15",
+        userId: "1014",
         username: "comfort_first",
         text: "편한 룩 최고죠!",
         createdAt: "2026-01-20T11:40:00Z",
@@ -923,6 +949,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-16",
+        userId: "1015",
         username: "leather_fan",
         text: "레더 재킷 멋져요.",
         createdAt: "2026-01-22T13:50:00Z",
@@ -932,6 +959,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-17",
+        userId: "1016",
         username: "street_mode",
         text: "스트릿 느낌 완전 좋아요!",
         createdAt: "2026-01-22T14:05:00Z",
@@ -941,6 +969,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-18",
+        userId: "1017",
         username: "chic_vibe",
         text: "색감 조합 최고.",
         createdAt: "2026-01-22T14:30:00Z",
@@ -957,6 +986,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-19",
+        userId: "1018",
         username: "layered_look",
         text: "레이어드 잘하셨네요!",
         createdAt: "2026-01-23T10:30:00Z",
@@ -966,6 +996,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-20",
+        userId: "1019",
         username: "muffler_fan",
         text: "머플러 색감 궁금해요.",
         createdAt: "2026-01-23T10:55:00Z",
@@ -975,6 +1006,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-21",
+        userId: "1020",
         username: "winter_style",
         text: "겨울 코디 참고할게요!",
         createdAt: "2026-01-23T11:10:00Z",
@@ -984,6 +1016,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-22",
+        userId: "1021",
         username: "daily_fit",
         text: "핏 너무 예뻐요.",
         createdAt: "2026-01-23T11:25:00Z",
@@ -993,6 +1026,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-23",
+        userId: "1022",
         username: "scarf_mood",
         text: "색 조합 최고네요.",
         createdAt: "2026-01-23T11:40:00Z",
@@ -1009,6 +1043,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-24",
+        userId: "1023",
         username: "classic_fit",
         text: "클래식 무드 최고!",
         createdAt: "2026-01-16T16:10:00Z",
@@ -1018,6 +1053,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
       },
       {
         id: "c-25",
+        userId: "1024",
         username: "pocket_detail",
         text: "포켓치프 포인트 좋네요.",
         createdAt: "2026-01-16T16:35:00Z",
@@ -1034,6 +1070,7 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     items: [
       {
         id: "c-26",
+        userId: "1025",
         username: "sneaker_daily",
         text: "스니커즈 매치 굿!",
         createdAt: "2026-01-19T08:15:00Z",
@@ -1047,7 +1084,6 @@ const mockFeedComments: Record<string, FeedCommentListResponse> = {
     hasMore: false,
   },
 };
-
 export const communityHandlers = [
   // 1단계: Presigned URL 발급
   http.post("/api/feeds/presigned-url", async ({ request }) => {

@@ -29,6 +29,10 @@ public class PostCreateDto {
                 throw new BusinessException(ErrorCode.POST_CREATE_FILE_REQUIRED);
             }
 
+            if (content.length() > 500){
+                throw new BusinessException(ErrorCode.POST_CREATE_CONTENT_LENGTH);
+            }
+
             Gender parsedGender = PostRequestParser.parseGender(gender);
             SkeletonType parsedSkeletonType = PostRequestParser.parseSkeletonType(skeletonType);
             List<StyleName> parsedStyles = PostRequestParser.parseStyles(style);

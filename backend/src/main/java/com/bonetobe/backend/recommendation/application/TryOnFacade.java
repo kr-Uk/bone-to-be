@@ -11,10 +11,7 @@ import com.bonetobe.backend.file.presentation.FileUploadUrl;
 import com.bonetobe.backend.notification.application.NotificationFacade;
 import com.bonetobe.backend.notification.domain.AlertType;
 import com.bonetobe.backend.notification.domain.Notification;
-import com.bonetobe.backend.recommendation.domain.Recommendation;
-import com.bonetobe.backend.recommendation.domain.RecommendationMessage;
-import com.bonetobe.backend.recommendation.domain.TryOnProducer;
-import com.bonetobe.backend.recommendation.domain.TryOnService;
+import com.bonetobe.backend.recommendation.domain.*;
 import com.bonetobe.backend.recommendation.presentation.GetTryOnPicture;
 import com.bonetobe.backend.recommendation.presentation.TryOnResult;
 import com.bonetobe.backend.report.domain.Report;
@@ -99,6 +96,10 @@ public class TryOnFacade {
 
     public GetTryOnPicture getTryOnPicture(Long reportId, Long userId) {
         Recommendation recommendation = tryOnService.get(reportId, userId);
+        if (recommendation.getStatus() == TryOnStatus.PENDING) {
+            return new GetTryOnPicture(reportId, null, null, recommendation.getStatus());
+        }
+
         String worst = fileService.getPrivateDownloadUrls(
             List.of(
                 new FileDownloadUrl.Query(recommendation.getWorstPicture().getId())),
@@ -109,6 +110,6 @@ public class TryOnFacade {
                 new FileDownloadUrl.Query(recommendation.getBestPicture().getId())),
             userId).get(0).presignedUrl();
 
-        return new GetTryOnPicture(reportId, best, worst);
+        return new GetTryOnPicture(reportId, best, worst, recommendation.getStatus());
     }
 }

@@ -5,6 +5,7 @@ import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.notification.domain.Notification;
 import com.bonetobe.backend.report.infrastructure.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
@@ -27,9 +29,13 @@ public class NotificationServiceImpl implements NotificationService {
         String emitterId = UUID.randomUUID().toString();
 
         // 2. 생명주기 콜백 등록
-        emitter.onCompletion(() -> cleanup(userId, emitterId));
-        emitter.onTimeout(() -> cleanup(userId, emitterId));
-        emitter.onError(e -> cleanup(userId, emitterId));
+        try {
+            emitter.onCompletion(() -> cleanup(userId, emitterId));
+            emitter.onTimeout(() -> cleanup(userId, emitterId));
+            emitter.onError(e -> cleanup(userId, emitterId));
+        } catch (Exception e) {
+            log.info("알림 실패 {}", e.getMessage());
+        }
 
         // 3. emitter 등록 (메모리 + Redis 메타)
         emitterRepository.save(userId, emitterId, emitter, REDIS_TTL_MS);

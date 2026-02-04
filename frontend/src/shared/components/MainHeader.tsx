@@ -18,8 +18,13 @@ import logo from "@/assets/image/MainLogo.svg";
 import { FollowListModal } from "@/pages/profile/components/FollowListModal";
 import { useUserSearch } from "@/pages/profile/hooks/useUserSearch";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { markNotificationRead } from "@/shared/api/notification.api";
+import { useNotificationsQuery } from "@/shared/hooks/useNotificationsQuery";
 import { useLogout } from "@/shared/hooks/useLogout";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
+import { connect, disconnect } from "@/shared/notifications/sseClient";
+import { useNotificationStore } from "@/shared/stores/notification.store";
 
 type NavItem = {
   label: string;
@@ -51,6 +56,33 @@ const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
 const resolveProfilePath = (userId?: string) =>
   userId ? `/profile/${encodeURIComponent(userId)}` : "/profile";
 
+const formatRelativeTime = (value: string) => {
+  const target = new Date(value).getTime();
+  if (Number.isNaN(target)) {
+    return value;
+  }
+
+  const diffMs = Date.now() - target;
+  const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+
+  if (diffSec < 60) {
+    return `${diffSec}초전`;
+  }
+
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) {
+    return `${diffMin}분전`;
+  }
+
+  const diffHour = Math.floor(diffMin / 60);
+  if (diffHour < 24) {
+    return `${diffHour}시간전`;
+  }
+
+  const diffDay = Math.floor(diffHour / 24);
+  return `${diffDay}일전`;
+};
+
 export const MainHeader = () => {
   const navigate = useNavigate();
   const protectedNavigate = useProtectedNavigate();
@@ -60,9 +92,12 @@ export const MainHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const notificationMenuRef = useRef<HTMLDivElement | null>(null);
+  const isMobile = useMediaQuery("(max-width: 1023px)");
   const profilePath = "/profile";
   const navItems: NavItem[] = isLoggedIn
     ? [...baseNavItems, { label: "MYPAGE", path: profilePath }]
@@ -81,6 +116,12 @@ export const MainHeader = () => {
   const searchedUsers: SearchUser[] = searchResult.data ?? [];
   const isSearchLoading = searchResult.isLoading;
   const isSearchError = searchResult.isError;
+  const notificationsQuery = useNotificationsQuery(isNotificationOpen);
+  const notifications = useNotificationStore((state) => state.notifications);
+  const setNotifications = useNotificationStore((state) => state.setNotifications);
+  const removeNotification = useNotificationStore((state) => state.removeNotification);
+  const isNotificationLoading = notificationsQuery.isLoading;
+  const isNotificationError = notificationsQuery.isError;
   const searchUsers = useMemo(() => {
     return searchedUsers.map((user) => ({
       id: String(user.userId),
@@ -129,9 +170,28 @@ export const MainHeader = () => {
   }, [isProfileMenuOpen]);
 
   useEffect(() => {
+    if (!isNotificationOpen || isMobile) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!notificationMenuRef.current) {
+        return;
+      }
+      if (!notificationMenuRef.current.contains(event.target as Node)) {
+        setIsNotificationOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isNotificationOpen]);
+
+  useEffect(() => {
     setIsProfileMenuOpen(false);
     setIsMobileMenuOpen(false);
     setIsSearchOpen(false);
+    setIsNotificationOpen(false);
   }, [location.pathname, location.search, location.hash]);
 
   useEffect(() => {
@@ -164,6 +224,40 @@ export const MainHeader = () => {
   }, [isSearchOpen, searchQuery]);
 
   useEffect(() => {
+    if (!notificationsQuery.data) {
+      return;
+    }
+    setNotifications(notificationsQuery.data);
+  }, [notificationsQuery.data, setNotifications]);
+
+  useEffect(() => {
+    if (isAuthLoading) {
+      return;
+    }
+    if (isLoggedIn) {
+      connect();
+    } else {
+      disconnect();
+    }
+  }, [isAuthLoading, isLoggedIn]);
+
+
+  const handleNotificationClick = async (notification: {
+    id: string;
+    reportId?: string;
+  }) => {
+    removeNotification(notification.id);
+    try {
+      await markNotificationRead(notification.id);
+      if (notification.reportId) {
+        protectedNavigate(`/diagnosis/report/${notification.reportId}`);
+      }
+    } finally {
+      await notificationsQuery.refetch();
+    }
+  };
+
+  useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
     const handleChange = () => {
       if (mediaQuery.matches) {
@@ -186,6 +280,38 @@ export const MainHeader = () => {
       }
     };
   }, []);
+
+  const notificationContent = (
+    <>
+      <NotificationList>
+        {isNotificationLoading ? (
+          <NotificationEmpty>알림을 불러오는 중...</NotificationEmpty>
+        ) : isNotificationError ? (
+          <NotificationEmpty>알림을 불러오지 못했습니다.</NotificationEmpty>
+        ) : notifications.length ? (
+          notifications.map((notification) => (
+            <NotificationItem
+              key={notification.id}
+              onClick={() =>
+                handleNotificationClick({
+                  id: notification.id,
+                  reportId: notification.payload?.jobId,
+                })
+              }
+            >
+              <NotificationMeta>
+                <NotificationType>{notification.type}</NotificationType>
+                <NotificationTime>{formatRelativeTime(notification.createdAt)}</NotificationTime>
+              </NotificationMeta>
+              <NotificationMessage>{notification.message}</NotificationMessage>
+            </NotificationItem>
+          ))
+        ) : (
+          <NotificationEmpty>알림이 없습니다.</NotificationEmpty>
+        )}
+      </NotificationList>
+    </>
+  );
 
   return (
     <Header>
@@ -223,14 +349,29 @@ export const MainHeader = () => {
               aria-expanded={isSearchOpen}
               onClick={() => {
                 setIsProfileMenuOpen(false);
+                setIsNotificationOpen(false);
                 setIsSearchOpen((prev) => !prev);
               }}
             >
               <FiSearch size={24} />
             </AuthIconButton>
-            <AuthIconButton type="button" aria-label="Notifications">
-              <FaRegBell size={26} />
-            </AuthIconButton>
+            <NotificationMenuWrap ref={notificationMenuRef}>
+              <AuthIconButton
+                type="button"
+                aria-label="Notifications"
+                aria-expanded={isNotificationOpen}
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setIsProfileMenuOpen(false);
+                  setIsNotificationOpen((prev) => !prev);
+                }}
+              >
+                <FaRegBell size={26} />
+              </AuthIconButton>
+              <NotificationMenu $isOpen={isNotificationOpen}>
+                {notificationContent}
+              </NotificationMenu>
+            </NotificationMenuWrap>
             <ProfileMenuWrap ref={profileMenuRef}>
               <AuthIconButton
                 type="button"
@@ -238,6 +379,7 @@ export const MainHeader = () => {
                 aria-expanded={isProfileMenuOpen}
                 onClick={() => {
                   setIsSearchOpen(false);
+                  setIsNotificationOpen(false);
                   setIsProfileMenuOpen((prev) => !prev);
                 }}
               >
@@ -343,7 +485,15 @@ export const MainHeader = () => {
 
             {isLoggedIn && (
               <SideMenuAccountSection>
-                <SideMenuRowButton type="button">
+                <SideMenuRowButton
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsProfileMenuOpen(false);
+                    setIsSearchOpen(false);
+                    setIsNotificationOpen(true);
+                  }}
+                >
                   <SideMenuIconSlot aria-hidden="true">
                     <FaRegBell size={18} />
                   </SideMenuIconSlot>
@@ -419,6 +569,17 @@ export const MainHeader = () => {
               />
             </SearchModalCard>
           </SearchModalOverlay>,
+          document.body,
+        )}
+      {isNotificationOpen &&
+        isMobile &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <NotificationModalOverlay onClick={() => setIsNotificationOpen(false)}>
+            <NotificationModalCard onClick={(event) => event.stopPropagation()}>
+              {notificationContent}
+            </NotificationModalCard>
+          </NotificationModalOverlay>,
           document.body,
         )}
     </Header>
@@ -537,6 +698,104 @@ const AuthIcons = styled.div`
   @media (max-width: 1023px) {
     display: none;
   }
+`;
+
+const NotificationMenuWrap = styled.div`
+  position: relative;
+`;
+
+const NotificationMenu = styled.div<{ $isOpen: boolean }>`
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  min-width: 16.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
+  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  display: ${({ $isOpen }) => ($isOpen ? "grid" : "none")};
+  gap: 0.75rem;
+  z-index: 10;
+`;
+
+const NotificationList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 18rem;
+  overflow: auto;
+  padding-right: 0.15rem;
+`;
+
+const NotificationItem = styled.div`
+  padding: 0.65rem 0.7rem;
+  border-radius: 0.6rem;
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
+  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[700]};
+  display: grid;
+  gap: 0.35rem;
+`;
+
+const NotificationMeta = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+`;
+
+const NotificationType = styled.span`
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[700]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[100]};
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+`;
+
+const NotificationTime = styled.span`
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[400]};
+  font-size: 0.65rem;
+  font-weight: 500;
+`;
+
+const NotificationMessage = styled.p`
+  margin: 0;
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[100]};
+  font-size: 0.78rem;
+  line-height: 1.1rem;
+  word-break: keep-all;
+`;
+
+const NotificationEmpty = styled.span`
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[400]};
+  font-size: 0.78rem;
+  text-align: center;
+  padding: 0.75rem 0;
+`;
+
+const NotificationModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1000;
+`;
+
+const NotificationModalCard = styled.div`
+  width: min(22rem, 90vw);
+  max-height: 80vh;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
+  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  display: grid;
+  gap: 0.75rem;
 `;
 
 const ProfileMenuWrap = styled.div`

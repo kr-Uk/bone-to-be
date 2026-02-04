@@ -1,7 +1,7 @@
 import { useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
-import { IoAddSharp, IoCheckmark } from "react-icons/io5";
+import { IoCheckmark } from "react-icons/io5";
 import styled from "styled-components";
 
 import { Text } from "./ProfileCommon";
@@ -155,7 +155,7 @@ function FollowRow({
 }) {
   const isFollowing = user.isFollowing ?? type === "following";
   const buttonLabel = isFollowing ? "Following" : "Follow";
-  const buttonIcon = isFollowing ? <IoCheckmark /> : <IoAddSharp />;
+  const buttonIcon = isFollowing ? <IoCheckmark /> : null;
   const isClickable = Boolean(onUserClick);
   const isRowClickable = isClickable && rowClickable;
 
@@ -436,6 +436,8 @@ const ActionButton = styled.button`
   white-space: nowrap;
 
   &[data-active="false"] {
+    background: var(--color-brand-primary-900, #59168b);
     outline-color: var(--color-brand-primary-900, #59168b);
+    color: var(--neutral-50, #fafafa);
   }
 `;

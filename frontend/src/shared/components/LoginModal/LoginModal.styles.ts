@@ -192,7 +192,7 @@ export const Brand = styled.div`
 
 export const BrandTitle = styled.div`
   font-size: clamp(30px, 3.3vw, 42px);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: -0.05em;
   color: ${loginPalette.slate100};
 `;
@@ -265,7 +265,7 @@ export const PrimaryButton = styled.button`
   padding: 12px 16px;
   background: ${loginPalette.primary};
   color: #fff;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 15px;
   cursor: pointer;
   box-shadow: 0 14px 28px -10px rgba(152, 16, 250, 0.55);
@@ -298,7 +298,7 @@ export const OrLine = styled.div`
 
 export const OrText = styled.div`
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: ${loginPalette.slate400};
@@ -316,7 +316,7 @@ export const SocialButtonKakao = styled.button`
   background: #fee500;
   border: 0;
   color: #191919;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 13px;
   cursor: pointer;
 
@@ -338,7 +338,7 @@ export const SocialButton = styled.button`
   background: #fff;
   border: 0;
   color: ${loginPalette.cardDark};
-  font-weight: 900;
+  font-weight: 700;
   font-size: 13px;
   cursor: pointer;
 
@@ -485,7 +485,7 @@ export const DarkBtn = styled.button`
   background: rgba(255, 255, 255, 0.08);
   color: ${loginPalette.slate100};
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 700;
   border: 0;
   cursor: pointer;
 

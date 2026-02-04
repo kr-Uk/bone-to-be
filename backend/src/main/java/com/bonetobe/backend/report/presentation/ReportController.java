@@ -59,7 +59,7 @@ public class ReportController {
             .status(HttpStatus.OK)
             .body(
                 APIResponse.success(SuccessCode.OK,
-                    GetReport.from(reportService.getReport(reportId, userPrincipal.getId()))));
+                    GetReport.from(reportService.getReportWithFile(reportId, userPrincipal.getId()))));
     }
 
     @GetMapping

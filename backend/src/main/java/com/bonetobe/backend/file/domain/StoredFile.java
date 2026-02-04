@@ -59,6 +59,12 @@ public class StoredFile extends BaseEntity {
         return storedFile;
     }
 
+    public static StoredFile of(Long fileId) {
+        StoredFile storedFile = new StoredFile();
+        storedFile.id = fileId;
+        return storedFile;
+    }
+
     public void completeUpload() {
         if (status != FileStatus.CONFIRMED) {
             throw new FileStorageUploadException(ErrorCode.FILE_NOT_CONFIRMED_EXCEPTION);

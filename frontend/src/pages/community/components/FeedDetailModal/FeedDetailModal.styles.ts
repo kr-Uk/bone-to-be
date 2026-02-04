@@ -134,6 +134,7 @@ export const MobileAvatar = styled.img`
   object-fit: cover;
   background: #525252;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const MobileAvatarFallback = styled.div`
@@ -142,12 +143,14 @@ export const MobileAvatarFallback = styled.div`
   border-radius: 50%;
   background: #525252;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const MobileName = styled.div`
   color: #fafafa;
   font-weight: 600;
   font-size: 14px;
+  cursor: pointer;
 `;
 
 export const MobileNameRow = styled.div`

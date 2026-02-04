@@ -4,20 +4,34 @@ import * as S from "./FeedDetailRight.styles";
 
 export interface FeedDetailContentProps {
   author: {
+    userId: string;
     username: string;
     avatarUrl: string | null | undefined;
   };
   content: string[];
   tags: string[];
   createdAt: string;
+  onUserClick?: () => void;
 }
 
-export function FeedDetailContent({ author, content, tags, createdAt }: FeedDetailContentProps) {
+export function FeedDetailContent({
+  author,
+  content,
+  tags,
+  createdAt,
+  onUserClick,
+}: FeedDetailContentProps) {
   return (
     <S.PostContent>
-      <S.Avatar />
+      <S.Avatar onClick={onUserClick}>
+        {author.avatarUrl ? (
+          <S.AvatarImage src={author.avatarUrl} alt={`${author.username} avatar`} />
+        ) : (
+          <S.AvatarFallback />
+        )}
+      </S.Avatar>
       <div>
-        <S.Username>{author.username}</S.Username>
+        <S.Username onClick={onUserClick}>{author.username}</S.Username>
         {content.map((line: string, index: number) => (
           <S.Text key={`content-${index}`}>{line}</S.Text>
         ))}

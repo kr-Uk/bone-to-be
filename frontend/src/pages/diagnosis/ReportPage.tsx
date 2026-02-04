@@ -7,9 +7,9 @@ import AnalysisResultCard from "./components/AnalysisResultCard";
 import FitReferenceSection from "./components/FitReferenceSection";
 import RecommendationSection from "./components/RecommendationSection";
 import ReportHeroSection from "./components/ReportHeroSection";
-import VirtualFittingSection from "./components/VirtualFittingSection";
+import TryOnComparisonSection from "./components/TryOnComparisonSection";
 
-import { useReportDetail } from "@/pages/diagnosis/api";
+import { useReportDetail, useTryOnData } from "@/pages/diagnosis/api";
 import { convertSkeletonTypeToBodyType } from "@/pages/diagnosis/api/diagnosis.types";
 import { BODY_TYPE_METADATA } from "@/shared/constants/reportMockData";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
@@ -168,6 +168,16 @@ const ReportPage = () => {
   // 실시간 리포트 조회 (폴링)
   const { data: reportData, isLoading, isError, error } = useReportDetail(reportId);
 
+  // 리포트 완성 후 tryon 폴링 시작
+  const {
+    data: tryonData,
+    isLoading: tryonLoading,
+    isError: tryonError,
+    refetch: retryTryon,
+  } = useTryOnData(reportId, {
+    enabled: reportData?.status === "COMPLETED",
+  });
+
   // reportId가 유효하지 않으면 홈으로 리다이렉트
   useEffect(() => {
     if (!reportId || isNaN(reportId) || reportId <= 0) {
@@ -300,19 +310,20 @@ const ReportPage = () => {
           dontRecommendations={metadata.dontRecommendations}
         />
 
-        {/* VirtualFittingSection은 details 데이터가 있을 때만 표시 */}
-        {reportData.details &&
-          Array.isArray(reportData.details) &&
-          reportData.details.length > 0 && (
-            <VirtualFittingSection
-              imageUrl={"/images/virtual-fitting-placeholder.png"}
-              title="가상 피팅 준비 중"
-              description="곧 이용하실 수 있습니다"
-              tags={[]}
-              onTryAnother={() => {}}
-            />
-          )}
-      </SectionStack>
+          {/* AI Virtual Fitting - Try-On 이미지 비교 */}
+          {reportData.details &&
+            Array.isArray(reportData.details) &&
+            reportData.details.length > 0 && (
+              <TryOnComparisonSection
+                bestImageUrl={tryonData?.bestImageUrl ?? null}
+                worstImageUrl={tryonData?.worstImageUrl ?? null}
+                isLoading={tryonLoading}
+                isError={tryonError}
+                onRetry={retryTryon}
+              />
+            )}
+        </ContentWrapper>
+      </MainContent>
     </PageContainer>
   );
 };

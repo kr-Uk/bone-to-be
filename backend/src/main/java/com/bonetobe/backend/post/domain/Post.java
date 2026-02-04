@@ -46,6 +46,7 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SkeletonType skeletonType;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(nullable = false)

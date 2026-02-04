@@ -322,8 +322,7 @@ const ReportPage = () => {
                 onRetry={retryTryon}
               />
             )}
-        </ContentWrapper>
-      </MainContent>
+        </SectionStack>
     </PageContainer>
   );
 };

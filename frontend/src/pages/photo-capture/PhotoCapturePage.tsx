@@ -307,7 +307,7 @@ const Button = styled.button<{ $variant?: "primary" | "secondary" }>`
 
 const PhotoCapturePage = () => {
   const navigate = useNavigate();
-  const { diagnosisData, setPhotoData, setReportId } = useDiagnosisStore();
+  const { diagnosisData, setPhotoData, setReportId, checkExpiration } = useDiagnosisStore();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
 
@@ -327,12 +327,13 @@ const PhotoCapturePage = () => {
   const s3UploadMutation = useS3Upload();
   const createReportMutation = useCreateReport();
 
-  // Redirect if no basic info
+  // 만료 시간 체크
   useEffect(() => {
-    if (!diagnosisData.basicInfo) {
-      navigate("/diagnosis/basic-info", { replace: true, state: { fromInternalNav: true } });
-    }
-  }, [diagnosisData.basicInfo, navigate]);
+    checkExpiration();
+  }, [checkExpiration]);
+
+  // Note: basicInfo가 없는 경우는 BasicInfoPage의 onSubmit을 통한 정상 플로우에서는 발생하지 않음
+  // 직접 URL 접근 시에는 뒤로가기 버튼을 통해 basic-info로 이동하도록 안내
 
   // Handle camera capture with countdown
   const handleCapture = () => {

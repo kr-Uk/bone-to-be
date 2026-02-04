@@ -15,7 +15,7 @@ public class NotificationFacade {
     private final NotificationService notificationService;
     public void deleteNotifications(Long userId, String notificationId) {
         Notification notification = notificationService.getNotification(notificationId);
-        if (Objects.equals(notification.getUser().getId(), userId)) {
+        if (!Objects.equals(notification.getUser().getId(), userId)) {
             throw new BusinessException(ErrorCode.FORBIDDEN);
         }
 

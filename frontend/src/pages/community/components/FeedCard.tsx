@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import styled from "styled-components";
 
@@ -30,7 +31,10 @@ const CardContainer = styled.div<{ $isActive?: boolean }>`
   }
 `;
 
-const Image = styled.img`
+const Image = styled.img.attrs({
+  loading: "eager",
+  decoding: "async",
+})`
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -140,7 +144,7 @@ const LikeButton = styled.button<{ $liked: boolean }>`
   }
 `;
 
-export function FeedCard({ item, isActive, onLike, onClick }: FeedCardProps) {
+export const FeedCard = memo(({ item, isActive, onLike, onClick }: FeedCardProps) => {
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onLike();
@@ -168,4 +172,6 @@ export function FeedCard({ item, isActive, onLike, onClick }: FeedCardProps) {
       </LikeButton>
     </CardContainer>
   );
-}
+});
+
+FeedCard.displayName = "FeedCard";

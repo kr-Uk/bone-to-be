@@ -1,4 +1,10 @@
-import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+  type InfiniteData,
+} from "@tanstack/react-query";
 import axios from "axios";
 
 import {
@@ -238,6 +244,7 @@ export function useLikeToggle() {
 
       // 이전 상태 스냅샷 저장
       const previousDetail = queryClient.getQueryData<FeedDetailDto>(["feedDetail", feedId]);
+      const previousFeedList = queryClient.getQueriesData({ queryKey: ["feedList"] });
 
       // 낙관적 업데이트: 피드 상세의 좋아요 상태 즉시 변경
       queryClient.setQueryData<FeedDetailDto>(["feedDetail", feedId], (old) => {
@@ -249,19 +256,47 @@ export function useLikeToggle() {
         };
       });
 
+      // 낙관적 업데이트: 피드 목록의 isLiked 상태도 즉시 변경
+      queryClient.setQueriesData<InfiniteData<FeedListResponseDto>>(
+        { queryKey: ["feedList"] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page) => ({
+              ...page,
+              items: page.items.map((item) =>
+                item.postId === Number(feedId) ? { ...item, isLiked: !isLiked } : item,
+              ),
+            })),
+          };
+        },
+      );
+
       // rollback을 위해 이전 상태 반환
-      return { previousDetail };
+      return { previousDetail, previousFeedList };
     },
     onError: (_, { feedId }, context) => {
       // 에러 발생 시 이전 상태로 rollback
       if (context?.previousDetail) {
         queryClient.setQueryData(["feedDetail", feedId], context.previousDetail);
       }
+      if (context?.previousFeedList) {
+        context.previousFeedList.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
     },
     onSettled: (_, __, { feedId }) => {
       // 성공/실패 무관하게 캐시 무효화하여 서버 상태 동기화
       queryClient.invalidateQueries({ queryKey: ["feedDetail", feedId] });
-      queryClient.invalidateQueries({ queryKey: ["feedList"] });
+
+      // 피드 목록은 즉시 refetch하지 않음 (이미지 깜빡임 방지)
+      queryClient.invalidateQueries({
+        queryKey: ["feedList"],
+        refetchType: "none",
+      });
+
       queryClient.invalidateQueries({ queryKey: ["feedLikes", feedId] });
 
       // Profile page 캐시도 무효화하여 좋아요 동기화

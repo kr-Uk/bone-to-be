@@ -25,6 +25,7 @@ type Props = {
   enableLocalFilter?: boolean;
   onUserClick?: (user: FollowUser) => void;
   showAction?: boolean;
+  rowClickable?: boolean;
 };
 
 export const FollowListModal = ({
@@ -44,6 +45,7 @@ export const FollowListModal = ({
   enableLocalFilter = true,
   onUserClick,
   showAction = true,
+  rowClickable = true,
 }: Props) => {
   const [localQuery, setLocalQuery] = useState("");
   const resolvedQuery = query ?? localQuery;
@@ -123,6 +125,7 @@ export const FollowListModal = ({
               onToggleFollow={onToggleFollow}
               onUserClick={onUserClick}
               showAction={showAction}
+              rowClickable={rowClickable}
             />
           ))
         )}
@@ -139,6 +142,7 @@ function FollowRow({
   onToggleFollow,
   onUserClick,
   showAction,
+  rowClickable,
 }: {
   type: FollowModalType;
   user: FollowUser;
@@ -147,11 +151,13 @@ function FollowRow({
   onToggleFollow?: (userId: string) => void;
   onUserClick?: (user: FollowUser) => void;
   showAction?: boolean;
+  rowClickable: boolean;
 }) {
   const isFollowing = user.isFollowing ?? type === "following";
   const buttonLabel = isFollowing ? "Following" : "Follow";
   const buttonIcon = isFollowing ? <IoCheckmark /> : <IoAddSharp />;
   const isClickable = Boolean(onUserClick);
+  const isRowClickable = isClickable && rowClickable;
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -167,7 +173,7 @@ function FollowRow({
   };
 
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (!isClickable) {
+    if (!isRowClickable) {
       return;
     }
     if (event.key === "Enter" || event.key === " ") {
@@ -180,14 +186,14 @@ function FollowRow({
 
   return (
     <Row
-      $clickable={isClickable}
-      onClick={isClickable ? handleRowClick : undefined}
-      onKeyDown={isClickable ? handleRowKeyDown : undefined}
-      role={isClickable ? "button" : undefined}
-      tabIndex={isClickable ? 0 : undefined}
+      $clickable={isRowClickable}
+      onClick={isRowClickable ? handleRowClick : undefined}
+      onKeyDown={isRowClickable ? handleRowKeyDown : undefined}
+      role={isRowClickable ? "button" : undefined}
+      tabIndex={isRowClickable ? 0 : undefined}
     >
       <RowLeft>
-        <Avatar>
+        <Avatar $clickable={isClickable} onClick={isClickable ? handleRowClick : undefined}>
           {user.avatarUrl ? (
             <AvatarImage src={user.avatarUrl} alt={`${user.username} avatar`} />
           ) : (
@@ -197,7 +203,13 @@ function FollowRow({
 
         <Info>
           <TopLine>
-            <Username as="span">{user.username}</Username>
+            <Username
+              as="span"
+              $clickable={isClickable}
+              onClick={isClickable ? handleRowClick : undefined}
+            >
+              {user.username}
+            </Username>
             {user.styleTag ? <StyleBadge as="span">{user.styleTag}</StyleBadge> : null}
           </TopLine>
 
@@ -340,7 +352,7 @@ const RowLeft = styled.div`
   gap: 0.75rem;
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.div<{ $clickable: boolean }>`
   width: 3rem;
   height: 3rem;
   background: var(--neutral-900, #171717);
@@ -350,6 +362,7 @@ const Avatar = styled.div`
   outline-offset: -0.0625rem;
   display: grid;
   place-items: center;
+  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
 `;
 
 const AvatarImage = styled.img`
@@ -376,11 +389,12 @@ const TopLine = styled.div`
   gap: 0.5rem;
 `;
 
-const Username = styled(Text)`
+const Username = styled(Text)<{ $clickable: boolean }>`
   color: var(--neutral-50, #fafafa);
   font-size: 0.875rem;
   font-weight: 700;
   line-height: 1.25rem;
+  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
 `;
 
 const StyleBadge = styled(Text)`

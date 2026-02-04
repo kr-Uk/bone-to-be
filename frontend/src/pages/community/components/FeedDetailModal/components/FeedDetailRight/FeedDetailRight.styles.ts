@@ -69,6 +69,7 @@ export const DesktopAvatar = styled.img`
   object-fit: cover;
   background: #525252;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const DesktopAvatarFallback = styled.div`
@@ -77,12 +78,14 @@ export const DesktopAvatarFallback = styled.div`
   border-radius: 50%;
   background: #525252;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const DesktopName = styled.div`
   color: #fafafa;
   font-weight: 600;
   font-size: 15px;
+  cursor: pointer;
 `;
 
 export const DesktopMeta = styled.div`
@@ -96,11 +99,13 @@ export const Avatar = styled.div`
   border-radius: 50%;
   background: #525252;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const Username = styled.div`
   color: #fafafa;
   font-weight: 600;
+  cursor: pointer;
 `;
 
 export const PostContent = styled.div`

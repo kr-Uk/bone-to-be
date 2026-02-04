@@ -5,16 +5,17 @@ interface Props {
   text: string;
   time: string;
   likeCount: number;
+  onUserClick?: () => void;
 }
 
 const formatCount = (count: number) => count.toLocaleString();
 
-export function CommentItem({ username, text, time, likeCount }: Props) {
+export function CommentItem({ username, text, time, likeCount, onUserClick }: Props) {
   return (
     <Wrapper>
-      <Avatar />
+      <Avatar onClick={onUserClick} />
       <TextArea>
-        <Username>{username}</Username>
+        <Username onClick={onUserClick}>{username}</Username>
         <CommentText>{text}</CommentText>
         <MetaRow>
           <Time>{time}</Time>
@@ -36,6 +37,7 @@ const Avatar = styled.div`
   border-radius: 50%;
   background: #525252;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 const TextArea = styled.div`
@@ -47,6 +49,7 @@ const TextArea = styled.div`
 const Username = styled.div`
   font-weight: 600;
   color: #fafafa;
+  cursor: pointer;
   @media (max-width: 430px) {
     font-size: 14px;
   }

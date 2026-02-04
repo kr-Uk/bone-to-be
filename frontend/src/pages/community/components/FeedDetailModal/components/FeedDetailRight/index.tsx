@@ -12,6 +12,7 @@ import * as S from "./FeedDetailRight.styles";
 import type { FeedDetailRightProps } from "../../types";
 
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
+import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 export function FeedDetailRight({
   detail,
@@ -26,6 +27,7 @@ export function FeedDetailRight({
   const [isInputVisible, setIsInputVisible] = useState(false);
   const commentInputRef = useRef<HTMLInputElement | null>(null);
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const protectedNavigate = useProtectedNavigate();
 
   const {
     liked,
@@ -76,24 +78,31 @@ export function FeedDetailRight({
     commentInputRef.current?.focus();
   };
 
+  const handleAuthorClick = detail?.author.userId
+    ? () => protectedNavigate(`/profile/${detail.author.userId}`)
+    : undefined;
+
   return (
     <S.RightContainer>
       <FeedDetailHeader
         avatarUrl={detail?.author.avatarUrl ?? null}
         username={detail?.author.username ?? "Loading..."}
         meta={desktopMeta}
+        onUserClick={handleAuthorClick}
       />
 
       <S.ContentStack>
         {detail && (
           <FeedDetailContent
             author={{
+              userId: detail.author.userId,
               username: detail.author.username,
               avatarUrl: detail.author.avatarUrl,
             }}
             content={detail.content}
             tags={detail.tags}
             createdAt={detail.createdAt}
+            onUserClick={handleAuthorClick}
           />
         )}
 

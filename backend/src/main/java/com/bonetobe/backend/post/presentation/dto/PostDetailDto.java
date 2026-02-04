@@ -24,6 +24,7 @@ public class PostDetailDto {
             Long likeCount,
             Long commentCount,
             Boolean isLiked,
+            Boolean isScrapped,
             Author author,
             LocalDateTime createdAt
     ) {
@@ -40,6 +41,7 @@ public class PostDetailDto {
                     summary.likeCount(),
                     summary.commentCount(),
                     summary.isLiked(),
+                    summary.isScrapped(),
                     Author.of(summary.author()),
                     summary.createdAt()
             );

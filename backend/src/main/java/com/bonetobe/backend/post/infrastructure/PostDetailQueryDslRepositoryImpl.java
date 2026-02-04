@@ -14,6 +14,7 @@ import static com.bonetobe.backend.file.domain.QStoredFile.storedFile;
 import static com.bonetobe.backend.post.domain.QPost.post;
 import static com.bonetobe.backend.post.domain.QPostLike.postLike;
 import static com.bonetobe.backend.post.domain.QPostStyle.postStyle;
+import static com.bonetobe.backend.post.domain.QScrap.scrap;
 import static com.bonetobe.backend.style.domain.QStyle.style;
 import static com.bonetobe.backend.user.domain.QFollow.follow;
 import static com.bonetobe.backend.user.domain.QUser.user;
@@ -42,6 +43,11 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
                         postLike.post.eq(post),
                         postLike.user.id.eq(viewerId)
                 )
+                .leftJoin(scrap)
+                .on(
+                        scrap.post.eq(post),
+                        scrap.user.id.eq(viewerId)
+                )
                 .where(post.id.eq(postId))
                 .transform(
                         GroupBy.groupBy(post.id).list(
@@ -58,6 +64,7 @@ public class PostDetailQueryDslRepositoryImpl implements PostDetailQueryDslRepos
                                         post.likeCount,
                                         post.commentCount,
                                         postLike.id.isNotNull(),
+                                        scrap.id.isNotNull(),
                                         Projections.constructor(
                                                 PostDetailSummaryRaw.AuthorSummary.class,
                                                 user.id,

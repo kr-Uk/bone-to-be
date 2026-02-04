@@ -19,6 +19,7 @@ public record PostDetailSummaryRaw(
         Long likeCount,
         Long commentCount,
         Boolean isLiked,
+        Boolean isScrapped,
         AuthorSummary author,
         LocalDateTime createdAt
 ) {
@@ -41,6 +42,7 @@ public record PostDetailSummaryRaw(
                 likeCount,
                 commentCount,
                 isLiked,
+                isScrapped,
                 new PostDetailSummary.AuthorSummary(
                         author.userId(),
                         profileImageUrl,

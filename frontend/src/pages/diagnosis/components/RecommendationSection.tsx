@@ -5,7 +5,7 @@ const Section = styled(motion.section)`
   backdrop-filter: blur(10px);
   background: ${({ theme }) => theme.colors.gray[900]};
   border: 1px solid ${({ theme }) => theme.colors.gray[600]};
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.5);
   padding: 33px 25px 25px;
   display: flex;

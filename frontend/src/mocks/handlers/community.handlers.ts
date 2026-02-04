@@ -1408,6 +1408,48 @@ export const communityHandlers = [
     });
   }),
 
+  // POST /feeds/:feedId/scraps (스크랩)
+  http.post("/feeds/:feedId/scraps", async ({ params }) => {
+    await delay(200);
+
+    const { feedId } = params;
+    const mockDetail = mockFeedDetails[String(feedId)];
+
+    if (!mockDetail) {
+      return HttpResponse.json(
+        { code: 400, message: "잘못된 요청입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+
+  // POST /api/feeds/:feedId/scraps (스크랩)
+  http.post("/api/feeds/:feedId/scraps", async ({ params }) => {
+    await delay(200);
+
+    const { feedId } = params;
+    const mockDetail = mockFeedDetails[String(feedId)];
+
+    if (!mockDetail) {
+      return HttpResponse.json(
+        { code: 400, message: "잘못된 요청입니다.", data: null },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({
+      code: 200,
+      message: "요청 성공",
+      data: null,
+    });
+  }),
+
   // POST /api/feeds/:feedId/like (구 엔드포인트 - 호환성)
   http.post("/api/feeds/:feedId/like", async ({ params }) => {
     await delay(200);
@@ -1642,6 +1684,7 @@ export const communityHandlers = [
 
     const newComment = {
       id: `c-${Date.now()}`,
+      userId: "mock-user-123",
       username: "me",
       text,
       createdAt: new Date().toISOString(),
@@ -1685,6 +1728,7 @@ export const communityHandlers = [
 
     const newComment = {
       id: `c-${Date.now()}`,
+      userId: "mock-user-me",
       username: "me",
       text: content,
       createdAt: new Date().toISOString(),

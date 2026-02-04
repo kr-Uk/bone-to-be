@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
-import { useCreateFeedComment, useLikeToggle } from "../../../api";
+import { useCreateFeedComment, useFeedScrap, useLikeToggle } from "../../../api";
 
 import type { FeedLikeUser } from "../../../api";
 
@@ -42,6 +43,7 @@ export function useFeedDetailState({
 
   const likeToggleMutation = useLikeToggle();
   const createCommentMutation = useCreateFeedComment();
+  const scrapMutation = useFeedScrap();
 
   // 서버 상태 동기화
   useEffect(() => {
@@ -122,8 +124,22 @@ export function useFeedDetailState({
   };
 
   const handleSaveToggle = () => {
-    setSaved((prev) => !prev);
-    // TODO: 서버 요청 추가 (API 완성 시)
+    if (!feedId || saved || scrapMutation.isPending) return;
+    setSaved(true);
+
+    scrapMutation.mutate(feedId, {
+      onError: (error) => {
+        if (axios.isAxiosError(error)) {
+          const status = error.response?.status;
+          const code = (error.response?.data as { code?: number } | undefined)?.code;
+          if (status === 409 || code === 2050) {
+            setSaved(true);
+            return;
+          }
+        }
+        setSaved(false);
+      },
+    });
   };
 
   const handleCommentSubmit = (text: string) => {

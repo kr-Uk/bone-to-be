@@ -1,10 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 import {
   getFeedList,
   addFeedLike,
   removeFeedLike,
+  addFeedScrap,
   getPresignedUrl,
   uploadImageToS3,
   createFeed,
@@ -95,6 +96,7 @@ const mapFeedCommentDtoToUi = (comment: FeedCommentDto) => ({
   id: String(comment.replyId),
   userId: String(comment.author.userId),
   username: comment.author.nickname,
+  avatarUrl: comment.author.profileImageUrl,
   text: comment.content, // replyContent → content
   createdAt: comment.createdAt,
   likeCount: comment.likeCount,
@@ -124,6 +126,33 @@ export function useFeedList(request: FeedListRequest) {
       total: data.total,
       page: data.page,
       hasMore: data.hasMore,
+    }),
+  });
+}
+
+/**
+ * 무한 스크롤을 위한 피드 리스트 조회 쿼리
+ */
+export function useInfiniteFeedList(request: Omit<FeedListRequest, "page">) {
+  return useInfiniteQuery({
+    queryKey: ["feedList", request],
+    queryFn: ({ pageParam = 0 }) => getFeedList({ ...request, page: pageParam }),
+
+    initialPageParam: 0,
+
+    getNextPageParam: (lastPage) => {
+      // hasMore가 true이면 다음 페이지 번호 반환
+      return lastPage.hasMore ? lastPage.page + 1 : undefined;
+    },
+
+    staleTime: 1000 * 60 * 5, // 5분
+
+    select: (data) => ({
+      pages: data.pages.map((page) => ({
+        ...page,
+        items: page.items.map(mapFeedItemDtoToUi),
+      })),
+      pageParams: data.pageParams,
     }),
   });
 }
@@ -238,6 +267,15 @@ export function useLikeToggle() {
       // Profile page 캐시도 무효화하여 좋아요 동기화
       queryClient.invalidateQueries({ queryKey: ["profile", "feeds"] });
     },
+  });
+}
+
+/**
+ * 피드 스크랩
+ */
+export function useFeedScrap() {
+  return useMutation({
+    mutationFn: (feedId: string) => addFeedScrap(feedId),
   });
 }
 

@@ -1,16 +1,20 @@
 import { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 
-import { useFeedList, useLikeToggle } from "./api";
+import { useInfiniteFeedList, useLikeToggle } from "./api";
 import { FeedCreateModal } from "./components/FeedCreateModal";
 import { FeedDetailModal } from "./components/FeedDetailModal";
 import { FeedFAB } from "./components/FeedFAB";
 import { FeedFilters } from "./components/FeedFilters";
 import { FeedGrid } from "./components/FeedGrid";
 import { FeedHeader } from "./components/FeedHeader";
+import { LoadingSpinner } from "./components/LoadingSpinner";
+import { ScrollToTopButton } from "./components/ScrollToTopButton";
 import { SelectedFilters } from "./components/SelectedFilters";
 
 import type { FeedFilters as FeedFiltersType, SortBy } from "./api";
+
+import { useInfiniteScroll } from "@/shared/hooks";
 
 const PageContainer = styled.div`
   display: flex;
@@ -77,6 +81,20 @@ const EmptyContainer = styled.div`
   ${({ theme }) => theme.typography.body.lg.regular};
 `;
 
+const LoadMoreTrigger = styled.div`
+  height: 1px;
+  margin: ${({ theme }) => theme.spacing.lg} 0;
+  visibility: hidden;
+`;
+
+const NextPageLoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  margin: ${({ theme }) => theme.spacing.xl} 0;
+`;
+
 export default function CommunityPage() {
   const [sortBy, setSortBy] = useState<SortBy>("popular");
   const [filters, setFilters] = useState<FeedFiltersType>({
@@ -88,18 +106,34 @@ export default function CommunityPage() {
   });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
-  const { data, isLoading, error } = useFeedList({
-    sortBy,
-    filters,
-    page: 0,
-    limit: 12,
-  });
-  const feedIds = useMemo(() => data?.items.map((item) => item.id) ?? [], [data?.items]);
+
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteFeedList({
+      sortBy,
+      filters,
+      limit: 12,
+    });
+
+  // 모든 페이지의 피드 아이템을 하나의 배열로 병합
+  const allFeedItems = useMemo(
+    () => data?.pages.flatMap((page) => page.items) ?? [],
+    [data?.pages],
+  );
+
+  const feedIds = useMemo(() => allFeedItems.map((item) => item.id), [allFeedItems]);
   const selectedIndex = selectedFeedId ? feedIds.indexOf(selectedFeedId) : -1;
   const hasPrev = selectedIndex > 0;
   const hasNext = selectedIndex >= 0 && selectedIndex < feedIds.length - 1;
 
   const likeToggleMutation = useLikeToggle();
+
+  // 무한 스크롤 트리거
+  const loadMoreRef = useInfiniteScroll({
+    onLoadMore: () => fetchNextPage(),
+    hasMore: hasNextPage ?? false,
+    isLoading: isFetchingNextPage,
+    rootMargin: "200px",
+  });
 
   const handleSortChange = useCallback((newSort: SortBy) => {
     setSortBy(newSort);
@@ -166,12 +200,27 @@ export default function CommunityPage() {
           <LoadingContainer>로딩 중...</LoadingContainer>
         ) : error ? (
           <ErrorContainer>피드를 불러올 수 없습니다. 다시 시도해주세요.</ErrorContainer>
-        ) : !data?.items || data.items.length === 0 ? (
+        ) : allFeedItems.length === 0 ? (
           <EmptyContainer>선택한 필터에 맞는 피드가 없습니다.</EmptyContainer>
         ) : (
-          <FeedGrid feedItems={data.items} onLike={handleLike} onCardClick={handleCardClick} />
+          <>
+            <FeedGrid feedItems={allFeedItems} onLike={handleLike} onCardClick={handleCardClick} />
+
+            {/* 무한 스크롤 트리거 */}
+            {hasNextPage && <LoadMoreTrigger ref={loadMoreRef} />}
+
+            {/* 다음 페이지 로딩 중 스피너 표시 */}
+            {isFetchingNextPage && (
+              <NextPageLoadingContainer>
+                <LoadingSpinner />
+              </NextPageLoadingContainer>
+            )}
+          </>
         )}
       </ContentContainer>
+
+      {/* 맨 위로 버튼 */}
+      <ScrollToTopButton />
 
       <FeedFAB onClick={handleFABClick} />
 

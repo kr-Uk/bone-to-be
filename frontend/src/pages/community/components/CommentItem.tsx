@@ -87,4 +87,3 @@ const Time = styled.div`
   font-size: 12px;
   color: #a1a1a1;
 `;
-

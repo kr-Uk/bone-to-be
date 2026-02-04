@@ -7,7 +7,12 @@ export interface FeedDetailHeaderProps {
   onUserClick?: () => void;
 }
 
-export function FeedDetailHeader({ avatarUrl, username, meta, onUserClick }: FeedDetailHeaderProps) {
+export function FeedDetailHeader({
+  avatarUrl,
+  username,
+  meta,
+  onUserClick,
+}: FeedDetailHeaderProps) {
   return (
     <S.DesktopHeader>
       {avatarUrl ? (

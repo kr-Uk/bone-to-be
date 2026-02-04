@@ -40,7 +40,12 @@
 .metricCard__key {
   color: var(--neutral-500, #737373);
   font-size: 12px;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -55,7 +60,12 @@
 .metricCard__title {
   color: var(--neutral-50, #fafafa);
   font-size: 18px;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
   font-weight: 600;
   line-height: 28px;
   white-space: nowrap;
@@ -112,12 +122,17 @@
 .metricCard__value {
   color: var(--neutral-400, #a1a1a1);
   font-size: 24px;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
   font-weight: 700;
 }
 
 .metricCard__value--zone-0 {
-  color: var(--purple-200, #E9D4FF);
+  color: var(--purple-200, #e9d4ff);
 }
 
 .metricCard__value--zone-1 {
@@ -211,7 +226,12 @@
 .metricCard__segmentLabel {
   color: var(--neutral-400, #a1a1a1);
   font-size: 12px;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
   font-weight: 300;
   text-transform: uppercase;
   letter-spacing: 0.2px;
@@ -228,7 +248,12 @@
   justify-content: space-between;
   align-items: flex-start;
   font-size: 11px;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
   font-weight: 300;
   color: var(--neutral-50, #fafafa);
 }
@@ -254,7 +279,12 @@
 .metricCard__resultText {
   color: var(--neutral-300, #d4d4d4);
   font-size: 14px;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
   font-weight: 500;
   line-height: 19.6px;
 }

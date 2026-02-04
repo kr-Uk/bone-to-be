@@ -7,6 +7,7 @@ import BodyTypeHistorySection from "./components/BodyTypeHistorySection";
 import { FollowListModal } from "./components/FollowListModal";
 import PostsSection from "./components/PostsSection";
 import ProfileHeaderSection from "./components/ProfileHeaderSection";
+import { ProfileSkeleton } from "./components/ProfileSkeleton";
 import SkeletalTypeSection from "./components/SkeletalTypeSection";
 import { useFollowListQuery } from "./hooks/useFollowListQuery";
 import {
@@ -192,13 +193,7 @@ const ProfilePage = () => {
   }, [data]);
 
   if (isAuthLoading || (shouldFetchProfile && isLoading)) {
-    return (
-      <Page>
-        <Main>
-          <StatusMessage>Loading profile...</StatusMessage>
-        </Main>
-      </Page>
-    );
+    return <ProfileSkeleton isOwner={!userId} />;
   }
 
   if (!userId && !isLoggedIn) {

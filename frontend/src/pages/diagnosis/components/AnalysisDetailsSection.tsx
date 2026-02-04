@@ -55,7 +55,7 @@ const MetricsGrid = styled(motion.div)`
   }
 
   @media (min-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: ${({ theme }) => theme.spacing.xxl};
   }
 `;
@@ -167,6 +167,7 @@ const AccordionContent = styled(motion.div)`
 `;
 
 const GroupSection = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
@@ -174,6 +175,20 @@ const GroupSection = styled.div`
 
   &:first-child {
     padding-top: 0;
+  }
+
+  &:not(:first-child) {
+    padding-top: ${({ theme }) => theme.spacing.xxl};
+  }
+
+  &:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: ${({ theme }) => theme.spacing.lg};
+    height: 1px;
+    background-color: ${({ theme }) => theme.colors.gray[800]};
   }
 `;
 

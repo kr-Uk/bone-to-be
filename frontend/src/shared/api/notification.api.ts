@@ -49,23 +49,6 @@ export const fetchNotifications = async (): Promise<Notification[]> => {
   );
 };
 
-export const requestNotificationTest = async (): Promise<Notification | null> => {
-  const { data } = await axiosInstance.post<string>("/notifications", null, {
-    responseType: "text",
-  });
-
-  if (typeof data !== "string") {
-    return null;
-  }
-
-  const dto = extractNotificationPayload(data);
-  if (!dto) {
-    return null;
-  }
-
-  return mapNotification(dto);
-};
-
 export const markNotificationRead = async (uuid: string): Promise<void> => {
   await axiosInstance.put<ApiResponse<null>>("/notifications", null, {
     params: { uuid },

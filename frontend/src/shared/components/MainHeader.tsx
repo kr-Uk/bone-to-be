@@ -18,7 +18,7 @@ import logo from "@/assets/image/MainLogo.svg";
 import { FollowListModal } from "@/pages/profile/components/FollowListModal";
 import { useUserSearch } from "@/pages/profile/hooks/useUserSearch";
 import { useAuth } from "@/shared/hooks/useAuth";
-import { markNotificationRead, requestNotificationTest } from "@/shared/api/notification.api";
+import { markNotificationRead } from "@/shared/api/notification.api";
 import { useNotificationsQuery } from "@/shared/hooks/useNotificationsQuery";
 import { useLogout } from "@/shared/hooks/useLogout";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
@@ -93,7 +93,6 @@ export const MainHeader = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isNotificationTestLoading, setIsNotificationTestLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
@@ -242,34 +241,17 @@ export const MainHeader = () => {
     }
   }, [isAuthLoading, isLoggedIn]);
 
-  const handleNotificationTest = async () => {
-    if (isNotificationTestLoading) {
-      return;
-    }
-    setIsNotificationTestLoading(true);
-    try {
-      const notification = await requestNotificationTest();
-      if (notification) {
-        setNotifications([notification]);
-        if (notification.type === "체형 진단" || notification.type === "가상 피팅") {
-          useNotificationStore.getState().pushToast({
-            id: notification.id,
-            message: notification.message,
-            type: notification.type,
-            reportId: notification.payload?.jobId,
-            createdAt: notification.createdAt,
-          });
-        }
-      }
-    } finally {
-      setIsNotificationTestLoading(false);
-    }
-  };
 
-  const handleNotificationClick = async (uuid: string) => {
-    removeNotification(uuid);
+  const handleNotificationClick = async (notification: {
+    id: string;
+    reportId?: string;
+  }) => {
+    removeNotification(notification.id);
     try {
-      await markNotificationRead(uuid);
+      await markNotificationRead(notification.id);
+      if (notification.reportId) {
+        protectedNavigate(`/diagnosis/report/${notification.reportId}`);
+      }
     } finally {
       await notificationsQuery.refetch();
     }
@@ -301,13 +283,6 @@ export const MainHeader = () => {
 
   const notificationContent = (
     <>
-      <NotificationTestButton
-        type="button"
-        onClick={handleNotificationTest}
-        disabled={isNotificationTestLoading}
-      >
-        {isNotificationTestLoading ? "테스트 요청 중..." : "테스트 알림 확인"}
-      </NotificationTestButton>
       <NotificationList>
         {isNotificationLoading ? (
           <NotificationEmpty>알림을 불러오는 중...</NotificationEmpty>
@@ -317,7 +292,12 @@ export const MainHeader = () => {
           notifications.map((notification) => (
             <NotificationItem
               key={notification.id}
-              onClick={() => handleNotificationClick(notification.id)}
+              onClick={() =>
+                handleNotificationClick({
+                  id: notification.id,
+                  reportId: notification.payload?.jobId,
+                })
+              }
             >
               <NotificationMeta>
                 <NotificationType>{notification.type}</NotificationType>
@@ -793,30 +773,6 @@ const NotificationEmpty = styled.span`
   font-size: 0.78rem;
   text-align: center;
   padding: 0.75rem 0;
-`;
-
-const NotificationTestButton = styled.button`
-  width: 100%;
-  padding: 0.45rem 0.6rem;
-  border-radius: 0.6rem;
-  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[700]};
-  background: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
-  color: ${({ theme }) => (theme as AppTheme).colors.gray[100]};
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-
-  &:hover:enabled {
-    background: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
-  }
-
-  &:disabled {
-    cursor: default;
-    opacity: 0.6;
-  }
 `;
 
 const NotificationModalOverlay = styled.div`

@@ -1,0 +1,260 @@
+.metricCard {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.metricCard__panel {
+  align-self: stretch;
+  padding: 23.67px;
+  background: var(--neutral-900, #171717);
+  border-radius: 4px;
+  outline: 1px solid var(--neutral-600, #525252);
+  outline-offset: -1px;
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+
+.metricCard__header {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.metricCard__titleGroup {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.metricCard__key {
+  color: var(--neutral-500, #737373);
+  font-size: 12px;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.metricCard__titleRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metricCard__title {
+  color: var(--neutral-50, #fafafa);
+  font-size: 18px;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 600;
+  line-height: 28px;
+  white-space: nowrap;
+}
+
+.metricCard__title--active {
+  color: var(--neutral-50, #fafafa);
+  font-weight: 500;
+}
+
+.metricCard__title--inactive {
+  color: var(--neutral-400, #a1a1a1);
+  font-weight: 300;
+}
+
+.metricCard__info {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.metricCard__infoIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--neutral-600, #525252);
+}
+
+.metricCard__tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translate(-50%, -4px);
+  width: 208px;
+  padding: 12px;
+  background: rgba(26, 26, 26, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: var(--neutral-300, #d4d4d4);
+  font-size: 12px;
+  line-height: 1.5;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.metricCard__info:hover .metricCard__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -12px);
+}
+
+.metricCard__value {
+  color: var(--neutral-400, #a1a1a1);
+  font-size: 24px;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 700;
+}
+
+.metricCard__value--zone-0 {
+  color: var(--purple-200, #E9D4FF);
+}
+
+.metricCard__value--zone-1 {
+  color: var(--purple-400, #c084fc);
+}
+
+.metricCard__value--zone-2 {
+  color: var(--purple-600, #9810fa);
+}
+
+.metricCard__range {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.metricCard__bar {
+  position: relative;
+  padding: 1px;
+  background: var(--neutral-800, #262626);
+  overflow: hidden;
+  border-radius: 9999px;
+  outline: 1px solid var(--neutral-800, #262626);
+  outline-offset: -1px;
+  width: 100%;
+  height: 16px;
+  display: flex;
+}
+
+.metricCard__barHighlight {
+  position: absolute;
+  left: 0;
+  top: 0.66px;
+  height: 14.67px;
+  width: 0;
+  opacity: 0.4;
+  background: var(--purple-300, #dab2ff);
+  border-radius: 9999px;
+  transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.metricCard__barHighlight--zone-0 {
+  background: var(--purple-300, #dab2ff);
+}
+
+.metricCard__barHighlight--zone-1 {
+  background: var(--purple-500, #a855f7);
+}
+
+.metricCard__barHighlight--zone-2 {
+  background: var(--purple-600, #9810fa);
+}
+
+.metricCard__bar.is-open .metricCard__barHighlight {
+  width: var(--range-width, 0%);
+}
+
+.metricCard__segment {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 14px;
+  margin-top: 1px;
+}
+
+.metricCard__segment--first {
+  flex: 0 0 var(--zone-0-width, 33.33%);
+}
+
+.metricCard__segment--second {
+  flex: 0 0 var(--zone-1-width, 33.33%);
+}
+
+.metricCard__segment--third {
+  flex: 0 0 var(--zone-2-width, 33.33%);
+}
+
+.metricCard__segment--first::after,
+.metricCard__segment--second::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 1.665px;
+  width: 1px;
+  height: 10.67px;
+  background: var(--neutral-600, #525252);
+}
+
+.metricCard__segmentLabel {
+  color: var(--neutral-400, #a1a1a1);
+  font-size: 12px;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.metricCard__segmentLabel--active {
+  color: var(--neutral-50, #fafafa);
+  font-weight: 500;
+}
+
+.metricCard__rangeLabels {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 11px;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 300;
+  color: var(--neutral-50, #fafafa);
+}
+
+.metricCard__result {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--neutral-800, #262626);
+  border-radius: 4px;
+  outline: 1px solid var(--neutral-800, #262626);
+  outline-offset: -1px;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.metricCard__resultIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--purple-600, #9810fa);
+}
+
+.metricCard__resultText {
+  color: var(--neutral-300, #d4d4d4);
+  font-size: 14px;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 19.6px;
+}

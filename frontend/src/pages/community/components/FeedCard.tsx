@@ -1,3 +1,4 @@
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import styled from "styled-components";
 
 import type { FeedItem } from "../api";
@@ -47,9 +48,14 @@ const Overlay = styled.div`
   opacity: 0;
   transition: opacity 0.2s ease;
   padding: ${({ theme }) => theme.spacing.lg};
+  padding-bottom: calc(${({ theme }) => theme.spacing.md} + 36px);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    padding-bottom: calc(${({ theme }) => theme.spacing.sm} + 32px);
+  }
 `;
 
 const UserInfo = styled.div`
@@ -87,27 +93,50 @@ const HeightBadge = styled.span`
   border-radius: 12px;
 `;
 
-const LikeButton = styled.button`
+const LikeButton = styled.button<{ $liked: boolean }>`
   position: absolute;
-  bottom: ${({ theme }) => theme.spacing.lg};
-  right: ${({ theme }) => theme.spacing.lg};
-  background: none;
+  bottom: ${({ theme }) => theme.spacing.md};
+  right: ${({ theme }) => theme.spacing.md};
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
   border: none;
   cursor: pointer;
-  font-size: 1.5rem;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
-  z-index: 1;
+  transition: all 0.2s ease;
+  z-index: 2;
+  color: ${({ $liked }) => ($liked ? "#ef4444" : "#fafafa")};
+  font-size: 18px;
 
-  &:hover {
-    transform: scale(1.15);
+  svg {
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease;
   }
 
-  &:active {
-    transform: scale(0.95);
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+
+    svg {
+      transform: scale(1.15);
+    }
+  }
+
+  &:active svg {
+    transform: scale(1.3);
+  }
+
+  @media (max-width: 768px) {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    bottom: ${({ theme }) => theme.spacing.sm};
+    right: ${({ theme }) => theme.spacing.sm};
   }
 `;
 
@@ -129,8 +158,13 @@ export function FeedCard({ item, isActive, onLike, onClick }: FeedCardProps) {
           </BadgesContainer>
         </UserInfo>
       </Overlay>
-      <LikeButton onClick={handleLikeClick} aria-label="Toggle like">
-        {item.isLiked ? "❤️" : "🤍"}
+      <LikeButton
+        $liked={item.isLiked}
+        onClick={handleLikeClick}
+        aria-label={item.isLiked ? "좋아요 취소" : "좋아요"}
+        aria-pressed={item.isLiked}
+      >
+        {item.isLiked ? <FaHeart size={18} /> : <FaRegHeart size={18} />}
       </LikeButton>
     </CardContainer>
   );

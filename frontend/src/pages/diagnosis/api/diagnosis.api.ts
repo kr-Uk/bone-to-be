@@ -15,6 +15,8 @@ import type {
   RepresentativeReportResponse,
   RepresentativeReport,
   RepresentativeReportDto,
+  TryOnResponse,
+  TryOnDataResponse,
 } from "./diagnosis.types";
 
 import axios from "@/shared/api/axios";
@@ -132,6 +134,15 @@ export async function createReport(
  */
 export async function getReportDetail(reportId: number): Promise<ReportDetailResponse["data"]> {
   const response = await axios.get<ReportDetailResponse>(`/reports/${reportId}`);
+
+  return response.data.data; // 래퍼 벗기기
+}
+
+/**
+ * Try-On 데이터 조회
+ */
+export async function getTryOnData(reportId: number): Promise<TryOnResponse> {
+  const response = await axios.get<TryOnDataResponse>(`/tryon/${reportId}`);
 
   return response.data.data; // 래퍼 벗기기
 }

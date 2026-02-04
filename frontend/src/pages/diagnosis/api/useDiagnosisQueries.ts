@@ -11,6 +11,7 @@ import {
   getReportDetail,
   getMyReportList,
   getRepresentativeReport,
+  getTryOnData,
 } from "./diagnosis.api";
 
 import type {
@@ -24,6 +25,7 @@ import type {
   ReportDetailResponse,
   ReportSummary,
   RepresentativeReport,
+  TryOnResponse,
 } from "./diagnosis.types";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 
@@ -145,6 +147,72 @@ export function useReportDetail(
         }
       }
       // 서버 에러는 최대 3번 재시도
+      return failureCount < 3;
+    },
+  });
+}
+
+/**
+ * 404 에러 체크 유틸리티
+ */
+const isNotFoundError = (error: Error): boolean => {
+  if (isAxiosError(error)) {
+    return error.response?.status === 404;
+  }
+  return false;
+};
+
+/**
+ * Try-On 데이터 조회 훅 (폴링 지원)
+ */
+export function useTryOnData(
+  reportId: number | null,
+  options?: {
+    enabled?: boolean;
+  },
+): UseQueryResult<TryOnResponse, Error> {
+  return useQuery({
+    queryKey: ["tryonData", reportId],
+    queryFn: () => getTryOnData(reportId!),
+    enabled: options?.enabled !== false && reportId !== null,
+
+    // 폴링 로직
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      const error = query.state.error;
+
+      // 404는 정상 (아직 생성 안 됨), 다른 에러는 폴링 중단
+      if (error && !isNotFoundError(error)) {
+        return false;
+      }
+
+      // 두 이미지 URL이 모두 있으면 폴링 중단
+      if (data?.bestImageUrl && data?.worstImageUrl) {
+        return false;
+      }
+
+      // 3초마다 재조회
+      return 3000;
+    },
+
+    staleTime: 0, // 항상 최신 데이터 요청
+
+    // 에러 재시도 로직
+    retry: (failureCount, error) => {
+      // 404는 계속 재시도 (최대 20회 = 1분)
+      if (isNotFoundError(error)) {
+        return failureCount < 20;
+      }
+
+      // 4xx (404 제외)는 재시도 안 함
+      if (isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status && status >= 400 && status < 500) {
+          return false;
+        }
+      }
+
+      // 5xx는 3회 재시도
       return failureCount < 3;
     },
   });

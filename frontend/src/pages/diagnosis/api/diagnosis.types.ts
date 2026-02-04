@@ -233,3 +233,36 @@ export type AnalysisResult = {
   recommendations: string[];
   processedAt: string;
 };
+
+/**
+ * ===== Try-On API 타입 =====
+ */
+
+/**
+ * Try-On API 응답 데이터
+ */
+export interface TryOnResponse {
+  reportId: number;
+  bestImageUrl: string | null;
+  worstImageUrl: string | null;
+}
+
+export type TryOnDataResponse = ApiResponse<TryOnResponse>;
+
+/**
+ * TryOnComparisonSection Props
+ */
+export interface TryOnComparisonSectionProps {
+  bestImageUrl: string | null;
+  worstImageUrl: string | null;
+  isLoading: boolean;
+  isError: boolean;
+  onRetry?: () => void;
+}
+
+/**
+ * Try-On 데이터 준비 상태 타입 가드
+ */
+export const isTryOnReady = (data: TryOnResponse | undefined): data is TryOnResponse => {
+  return Boolean(data?.bestImageUrl && data?.worstImageUrl);
+};

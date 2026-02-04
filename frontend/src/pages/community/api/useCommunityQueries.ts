@@ -5,6 +5,7 @@ import {
   getFeedList,
   addFeedLike,
   removeFeedLike,
+  addFeedScrap,
   getPresignedUrl,
   uploadImageToS3,
   createFeed,
@@ -95,6 +96,7 @@ const mapFeedCommentDtoToUi = (comment: FeedCommentDto) => ({
   id: String(comment.replyId),
   userId: String(comment.author.userId),
   username: comment.author.nickname,
+  avatarUrl: comment.author.profileImageUrl,
   text: comment.content, // replyContent → content
   createdAt: comment.createdAt,
   likeCount: comment.likeCount,
@@ -238,6 +240,15 @@ export function useLikeToggle() {
       // Profile page 캐시도 무효화하여 좋아요 동기화
       queryClient.invalidateQueries({ queryKey: ["profile", "feeds"] });
     },
+  });
+}
+
+/**
+ * 피드 스크랩
+ */
+export function useFeedScrap() {
+  return useMutation({
+    mutationFn: (feedId: string) => addFeedScrap(feedId),
   });
 }
 

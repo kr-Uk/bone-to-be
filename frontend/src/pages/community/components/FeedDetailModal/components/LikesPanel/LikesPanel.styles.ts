@@ -83,6 +83,22 @@ export const LikeAvatar = styled.div`
   background: #525252;
   flex-shrink: 0;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+`;
+
+export const LikeAvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+`;
+
+export const LikeAvatarFallback = styled.div`
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #737373;
 `;
 
 export const LikeName = styled.div`

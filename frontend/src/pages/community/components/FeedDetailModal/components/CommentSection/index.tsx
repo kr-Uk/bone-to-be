@@ -33,9 +33,9 @@ export function CommentSection({ comments, isLoading, hasError }: CommentSection
             <CommentRow
               userId={comment.userId}
               username={comment.username}
+              avatarUrl={comment.avatarUrl}
               text={comment.text}
               time={formatTimeAgo(comment.createdAt)}
-              likeCount={0}
               onUserClick={handleUserClick}
             />
           </S.CommentRowWrapper>

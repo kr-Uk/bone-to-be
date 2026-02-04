@@ -23,7 +23,13 @@ export function FeedDetailContent({
 }: FeedDetailContentProps) {
   return (
     <S.PostContent>
-      <S.Avatar onClick={onUserClick} />
+      <S.Avatar onClick={onUserClick}>
+        {author.avatarUrl ? (
+          <S.AvatarImage src={author.avatarUrl} alt={`${author.username} avatar`} />
+        ) : (
+          <S.AvatarFallback />
+        )}
+      </S.Avatar>
       <div>
         <S.Username onClick={onUserClick}>{author.username}</S.Username>
         {content.map((line: string, index: number) => (

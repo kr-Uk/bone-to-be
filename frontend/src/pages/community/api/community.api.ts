@@ -148,6 +148,13 @@ export async function removeFeedLike(feedId: string): Promise<void> {
 }
 
 /**
+ * 피드 스크랩
+ */
+export async function addFeedScrap(feedId: string): Promise<void> {
+  await axiosInstance.post<ApiResponse<null>>(`/feeds/${feedId}/scraps`);
+}
+
+/**
  * 피드 좋아요 토글
  * @deprecated 새 백엔드 스펙에서는 addFeedLike/removeFeedLike 사용
  */

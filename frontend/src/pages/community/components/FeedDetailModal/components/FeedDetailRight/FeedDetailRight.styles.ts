@@ -100,6 +100,22 @@ export const Avatar = styled.div`
   background: #525252;
   flex-shrink: 0;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+`;
+
+export const AvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+`;
+
+export const AvatarFallback = styled.div`
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #737373;
 `;
 
 export const Username = styled.div`

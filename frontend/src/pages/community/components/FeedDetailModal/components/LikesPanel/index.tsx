@@ -45,13 +45,19 @@ export function LikesPanel({ isOpen, onClose, likeUsers }: LikesPanelProps) {
               return (
                 <S.LikeItem key={user.id}>
                   <S.LikeLeft>
-                    <S.LikeAvatar
-                      role="button"
-                      tabIndex={0}
-                      onClick={handleClick}
-                      onKeyDown={handleKeyDown}
-                      aria-label={`${user.username} 프로필 보기`}
-                    />
+                  <S.LikeAvatar
+                    role="button"
+                    tabIndex={0}
+                    onClick={handleClick}
+                    onKeyDown={handleKeyDown}
+                    aria-label={`${user.username} 프로필 보기`}
+                  >
+                    {user.avatarUrl ? (
+                      <S.LikeAvatarImage src={user.avatarUrl} alt={`${user.username} avatar`} />
+                    ) : (
+                      <S.LikeAvatarFallback />
+                    )}
+                  </S.LikeAvatar>
                     <div>
                       <S.LikeName
                         role="button"

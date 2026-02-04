@@ -188,7 +188,9 @@ const ReportPage = () => {
         <ErrorIcon>⚠️</ErrorIcon>
         <ErrorTitle>분석 결과를 불러올 수 없습니다</ErrorTitle>
         <ErrorMessage>{error?.message || "알 수 없는 오류가 발생했습니다"}</ErrorMessage>
-        <ErrorButton onClick={() => navigate("/diagnosis/basic-info")}>
+        <ErrorButton
+          onClick={() => navigate("/diagnosis/basic-info", { state: { fromInternalNav: true } })}
+        >
           처음부터 다시 시작
         </ErrorButton>
       </ErrorView>
@@ -223,7 +225,9 @@ const ReportPage = () => {
         <ErrorIcon>❌</ErrorIcon>
         <ErrorTitle>분석에 실패했습니다</ErrorTitle>
         <ErrorMessage>사진을 다시 업로드하거나 고객센터에 문의해주세요</ErrorMessage>
-        <ErrorButton onClick={() => navigate("/diagnosis/photo-capture")}>
+        <ErrorButton
+          onClick={() => navigate("/diagnosis/photo-capture", { state: { fromInternalNav: true } })}
+        >
           사진 다시 촬영하기
         </ErrorButton>
       </ErrorView>

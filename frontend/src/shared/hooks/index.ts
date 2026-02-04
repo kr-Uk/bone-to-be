@@ -5,3 +5,4 @@ export { useDeleteMe } from "./useDeleteMe";
 export { useLogin } from "./useLogin";
 export { useLogout } from "./useLogout";
 export { usePasswordResetRequest } from "./usePasswordResetRequest";
+export { useProtectedNavigate } from "./useProtectedNavigate";

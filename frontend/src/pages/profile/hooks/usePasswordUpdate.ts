@@ -13,4 +13,3 @@ export const usePasswordUpdate = (): UseMutationResult<
     mutationFn: updateMyPassword,
   });
 };
-

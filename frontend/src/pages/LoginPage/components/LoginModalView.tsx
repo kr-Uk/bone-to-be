@@ -36,23 +36,21 @@ export const LoginModalView = ({
 
       <S.Form>
         <S.Field>
-          <S.Label>이메일</S.Label>
           <S.Input
             value={email}
             onChange={(e) => onChangeEmail?.(e.target.value)}
-            placeholder=""
+            placeholder="이메일"
             autoComplete="email"
           />
         </S.Field>
         <S.PasswordSpacer />
 
         <S.Field>
-          <S.Label>비밀번호</S.Label>
           <S.Input
             type="password"
             value={password}
             onChange={(e) => onChangePassword?.(e.target.value)}
-            placeholder=""
+            placeholder="비밀번호"
             autoComplete="current-password"
           />
         </S.Field>

@@ -2,8 +2,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styled, { css, keyframes } from "styled-components";
 
 import bg403 from "./images/403_bg.png";
-import text403 from "./images/text403.png";
-import skull from "./images/locked_skeleton.png";
 import float1 from "./images/float_1.png";
 import float2 from "./images/float_2.png";
 import float3 from "./images/float_3.png";
@@ -11,6 +9,9 @@ import float4 from "./images/float_4.png";
 import float5 from "./images/float_5.png";
 import float6 from "./images/float_6.png";
 import float7 from "./images/float_7.png";
+import skull from "./images/locked_skeleton.png";
+import text403 from "./images/text403.png";
+
 import NotFound from "@/pages/NotFound/NotFound";
 
 type FloatPreset = "slow" | "mid" | "fast";
@@ -156,7 +157,7 @@ const ForbiddenPage = () => {
   };
 
   const handleGoMyPage = () => {
-    navigate("/profile");
+    navigate("/profile", { state: { fromInternalNav: true } });
   };
 
   return (
@@ -193,7 +194,11 @@ const ForbiddenPage = () => {
         <Content aria-labelledby="forbidden-title" aria-describedby="forbidden-desc">
           <TextImg src={text403} alt="403" />
           <Title id="forbidden-title">접근 권한이 없습니다</Title>
-          <Description id="forbidden-desc">요청하신 경로를 확인할 권한이 없거나,<br />잘못된 경로로 접근하셨습니다.</Description>
+          <Description id="forbidden-desc">
+            요청하신 경로를 확인할 권한이 없거나,
+            <br />
+            잘못된 경로로 접근하셨습니다.
+          </Description>
           <WarningBox role="status" aria-live="polite">
             <WarningIcon aria-hidden="true" viewBox="0 0 20 20">
               <path
@@ -242,9 +247,9 @@ const Page = styled.main`
   display: grid;
   place-items: center;
   padding: 4rem 1.5rem;
-  background-image: radial-gradient(circle at 18% 18%, rgba(152, 16, 250, 0.2), transparent 60%),
-    radial-gradient(circle at 82% 22%, rgba(88, 16, 200, 0.25), transparent 55%),
-    url(${bg403});
+  background-image:
+    radial-gradient(circle at 18% 18%, rgba(152, 16, 250, 0.2), transparent 60%),
+    radial-gradient(circle at 82% 22%, rgba(88, 16, 200, 0.25), transparent 55%), url(${bg403});
   background-size: auto, auto, cover;
   background-position: center, center, center;
   background-repeat: no-repeat;
@@ -257,7 +262,8 @@ const Page = styled.main`
     content: "";
     position: absolute;
     inset: 0;
-    background-image: linear-gradient(rgba(152, 16, 250, 0.15) 1px, transparent 1px),
+    background-image:
+      linear-gradient(rgba(152, 16, 250, 0.15) 1px, transparent 1px),
       linear-gradient(90deg, rgba(152, 16, 250, 0.12) 1px, transparent 1px);
     background-size: 2.75rem 2.75rem;
     opacity: 0.4;
@@ -325,10 +331,10 @@ const LayerImage = styled.img<{
   width: ${({ $width }) => $width};
   z-index: ${({ $z }) => $z};
   pointer-events: none;
-  ${({ $preset }) =>
-    css`
-      animation: ${floatPresets[$preset].keyframes} ${floatPresets[$preset].duration} ease-in-out infinite;
-    `};
+  ${({ $preset }) => css`
+    animation: ${floatPresets[$preset].keyframes} ${floatPresets[$preset].duration} ease-in-out
+      infinite;
+  `};
   animation-delay: ${({ $delay }) => $delay ?? "0s"};
 
   @media (prefers-reduced-motion: reduce) {
@@ -417,7 +423,10 @@ const buttonBase = css`
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 
   &:focus-visible {
     outline: 0.2rem solid ${({ theme }) => theme.colors.purple[200]};

@@ -33,11 +33,7 @@ export const MainProgressSection = () => {
         </Header>
         <Cards>
           {cardData.map((c, i) => (
-            <Card
-              key={c.title}
-              data-aos="fade-up"
-              data-aos-delay={150 * (i + 1)}
-            >
+            <Card key={c.title} data-aos="fade-up" data-aos-delay={150 * (i + 1)}>
               <IconWrap>
                 <IconImg src={c.icon} alt="" />
               </IconWrap>

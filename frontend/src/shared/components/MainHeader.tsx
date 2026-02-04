@@ -18,10 +18,12 @@ import logo from "@/assets/image/MainLogo.svg";
 import { FollowListModal } from "@/pages/profile/components/FollowListModal";
 import { useUserSearch } from "@/pages/profile/hooks/useUserSearch";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { markNotificationRead, requestNotificationTest } from "@/shared/api/notification.api";
 import { useNotificationsQuery } from "@/shared/hooks/useNotificationsQuery";
 import { useLogout } from "@/shared/hooks/useLogout";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
-import { NotificationToggleButton } from "@/shared/components/NotificationToggleButton";
+import { connect, disconnect } from "@/shared/notifications/sseClient";
 import { useNotificationStore } from "@/shared/stores/notification.store";
 
 type NavItem = {
@@ -54,6 +56,33 @@ const withTypography = (getToken: (theme: AppTheme) => TypographyToken) => css`
 const resolveProfilePath = (userId?: string) =>
   userId ? `/profile/${encodeURIComponent(userId)}` : "/profile";
 
+const formatRelativeTime = (value: string) => {
+  const target = new Date(value).getTime();
+  if (Number.isNaN(target)) {
+    return value;
+  }
+
+  const diffMs = Date.now() - target;
+  const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+
+  if (diffSec < 60) {
+    return `${diffSec}초전`;
+  }
+
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) {
+    return `${diffMin}분전`;
+  }
+
+  const diffHour = Math.floor(diffMin / 60);
+  if (diffHour < 24) {
+    return `${diffHour}시간전`;
+  }
+
+  const diffDay = Math.floor(diffHour / 24);
+  return `${diffDay}일전`;
+};
+
 export const MainHeader = () => {
   const navigate = useNavigate();
   const protectedNavigate = useProtectedNavigate();
@@ -64,10 +93,12 @@ export const MainHeader = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isNotificationTestLoading, setIsNotificationTestLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
   const notificationMenuRef = useRef<HTMLDivElement | null>(null);
+  const isMobile = useMediaQuery("(max-width: 1023px)");
   const profilePath = "/profile";
   const navItems: NavItem[] = isLoggedIn
     ? [...baseNavItems, { label: "MYPAGE", path: profilePath }]
@@ -89,6 +120,7 @@ export const MainHeader = () => {
   const notificationsQuery = useNotificationsQuery(isNotificationOpen);
   const notifications = useNotificationStore((state) => state.notifications);
   const setNotifications = useNotificationStore((state) => state.setNotifications);
+  const removeNotification = useNotificationStore((state) => state.removeNotification);
   const isNotificationLoading = notificationsQuery.isLoading;
   const isNotificationError = notificationsQuery.isError;
   const searchUsers = useMemo(() => {
@@ -139,7 +171,7 @@ export const MainHeader = () => {
   }, [isProfileMenuOpen]);
 
   useEffect(() => {
-    if (!isNotificationOpen) {
+    if (!isNotificationOpen || isMobile) {
       return;
     }
 
@@ -200,6 +232,50 @@ export const MainHeader = () => {
   }, [notificationsQuery.data, setNotifications]);
 
   useEffect(() => {
+    if (isAuthLoading) {
+      return;
+    }
+    if (isLoggedIn) {
+      connect();
+    } else {
+      disconnect();
+    }
+  }, [isAuthLoading, isLoggedIn]);
+
+  const handleNotificationTest = async () => {
+    if (isNotificationTestLoading) {
+      return;
+    }
+    setIsNotificationTestLoading(true);
+    try {
+      const notification = await requestNotificationTest();
+      if (notification) {
+        setNotifications([notification]);
+        if (notification.type === "체형 진단" || notification.type === "가상 피팅") {
+          useNotificationStore.getState().pushToast({
+            id: notification.id,
+            message: notification.message,
+            type: notification.type,
+            reportId: notification.payload?.jobId,
+            createdAt: notification.createdAt,
+          });
+        }
+      }
+    } finally {
+      setIsNotificationTestLoading(false);
+    }
+  };
+
+  const handleNotificationClick = async (uuid: string) => {
+    removeNotification(uuid);
+    try {
+      await markNotificationRead(uuid);
+    } finally {
+      await notificationsQuery.refetch();
+    }
+  };
+
+  useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
     const handleChange = () => {
       if (mediaQuery.matches) {
@@ -222,6 +298,40 @@ export const MainHeader = () => {
       }
     };
   }, []);
+
+  const notificationContent = (
+    <>
+      <NotificationTestButton
+        type="button"
+        onClick={handleNotificationTest}
+        disabled={isNotificationTestLoading}
+      >
+        {isNotificationTestLoading ? "테스트 요청 중..." : "테스트 알림 확인"}
+      </NotificationTestButton>
+      <NotificationList>
+        {isNotificationLoading ? (
+          <NotificationEmpty>알림을 불러오는 중...</NotificationEmpty>
+        ) : isNotificationError ? (
+          <NotificationEmpty>알림을 불러오지 못했습니다.</NotificationEmpty>
+        ) : notifications.length ? (
+          notifications.map((notification) => (
+            <NotificationItem
+              key={notification.id}
+              onClick={() => handleNotificationClick(notification.id)}
+            >
+              <NotificationMeta>
+                <NotificationType>{notification.type}</NotificationType>
+                <NotificationTime>{formatRelativeTime(notification.createdAt)}</NotificationTime>
+              </NotificationMeta>
+              <NotificationMessage>{notification.message}</NotificationMessage>
+            </NotificationItem>
+          ))
+        ) : (
+          <NotificationEmpty>알림이 없습니다.</NotificationEmpty>
+        )}
+      </NotificationList>
+    </>
+  );
 
   return (
     <Header>
@@ -279,26 +389,7 @@ export const MainHeader = () => {
                 <FaRegBell size={26} />
               </AuthIconButton>
               <NotificationMenu $isOpen={isNotificationOpen}>
-                <NotificationToggleButton />
-                <NotificationList>
-                  {isNotificationLoading ? (
-                    <NotificationEmpty>알림을 불러오는 중...</NotificationEmpty>
-                  ) : isNotificationError ? (
-                    <NotificationEmpty>알림을 불러오지 못했습니다.</NotificationEmpty>
-                  ) : notifications.length ? (
-                    notifications.map((notification) => (
-                      <NotificationItem key={notification.id}>
-                        <NotificationMeta>
-                          <NotificationType>{notification.type}</NotificationType>
-                          <NotificationTime>{notification.createdAt}</NotificationTime>
-                        </NotificationMeta>
-                        <NotificationMessage>{notification.message}</NotificationMessage>
-                      </NotificationItem>
-                    ))
-                  ) : (
-                    <NotificationEmpty>알림이 없습니다.</NotificationEmpty>
-                  )}
-                </NotificationList>
+                {notificationContent}
               </NotificationMenu>
             </NotificationMenuWrap>
             <ProfileMenuWrap ref={profileMenuRef}>
@@ -414,7 +505,15 @@ export const MainHeader = () => {
 
             {isLoggedIn && (
               <SideMenuAccountSection>
-                <SideMenuRowButton type="button">
+                <SideMenuRowButton
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsProfileMenuOpen(false);
+                    setIsSearchOpen(false);
+                    setIsNotificationOpen(true);
+                  }}
+                >
                   <SideMenuIconSlot aria-hidden="true">
                     <FaRegBell size={18} />
                   </SideMenuIconSlot>
@@ -490,6 +589,17 @@ export const MainHeader = () => {
               />
             </SearchModalCard>
           </SearchModalOverlay>,
+          document.body,
+        )}
+      {isNotificationOpen &&
+        isMobile &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <NotificationModalOverlay onClick={() => setIsNotificationOpen(false)}>
+            <NotificationModalCard onClick={(event) => event.stopPropagation()}>
+              {notificationContent}
+            </NotificationModalCard>
+          </NotificationModalOverlay>,
           document.body,
         )}
     </Header>
@@ -618,7 +728,7 @@ const NotificationMenu = styled.div<{ $isOpen: boolean }>`
   position: absolute;
   top: calc(100% + 0.75rem);
   right: 0;
-  min-width: 14.5rem;
+  min-width: 16.5rem;
   padding: 0.75rem;
   border-radius: 0.75rem;
   background: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
@@ -683,6 +793,53 @@ const NotificationEmpty = styled.span`
   font-size: 0.78rem;
   text-align: center;
   padding: 0.75rem 0;
+`;
+
+const NotificationTestButton = styled.button`
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[700]};
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[900]};
+  color: ${({ theme }) => (theme as AppTheme).colors.gray[100]};
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  &:hover:enabled {
+    background: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+`;
+
+const NotificationModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1000;
+`;
+
+const NotificationModalCard = styled.div`
+  width: min(22rem, 90vw);
+  max-height: 80vh;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: ${({ theme }) => (theme as AppTheme).colors.gray[800]};
+  border: 1px solid ${({ theme }) => (theme as AppTheme).colors.gray[600]};
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  display: grid;
+  gap: 0.75rem;
 `;
 
 const ProfileMenuWrap = styled.div`

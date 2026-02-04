@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { LoginModalContainer } from "@/pages/LoginPage/components/LoginModalContainer";
 import { AuthRequiredModal } from "@/shared/components/AuthRequiredModal";
 import { MainHeader } from "@/shared/components/MainHeader";
+import { NotificationToastContainer } from "@/shared/components/NotificationToastContainer";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
 
 export const MainLayout = () => {
@@ -36,6 +37,7 @@ export const MainLayout = () => {
       </Main>
       <LoginModalContainer />
       <AuthRequiredModal />
+      <NotificationToastContainer />
     </Wrapper>
   );
 };

@@ -23,6 +23,23 @@ const mapNotification = (dto: NotificationDto): Notification => ({
   payload: dto.reportId ? { jobId: String(dto.reportId) } : undefined,
 });
 
+const extractNotificationPayload = (raw: string): NotificationDto | null => {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  const jsonText = trimmed.startsWith("{")
+    ? trimmed
+    : trimmed.match(/data:\s*(\{[\s\S]*\})/)?.[1];
+
+  if (!jsonText) return null;
+
+  try {
+    return JSON.parse(jsonText) as NotificationDto;
+  } catch {
+    return null;
+  }
+};
+
 export const fetchNotifications = async (): Promise<Notification[]> => {
   const { data } = await axiosInstance.get<ApiResponse<NotificationDto[]>>("/notifications");
   const list = Array.isArray(data?.data) ? data.data : [];
@@ -30,4 +47,27 @@ export const fetchNotifications = async (): Promise<Notification[]> => {
   return mapped.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
+};
+
+export const requestNotificationTest = async (): Promise<Notification | null> => {
+  const { data } = await axiosInstance.post<string>("/notifications", null, {
+    responseType: "text",
+  });
+
+  if (typeof data !== "string") {
+    return null;
+  }
+
+  const dto = extractNotificationPayload(data);
+  if (!dto) {
+    return null;
+  }
+
+  return mapNotification(dto);
+};
+
+export const markNotificationRead = async (uuid: string): Promise<void> => {
+  await axiosInstance.put<ApiResponse<null>>("/notifications", null, {
+    params: { uuid },
+  });
 };

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type NotificationType = "IMAGE_JOB" | "FOLLOW" | "COMMENT";
+export type NotificationType = string;
 
 export type Notification = {
   id: string;
@@ -14,20 +14,33 @@ export type Notification = {
   };
 };
 
+export type NotificationToast = {
+  id: string;
+  message: string;
+  type?: string;
+  reportId?: string;
+  createdAt: string;
+};
+
 type NotificationStore = {
   notifications: Notification[];
   unreadCount: number;
   isConnected: boolean;
+  toasts: NotificationToast[];
   push: (notification: Notification) => void;
   setNotifications: (notifications: Notification[]) => void;
+  removeNotification: (notificationId: string) => void;
   markAllRead: () => void;
   setConnected: (value: boolean) => void;
+  pushToast: (toast: NotificationToast) => void;
+  removeToast: (toastId: string) => void;
 };
 
 export const useNotificationStore = create<NotificationStore>((set) => ({
   notifications: [],
   unreadCount: 0,
   isConnected: false,
+  toasts: [],
   push: (notification) =>
     set((state) => ({
       notifications: [notification, ...state.notifications],
@@ -49,6 +62,19 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
       );
       return { notifications: next };
     }),
+  removeNotification: (notificationId) =>
+    set((state) => ({
+      notifications: state.notifications.filter((item) => item.id !== notificationId),
+    })),
   markAllRead: () => set({ unreadCount: 0 }),
   setConnected: (value) => set({ isConnected: value }),
+  pushToast: (toast) =>
+    set((state) => {
+      if (state.toasts.some((item) => item.id === toast.id)) {
+        return state;
+      }
+      return { toasts: [toast, ...state.toasts] };
+    }),
+  removeToast: (toastId) =>
+    set((state) => ({ toasts: state.toasts.filter((item) => item.id !== toastId) })),
 }));

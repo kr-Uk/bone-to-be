@@ -4,6 +4,8 @@ import com.bonetobe.backend.common.response.APIResponse;
 import com.bonetobe.backend.common.response.SuccessCode;
 import com.bonetobe.backend.notification.application.NotificationFacade;
 import com.bonetobe.backend.notification.adapter.NotificationService;
+import com.bonetobe.backend.notification.domain.AlertType;
+import com.bonetobe.backend.notification.domain.Notification;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,5 +55,10 @@ public class NotificationController {
                 .body(APIResponse.success(
                     SuccessCode.OK
                 ));
+    }
+
+    @PostMapping
+    public void testNotification(@AuthenticationPrincipal UserPrincipal user) {
+        notificationFacade.saveAndSendNotification(Notification.create(user.getId(), 1L, AlertType.TRY_ME));
     }
 }

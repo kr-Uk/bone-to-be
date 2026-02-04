@@ -153,6 +153,10 @@ export default function CommunityPage() {
         ...prev,
         styles: prev.styles.filter((s) => s !== value),
       }));
+    } else if (filterKey === "heightRange") {
+      setFilters((prev) => ({ ...prev, heightRange: null }));
+    } else if (filterKey === "weightRange") {
+      setFilters((prev) => ({ ...prev, weightRange: null }));
     }
   }, []);
 

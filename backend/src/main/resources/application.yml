@@ -136,6 +136,10 @@ rabbitmq:
           name: tryon.completed.queue
           routingKey: tryon.completed
 
+        failed:
+          name: tryon.failed.queue
+          routingKey: tryon.failed
+
 
   ##################################
   # Jackson

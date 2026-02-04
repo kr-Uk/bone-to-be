@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -90,9 +91,17 @@ const BasicInfoPage = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+  const storedBasicInfo = useDiagnosisStore((state) => state.diagnosisData.basicInfo);
   const setBasicInfo = useDiagnosisStore((state) => state.setBasicInfo);
+  const checkExpiration = useDiagnosisStore((state) => state.checkExpiration);
+
+  // 만료 시간 체크
+  useEffect(() => {
+    checkExpiration();
+  }, [checkExpiration]);
 
   const {
+    reset,
     watch,
     setValue,
     handleSubmit,
@@ -107,6 +116,18 @@ const BasicInfoPage = () => {
       styles: [],
     },
   });
+
+  // 뒤로가기 또는 재방문 시 기존 데이터 복원
+  useEffect(() => {
+    if (storedBasicInfo) {
+      reset({
+        gender: storedBasicInfo.gender,
+        height: storedBasicInfo.height.toString(),
+        weight: storedBasicInfo.weight.toString(),
+        styles: storedBasicInfo.styles,
+      });
+    }
+  }, [storedBasicInfo, reset]);
 
   // 자식 컴포넌트에 전달할 값
   const gender = watch("gender");

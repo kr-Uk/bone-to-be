@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Table(
         name = "notification",
@@ -38,6 +40,19 @@ public class Notification extends BaseEntity {
     private AlertType alertType;
 
     private String uuid;
+
+    public static Notification create(
+        Long userId,
+        Long domainId,
+        AlertType alertType
+    ) {
+        Notification notification = new Notification();
+        notification.user = User.of(userId);
+        notification.domainId = domainId;
+        notification.alertType = alertType;
+        notification.uuid = UUID.randomUUID().toString();
+        return notification;
+    }
 
     public void read() {
         if (isRead) {

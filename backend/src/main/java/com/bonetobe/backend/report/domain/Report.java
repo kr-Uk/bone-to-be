@@ -51,14 +51,18 @@ public class Report extends BaseEntity {
 
     public static Report startReport(
         User user,
-        BodyInfo bodyInfo
-    ) {
+        BodyInfo bodyInfo,
+        Long fileId) {
         Report report = new Report();
         report.user = user;
         report.bodyInfo = bodyInfo;
-        /*
-            TODO : 첫 리포트인 경우 representative 를 첫 리포트로 등록하는 로직 추가
-         */
+        report.photo = StoredFile.of(fileId);
+        return report;
+    }
+
+    public static Report of(Long reportId) {
+        Report report = new Report();
+        report.id = reportId;
         return report;
     }
 

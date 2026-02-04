@@ -45,6 +45,19 @@ const MainContent = styled.main<{ $isDesktop: boolean }>`
   }
 `;
 
+const SectionStack = styled.section`
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 64px 1.5rem 0;
+
+  @media (min-width: 1024px) {
+    padding-top: 80px;
+  }
+`;
+
 const LeftSection = styled.aside`
   width: 480px;
   flex-shrink: 0;
@@ -282,33 +295,33 @@ const ReportPage = () => {
           )}
 
           <FitReferenceSection fitReferences={metadata.fitReferences} />
-
-          {/* 상세 골격 분석 섹션 (11개 지표) */}
-          {reportData.details &&
-            Array.isArray(reportData.details) &&
-            reportData.details.length > 0 && (
-              <AnalysisDetailsSection metrics={reportData.details} />
-            )}
-
-          <RecommendationSection
-            doRecommendations={metadata.doRecommendations}
-            dontRecommendations={metadata.dontRecommendations}
-          />
-
-          {/* AI Virtual Fitting - Try-On 이미지 비교 */}
-          {reportData.details &&
-            Array.isArray(reportData.details) &&
-            reportData.details.length > 0 && (
-              <TryOnComparisonSection
-                bestImageUrl={tryonData?.bestImageUrl ?? null}
-                worstImageUrl={tryonData?.worstImageUrl ?? null}
-                isLoading={tryonLoading}
-                isError={tryonError}
-                onRetry={retryTryon}
-              />
-            )}
         </ContentWrapper>
       </MainContent>
+
+      <SectionStack>
+        {/* 상세 골격 분석 섹션 (11개 지표) */}
+        {reportData.details &&
+          Array.isArray(reportData.details) &&
+          reportData.details.length > 0 && <AnalysisDetailsSection metrics={reportData.details} />}
+
+        <RecommendationSection
+          doRecommendations={metadata.doRecommendations}
+          dontRecommendations={metadata.dontRecommendations}
+        />
+
+        {/* AI Virtual Fitting - Try-On 이미지 비교 */}
+        {reportData.details &&
+          Array.isArray(reportData.details) &&
+          reportData.details.length > 0 && (
+            <TryOnComparisonSection
+              bestImageUrl={tryonData?.bestImageUrl ?? null}
+              worstImageUrl={tryonData?.worstImageUrl ?? null}
+              isLoading={tryonLoading}
+              isError={tryonError}
+              onRetry={retryTryon}
+            />
+          )}
+      </SectionStack>
     </PageContainer>
   );
 };

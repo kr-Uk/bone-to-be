@@ -6,6 +6,7 @@ import com.bonetobe.backend.notification.domain.Notification;
 import com.bonetobe.backend.notification.adapter.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -13,9 +14,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class NotificationFacade {
     private final NotificationService notificationService;
+
+    @Transactional
     public void deleteNotifications(Long userId, String notificationId) {
         Notification notification = notificationService.getNotification(notificationId);
-        if (Objects.equals(notification.getUser().getId(), userId)) {
+        if (!Objects.equals(notification.getUser().getId(), userId)) {
             throw new BusinessException(ErrorCode.FORBIDDEN);
         }
 

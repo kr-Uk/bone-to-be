@@ -6,7 +6,7 @@ public record BodyMetrics(
         Double hipWidthIndex,
         Double shoulderHipRatio,
         Double upperBodyDepthIndex,
-        Double ribcageVolumeIndex,
+        Double waistLengthIndex,
         Double waistCurvatureIndex,
         Double jointThicknessIndex,
         Double armTorsoRatio,

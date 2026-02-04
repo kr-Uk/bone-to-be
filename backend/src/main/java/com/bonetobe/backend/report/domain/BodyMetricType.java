@@ -4,7 +4,6 @@ import com.bonetobe.backend.common.SkeletonType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -72,14 +71,14 @@ public enum BodyMetricType {
         Map.of(WAVE, 1, STRAIGHT, 1, NATURAL, 1)
     ),
 
-    RIBCAGE_VOLUME_INDEX(
-        "ribcage_volume_index", "흉곽 볼륨 지수",
-        BodyMetrics::ribcageVolumeIndex,
-        0.85, 1.35, "통허리 (Straight)", "잘록함 (Wave)",
-        "흉곽과 허리 너비의 비율을 통해 상체 라인을 분석한 지표입니다.",
-        List.of(new Zone("일자형", STRAIGHT, 1.05), new Zone("완만함", NATURAL, 1.15), new Zone("잘록함", WAVE, 1.35)),
-        score -> score < 1.05 ? STRAIGHT : (score < 1.15 ? NATURAL : WAVE),
-        Map.of(STRAIGHT, "허리 라인이 일자형에 가까워요.", NATURAL, "허리 굴곡이 완만해요.", WAVE, "허리가 가늘고 흉곽과 대비돼요."),
+    WAIST_LENGTH_INDEX(
+        "waist_length_index", "허리 길이 지수",
+        BodyMetrics::waistLengthIndex,
+        0.85, 1.35, "허리가 짧음(Straight)", "허리가 김 (Natural)",
+        "상체 대비 허리 길이 비율을 통해 허리 길이를 분석한 지표입니다.",
+        List.of(new Zone("짧은 허리", STRAIGHT, 1.05), new Zone("표준", WAVE, 1.15), new Zone("허리가 김", NATURAL, 1.35)),
+        score -> score < 1.05 ? STRAIGHT : (score < 1.15 ? WAVE : NATURAL),
+        Map.of(STRAIGHT, "허리가 짧은 편이에요.", NATURAL, "허리가 평균 길이에요.", WAVE, "허리가 긴 편이에요."),
         Map.of(WAVE, 1, STRAIGHT, 1, NATURAL, 1)
     ),
 

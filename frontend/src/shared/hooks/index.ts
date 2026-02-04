@@ -1,3 +1,4 @@
+export { useInfiniteScroll } from "./useInfiniteScroll";
 export { useMediaQuery } from "./useMediaQuery";
 export { usePoseDetection } from "./usePoseDetection";
 export { useAuth } from "./useAuth";

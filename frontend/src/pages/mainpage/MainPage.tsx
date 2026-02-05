@@ -1,4 +1,3 @@
-import type AOS from "aos";
 import { lazy, useCallback, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 
@@ -54,7 +53,7 @@ const categoryItems = [
 
 const MainPage = () => {
   const protectedNavigate = useProtectedNavigate();
-  const aosRef = useRef<AOS | null>(null);
+  const aosRef = useRef<{ refresh: () => void } | null>(null);
   const refreshAos = useCallback(() => {
     aosRef.current?.refresh();
   }, []);
@@ -81,9 +80,12 @@ const MainPage = () => {
       };
 
       if (win.requestIdleCallback) {
-        const idleId = win.requestIdleCallback(() => {
-          void initAos();
-        }, { timeout: 1500 });
+        const idleId = win.requestIdleCallback(
+          () => {
+            void initAos();
+          },
+          { timeout: 1500 },
+        );
         return () => win.cancelIdleCallback?.(idleId);
       }
 

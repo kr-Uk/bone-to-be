@@ -241,11 +241,7 @@ export const MainHeader = () => {
     }
   }, [isAuthLoading, isLoggedIn]);
 
-
-  const handleNotificationClick = async (notification: {
-    id: string;
-    reportId?: string;
-  }) => {
+  const handleNotificationClick = async (notification: { id: string; reportId?: string }) => {
     removeNotification(notification.id);
     try {
       await markNotificationRead(notification.id);

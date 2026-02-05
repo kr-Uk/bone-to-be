@@ -1,5 +1,5 @@
 package com.bonetobe.backend.style.domain;
 
 public enum StyleName {
-    MINIMAL, STREET, CASUAL
+    MINIMAL, STREET, CASUAL, ANY, BASIC, FORMAL
 }

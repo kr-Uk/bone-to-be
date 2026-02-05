@@ -20,7 +20,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     @Transactional
     public Report saveReport(ReportCommand command) {
-        return reportStore.save(Report.startReport(command.user(), command.bodyInfo(), command.fileId()));
+        return reportStore.save(Report.startReport(command.user(), command.bodyInfo(), command.styleName(), command.fileId()));
     }
 
     @Override

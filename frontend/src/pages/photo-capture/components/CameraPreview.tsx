@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import styled, { keyframes } from "styled-components";
 
 import { ImageGuideline } from "./ImageGuideline";
@@ -120,11 +120,10 @@ const CameraPreview = ({
   const { cameraActive, latestLandmarks, canvasDimensions } = usePoseDetection(videoRef, canvasRef);
 
   // Calculate aspect ratio string for CSS
-  const aspectRatioString = canvasDimensions
-    ? `${canvasDimensions.width} / ${canvasDimensions.height}`
-    : "4 / 3"; // Fallback
-
-  console.log("[CameraPreview] Aspect ratio string:", aspectRatioString);
+  const aspectRatioString = useMemo(
+    () => (canvasDimensions ? `${canvasDimensions.width} / ${canvasDimensions.height}` : "4 / 3"), // Fallback
+    [canvasDimensions],
+  );
 
   // 카메라 활성화 상태를 부모에게 전달
   useEffect(() => {

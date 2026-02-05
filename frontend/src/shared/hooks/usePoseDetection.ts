@@ -80,8 +80,8 @@ export const usePoseDetection = (
           await poseRef.current.send({ image: videoRef.current });
         }
       },
-      width: { ideal: 1920 },
-      height: { ideal: 1080 },
+      width: 1920,
+      height: 1080,
     });
 
     // 3. Listen for video metadata to get actual resolution

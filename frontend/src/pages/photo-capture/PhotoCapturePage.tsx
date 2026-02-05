@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { IoArrowForward, IoPerson } from "react-icons/io5";
 import { MdMyLocation } from "react-icons/md";
 import { TbBoxAlignBottomRight } from "react-icons/tb";
@@ -321,6 +321,7 @@ const PhotoCapturePage = () => {
   const [cameraActive, setCameraActive] = useState(false);
   const captureRef = useRef<(() => string | null) | null>(null);
   const latestLandmarksRef = useRef<Results | null>(null);
+  const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // API hooks (새 API 사용)
   const createPresignedUrlMutation = useCreatePresignedUrl();
@@ -332,22 +333,39 @@ const PhotoCapturePage = () => {
     checkExpiration();
   }, [checkExpiration]);
 
+  // Cleanup: interval 정리
+  useEffect(() => {
+    return () => {
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+      }
+    };
+  }, []);
+
   // Note: basicInfo가 없는 경우는 BasicInfoPage의 onSubmit을 통한 정상 플로우에서는 발생하지 않음
   // 직접 URL 접근 시에는 뒤로가기 버튼을 통해 basic-info로 이동하도록 안내
 
   // Handle camera capture with countdown
-  const handleCapture = () => {
+  const handleCapture = useCallback(() => {
     if (!captureRef.current) return;
+
+    // 이전 interval 정리
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+    }
 
     let count = 3;
     setCountdown(count);
 
-    const countdownInterval = setInterval(() => {
+    countdownIntervalRef.current = setInterval(() => {
       count--;
       if (count > 0) {
         setCountdown(count);
       } else {
-        clearInterval(countdownInterval);
+        if (countdownIntervalRef.current) {
+          clearInterval(countdownIntervalRef.current);
+          countdownIntervalRef.current = null;
+        }
         setCountdown(null);
 
         // Flash effect
@@ -366,35 +384,35 @@ const PhotoCapturePage = () => {
         }
       }
     }, 1000);
-  };
+  }, []);
 
   // Handle image upload and validation
-  const handleImageUpload = async (imageData: string) => {
+  const handleImageUpload = useCallback(async (imageData: string) => {
     setSelectedImage(imageData);
     // Validate pose for static image
     const result = await validateImagePose(imageData);
     setPoseValidation(result);
-  };
+  }, []);
 
   // Handle retry (reset state)
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     setSelectedImage(null);
     setPoseValidation(null);
     if (mode === "camera") {
       setCameraActive(true);
     }
-  };
+  }, [mode]);
 
   // Handle mode change
-  const handleModeChange = (newMode: CaptureMode) => {
+  const handleModeChange = useCallback((newMode: CaptureMode) => {
     setMode(newMode);
     setSelectedImage(null);
     setPoseValidation(null);
     setCameraActive(newMode === "camera");
-  };
+  }, []);
 
   // Handle analysis flow (새 API 사용)
-  const handleAnalyze = async () => {
+  const handleAnalyze = useCallback(async () => {
     if (!selectedImage || !poseValidation?.isValid || !diagnosisData.basicInfo) {
       return;
     }
@@ -443,12 +461,32 @@ const PhotoCapturePage = () => {
       alert("분석에 실패했습니다. 다시 시도해주세요.");
       setAnalysisStatus("idle");
     }
-  };
+  }, [
+    selectedImage,
+    poseValidation,
+    diagnosisData.basicInfo,
+    createPresignedUrlMutation,
+    s3UploadMutation,
+    createReportMutation,
+    setPhotoData,
+    setReportId,
+    navigate,
+  ]);
 
   // Handle landmarks update from camera
-  const handleLandmarksUpdate = (results: Results | null) => {
+  const handleLandmarksUpdate = useCallback((results: Results | null) => {
     latestLandmarksRef.current = results;
-  };
+  }, []);
+
+  // Handle capture ready callback
+  const handleCaptureReady = useCallback((captureFunc: () => string | null) => {
+    captureRef.current = captureFunc;
+  }, []);
+
+  // Handle camera active change
+  const handleCameraActiveChange = useCallback((isActive: boolean) => {
+    setCameraActive(isActive);
+  }, []);
 
   // Navigate to results
   const handleNavigateToResults = () => {
@@ -521,12 +559,8 @@ const PhotoCapturePage = () => {
                 capturedImage={selectedImage}
                 countdown={countdown}
                 showFlash={showFlash}
-                onCaptureReady={(captureFunc) => {
-                  captureRef.current = captureFunc;
-                }}
-                onCameraActiveChange={(isActive) => {
-                  setCameraActive(isActive);
-                }}
+                onCaptureReady={handleCaptureReady}
+                onCameraActiveChange={handleCameraActiveChange}
                 onLandmarksUpdate={handleLandmarksUpdate}
               />
               <CameraCaptureControls

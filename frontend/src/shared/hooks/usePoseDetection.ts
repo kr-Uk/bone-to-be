@@ -23,7 +23,6 @@ export const usePoseDetection = (
   // Calculate optimal dimensions from video element
   const calculateDimensionsFromVideo = useCallback(() => {
     if (!videoRef.current) {
-      console.log("[usePoseDetection] Video ref not available, using fallback");
       return null;
     }
 
@@ -31,7 +30,6 @@ export const usePoseDetection = (
 
     // Wait for video dimensions to be available
     if (!video.videoWidth || !video.videoHeight) {
-      console.log("[usePoseDetection] Video dimensions not ready yet");
       return null;
     }
 
@@ -41,11 +39,6 @@ export const usePoseDetection = (
     const aspectRatio = nativeWidth / nativeHeight;
     const width = MAX_CANVAS_WIDTH;
     const height = Math.round(width / aspectRatio);
-
-    console.log(`[usePoseDetection] Native resolution: ${nativeWidth}×${nativeHeight}`);
-    console.log(
-      `[usePoseDetection] Optimal canvas: ${width}×${height} (${aspectRatio.toFixed(2)})`,
-    );
 
     return {
       width,
@@ -80,8 +73,6 @@ export const usePoseDetection = (
     pose.onResults(onResults);
     poseRef.current = pose;
 
-    console.log("[usePoseDetection] Initializing MediaPipe Camera...");
-
     // 2. Initialize camera with high resolution constraints
     const camera = new Camera(video, {
       onFrame: async () => {
@@ -95,7 +86,6 @@ export const usePoseDetection = (
 
     // 3. Listen for video metadata to get actual resolution
     const handleLoadedMetadata = () => {
-      console.log("[usePoseDetection] Video metadata loaded");
       const dimensions = calculateDimensionsFromVideo();
       if (dimensions) {
         setCanvasDimensions(dimensions);
@@ -103,15 +93,7 @@ export const usePoseDetection = (
         // Update canvas size based on actual video resolution
         canvas.width = dimensions.width;
         canvas.height = dimensions.height;
-
-        console.log(
-          "[usePoseDetection] Canvas size updated:",
-          dimensions.width,
-          "x",
-          dimensions.height,
-        );
       } else {
-        console.warn("[usePoseDetection] Could not calculate dimensions, using fallback");
         // Set fallback dimensions
         const fallback = {
           width: 400,
@@ -129,20 +111,14 @@ export const usePoseDetection = (
     video.addEventListener("loadedmetadata", handleLoadedMetadata);
 
     cameraRef.current = camera;
-    console.log("[usePoseDetection] Starting camera...");
 
     camera
       .start()
       .then(() => {
         setCameraActive(true);
-        console.log("[usePoseDetection] ✅ Camera started successfully");
       })
       .catch((err: unknown) => {
-        console.error("[usePoseDetection] ❌ Failed to start camera:", err);
-
         const error = err as DOMException;
-        console.error("[usePoseDetection] Error name:", error.name);
-        console.error("[usePoseDetection] Error message:", error.message);
 
         // Show user-friendly error message
         if (error.name === "NotReadableError") {
@@ -191,7 +167,6 @@ export const usePoseDetection = (
   // 4. 결과 처리 함수 (Detection + Drawing 분리)
   const onResults = (results: Results) => {
     // ✅ 1. Landmarks 감지 결과 저장 (항상 실행 - 유효성 검사, 분석에 사용)
-    console.log(onResults);
     setLatestLandmarks(results);
 
     // ✅ 2. Canvas 렌더링 (조건부)

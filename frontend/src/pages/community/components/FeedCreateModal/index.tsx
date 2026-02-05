@@ -60,16 +60,20 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
 
   // Handle form submission
   const onSubmit = handleSubmit((data) => {
+    const resolvedStyles = data.styles.length > 0 ? data.styles : null;
+    const resolvedHeight = data.height ? parseInt(data.height, 10) : null;
+    const resolvedWeight = data.weight ? parseInt(data.weight, 10) : null;
+
     // Transform data to match API requirements
     createFeed(
       {
         file: data.image,
         content: data.content,
-        gender: data.gender,
-        bodyType: data.bodyType,
-        styles: data.styles,
-        height: parseInt(data.height, 10),
-        weight: parseInt(data.weight, 10), // 필수로 변경
+        gender: data.gender ?? null,
+        bodyType: data.bodyType ?? null,
+        styles: resolvedStyles,
+        height: resolvedHeight,
+        weight: resolvedWeight,
       },
       {
         onSuccess: () => {

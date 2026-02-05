@@ -92,11 +92,7 @@ export function FeedDetailModal({
       </S.CloseButton>
       <S.ModalWrapper onClick={(e) => e.stopPropagation()}>
         <S.MobileHeader>
-          <S.MobileAvatar
-            src={mobileAvatarSrc}
-            alt="profile"
-            onClick={handleMobileAuthorClick}
-          />
+          <S.MobileAvatar src={mobileAvatarSrc} alt="profile" onClick={handleMobileAuthorClick} />
           <div>
             <S.MobileNameRow>
               <S.MobileName onClick={handleMobileAuthorClick}>

@@ -135,7 +135,7 @@ export function FeedFilters({ filters, onFilterChange }: FeedFiltersProps) {
   const handleStylesChange = (value: string | string[] | null) => {
     onFilterChange({
       ...filters,
-      styles: Array.isArray(value) ? value : [],
+      styles: (Array.isArray(value) ? value : []) as FeedFilters["styles"],
     });
   };
 

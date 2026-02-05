@@ -25,26 +25,20 @@ export const feedFormSchema = z.object({
   content: z.string().max(200, "내용은 최대 200자까지 입력 가능합니다").default(""),
 
   // 필수: 체형 (Natural, Wave, Straight)
-  bodyType: z.enum(["Natural", "Wave", "Straight"], {
-    required_error: "체형을 선택해주세요",
-  }),
+  bodyType: z.enum(["Natural", "Wave", "Straight"]).optional().nullable(),
 
   // 필수: 성별 (F, M)
-  gender: z.enum(["F", "M"], {
-    required_error: "성별을 선택해주세요",
-  }),
+  gender: z.enum(["F", "M"]).optional().nullable(),
 
   // 선택: 키 (양의 정수, 빈 값 허용)
   height: z.string().regex(/^\d*$/, "숫자만 입력 가능합니다").default(""),
 
   // 필수: 몸무게 (양의 정수, 필수 입력)
-  weight: z.string().regex(/^\d+$/, "숫자만 입력 가능합니다").min(1, "몸무게를 입력해주세요"),
+  weight: z.string().regex(/^\d*$/, "숫자만 입력 가능합니다").default(""),
 
   // 필수: 스타일 (최소 1개 이상 선택)
-  styles: z
-    .array(z.enum(STYLE_VALUES))
-    .min(1, "스타일을 최소 1개 이상 선택해주세요")
-    .default([]),
+  styles: z.array(z.enum(STYLE_VALUES)).default([]),
 });
 
 export type FeedFormValues = z.infer<typeof feedFormSchema>;
+export type FeedStyleValue = (typeof STYLE_VALUES)[number];

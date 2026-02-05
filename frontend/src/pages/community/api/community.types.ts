@@ -19,7 +19,7 @@ export interface FeedItem {
   bodyType: "Straight" | "Wave" | "Natural";
   height: number; // cm
   weight?: number; // kg (optional)
-  styles: string[]; // 예: ["casual", "street", "minimal"]
+  styles: StyleType[];
   gender: "M" | "F";
   isLiked: boolean;
   likeCount: number;
@@ -179,11 +179,11 @@ export interface PresignedUrlResponse {
 export interface FeedCreateRequest {
   fileId: number;
   content: string;
-  gender: "female" | "male";
-  skeletonType: "NATURAL" | "STRAIGHT" | "WAVE"; // 대문자
-  style: StyleType[]; // 대문자: ["BASIC", "CASUAL", "FORMAL", "ANY"]
-  height: number; // cm
-  weight: number; // kg (필수)
+  gender: "female" | "male" | null;
+  skeletonType: "NATURAL" | "STRAIGHT" | "WAVE" | null; // 대문자
+  style: StyleType[] | null; // 대문자: ["BASIC", "CASUAL", "FORMAL", "ANY"]
+  height: number | null; // cm
+  weight: number | null; // kg
 }
 
 /**

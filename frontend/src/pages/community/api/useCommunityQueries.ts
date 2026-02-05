@@ -320,9 +320,28 @@ export function useLikeToggle() {
  * 피드 스크랩
  */
 export function useFeedScrap() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ feedId, isScrapped }: { feedId: string; isScrapped: boolean }) =>
       isScrapped ? removeFeedScrap(feedId) : addFeedScrap(feedId),
+    onMutate: async ({ feedId, isScrapped }) => {
+      await queryClient.cancelQueries({ queryKey: ["feedDetail", feedId] });
+      const previousDetail = queryClient.getQueryData<FeedDetailDto>(["feedDetail", feedId]);
+      queryClient.setQueryData<FeedDetailDto>(["feedDetail", feedId], (old) => {
+        if (!old) return old;
+        return { ...old, isScrapped: !isScrapped };
+      });
+      return { previousDetail };
+    },
+    onError: (_, { feedId }, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(["feedDetail", feedId], context.previousDetail);
+      }
+    },
+    onSettled: (_, __, variables) => {
+      if (!variables?.feedId) return;
+      queryClient.invalidateQueries({ queryKey: ["feedDetail", variables.feedId] });
+    },
   });
 }
 
@@ -355,11 +374,11 @@ export function useFeedCreate() {
     mutationFn: async (params: {
       file: File;
       content: string;
-      gender: "F" | "M";
-      bodyType: "Natural" | "Wave" | "Straight";
-      styles: string[];
-      height: number;
-      weight: number;
+      gender: "F" | "M" | null;
+      bodyType: "Natural" | "Wave" | "Straight" | null;
+      styles: StyleType[] | null;
+      height: number | null;
+      weight: number | null;
     }) => {
       try {
         // 1단계: Presigned URL 발급
@@ -391,9 +410,11 @@ export function useFeedCreate() {
         const feedRequest: FeedCreateRequest = {
           fileId: presignedResponse.data.fileId,
           content: params.content,
-          gender: params.gender === "F" ? "female" : "male",
-          skeletonType: params.bodyType.toUpperCase() as "NATURAL" | "WAVE" | "STRAIGHT",
-          style: params.styles.map((s) => s.toUpperCase()),
+          gender: params.gender ? (params.gender === "F" ? "female" : "male") : null,
+          skeletonType: params.bodyType
+            ? (params.bodyType.toUpperCase() as "NATURAL" | "WAVE" | "STRAIGHT")
+            : null,
+          style: params.styles,
           height: params.height,
           weight: params.weight,
         };

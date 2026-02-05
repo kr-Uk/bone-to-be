@@ -7,10 +7,17 @@ import type { OptimalDimensions } from "@/shared/utils";
 
 const MAX_CANVAS_WIDTH = 400;
 
-export const usePoseDetection = (
-  videoRef: RefObject<HTMLVideoElement | null>,
-  canvasRef: RefObject<HTMLCanvasElement | null>,
-) => {
+interface UsePoseDetectionOptions {
+  videoRef: RefObject<HTMLVideoElement | null>;
+  displayCanvasRef: RefObject<HTMLCanvasElement | null>; // 시각화용 (사용자에게 표시)
+  captureCanvasRef: RefObject<HTMLCanvasElement | null>; // 캡처용 (S3 업로드)
+}
+
+export const usePoseDetection = ({
+  videoRef,
+  displayCanvasRef,
+  captureCanvasRef,
+}: UsePoseDetectionOptions) => {
   const [cameraActive, setCameraActive] = useState<boolean>(false);
   const [latestLandmarks, setLatestLandmarks] = useState<Results | null>(null);
   const [canvasDimensions, setCanvasDimensions] = useState<OptimalDimensions | null>(null);
@@ -51,10 +58,11 @@ export const usePoseDetection = (
 
   // Initialize MediaPipe Camera and detect dimensions
   useEffect(() => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !displayCanvasRef.current || !captureCanvasRef.current) return;
 
     const video = videoRef.current;
-    const canvas = canvasRef.current;
+    const displayCanvas = displayCanvasRef.current;
+    const captureCanvas = captureCanvasRef.current;
 
     // 1. Pose 인스턴스 설정
     const pose = new Pose({
@@ -90,9 +98,11 @@ export const usePoseDetection = (
       if (dimensions) {
         setCanvasDimensions(dimensions);
 
-        // Update canvas size based on actual video resolution
-        canvas.width = dimensions.width;
-        canvas.height = dimensions.height;
+        // Update both canvas sizes based on actual video resolution
+        displayCanvas.width = dimensions.width;
+        displayCanvas.height = dimensions.height;
+        captureCanvas.width = dimensions.width;
+        captureCanvas.height = dimensions.height;
       } else {
         // Set fallback dimensions
         const fallback = {
@@ -103,8 +113,10 @@ export const usePoseDetection = (
           nativeHeight: 480,
         };
         setCanvasDimensions(fallback);
-        canvas.width = fallback.width;
-        canvas.height = fallback.height;
+        displayCanvas.width = fallback.width;
+        displayCanvas.height = fallback.height;
+        captureCanvas.width = fallback.width;
+        captureCanvas.height = fallback.height;
       }
     };
 
@@ -151,8 +163,10 @@ export const usePoseDetection = (
           nativeHeight: 480,
         };
         setCanvasDimensions(fallback);
-        canvas.width = fallback.width;
-        canvas.height = fallback.height;
+        displayCanvas.width = fallback.width;
+        displayCanvas.height = fallback.height;
+        captureCanvas.width = fallback.width;
+        captureCanvas.height = fallback.height;
       });
 
     // 4. Cleanup
@@ -162,44 +176,68 @@ export const usePoseDetection = (
       poseRef.current?.close();
       setCameraActive(false);
     };
-  }, [videoRef, canvasRef, calculateDimensionsFromVideo]);
+  }, [videoRef, displayCanvasRef, captureCanvasRef, calculateDimensionsFromVideo]);
 
   // 4. 결과 처리 함수 (Detection + Drawing 분리)
   const onResults = (results: Results) => {
     // ✅ 1. Landmarks 감지 결과 저장 (항상 실행 - 유효성 검사, 분석에 사용)
     setLatestLandmarks(results);
 
-    // ✅ 2. Canvas 렌더링 (조건부)
-    if (!canvasRef.current) return;
+    // ✅ 2. Display Canvas 렌더링 (사용자에게 보여지는 화면)
+    if (displayCanvasRef.current) {
+      const displayCtx = displayCanvasRef.current.getContext("2d");
+      if (displayCtx) {
+        displayCtx.save();
+        displayCtx.clearRect(0, 0, displayCanvasRef.current.width, displayCanvasRef.current.height);
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+        // 원본 비디오 이미지 그리기
+        displayCtx.drawImage(
+          results.image,
+          0,
+          0,
+          displayCanvasRef.current.width,
+          displayCanvasRef.current.height,
+        );
 
-    // Canvas 크기는 이미 PreviewWrapper 크기로 동적 설정됨
-    ctx.save();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 디버그 모드에서만 랜드마크 그리기
+        if (isDebugMode && results.poseLandmarks) {
+          // 뼈대 (Link)
+          drawConnectors(displayCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+            color: "#00FF00",
+            lineWidth: 2,
+          });
 
-    // 원본 비디오 이미지 그리기 (항상)
-    ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+          // 관절 (Point)
+          drawLandmarks(displayCtx, results.poseLandmarks, {
+            color: "#FF0000",
+            lineWidth: 1,
+            radius: 3,
+          });
+        }
 
-    // ✅ 3. 포즈 랜드마크 그리기 (디버그 모드에서만)
-    if (isDebugMode && results.poseLandmarks) {
-      // 뼈대 (Link)
-      drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {
-        color: "#00FF00",
-        lineWidth: 2,
-      });
-
-      // 관절 (Point)
-      drawLandmarks(ctx, results.poseLandmarks, {
-        color: "#FF0000",
-        lineWidth: 1,
-        radius: 3,
-      });
+        displayCtx.restore();
+      }
     }
 
-    ctx.restore();
+    // ✅ 3. Capture Canvas 렌더링 (S3 업로드용 - 순수 비디오만)
+    if (captureCanvasRef.current) {
+      const captureCtx = captureCanvasRef.current.getContext("2d");
+      if (captureCtx) {
+        captureCtx.save();
+        captureCtx.clearRect(0, 0, captureCanvasRef.current.width, captureCanvasRef.current.height);
+
+        // 순수 비디오 프레임만 그리기 (시각화 요소 없음)
+        captureCtx.drawImage(
+          results.image,
+          0,
+          0,
+          captureCanvasRef.current.width,
+          captureCanvasRef.current.height,
+        );
+
+        captureCtx.restore();
+      }
+    }
   };
 
   return {

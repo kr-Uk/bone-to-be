@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { useInfiniteFeedList, useLikeToggle } from "./api";
@@ -104,6 +105,13 @@ export default function CommunityPage() {
     heightRange: null,
     weightRange: null,
   });
+  const location = useLocation();
+
+  useEffect(() => {
+    const state = location.state as { initialFilters?: Partial<FeedFiltersType> } | null;
+    if (!state?.initialFilters) return;
+    setFilters((prev) => ({ ...prev, ...state.initialFilters }));
+  }, [location.key]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
 

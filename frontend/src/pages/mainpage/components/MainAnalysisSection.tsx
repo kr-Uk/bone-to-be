@@ -390,7 +390,7 @@ export const MainAnalysisSection = () => {
           </List>
 
           <LinkRow data-aos="fade-up" data-aos-delay="750">
-            <Link href="#">
+            <Link href="/community">
               View Community <span>→</span>
             </Link>
           </LinkRow>

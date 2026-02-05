@@ -6,7 +6,16 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 // 허용된 이미지 타입
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
 
-const STYLE_VALUES = ["BASIC", "CASUAL", "FORMAL", "ANY"] as const;
+const STYLE_VALUES = [
+  "VINTAGE",
+  "STREET",
+  "SPORTY",
+  "MINIMAL",
+  "FORMAL",
+  "FEMININE",
+  "CLASSIC",
+  "CASUAL",
+] as const;
 
 export const feedFormSchema = z.object({
   // 필수: 이미지 파일 (SVG, PNG, JPG)

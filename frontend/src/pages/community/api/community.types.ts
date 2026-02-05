@@ -7,7 +7,15 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export type StyleType = "BASIC" | "CASUAL" | "FORMAL" | "ANY";
+export type StyleType =
+  | "VINTAGE"
+  | "STREET"
+  | "SPORTY"
+  | "MINIMAL"
+  | "FORMAL"
+  | "FEMININE"
+  | "CLASSIC"
+  | "CASUAL";
 
 /**
  * 커뮤니티 피드 아이템
@@ -99,7 +107,7 @@ export interface FeedAuthorDto {
 export interface FeedListItemDto {
   postId: number;
   imageUrl: string;
-  style: StyleType[]; // 대문자: ["BASIC", "CASUAL", "FORMAL", "ANY"]
+  style: StyleType[]; // 대문자: ["VINTAGE", "STREET", "SPORTY", "MINIMAL", "FORMAL", "FEMININE", "CLASSIC", "CASUAL"]
   gender: "FEMALE" | "MALE"; // 대문자
   height: number;
   weight?: number;
@@ -181,7 +189,7 @@ export interface FeedCreateRequest {
   content: string;
   gender: "female" | "male" | null;
   skeletonType: "NATURAL" | "STRAIGHT" | "WAVE" | null; // 대문자
-  style: StyleType[] | null; // 대문자: ["BASIC", "CASUAL", "FORMAL", "ANY"]
+  style: StyleType[] | null; // 대문자: ["VINTAGE", "STREET", "SPORTY", "MINIMAL", "FORMAL", "FEMININE", "CLASSIC", "CASUAL"]
   height: number | null; // cm
   weight: number | null; // kg
 }

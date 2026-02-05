@@ -1,50 +1,102 @@
+import { useEffect, useMemo, useState } from "react";
+import type { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
+
+import { FabButton } from "./FabButton";
 
 interface FeedFABProps {
   onClick: () => void;
+  trackingProps?: Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick" | "type" | "aria-label">;
 }
 
-const FABButton = styled.button`
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.purple[600]};
-  box-shadow: 0 4px 8px rgba(124, 58, 237, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-  transition: transform 0.2s ease;
-  z-index: 100;
-  font-size: 2.125rem;
-  color: white;
+const FeedFabButton = styled(FabButton)<{ $variant: "create" | "top" }>`
+  width: 56px;
+  height: 56px;
+  font-size: 0;
+  background-color: ${({ $variant, theme }) =>
+    $variant === "create" ? theme.colors.brand : theme.colors.secondary};
+  color: ${({ $variant, theme }) =>
+    $variant === "create" ? theme.colors.secondary : theme.colors.primary};
 
-  &:hover {
-    transform: scale(1.05);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  /* Mobile */
   @media (max-width: 767px) {
-    width: 60px;
-    height: 60px;
-    bottom: 12px;
-    right: 12px;
-    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
   }
 `;
 
-export function FeedFAB({ onClick }: FeedFABProps) {
+const IconBase = styled.svg<{ $active: boolean }>`
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: ${({ $active }) => ($active ? 1 : 0)};
+  transform: ${({ $active }) => ($active ? "scale(1)" : "scale(0.85)")};
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+`;
+
+const PlusIcon = styled(IconBase)`
+  stroke-width: 1.6;
+`;
+
+const ChevronIcon = styled(IconBase)`
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.4;
+`;
+
+export function FeedFAB({ onClick, trackingProps }: FeedFABProps) {
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY >= 300);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const buttonLabel = useMemo(
+    () => (showScrollTop ? "페이지 상단으로 이동" : "Create new feed post"),
+    [showScrollTop],
+  );
+
+  const handleClick = () => {
+    if (showScrollTop) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return;
+    }
+
+    onClick();
+  };
+
   return (
-    <FABButton onClick={onClick} aria-label="Create new feed post">
-      +
-    </FABButton>
+    <FeedFabButton
+      {...trackingProps}
+      $variant={showScrollTop ? "top" : "create"}
+      type="button"
+      onClick={handleClick}
+      aria-label={buttonLabel}
+    >
+      <ChevronIcon
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        $active={showScrollTop}
+      >
+        <path d="M6 14l6-6 6 6" />
+      </ChevronIcon>
+      <PlusIcon viewBox="0 0 24 24" aria-hidden="true" $active={!showScrollTop}>
+        <path d="M12 5v14M5 12h14" />
+      </PlusIcon>
+    </FeedFabButton>
   );
 }

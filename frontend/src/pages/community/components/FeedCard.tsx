@@ -31,10 +31,7 @@ const CardContainer = styled.div<{ $isActive?: boolean }>`
   }
 `;
 
-const Image = styled.img.attrs({
-  loading: "eager",
-  decoding: "async",
-})`
+const Image = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;

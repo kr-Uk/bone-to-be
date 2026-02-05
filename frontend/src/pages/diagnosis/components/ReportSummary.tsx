@@ -235,7 +235,6 @@ const TabContentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-  height: 160px;
 
   @media (max-width: 1023px) {
     display: none;
@@ -244,7 +243,6 @@ const TabContentGrid = styled.div`
 
 const TabContentCell = styled.div<{ $active: boolean }>`
   position: relative;
-  height: 160px;
 
   @media (max-width: 1023px) {
     display: none;

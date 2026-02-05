@@ -36,6 +36,7 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private SkeletonType skeletonType;
 
@@ -82,5 +83,9 @@ public class User extends BaseEntity{
     public User update(String name) {
         this.nickname = name;
         return this;
+    }
+
+    public void updateSkeletonType(SkeletonType skeletonType) {
+        this.skeletonType = skeletonType;
     }
 }

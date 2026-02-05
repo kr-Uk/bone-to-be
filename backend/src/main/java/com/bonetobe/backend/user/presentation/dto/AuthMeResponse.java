@@ -11,14 +11,16 @@ public class AuthMeResponse {
     private String email;
     private String nickname;
     private String role;
+    private String profileImageUrl;
 
-    public static AuthMeResponse from(UserPrincipal principal) {
+    public static AuthMeResponse from(UserPrincipal principal, String imageUrl) {
         return AuthMeResponse.builder()
                 .email(principal.getEmail())
                 .nickname(principal.getNickname())
                 .role(principal.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .findFirst().orElse("ROLE_USER"))
+                .profileImageUrl(imageUrl)
                 .build();
     }
 }

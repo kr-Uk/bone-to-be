@@ -2,6 +2,8 @@ package com.bonetobe.backend.user.domain;
 
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
+import com.bonetobe.backend.file.domain.FileService;
+import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import com.bonetobe.backend.user.domain.command.UserCreateCommand;
 import com.bonetobe.backend.user.infrastructure.UserPrincipal;
 import com.bonetobe.backend.user.presentation.dto.AuthMeResponse;
@@ -13,6 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final FileService fileService;
 
     @Override
     public boolean existsByEmail(String email) {
@@ -120,6 +126,22 @@ public class AuthServiceImpl implements AuthService {
         if (principal == null) {
             throw new AuthenticationCredentialsNotFoundException(ErrorCode.UNAUTHORIZED.getMessage());
         }
-        return AuthMeResponse.from(principal);
+        User user = userRepository.findById(principal.getId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        String profileImageUrl = null;
+        if (user.getProfileImage() != null) {
+            List<FileDownloadUrl.Query> queries = Collections.singletonList(
+                    new FileDownloadUrl.Query(user.getProfileImage().getId())
+            );
+
+            // [방어 코드 적용] stream 사용
+            profileImageUrl = fileService.getPublicDownloadUrls(queries).stream()
+                    .findFirst()
+                    .map(FileDownloadUrl.Result::presignedUrl)
+                    .orElse(null);
+        }
+
+        return AuthMeResponse.from(principal, profileImageUrl);
     }
 }

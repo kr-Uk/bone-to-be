@@ -5,7 +5,7 @@ import com.bonetobe.backend.common.SkeletonType;
 public record UserDetailDto(
         String profileImageUrl,
         String nickname,
-        SkeletonType skeletonType,
+        String skeletonType,
         long postCount,
         long followerCount,
         long followingCount,

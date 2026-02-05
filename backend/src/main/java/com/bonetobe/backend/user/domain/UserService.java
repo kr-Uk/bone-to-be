@@ -1,5 +1,6 @@
 package com.bonetobe.backend.user.domain;
 
+import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.user.domain.command.UpdateMyPageCommand;
 import com.bonetobe.backend.user.domain.command.UserFileCommand;
 import com.bonetobe.backend.user.domain.command.UserUpdateCommand;
@@ -23,4 +24,6 @@ public interface UserService {
     void updateMyPage(UpdateMyPageCommand command);
 
     List<UserSearchSummaryRaw> getUserSearch(String nickname, Long viewerId);
+
+    void updateSkeletonType(User user, SkeletonType skeletonType);
 }

@@ -1,7 +1,8 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
-import { fetchNotifications } from "@/shared/api/notification.api";
 import type { Notification } from "@/shared/stores/notification.store";
+
+import { fetchNotifications } from "@/shared/api/notification.api";
 
 export const notificationsQueryKey = ["notifications", "list"] as const;
 

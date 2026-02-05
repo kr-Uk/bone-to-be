@@ -6,8 +6,8 @@ import AnalysisDetailsSection from "./components/AnalysisDetailsSection";
 import AnalysisResultCard from "./components/AnalysisResultCard";
 import FitReferenceSection from "./components/FitReferenceSection";
 import RecommendationSection from "./components/RecommendationSection";
-import ReportSummary from "./components/ReportSummary";
 import ReportHeroSection from "./components/ReportHeroSection";
+import ReportSummary from "./components/ReportSummary";
 import TryOnComparisonSection from "./components/TryOnComparisonSection";
 
 import { useReportDetail, useTryOnData } from "@/pages/diagnosis/api";

@@ -1,7 +1,7 @@
-import { useMemo, useState, type JSX } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import styled from "styled-components";
+import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
+import { useMemo, useState, type JSX } from "react";
+import styled from "styled-components";
 
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 

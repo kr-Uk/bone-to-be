@@ -3,9 +3,9 @@ import styled, { css } from "styled-components";
 
 import { MainSection } from "./components/MainSection";
 
-import { LazySection } from "@/shared/components/LazySection";
 import type { AppTheme } from "@/shared/styles/theme";
 
+import { LazySection } from "@/shared/components/LazySection";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 const BodyTypeScrollShowcase = lazy(async () => {

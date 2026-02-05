@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState, type JSX } from "react";
+import { useMemo, useState, type JSX } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
 import { CheckCircle2 } from "lucide-react";
+
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 
 type Gender = "male" | "female";
 
@@ -651,41 +653,11 @@ const ReportSummary = ({ bodyTypeKey, gender }: ReportSummaryProps) => {
   // Temporary preview fallback until backend provides gender.
   const previewGender: Gender = "female";
   const genderKey: Gender = gender ?? previewGender;
+  const isMobile = useMediaQuery("(max-width: 1023px)");
   const description = content.description[genderKey];
   const tabs = content.tabs[genderKey];
   const checklist = content.checklist[genderKey];
   const skinDesc = content.skinDesc[genderKey];
-
-  useEffect(() => {
-    if (window.innerWidth > 1023) return;
-
-    const targets = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-report-summary-row]"),
-    );
-    if (targets.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-        if (visible.length > 0) {
-          const target = visible[0].target as HTMLElement;
-          const index = Number(target.dataset.index ?? 0);
-          setActiveTab(index);
-        }
-      },
-      {
-        threshold: [0.1, 0.25, 0.5, 0.75],
-        rootMargin: "0px",
-      },
-    );
-
-    targets.forEach((target) => observer.observe(target));
-
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <SummarySection>
@@ -763,7 +735,7 @@ const ReportSummary = ({ bodyTypeKey, gender }: ReportSummaryProps) => {
 
           <MobileTabBody>
             {tabs.map((tab, index) => {
-              const isActive = activeTab === index;
+              const isActive = isMobile ? true : activeTab === index;
               return (
                 <MobileRow key={tab.title} data-report-summary-row data-index={`${index}`}>
                   <TabButton

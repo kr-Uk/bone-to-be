@@ -1,5 +1,6 @@
+import type { Notification } from "@/shared/stores/notification.store";
+
 import axiosInstance from "@/shared/api/axios";
-import type { Notification, NotificationType } from "@/shared/stores/notification.store";
 
 type ApiResponse<T> = {
   code: number;
@@ -17,7 +18,7 @@ type NotificationDto = {
 
 const mapNotification = (dto: NotificationDto): Notification => ({
   id: dto.uuid,
-  type: dto.type as NotificationType,
+  type: dto.type,
   message: dto.content,
   createdAt: dto.createdAt,
   payload: dto.reportId ? { jobId: String(dto.reportId) } : undefined,

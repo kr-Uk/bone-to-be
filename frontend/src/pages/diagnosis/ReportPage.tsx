@@ -6,6 +6,7 @@ import AnalysisDetailsSection from "./components/AnalysisDetailsSection";
 import AnalysisResultCard from "./components/AnalysisResultCard";
 import FitReferenceSection from "./components/FitReferenceSection";
 import RecommendationSection from "./components/RecommendationSection";
+import ReportSummary from "./components/ReportSummary";
 import ReportHeroSection from "./components/ReportHeroSection";
 import TryOnComparisonSection from "./components/TryOnComparisonSection";
 
@@ -299,6 +300,8 @@ const ReportPage = () => {
       </MainContent>
 
       <SectionStack>
+        <ReportSummary bodyTypeKey={bodyTypeKey} gender={reportData.gender} />
+
         {/* 상세 골격 분석 섹션 (11개 지표) */}
         {reportData.details &&
           Array.isArray(reportData.details) &&

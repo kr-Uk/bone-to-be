@@ -13,14 +13,14 @@ const METRIC_GROUPS = [
   {
     key: "line",
     title: "Line Specs",
-    keys: ["shoulder_slope_angle", "waist_curvature_index", "linearity_index"],
+    keys: ["shoulder_slope_angle", "linearity_index", "shoulder_width_index",
+      "hip_width_index",],
   },
   {
     key: "volume",
     title: "Volume Specs",
     keys: [
-      "shoulder_width_index",
-      "hip_width_index",
+      "waist_curvature_index",
       "upper_body_depth_index",
       "ribcage_volume_index",
       "joint_thickness_index",

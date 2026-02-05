@@ -143,6 +143,7 @@ export type ReportDetailMetric = {
  */
 export type ReportDetailResponse = ApiResponse<{
   reportId: number;
+  gender?: "male" | "female";
   skeletonType: SkeletonType | null;
   straightRate: number;
   naturalRate: number;

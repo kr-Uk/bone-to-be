@@ -27,9 +27,7 @@ export const fetchNotifications = async (): Promise<Notification[]> => {
   const { data } = await axiosInstance.get<ApiResponse<NotificationDto[]>>("/notifications");
   const list = Array.isArray(data?.data) ? data.data : [];
   const mapped = list.map(mapNotification);
-  return mapped.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  );
+  return mapped.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
 
 export const markNotificationRead = async (uuid: string): Promise<void> => {

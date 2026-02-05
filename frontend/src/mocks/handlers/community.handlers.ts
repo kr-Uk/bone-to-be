@@ -1728,6 +1728,7 @@ export const communityHandlers = [
 
     const newComment = {
       id: `c-${Date.now()}`,
+      userId: "me",
       username: "me",
       text: content,
       createdAt: new Date().toISOString(),

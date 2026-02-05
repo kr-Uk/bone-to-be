@@ -15,7 +15,12 @@ export const NotificationToggleButton = () => {
 
   return (
     <ToggleGroup>
-      <ToggleButton type="button" onClick={handleConnect} disabled={isConnected} data-active={isConnected}>
+      <ToggleButton
+        type="button"
+        onClick={handleConnect}
+        disabled={isConnected}
+        data-active={isConnected}
+      >
         알림 켜기
       </ToggleButton>
     </ToggleGroup>

@@ -1,5 +1,14 @@
 package com.bonetobe.backend.style.domain;
 
 public enum StyleName {
-    MINIMAL, STREET, CASUAL, ANY, BASIC, FORMAL
+    CLASSIC,
+    FORMAL,
+    MINIMAL,
+    STREET,
+    CASUAL,
+    VINTAGE,
+    SPORTY,
+    FEMININE,
+    ANY,
+    BASIC
 }

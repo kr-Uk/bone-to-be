@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import styled, { css } from "styled-components";
 
+import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
+
 type BodyTypeKey = "STRAIGHT" | "WAVE" | "NATURAL";
 
 type BodyTypeSection = {
@@ -330,18 +332,19 @@ const Desc = styled(motion.p)`
   color: ${({ theme }) => theme.colors.gray[400]};
 `;
 
-const Cta = styled(motion.a)`
+const Cta = styled(motion.button)`
   margin-top: 1.5rem;
   width: fit-content;
   display: inline-flex;
   gap: 0.75rem;
   align-items: center;
-  text-decoration: none;
   padding: 0.9rem 1rem;
   border-radius: 10px;
   font-size: ${({ theme }) => theme.typography.body.md.semibold.fontSize};
   font-weight: ${({ theme }) => theme.typography.body.md.semibold.fontWeight};
   line-height: ${({ theme }) => theme.typography.body.md.semibold.lineHeight};
+  border: 1px solid ${({ theme }) => theme.colors.brand};
+  cursor: pointer;
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
@@ -349,7 +352,6 @@ const Cta = styled(motion.a)`
   ${({ theme }) => css`
     color: ${theme.colors.gray[50]};
     background: ${theme.colors.brand};
-    border: 1px solid ${theme.colors.brand};
   `}
 
   &:hover {
@@ -415,10 +417,10 @@ const ModelPhotos = ({ section }: ModelPhotosProps) => {
   );
 };
 
-const ctaHrefMap: Record<BodyTypeKey, string> = {
-  STRAIGHT: "/types/straight",
-  WAVE: "/types/wave",
-  NATURAL: "/types/natural",
+const bodyTypeMap: Record<BodyTypeKey, "Straight" | "Wave" | "Natural"> = {
+  STRAIGHT: "Straight",
+  WAVE: "Wave",
+  NATURAL: "Natural",
 };
 
 type PinnedSectionProps = {
@@ -427,6 +429,7 @@ type PinnedSectionProps = {
 };
 
 const PinnedSection = ({ section, index }: PinnedSectionProps) => {
+  const protectedNavigate = useProtectedNavigate();
   const sectionRef = useRef<HTMLElement | null>(null);
   const copyBlockId = `body-type-copy-${section.key.toLowerCase()}`;
   const { scrollYProgress } = useScroll({
@@ -483,7 +486,13 @@ const PinnedSection = ({ section, index }: PinnedSectionProps) => {
                 {section.desc}
               </Desc>
               <Cta
-                href={ctaHrefMap[section.key]}
+                type="button"
+                onClick={() => {
+                  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+                  protectedNavigate("/community", {
+                    state: { initialFilters: { bodyType: bodyTypeMap[section.key] } },
+                  });
+                }}
                 data-aos="fade-up"
                 data-aos-easing="linear"
                 data-aos-duration="1500"

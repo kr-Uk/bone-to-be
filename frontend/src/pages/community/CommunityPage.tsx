@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { useInfiniteFeedList, useLikeToggle } from "./api";
@@ -9,7 +10,6 @@ import { FeedFilters } from "./components/FeedFilters";
 import { FeedGrid } from "./components/FeedGrid";
 import { FeedHeader } from "./components/FeedHeader";
 import { LoadingSpinner } from "./components/LoadingSpinner";
-import { ScrollToTopButton } from "./components/ScrollToTopButton";
 import { SelectedFilters } from "./components/SelectedFilters";
 
 import type { FeedFilters as FeedFiltersType, SortBy } from "./api";
@@ -104,6 +104,13 @@ export default function CommunityPage() {
     heightRange: null,
     weightRange: null,
   });
+  const location = useLocation();
+
+  useEffect(() => {
+    const state = location.state as { initialFilters?: Partial<FeedFiltersType> } | null;
+    if (!state?.initialFilters) return;
+    setFilters((prev) => ({ ...prev, ...state.initialFilters }));
+  }, [location.key]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null);
 
@@ -222,9 +229,6 @@ export default function CommunityPage() {
           </>
         )}
       </ContentContainer>
-
-      {/* 맨 위로 버튼 */}
-      <ScrollToTopButton />
 
       <FeedFAB onClick={handleFABClick} />
 

@@ -1,15 +1,28 @@
-import AOS from "aos";
-import { useEffect } from "react";
+import type AOS from "aos";
+import { lazy, useCallback, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 
-import { BodyTypeScrollShowcase } from "./components/BodyTypeScrollShowcase";
-import { MainAnalysisSection } from "./components/MainAnalysisSection";
-import { MainProgressSection } from "./components/MainProgressSection";
 import { MainSection } from "./components/MainSection";
 
+import { LazySection } from "@/shared/components/LazySection";
 import type { AppTheme } from "@/shared/styles/theme";
 
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
+
+const BodyTypeScrollShowcase = lazy(async () => {
+  const mod = await import("./components/BodyTypeScrollShowcase");
+  return { default: mod.BodyTypeScrollShowcase };
+});
+
+const MainProgressSection = lazy(async () => {
+  const mod = await import("./components/MainProgressSection");
+  return { default: mod.MainProgressSection };
+});
+
+const MainAnalysisSection = lazy(async () => {
+  const mod = await import("./components/MainAnalysisSection");
+  return { default: mod.MainAnalysisSection };
+});
 
 type TypographyToken = {
   fontSize: string;
@@ -41,14 +54,50 @@ const categoryItems = [
 
 const MainPage = () => {
   const protectedNavigate = useProtectedNavigate();
+  const aosRef = useRef<AOS | null>(null);
+  const refreshAos = useCallback(() => {
+    aosRef.current?.refresh();
+  }, []);
 
   useEffect(() => {
-    AOS.init({
-      once: true,
-      duration: 600,
-      easing: "ease-out",
-    });
-    AOS.refresh();
+    let cancelled = false;
+
+    const initAos = async () => {
+      const mod = await import("aos");
+      if (cancelled) return;
+      const instance = mod.default;
+      aosRef.current = instance;
+      instance.init({
+        once: true,
+        duration: 600,
+        easing: "ease-out",
+      });
+    };
+
+    const scheduleInit = () => {
+      const win = window as Window & {
+        requestIdleCallback?: (cb: IdleRequestCallback, options?: IdleRequestOptions) => number;
+        cancelIdleCallback?: (id: number) => void;
+      };
+
+      if (win.requestIdleCallback) {
+        const idleId = win.requestIdleCallback(() => {
+          void initAos();
+        }, { timeout: 1500 });
+        return () => win.cancelIdleCallback?.(idleId);
+      }
+
+      const timeoutId = window.setTimeout(() => {
+        void initAos();
+      }, 400);
+      return () => window.clearTimeout(timeoutId);
+    };
+
+    const cancelSchedule = scheduleInit();
+    return () => {
+      cancelled = true;
+      cancelSchedule?.();
+    };
   }, []);
 
   const handleFinalCtaClick = () => {
@@ -58,9 +107,15 @@ const MainPage = () => {
   return (
     <Container>
       <MainSection categoryItems={categoryItems} />
-      <BodyTypeScrollShowcase />
-      <MainProgressSection />
-      <MainAnalysisSection />
+      <LazySection minHeight="660vh" onVisible={refreshAos}>
+        <BodyTypeScrollShowcase />
+      </LazySection>
+      <LazySection minHeight="80vh" onVisible={refreshAos}>
+        <MainProgressSection />
+      </LazySection>
+      <LazySection minHeight="80vh" onVisible={refreshAos}>
+        <MainAnalysisSection />
+      </LazySection>
 
       <FinalCTASection>
         <FinalTitle>Ready to find yours?</FinalTitle>

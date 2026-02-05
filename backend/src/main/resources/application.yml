@@ -195,7 +195,10 @@ logging:
 # Actuator
 ##################################
 management:
+  server:
+    port: 8081
   endpoints:
     web:
+      base-path: /actuator
       exposure:
-        include: health,info
+        include: prometheus,health,info

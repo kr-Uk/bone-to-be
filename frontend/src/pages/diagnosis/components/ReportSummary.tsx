@@ -1,10 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type JSX } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
 import { CheckCircle2 } from "lucide-react";
 
+type Gender = "male" | "female";
+
+type Gendered<T> = {
+  male: T;
+  female: T;
+};
+
 interface ReportSummaryProps {
   bodyTypeKey: "natural" | "wave" | "straight";
+  gender?: Gender;
 }
 
 const SummarySection = styled.section`
@@ -362,128 +370,291 @@ const SkinDescription = styled.p`
 
 const TYPE_CONTENT = {
   natural: {
-    description: (
-      <>
-        고객님의 신체는 근육이나 지방의 볼륨감이 아닌,{" "}
-        <HighlightText>골격 자체가 형성하는 프레임(Frame)</HighlightText>이 주도하는 체형입니다.
-        마치 옷걸이처럼 어깨가 단단히 형태를 잡고 있어 어떤 옷을 입어도 옷의 형태가
-        무너지지 않고 본연의 핏으로 떨어집니다.
-      </>
-    ),
-    tabs: [
+    description: {
+      male: (
+        <>
+          고객님의 체형은 근육이나 지방의 볼륨보다,{" "}
+          <HighlightText>굵고 단단한 골격 프레임</HighlightText>이 주도하는 체형입니다.
+          마치 옷걸이처럼 어깨가 단단히 형태를 잡고 있어 어떤 옷을 입어도 옷의 형태가
+          무너지지 않고 본연의 핏으로 떨어집니다. 특히 자켓/코트처럼 구조감 있는 아이템에서 옷 태가 잘 살아납니다.
+        </>
+      ),
+      female: (
+        <>
+          고객님의 체형은 근육이나 지방의 볼륨보다,{" "}
+          <HighlightText>골격이 만드는 직선적 프레임</HighlightText>이 중심이 됩니다.
+          마치 옷걸이처럼 어깨가 단단히 형태를 잡고 있어 어떤 옷을 입어도 옷의 형태가
+          무너지지 않고 본연의 핏으로 떨어집니다. <HighlightText>루즈한 실루엣 + 질감 있는 소재</HighlightText>는 여리하고 세련된 이미지를 줄 수 있습니다.
+        </>
+      ),
+    } satisfies Gendered<JSX.Element>,
+    tabs: {
+      male: [
+        {
+          label: "Upper Zone",
+          title: "목과 승모근",
+          content:
+            "목의 길이가 다소 짧거나, 목에서 어깨로 이어지는 승모근 라인이 발달해 있을 가능성이 높습니다. 쇄골은 뼈가 도드라지기보다 근육이나 살에 덮여 매끄럽고 단단한 인상으로 정리되는 경우가 많습니다. 카라가 너무 타이트한 상의보다는 넥라인에 여유가 있는 아이템이 상체를 더 깔끔하게 보이게 합니다.",
+        },
+        {
+          label: "Torso Volume",
+          title: "흉곽과 허리",
+          content:
+            "흉곽의 앞뒤 폭이 넓어 옆에서 보았을 때 두께감이 느껴질 수 있습니다. 갈비뼈에서 골반까지의 거리가 짧아 허리 위치가 높게 형성되어 상체가 짧고 하체가 길어 보이는 비율적 장점을 만듭니다. 상·하의 실루엣을 ‘통’으로 여유 있게 잡아주는 스타일이 자연스럽습니다.",
+        },
+        {
+          label: "Lower Line",
+          title: "다리와 무릎",
+          content:
+            "하체는 근육·지방의 볼륨보다 골격 프레임이 먼저 드러나며, 특히 무릎 뼈가 비교적 도드라져 관절의 존재감이 보이는 경우가 많습니다. 스키니처럼 관절을 강조하는 핏보다는, 무릎을 살짝 여유 있게 감싸는 핏이 하체 라인을 깔끔하게 보이게 합니다.",
+        },
+      ],
+      female: [
+        {
+          label: "Upper Zone",
+          title: "목과 승모근",
+          content:
+            "쇄골이 선명하게 드러나기보다는 살결에 자연스럽게 덮여 매끈한 라인으로 보이는 편입니다. 어깨선을 과하게 강조하기보다 드롭 숄더/여유 있는 넥라인처럼 힘을 빼는 디테일이 더 세련된 분위기를 만듭니다.",
+        },
+        {
+          label: "Torso Volume",
+          title: "흉곽과 허리",
+          content:
+            "흉곽의 앞뒤 폭이 비교적 넓어 옆모습에서 두께감이 느껴질 수 있습니다. 허리 라인을 살짝만 드러내거나(세미 크롭/하이웨스트) 전체적으로 루즈하게 떨어뜨리는 편이 더 자연스럽게 정리됩니다.",
+        },
+        {
+          label: "Lower Line",
+          title: "다리와 무릎",
+          content:
+            "하체는 근육이나 지방의 둥근 볼륨보다 골격 프레임이 먼저 보이며, 특히 무릎 뼈가 비교적 도드라져 관절의 존재감이 드러나는 경우가 많습니다. 관절이 직접 강조되는 스키니나 딱 무릎선 기장보다는, 무릎을 살짝 덮는 기장과 세미와이드·부츠컷처럼 흐르는 라인이 하체를 더 매끈하게 정리해줍니다.",
+        },
+      ],
+    } satisfies Gendered<
       {
-        label: "Upper Zone",
-        title: "목과 승모근",
-        content:
-          "목의 길이가 다소 짧거나, 목에서 어깨로 이어지는 승모근 라인이 발달해 있을 가능성이 높습니다. 쇄골은 뼈가 도드라지기보다 근육이나 살에 덮여 매끄럽고 깔끔한 라인을 형성하는 것이 특징입니다.",
-      },
-      {
-        label: "Torso Volume",
-        title: "흉곽과 허리",
-        content:
-          "흉곽의 앞뒤 폭이 넓어 옆에서 보았을 때 두께감이 느껴집니다. 갈비뼈에서 골반까지의 거리가 짧아 허리 위치가 높게 형성되어 상체가 짧고 하체가 길어 보이는 비율적 장점을 만듭니다.",
-      },
-      {
-        label: "Lower Line",
-        title: "다리와 무릎",
-        content:
-          "무릎 뼈가 작고 도드라지지 않으며, 허벅지 근육이 앞쪽으로 발달해 입체적인 형태를 띱니다. 종아리는 곧게 뻗어 있으며 발목 역시 뼈가 굵지 않고 탄력 있게 뻗은 실루엣을 보여줍니다.",
-      },
-    ],
-    checklist: [
-      "몸에 비해 손이 크고, 팔다리도 긴 편인가?",
-      "쇄골이 잘 보이고, 뼈가 굵은 편인가?",
-      "늑골(갈비뼈)이 둥글지 않고 평평한 편인가?",
-      "엉덩이가 둥글게 솟기보다 납작하고 평평한 편인가?",
-      "흉통의 두께가 얇거나, 바스트 탑의 위치가 조금 낮은 편인가?",
-    ],
+        label: string;
+        title: string;
+        content: string;
+      }[]
+    >,
+    checklist: {
+      male: [
+        "몸에 비해 손이 크고, 팔다리도 긴 편인가?",
+        "쇄골이 잘 보이고, 뼈가 굵은 편인가?",
+        "늑골이 둥글지 않고 조금 평평한 편인가?",
+        "엉덩이가 둥글게 솟기보다 납작하고 평평한 편인가?",
+        "흉통의 두께가 조금 얇은 편인가?",
+      ],
+      female: [
+        "몸에 비해 손이 크고, 팔다리도 긴 편인가?",
+        "쇄골이 잘 보이고, 뼈가 굵은 편인가?",
+        "늑골이 둥글지 않고 조금 평평한 편인가?",
+        "엉덩이가 둥글게 솟기보다 납작하고 평평한 편인가?",
+        "바스트 탑의 위치가 조금 낮은 편인가?",
+      ],
+    } satisfies Gendered<string[]>,
     skinTitle: '"Matte & Sinewy"',
-    skinDesc:
-      "피부 질감이 매트하고 드라이한 경향이 있습니다. 근육과 지방이 뼈를 덮기보다는 뼈대의 형태를 그대로 드러내며 납작하고 길게 붙는 것이 특징입니다. 이러한 드라이한 텍스처는 린넨이나 가죽 같은 거친 소재와 잘 어울립니다.",
+    skinDesc: {
+      male:
+        "피부 질감이 매트하고 드라이한 경향이 있습니다. 근육·지방이 뼈대를 두껍게 감싸기보다, 프레임을 따라 납작하고 길게 붙는 느낌이 강합니다. 그래서 매끈한 얇은 원단보다는 가죽·스웨이드·로우게이지 니트처럼 결이 살아있는 소재에서 체형의 장점이 더 멋스럽게 드러납니다.",
+      female:
+        "피부 질감이 매트하고 드라이한 경향이 있습니다. 살이 여리여리하게 흐르는 타입이라기보다, 뼈대 라인을 따라 납작하고 길게 붙는 편이라 실루엣이 시크하게 정리됩니다. 니트·스웨이드·코듀로이·린넨처럼 텍스처가 보이는 소재로 무심한 멋을 주는 것이 가장 잘 맞습니다."
+    } satisfies Gendered<string>,
   },
   wave: {
-    description: (
-      <>
-        고객님의 신체는 곡선과 볼륨이 자연스럽게 드러나는{" "}
-        <HighlightText>부드러운 실루엣 중심 체형</HighlightText>입니다. 허리와 골반의
-        굴곡이 강조되어 여성적인 라인이 잘 나타납니다.
-      </>
-    ),
-    tabs: [
+    description: {
+      male: (
+        <>
+          고객님의 신체는 뼈대가 가늘고, 라인이 각지기보다{" "}
+          <HighlightText>부드럽게 흐르는 곡선형 프레임</HighlightText>이 특징입니다. 흉통의 두께감이 얇고 상체 프레임이 가벼우며, 얇은 쇄골과 긴 목이 상체의 인상을 더 섬세하게 만듭니다.
+          상체가 길게 늘어지는 라인으로 이어져, 전체 무게 중심이 하체 쪽으로 내려가 보일 수 있습니다.
+        </>
+      ),
+      female: (
+        <>
+          고객님의 신체는 뼈대가 가늘고, 선이 직선적으로 끊기기보다{" "}
+          <HighlightText>부드럽게 이어지는 곡선형 프레임</HighlightText>을 가지고 있습니다.
+          상체는 얇고 평면적인 편이지만, 허리 라인이 길게 형성되고 골반이 아래로 자연스럽게 이어지는 체형입니다.
+          넓은 골반과 도드라지는 하체로 인해 무게 중심이 아래로 쏠린듯 보일 수 있습니다. 
+        </>
+      ),
+    } satisfies Gendered<JSX.Element>,
+    tabs: {
+      male: [
+        {
+          label: "Upper Zone",
+          title: "목과 승모근",
+          content:
+            "목이 가늘고 긴 편입니다. 또한, 어깨는 넓지 않으며, 어깨선이 각지기보다 완만하게 내려오는 경우가 많습니다. 쇄골은 얇고 섬세하게 드러나 상체 프레임이 전반적으로 가볍고 여리한 인상을 줍니다. 두꺼운 소재와 약간의 여유가 있는 핏의 옷이 상체 밸런스를 보완해줄 수 있습니다.",
+        },
+        {
+          label: "Torso Volume",
+          title: "흉곽과 허리",
+          content:
+            "흉곽(갈비뼈)이 납작하고 얇은 평면형 구조에 가까워 상체 두께감이 크지 않습니다. 갈비뼈에서 골반까지의 거리가 길어 허리선이 낮게 형성되는 편이며, 이로 인해 상체가 길고 가늘게 보이는 특징이 나타납니다. 상의를 살짝 넣어 허리 위치를 정리하거나, 짧은 기장의 아우터처럼 시선을 위로 끌어올리는 아이템이 전체 비율을 더 균형 있게 잡아줍니다.",
+        },
+        {
+          label: "Lower Line",
+          title: "다리와 무릎",
+          content:
+            "골반이 크지 않고 엉덩이 볼륨이 두드러지지 않아, 하체의 볼륨감이 뚜렷하지은 않은 체형입니다. 다리 길이도 길게 느껴지기보다 비교적 짧게 보일 수 있어, 무릎 위치가 위로 올라와 보이거나 하체에서 비율이 끊겨 보이는 인상이 생길 수 있습니다. 무릎 자체는 크게 각지기보다 라인이 부드럽게 이어지는 경우가 많지만, 하체 볼륨이 약해 실루엣이 밋밋해 보일 수 있습니다. 하의는 무릎선을 드러내는 딱 끊기는 기장보다, 밑단을 길게 가져가 라인을 연결해주는 핏이 전체 비율을 가장 안정적으로 정리해줍니다.",
+        },
+      ],
+      female: [
+        {
+          label: "Upper Zone",
+          title: "목과 승모근",
+          content:
+            "목이 가늘고 긴 편이며, 어깨 라인이 각지기보다 부드럽게 내려오는 형태가 많습니다. 쇄골이 얇고 섬세하게 드러나 상체 프레임이 가볍고 정돈된 인상을 줍니다. 카라나 목위로 올라오는 티셔츠를 입으면 목 길이가 보완되어 어깨넓이를 보완해줄 수 있습니다. 힘이 들어간 어깨 각을 만들기보다, 자연스럽게 흐르는 라인이 상체의 장점을 더 또렷하게 살립니다.",
+        },
+        {
+          label: "Torso Volume",
+          title: "흉곽과 허리",
+          content:
+            "흉곽(갈비뼈)이 납작하고 얇아 상체가 평면적으로 보일 수 있습니다. 허리 라인이 길게 형성되는 편이라, 벨트로 허리 위치를 정리하거나 크롭 기장처럼 한 번 끊어주는 디테일이 비율을 더 균형 있게 보이게 합니다.",
+        },
+        {
+          label: "Lower Line",
+          title: "다리와 무릎",
+          content:
+            "볼륨이 엉덩이·허벅지 쪽에 모이는 경향이 있어 하체 중심의 실루엣이 만들어질 수 있습니다. 무릎·종아리 라인도 매끈하게 연결되는 편입니다. 하체를 강하게 눌러 잡기보다는, 라인을 길게 이어주는 실루엣이 전체 비율을 가장 깔끔하게 정리해줍니다.",
+        },
+      ],
+    } satisfies Gendered<
       {
-        label: "Upper Zone",
-        title: "목과 승모근",
-        content:
-          "목선이 길고 완만하며 어깨 라인이 부드럽게 떨어집니다. 쇄골이 은은하게 드러나고 상체가 가볍고 섬세한 인상을 줍니다.",
-      },
-      {
-        label: "Torso Volume",
-        title: "흉곽과 허리",
-        content:
-          "허리 굴곡이 뚜렷하고 상체의 볼륨감이 자연스럽게 이어집니다. 곡선이 살아 있는 실루엣이 특징입니다.",
-      },
-      {
-        label: "Lower Line",
-        title: "다리와 무릎",
-        content:
-          "골반과 허벅지의 곡선이 도드라지며 다리 라인이 유연하게 이어집니다. 하체가 부드럽고 여성적인 느낌을 줍니다.",
-      },
-    ],
-    checklist: [
-      "허리 굴곡이 뚜렷하고 체형이 곡선적으로 보이는가?",
-      "상체보다 골반/허벅지 라인이 더 부드럽게 드러나는가?",
-      "어깨와 팔 라인이 가늘고 섬세한 편인가?",
-      "무릎이나 종아리 라인이 매끈하게 이어지는가?",
-      "전체적으로 부드럽고 유연한 인상을 주는가?",
-    ],
+        label: string;
+        title: string;
+        content: string;
+      }[]
+    >,
+    checklist: {
+      male: [
+        "목이 길고 어깨가 가늘면서 처진 느낌인가?",
+        "흉부가 얇으며 허리가 긴 편인가?",
+        "쇄골이 연약해 보이지만 잘 보이는가?",
+        "늑골이 평평하고 두께가 없는 편인가?",
+        "엉덩이가 평평한가?",
+      ],
+      female: [
+        "목이 길고 어깨가 가늘면서 처진 느낌인가?",
+        "바스트 탑 위치가 조금 낮은 편인가?",
+        "쇄골이 연약해 보이지만 잘 보이는가?",
+        "허리가 긴 편인가?",
+        "어깨에 비해 골반이 넓은 편인가?",
+      ],
+    } satisfies Gendered<string[]>,
     skinTitle: '"Soft & Curvy"',
-    skinDesc:
-      "피부 질감이 부드럽고 탄력이 있어 보이는 경향이 있습니다. 볼륨감 있는 텍스처가 곡선적인 실루엣과 잘 어울립니다.",
+    skinDesc: {
+      male:
+        "피부 질감이 부드럽고 유연하게 보이는 편이라, 흐물한 원단보다는 어느 정도 힘이 있는 소재가 더 잘 어울립니다. 적당한 탄성과 두께감이 있는 원단은 상체 프레임을 잡아줘 왜소해 보일 수 있는 인상을 자연스럽게 보완해줍니다.",
+      female:
+        "피부 질감이 부드러운 경향이 있습니다. 살성이 단단히 각을 세우기보다 유연하게 붙어, 실루엣이 매끈하게 이어지는 느낌을 만듭니다. 광택이 과하게 도는 소재보다 결이 부드럽게 살아있는 텍스처가 전체 라인을 더 고급스럽게 정리해줍니다.",
+    } satisfies Gendered<string>,
   },
   straight: {
-    description: (
-      <>
-        고객님의 신체는 입체감과 탄탄함이 강조되는{" "}
-        <HighlightText>볼륨 중심 체형</HighlightText>입니다. 상체의 두께감과 단단한
-        라인이 특징입니다.
-      </>
-    ),
-    tabs: [
+    description: {
+      male: (
+        <>
+          고객님의 신체는 3가지 체형 중에서도{" "}
+          <HighlightText>근육 발달과 탄탄한 밀도감</HighlightText>이 두드러지는 편입니다.
+          뼈대는 짧고 굵게 형성되는 경향이 있고, 그 위를 근육이 덮어
+          쇄골·갈비뼈·무릎뼈 같은 골격 포인트가 눈에 띄기보다
+          전체 윤곽이 매끈하고 입체적인 편입니다.
+        </>
+      ),
+      female: (
+        <>
+          고객님의 신체는 전반적으로 균형이 잡혀 있고,{" "}
+          <HighlightText>근육과 조직의 밀도감</HighlightText>이 뼈대를 덮어
+          골격이 도드라지기보다 매끈하게 정리되는 체형입니다.
+          둥근 어깨와 비교적 짧은 목, 잘 드러나지 않는 쇄골이 함께 나타날 수 있으며,
+          흉통의 볼륨으로 인해 상체가 글래머러스하게 보일 가능성이 높습니다.
+        </>
+      ),
+    } satisfies Gendered<JSX.Element>,
+    tabs: {
+      male: [
+        {
+          label: "Upper Zone",
+          title: "목과 승모근",
+          content:
+            "상체 두께감이 있어 목이 길게 드러나기보다는 비교적 짧고 단단한 인상으로 보일 수 있습니다. 쇄골은 선명하게 튀기보다 근육과 살에 덮여 매끈하게 정리되는 편이며, 어깨선도 날카롭게 각지기보다 안정적으로 잡혀 보이는 경우가 많습니다.",
+        },
+        {
+          label: "Torso Volume",
+          title: "흉곽과 허리",
+          content:
+            "흉곽의 앞뒤 두께감이 있어 상체가 평면적으로 보이기보다는 ‘입체감’이 느껴질 수 있습니다. 갈비뼈가 도드라지기보다 근육에 덮여 존재감이 줄어들고, 허리 라인은 길게 흐르기보다 비교적 짧게 정리되는 편입니다. 전체적으로 상체의 볼륨이 중심이 되어 직선적인 윤곽이 강조됩니다.",
+        },
+        {
+          label: "Lower Line",
+          title: "다리와 무릎",
+          content:
+            "하체는 뼈가 튀어나오기보다 근육·조직의 밀도감으로 탄탄하게 정리되는 편입니다. 무릎뼈가 선명하게 도드라지기보다는 라인이 두께감 있게 이어질 수 있고, 엉덩이는 아래로 퍼지기보다 윗부분에 볼륨이 모여 보이는 경우가 있습니다. 하의는 과한 와이드핏보다 직선 실루엣을 살려주는 핏이 전체 비율을 가장 깔끔하게 만듭니다.",
+        },
+      ],
+      female: [
+        {
+          label: "Upper Zone",
+          title: "목과 승모근",
+          content:
+            "둥근 어깨선과 비교적 짧은 목이 함께 나타날 수 있으며, 쇄골은 선명하게 드러나기보다 근육과 살에 덮여 매끈하게 정리되는 편입니다. 상체의 입체감이 이미 충분한 타입이라, 목 주변을 막아 답답해 보이게 하기보다는 넥라인을 열어 시원하게 정리해주는 연출이 균형을 잡아줍니다.",
+        },
+        {
+          label: "Torso Volume",
+          title: "흉곽과 허리",
+          content:
+            "흉통의 앞뒤 두께감이 있어 상체가 평면적으로 보이기보다 볼륨감이 느껴질 수 있습니다. 허리 라인은 잘록하게 강조되기보다 비교적 직선적으로 정리되며, 체중 변화가 있을 때는 배 쪽이 먼저 부각되는 경향이 나타날 수 있습니다. 따라서 실루엣은 과한 장식보다는 군더더기 없이 정돈하는 방향이 가장 깔끔합니다.",
+        },
+        {
+          label: "Lower Line",
+          title: "다리와 무릎",
+          content:
+            "상체에 비해 다리가 길게 보이고, 허리가 짧게 느껴질 수 있습니다. 하체는 뼈가 도드라지기보다 탄탄한 조직감으로 라인이 매끈하게 이어지는 편이며, 전체 실루엣이 직선적으로 정리됩니다. 과도하게 넓은 핏은 상·하의 두께감을 동시에 키워 보일 수 있어, 일자로 떨어지는 라인이 안정적입니다.",
+        },
+      ],
+    } satisfies Gendered<
       {
-        label: "Upper Zone",
-        title: "목과 승모근",
-        content:
-          "목이 비교적 짧고 어깨 라인이 단단하게 형성됩니다. 상체 프레임이 안정적이며 힘 있는 인상을 줍니다.",
-      },
-      {
-        label: "Torso Volume",
-        title: "흉곽과 허리",
-        content:
-          "흉곽이 입체적으로 발달해 두께감이 느껴집니다. 허리 굴곡이 크지 않아 상체가 단단해 보입니다.",
-      },
-      {
-        label: "Lower Line",
-        title: "다리와 무릎",
-        content:
-          "허벅지와 종아리가 탄탄하게 이어지며 다리 라인이 곧고 힘 있게 느껴집니다.",
-      },
-    ],
-    checklist: [
-      "상체가 두껍고 입체적으로 느껴지는가?",
-      "허리 굴곡이 크지 않고 직선적으로 보이는가?",
-      "어깨와 팔 라인이 단단한 편인가?",
-      "허벅지와 종아리가 탄탄하게 이어지는가?",
-      "전체적으로 힘 있고 안정적인 인상을 주는가?",
-    ],
+        label: string;
+        title: string;
+        content: string;
+      }[]
+    >,
+    checklist: {
+      male: [
+        "어깨가 둥글고 두꺼우며 튼튼한가?",
+        "쇄골이 잘 보이지 않는가?",
+        "정면에서 실루엣이 굴곡보다 직선적으로 정리되어 보이는가?",
+        "옆모습에서 S라인보다 상체의 두께감(입체감)이 더 먼저 느껴지는가?",
+        "목이 길게 드러나기보다 비교적 짧고 단단한 인상으로 보이는가?",
+      ],
+      female: [
+        "어깨가 둥글고 두꺼우며 튼튼한가?",
+        "쇄골이 잘 보이지 않는가?",
+        "흉통 볼륨이 있어 상체가 글래머러스하게 보이는 편인가?",
+        "허리 라인이 뚜렷하기보다 직선적으로 정리되어 보이는가?",
+        "체중이 늘면 배 쪽이 먼저 부각되는 경향이 있는가?",
+      ],
+    } satisfies Gendered<string[]>,
     skinTitle: '"Firm & Solid"',
-    skinDesc:
-      "피부와 조직이 탄탄하게 느껴지며, 입체감 있는 실루엣을 강조합니다. 구조적인 소재와도 잘 어울립니다.",
+    skinDesc: {
+      male:
+        "피부와 조직이 탄탄하고 밀도 있게 느껴지는 편이라, 부드럽게 흐르는 소재보다는 어느 정도 힘이 있고 형태를 잡아주는 원단이 잘 어울립니다. 원단이 실루엣을 정돈해주면 상체의 입체감이 과장되지 않고 깔끔하게 마무리됩니다.",
+      female:
+        "피부와 조직이 탄탄하고 밀도 있게 느껴지는 편이라 실루엣을 붙잡아 두께를 더 키우는 빳빳한 원단보다는 몸을 따라 부드럽게 흐르며 표면이 매끈한 소재를 선택하는 것이 좋습니다. 반대로 두께가 추가되는 소재는 단단한 느낌을 더 강조할 수 있어 주의가 필요합니다.",
+    } satisfies Gendered<string>,
   },
 } as const;
 
-const ReportSummary = ({ bodyTypeKey }: ReportSummaryProps) => {
+const ReportSummary = ({ bodyTypeKey, gender }: ReportSummaryProps) => {
   const [activeTab, setActiveTab] = useState(0);
   const content = useMemo(() => TYPE_CONTENT[bodyTypeKey], [bodyTypeKey]);
+  // Temporary preview fallback until backend provides gender.
+  const previewGender: Gender = "female";
+  const genderKey: Gender = gender ?? previewGender;
+  const description = content.description[genderKey];
+  const tabs = content.tabs[genderKey];
+  const checklist = content.checklist[genderKey];
+  const skinDesc = content.skinDesc[genderKey];
 
   useEffect(() => {
     if (window.innerWidth > 1023) return;
@@ -525,13 +696,13 @@ const ReportSummary = ({ bodyTypeKey }: ReportSummaryProps) => {
           <SummaryTitle>
             골격 유형 <SummaryTitleAccent>포인트</SummaryTitleAccent>
           </SummaryTitle>
-          <SummaryDescription>{content.description}</SummaryDescription>
+          <SummaryDescription>{description}</SummaryDescription>
         </SummaryHeader>
 
         <TabSection>
           <DesktopTabBody>
             <TabList>
-              {content.tabs.map((tab, index) => {
+              {tabs.map((tab, index) => {
                 const isActive = activeTab === index;
                 return (
                   <TabButton
@@ -568,7 +739,7 @@ const ReportSummary = ({ bodyTypeKey }: ReportSummaryProps) => {
             </TabList>
 
             <TabContentGrid>
-              {content.tabs.map((tab, index) => {
+              {tabs.map((tab, index) => {
                 const isActive = activeTab === index;
                 return (
                   <TabContentCell key={tab.title} $active={isActive}>
@@ -591,7 +762,7 @@ const ReportSummary = ({ bodyTypeKey }: ReportSummaryProps) => {
           </DesktopTabBody>
 
           <MobileTabBody>
-            {content.tabs.map((tab, index) => {
+            {tabs.map((tab, index) => {
               const isActive = activeTab === index;
               return (
                 <MobileRow key={tab.title} data-report-summary-row data-index={`${index}`}>
@@ -657,7 +828,7 @@ const ReportSummary = ({ bodyTypeKey }: ReportSummaryProps) => {
               Skeletal Checklist
             </BottomTitle>
             <Checklist>
-              {content.checklist.map((item) => (
+              {checklist.map((item) => (
                 <ChecklistItem key={item}>
                   <ChecklistIcon aria-hidden="true" />
                   <ChecklistText>{item}</ChecklistText>
@@ -671,7 +842,7 @@ const ReportSummary = ({ bodyTypeKey }: ReportSummaryProps) => {
               Skin & Texture
             </BottomTitle>
             <SkinTitle>{content.skinTitle}</SkinTitle>
-            <SkinDescription>{content.skinDesc}</SkinDescription>
+            <SkinDescription>{skinDesc}</SkinDescription>
           </div>
         </BottomSection>
       </SummaryPanel>

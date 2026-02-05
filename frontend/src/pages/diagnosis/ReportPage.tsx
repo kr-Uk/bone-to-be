@@ -301,7 +301,7 @@ const ReportPage = () => {
       </MainContent>
 
       <SectionStack>
-        <ReportSummary bodyTypeKey={bodyTypeKey} />
+        <ReportSummary bodyTypeKey={bodyTypeKey} gender={reportData.gender} />
 
         {/* 상세 골격 분석 섹션 (11개 지표) */}
         {reportData.details &&

@@ -1,15 +1,28 @@
 import AOS from "aos";
-import { useEffect } from "react";
+import { lazy, useCallback, useEffect } from "react";
 import styled, { css } from "styled-components";
 
-import { BodyTypeScrollShowcase } from "./components/BodyTypeScrollShowcase";
-import { MainAnalysisSection } from "./components/MainAnalysisSection";
-import { MainProgressSection } from "./components/MainProgressSection";
 import { MainSection } from "./components/MainSection";
 
+import { LazySection } from "@/shared/components/LazySection";
 import type { AppTheme } from "@/shared/styles/theme";
 
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
+
+const BodyTypeScrollShowcase = lazy(async () => {
+  const mod = await import("./components/BodyTypeScrollShowcase");
+  return { default: mod.BodyTypeScrollShowcase };
+});
+
+const MainProgressSection = lazy(async () => {
+  const mod = await import("./components/MainProgressSection");
+  return { default: mod.MainProgressSection };
+});
+
+const MainAnalysisSection = lazy(async () => {
+  const mod = await import("./components/MainAnalysisSection");
+  return { default: mod.MainAnalysisSection };
+});
 
 type TypographyToken = {
   fontSize: string;
@@ -41,6 +54,9 @@ const categoryItems = [
 
 const MainPage = () => {
   const protectedNavigate = useProtectedNavigate();
+  const refreshAos = useCallback(() => {
+    AOS.refresh();
+  }, []);
 
   useEffect(() => {
     AOS.init({
@@ -58,9 +74,15 @@ const MainPage = () => {
   return (
     <Container>
       <MainSection categoryItems={categoryItems} />
-      <BodyTypeScrollShowcase />
-      <MainProgressSection />
-      <MainAnalysisSection />
+      <LazySection minHeight="660vh" onVisible={refreshAos}>
+        <BodyTypeScrollShowcase />
+      </LazySection>
+      <LazySection minHeight="80vh" onVisible={refreshAos}>
+        <MainProgressSection />
+      </LazySection>
+      <LazySection minHeight="80vh" onVisible={refreshAos}>
+        <MainAnalysisSection />
+      </LazySection>
 
       <FinalCTASection>
         <FinalTitle>Ready to find yours?</FinalTitle>

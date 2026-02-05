@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import baseProfile from "@/assets/image/base__profile.png";
+
 interface Props {
   username: string;
   avatarUrl?: string | null;
@@ -9,10 +11,11 @@ interface Props {
 }
 
 export function CommentItem({ username, avatarUrl, text, time, onUserClick }: Props) {
+  const resolvedAvatar = avatarUrl ?? baseProfile;
   return (
     <Wrapper>
       <Avatar onClick={onUserClick}>
-        {avatarUrl ? <AvatarImage src={avatarUrl} alt={`${username} avatar`} /> : <AvatarDummy />}
+        <AvatarImage src={resolvedAvatar} alt={`${username} avatar`} />
       </Avatar>
       <TextArea>
         <Username onClick={onUserClick}>{username}</Username>
@@ -39,19 +42,18 @@ const Avatar = styled.div`
   cursor: pointer;
   display: grid;
   place-items: center;
+  overflow: hidden;
+  position: relative;
 `;
 
 const AvatarImage = styled.img`
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-`;
-
-const AvatarDummy = styled.div`
-  width: 12px;
-  height: 12px;
-  background: #737373;
+  object-position: center;
+  display: block;
   border-radius: 50%;
 `;
 

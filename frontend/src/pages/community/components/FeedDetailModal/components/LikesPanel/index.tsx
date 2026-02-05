@@ -4,6 +4,7 @@ import * as S from "./LikesPanel.styles";
 
 import type { LikesPanelProps } from "../../types";
 
+import baseProfile from "@/assets/image/base__profile.png";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 export function LikesPanel({ isOpen, onClose, likeUsers }: LikesPanelProps) {
@@ -52,11 +53,10 @@ export function LikesPanel({ isOpen, onClose, likeUsers }: LikesPanelProps) {
                       onKeyDown={handleKeyDown}
                       aria-label={`${user.username} 프로필 보기`}
                     >
-                      {user.avatarUrl ? (
-                        <S.LikeAvatarImage src={user.avatarUrl} alt={`${user.username} avatar`} />
-                      ) : (
-                        <S.LikeAvatarFallback />
-                      )}
+                      <S.LikeAvatarImage
+                        src={user.avatarUrl ?? baseProfile}
+                        alt={`${user.username} avatar`}
+                      />
                     </S.LikeAvatar>
                     <div>
                       <S.LikeName

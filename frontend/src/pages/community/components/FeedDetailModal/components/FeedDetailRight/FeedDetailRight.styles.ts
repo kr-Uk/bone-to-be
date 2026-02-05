@@ -102,12 +102,18 @@ export const Avatar = styled.div`
   cursor: pointer;
   display: grid;
   place-items: center;
+  overflow: hidden;
+  position: relative;
 `;
 
 export const AvatarImage = styled.img`
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
   border-radius: 50%;
 `;
 

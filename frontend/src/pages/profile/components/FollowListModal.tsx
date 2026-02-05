@@ -8,6 +8,8 @@ import { Text } from "./ProfileCommon";
 
 import type { FollowModalType, FollowUser } from "../api/profile.types";
 
+import baseProfile from "@/assets/image/base__profile.png";
+
 type Props = {
   type: FollowModalType;
   users: FollowUser[];
@@ -194,11 +196,7 @@ function FollowRow({
     >
       <RowLeft>
         <Avatar $clickable={isClickable} onClick={isClickable ? handleRowClick : undefined}>
-          {user.avatarUrl ? (
-            <AvatarImage src={user.avatarUrl} alt={`${user.username} avatar`} />
-          ) : (
-            <AvatarDummy />
-          )}
+          <AvatarImage src={user.avatarUrl ?? baseProfile} alt={`${user.username} avatar`} />
         </Avatar>
 
         <Info>
@@ -369,12 +367,6 @@ const AvatarImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-`;
-
-const AvatarDummy = styled.div`
-  width: 1rem;
-  height: 1rem;
-  background: var(--neutral-600, #525252);
 `;
 
 const Info = styled.div`

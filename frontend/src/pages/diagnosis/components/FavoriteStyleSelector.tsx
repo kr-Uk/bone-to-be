@@ -26,11 +26,6 @@ const Label = styled.label`
   }
 `;
 
-const StyleHint = styled.span`
-  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
-  color: ${({ theme }) => theme.colors.gray[400]};
-`;
-
 const StyleOptions = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -55,30 +50,29 @@ const StyleButton = styled.button<{ $selected: boolean }>`
 `;
 
 interface FavoriteStyleSelectorProps {
-  styles: StyleOption[];
-  onToggleStyle: (style: StyleOption) => void;
+  style: StyleOption;
+  onSelectStyle: (style: StyleOption) => void;
 }
 
 const FavoriteStyleSelector = ({
-  styles,
-  onToggleStyle,
+  style,
+  onSelectStyle,
 }: FavoriteStyleSelectorProps) => {
   return (
     <Container>
       <StyleHeader>
         <Label>선호하는 스타일</Label>
-        <StyleHint>* 복수 선택 가능</StyleHint>
       </StyleHeader>
       <StyleOptions>
-        {SELECTABLE_STYLES.map((style) => (
+        {SELECTABLE_STYLES.map((option) => (
           <StyleButton
-            key={style}
+            key={option}
             type="button"
-            $selected={styles.includes(style)}
-            onClick={() => onToggleStyle(style)}
-            aria-pressed={styles.includes(style)}
+            $selected={style === option}
+            onClick={() => onSelectStyle(option)}
+            aria-pressed={style === option}
           >
-            {STYLE_LABELS[style]}
+            {STYLE_LABELS[option]}
           </StyleButton>
         ))}
       </StyleOptions>

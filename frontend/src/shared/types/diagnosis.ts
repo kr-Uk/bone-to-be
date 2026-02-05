@@ -5,7 +5,7 @@ export type BasicInfoFormData = {
   gender: "women" | "men";
   height: string;
   weight: string;
-  styles: StyleOption[];
+  styles: StyleOption;
 };
 
 // API 전송용 (숫자 변환)
@@ -13,7 +13,7 @@ export type BasicInfoApiData = {
   gender: "women" | "men";
   height: number;
   weight: number;
-  styles: StyleOption[];
+  styles: StyleOption;
 };
 
 // 촬영 모드
@@ -34,7 +34,7 @@ export type AnalysisRequestData = {
   gender: "women" | "men";
   height: number;
   weight: number;
-  styles: StyleOption[];
+  styles: StyleOption;
   imageKey: string;
 };
 

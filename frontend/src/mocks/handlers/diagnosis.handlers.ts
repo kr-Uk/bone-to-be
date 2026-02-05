@@ -52,14 +52,16 @@ export const diagnosisHandlers = [
 
     // 스타일 검증 (백엔드 동작 시뮬레이션)
     if (body.styles) {
-      const validStyles: string[] = Object.values(STYLE_OPTIONS);
-      const invalidStyles = body.styles.filter(
-        (style: StyleOption) => !validStyles.includes(style)
-      );
+      const validStyles = Object.values(STYLE_OPTIONS);
 
-      if (invalidStyles.length > 0) {
+      // 타입 가드: string이 유효한 StyleOption인지 확인
+      const isValidStyleOption = (style: string): style is StyleOption => {
+        return validStyles.includes(style as StyleOption);
+      };
+
+      if (!isValidStyleOption(body.styles)) {
         return HttpResponse.json(
-          { error: `Invalid style options: ${invalidStyles.join(', ')}` },
+          { error: `Invalid style option: ${body.styles}` },
           { status: 400 }
         );
       }

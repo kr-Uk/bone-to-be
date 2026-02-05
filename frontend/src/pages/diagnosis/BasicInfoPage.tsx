@@ -115,7 +115,7 @@ const BasicInfoPage = () => {
       gender: "women" as const,
       height: "",
       weight: "",
-      styles: [] as StyleOption[],
+      styles: "ANY" as const,
     },
   });
 
@@ -135,14 +135,10 @@ const BasicInfoPage = () => {
   const gender = watch("gender");
   const height = watch("height");
   const weight = watch("weight");
-  const styles = watch("styles");
+  const style = watch("styles");
 
-  const toggleStyle = (style: StyleOption) => {
-    const currentStyles = watch("styles");
-    const newStyles = currentStyles.includes(style)
-      ? currentStyles.filter((s) => s !== style)
-      : [...currentStyles, style];
-    setValue("styles", newStyles, { shouldValidate: true });
+  const selectStyle = (selectedStyle: StyleOption) => {
+    setValue("styles", selectedStyle, { shouldValidate: true });
   };
 
   const onSubmit = (data: BasicInfoFormValues) => {
@@ -195,7 +191,7 @@ const BasicInfoPage = () => {
           </FormSection>
 
           <FormSection>
-            <FavoriteStyleSelector styles={styles} onToggleStyle={toggleStyle} />
+            <FavoriteStyleSelector style={style} onSelectStyle={selectStyle} />
           </FormSection>
 
           <StartButton type="submit" disabled={!isValid}>

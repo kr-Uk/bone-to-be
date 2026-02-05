@@ -36,14 +36,12 @@ export const basicInfoSchema = z.object({
         message: "몸무게는 30~200kg 사이여야 합니다",
       },
     ),
-  styles: z.array(
-    z.enum([
-      STYLE_OPTIONS.ANY,
-      STYLE_OPTIONS.BASIC,
-      STYLE_OPTIONS.CASUAL,
-      STYLE_OPTIONS.FORMAL,
-    ])
-  ),
+  styles: z.enum([
+    STYLE_OPTIONS.ANY,
+    STYLE_OPTIONS.BASIC,
+    STYLE_OPTIONS.CASUAL,
+    STYLE_OPTIONS.FORMAL,
+  ]),
 });
 
 export type BasicInfoFormValues = z.infer<typeof basicInfoSchema>;

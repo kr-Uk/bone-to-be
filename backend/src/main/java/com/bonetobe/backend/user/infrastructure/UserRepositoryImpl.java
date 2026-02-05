@@ -1,5 +1,6 @@
 package com.bonetobe.backend.user.infrastructure;
 
+import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.user.domain.User;
 import com.bonetobe.backend.user.domain.UserRepository;
 import com.bonetobe.backend.user.domain.query.UserSearchSummaryRaw;
@@ -66,5 +67,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<UserSearchSummaryRaw> findUserSearch(String nickname, Long viewerId) {
         return userQueryDslRepository.findUserSearch(nickname, viewerId);
+    }
+
+    @Override
+    public void updateSkeletonType(User user, SkeletonType skeletonType){
+        user.updateSkeletonType(skeletonType);
     }
 }

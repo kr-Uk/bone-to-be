@@ -8,16 +8,20 @@ public record FollowResponse(
         Long id,
         String nickname,
         String profileImageUrl, // 변경: 프론트에서 바로 쓸 수 있는 URL
-        SkeletonType skeletonType,
+        String skeletonType,
         String bio,
         boolean isFollowing
 ) {
     public static FollowResponse of(User user, String profileImageUrl, boolean isFollowing) {
+        String skeletonType = (user.getSkeletonType() != null)
+                ? user.getSkeletonType().name()
+                : "UNKNOWN";
+
         return new FollowResponse(
                 user.getId(),
                 user.getNickname(),
                 profileImageUrl,
-                user.getSkeletonType(),
+                skeletonType,
                 user.getBio(),
                 isFollowing
         );

@@ -1,5 +1,6 @@
 package com.bonetobe.backend.user.domain;
 
+import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.file.domain.FileService;
@@ -151,7 +152,7 @@ public class UserServiceImpl implements UserService {
         return new UserDetailDto(
                 profileImageUrl,
                 user.getNickname(),
-                user.getSkeletonType(),
+                user.getSkeletonType() != null ? user.getSkeletonType().name() : "UNKNOWN",
                 postCount,
                 followerCount,
                 followingCount,
@@ -167,5 +168,9 @@ public class UserServiceImpl implements UserService {
             return Collections.emptyList();
         }
         return userRepository.findUserSearch(nickname, viewerId);
+    }
+
+    public void updateSkeletonType(User user, SkeletonType skeletonType){
+        userRepository.updateSkeletonType(user, skeletonType);
     }
 }

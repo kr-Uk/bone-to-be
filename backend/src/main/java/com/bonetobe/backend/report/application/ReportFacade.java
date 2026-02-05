@@ -12,6 +12,7 @@ import com.bonetobe.backend.report.domain.ReportProducer;
 import com.bonetobe.backend.report.domain.ReportService;
 import com.bonetobe.backend.report.infrastructure.ReportMessage;
 import com.bonetobe.backend.report.presentation.dto.ReportResult;
+import com.bonetobe.backend.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ import java.util.List;
 public class ReportFacade {
     private final ReportService reportService;
     private final FileService fileService;
+    private final UserService userService;
     private final ReportProducer reportProducer;
     private final NotificationFacade notificationFacade;
 
@@ -51,6 +53,7 @@ public class ReportFacade {
         try {
             report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
             notificationFacade.saveAndSendNotification(Notification.create(report.getUser().getId(), report.getId(), AlertType.DIAGNOSE));
+            userService.updateSkeletonType(report.getUser(), report.getDiagnosis().getFitType());
 
         } catch (BusinessException e) {
             log.error("리포트 저장 중 에러 발생 :{}", e.getMessage());

@@ -1,5 +1,6 @@
 package com.bonetobe.backend.user.domain;
 
+import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.user.domain.query.UserSearchSummaryRaw;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface UserRepository {
     List<User> findFollowersByUserId(Long userId);
 
     List<UserSearchSummaryRaw> findUserSearch(String nickname, Long viewer);
+
+    void updateSkeletonType(User user, SkeletonType skeletonType);
 }

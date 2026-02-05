@@ -10,6 +10,11 @@ const SectionWrap = styled.section`
   padding: 8rem 0;
   background: ${({ theme }) => theme.colors.gray[900]};
 
+  @supports (content-visibility: auto) {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 900px;
+  }
+
   @media (max-width: 1024px) {
     padding: 6.5rem 0;
   }
@@ -233,7 +238,10 @@ const CheckCircle = styled.div`
   flex: 0 0 auto;
 `;
 
-const CheckIcon = styled.img`
+const CheckIcon = styled.img.attrs({
+  loading: "lazy",
+  decoding: "async",
+})`
   width: 0.625rem;
   height: 0.625rem;
   object-fit: contain;
@@ -303,7 +311,10 @@ const backVariants = {
   },
 };
 
-const Jang = styled.img`
+const Jang = styled.img.attrs({
+  loading: "lazy",
+  decoding: "async",
+})`
   display: flex;
 `;
 

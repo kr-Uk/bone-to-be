@@ -1,5 +1,5 @@
-import AOS from "aos";
-import { lazy, useCallback, useEffect } from "react";
+import type AOS from "aos";
+import { lazy, useCallback, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 
 import { MainSection } from "./components/MainSection";
@@ -54,17 +54,50 @@ const categoryItems = [
 
 const MainPage = () => {
   const protectedNavigate = useProtectedNavigate();
+  const aosRef = useRef<AOS | null>(null);
   const refreshAos = useCallback(() => {
-    AOS.refresh();
+    aosRef.current?.refresh();
   }, []);
 
   useEffect(() => {
-    AOS.init({
-      once: true,
-      duration: 600,
-      easing: "ease-out",
-    });
-    AOS.refresh();
+    let cancelled = false;
+
+    const initAos = async () => {
+      const mod = await import("aos");
+      if (cancelled) return;
+      const instance = mod.default;
+      aosRef.current = instance;
+      instance.init({
+        once: true,
+        duration: 600,
+        easing: "ease-out",
+      });
+    };
+
+    const scheduleInit = () => {
+      const win = window as Window & {
+        requestIdleCallback?: (cb: IdleRequestCallback, options?: IdleRequestOptions) => number;
+        cancelIdleCallback?: (id: number) => void;
+      };
+
+      if (win.requestIdleCallback) {
+        const idleId = win.requestIdleCallback(() => {
+          void initAos();
+        }, { timeout: 1500 });
+        return () => win.cancelIdleCallback?.(idleId);
+      }
+
+      const timeoutId = window.setTimeout(() => {
+        void initAos();
+      }, 400);
+      return () => window.clearTimeout(timeoutId);
+    };
+
+    const cancelSchedule = scheduleInit();
+    return () => {
+      cancelled = true;
+      cancelSchedule?.();
+    };
   }, []);
 
   const handleFinalCtaClick = () => {

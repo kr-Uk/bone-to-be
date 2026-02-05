@@ -6,6 +6,8 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 // 허용된 이미지 타입
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
 
+const STYLE_VALUES = ["BASIC", "CASUAL", "FORMAL", "ANY"] as const;
+
 export const feedFormSchema = z.object({
   // 필수: 이미지 파일 (SVG, PNG, JPG)
   image: z
@@ -39,7 +41,10 @@ export const feedFormSchema = z.object({
   weight: z.string().regex(/^\d+$/, "숫자만 입력 가능합니다").min(1, "몸무게를 입력해주세요"),
 
   // 필수: 스타일 (최소 1개 이상 선택)
-  styles: z.array(z.string()).min(1, "스타일을 최소 1개 이상 선택해주세요").default([]),
+  styles: z
+    .array(z.enum(STYLE_VALUES))
+    .min(1, "스타일을 최소 1개 이상 선택해주세요")
+    .default([]),
 });
 
 export type FeedFormValues = z.infer<typeof feedFormSchema>;

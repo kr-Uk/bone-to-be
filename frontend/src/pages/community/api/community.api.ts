@@ -42,9 +42,9 @@ function buildFeedApiParams(request: FeedListRequest): FeedListApiParams {
     params.skeletonType = request.filters.bodyType.toUpperCase();
   }
 
-  // 4. 스타일 필터 (소문자로 변환하여 쉼표로 결합)
+  // 4. 스타일 필터 (ENUM 그대로 전달)
   if (request.filters.styles && request.filters.styles.length > 0) {
-    params.style = request.filters.styles.map((s) => s.toLowerCase()).join(",");
+    params.style = request.filters.styles.join(",");
   }
 
   // 5. 키 범위 필터

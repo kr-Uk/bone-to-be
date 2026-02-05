@@ -21,14 +21,10 @@ const GENDER_OPTIONS = [
 ];
 
 const STYLE_OPTIONS = [
-  { label: "클래식", value: "classic" },
-  { label: "포멀", value: "formal" },
-  { label: "스트릿", value: "street" },
-  { label: "캐주얼", value: "casual" },
-  { label: "미니멀", value: "minimal" },
-  { label: "빈티지", value: "vintage" },
-  { label: "스포티", value: "sporty" },
-  { label: "페미닌", value: "feminine" },
+  { label: "베이직", value: "BASIC" },
+  { label: "캐주얼", value: "CASUAL" },
+  { label: "포멀", value: "FORMAL" },
+  { label: "기타", value: "ANY" },
 ];
 
 // ProfileHeader 컴포넌트 분리

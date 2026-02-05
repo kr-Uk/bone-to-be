@@ -33,6 +33,7 @@ import type {
   FeedListResponse,
   FeedCreateRequest,
   CommentLikeToggleRequest,
+  StyleType,
 } from "./community.types";
 
 const mapGenderToUi = (gender: "FEMALE" | "MALE"): "F" | "M" => (gender === "FEMALE" ? "F" : "M");
@@ -47,6 +48,15 @@ const mapSkeletonTypeToUi = (
   };
   return map[type];
 };
+
+const STYLE_LABELS: Record<StyleType, string> = {
+  BASIC: "베이직",
+  CASUAL: "캐주얼",
+  FORMAL: "포멀",
+  ANY: "기타",
+};
+
+const mapStyleToLabel = (style: StyleType) => STYLE_LABELS[style] ?? style;
 
 const mapContentToLines = (content: string) => {
   const lines = content
@@ -64,7 +74,7 @@ const mapFeedItemDtoToUi = (item: FeedListItemDto) => ({
   bodyType: mapSkeletonTypeToUi(item.skeletonType), // "NATURAL" → "Natural"
   height: item.height,
   weight: item.weight,
-  styles: item.style.map((s) => s.toLowerCase()), // ["MINIMAL", "STREET"] → ["minimal", "street"]
+  styles: item.style,
   gender: mapGenderToUi(item.gender), // "FEMALE" → "F"
   isLiked: item.isLiked,
   likeCount: 0, // likeCount 필드가 없으므로 기본값 0 제공
@@ -84,7 +94,7 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
   height: detail.height,
   weight: detail.weight,
   content: mapContentToLines(detail.content),
-  tags: detail.style.map((s) => s.toLowerCase()), // 대문자 → 소문자 변환
+  tags: detail.style.map(mapStyleToLabel),
   createdAt: detail.createdAt,
   isLiked: detail.isLiked,
   likeCount: detail.likeCount,

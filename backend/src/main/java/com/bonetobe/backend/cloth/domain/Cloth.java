@@ -3,11 +3,12 @@ package com.bonetobe.backend.cloth.domain;
 import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.SkeletonType;
 import com.bonetobe.backend.file.domain.StoredFile;
+import com.bonetobe.backend.style.domain.StyleName;
+import com.bonetobe.backend.user.domain.Gender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,6 +29,12 @@ public class Cloth extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
     private StoredFile file;
+
+    @Enumerated(EnumType.STRING)
+    private StyleName style;
+
+    @Enumerated
+    private Gender gender;
 
     public static Cloth of(Long clothId) {
         Cloth cloth = new Cloth();

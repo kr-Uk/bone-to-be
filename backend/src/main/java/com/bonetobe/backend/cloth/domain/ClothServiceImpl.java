@@ -6,6 +6,8 @@ import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.file.domain.FileService;
 import com.bonetobe.backend.file.presentation.FileDownloadUrl;
+import com.bonetobe.backend.style.domain.StyleName;
+import com.bonetobe.backend.user.domain.Gender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +21,9 @@ public class ClothServiceImpl implements ClothService {
     private final ClothRepository clothRepository;
     private final FileService fileService;
     @Override
-    public BestWorstClothDownload getClothDownloadPresignedUrls(SkeletonType skeletonType) {
-        Cloth bestCloth = clothRepository.findByBestSkeletonType(skeletonType).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CLOTH));
-        Cloth worstCloth = clothRepository.findByWorstSkeletonType(skeletonType).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CLOTH));
+    public BestWorstClothDownload getClothByStyleAndGender(SkeletonType skeletonType, StyleName styleName, Gender gender) {
+        Cloth bestCloth = clothRepository.findByBestSkeletonTypeAndGenderAndStyle(skeletonType, gender, styleName).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CLOTH));
+        Cloth worstCloth = clothRepository.findByWorstSkeletonTypeAndGenderAndStyle(skeletonType, gender, styleName).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_CLOTH));
         List<FileDownloadUrl.Result> publicDownloadUrls = fileService.getPublicDownloadUrls(List.of(new FileDownloadUrl.Query(bestCloth.getFile().getId()), new FileDownloadUrl.Query(worstCloth.getFile().getId())));
         Map<Long, String> urlMap = publicDownloadUrls.stream()
             .collect(Collectors.toMap(

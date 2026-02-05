@@ -1,9 +1,11 @@
+import type { StyleOption } from '@/shared/constants/styleOptions';
+
 // 폼 데이터 (UI용 - string 타입)
 export type BasicInfoFormData = {
   gender: "women" | "men";
   height: string;
   weight: string;
-  styles: string[];
+  styles: StyleOption[];
 };
 
 // API 전송용 (숫자 변환)
@@ -11,7 +13,7 @@ export type BasicInfoApiData = {
   gender: "women" | "men";
   height: number;
   weight: number;
-  styles: string[];
+  styles: StyleOption[];
 };
 
 // 촬영 모드
@@ -32,7 +34,7 @@ export type AnalysisRequestData = {
   gender: "women" | "men";
   height: number;
   weight: number;
-  styles: string[];
+  styles: StyleOption[];
   imageKey: string;
 };
 

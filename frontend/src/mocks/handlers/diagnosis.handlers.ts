@@ -11,6 +11,8 @@ import type {
   ReportDetailResponse,
 } from "@/pages/diagnosis/api";
 
+import { STYLE_OPTIONS, type StyleOption } from '@/shared/constants/styleOptions';
+
 /**
  * 진단 관련 MSW 핸들러
  */
@@ -46,6 +48,21 @@ export const diagnosisHandlers = [
     // 분석 요청 검증
     if (!body.imageKey || !body.gender || !body.height || !body.weight) {
       return HttpResponse.json({ error: "필수 파라미터가 누락되었습니다." }, { status: 400 });
+    }
+
+    // 스타일 검증 (백엔드 동작 시뮬레이션)
+    if (body.styles) {
+      const validStyles: string[] = Object.values(STYLE_OPTIONS);
+      const invalidStyles = body.styles.filter(
+        (style: StyleOption) => !validStyles.includes(style)
+      );
+
+      if (invalidStyles.length > 0) {
+        return HttpResponse.json(
+          { error: `Invalid style options: ${invalidStyles.join(', ')}` },
+          { status: 400 }
+        );
+      }
     }
 
     const analysisId = `analysis-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;

@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+import type { StyleOption } from '@/shared/constants/styleOptions';
+
+import { SELECTABLE_STYLES, STYLE_LABELS } from '@/shared/constants/styleOptions';
+
 const Container = styled.div``;
 
 const StyleHeader = styled.div`
@@ -51,15 +55,13 @@ const StyleButton = styled.button<{ $selected: boolean }>`
 `;
 
 interface FavoriteStyleSelectorProps {
-  styles: string[];
-  onToggleStyle: (style: string) => void;
-  styleOptions?: string[];
+  styles: StyleOption[];
+  onToggleStyle: (style: StyleOption) => void;
 }
 
 const FavoriteStyleSelector = ({
   styles,
   onToggleStyle,
-  styleOptions = ["Minimal", "Casual", "Street", "Feminine", "Vintage", "Sporty", "Formal"],
 }: FavoriteStyleSelectorProps) => {
   return (
     <Container>
@@ -68,14 +70,15 @@ const FavoriteStyleSelector = ({
         <StyleHint>* 복수 선택 가능</StyleHint>
       </StyleHeader>
       <StyleOptions>
-        {styleOptions.map((style) => (
+        {SELECTABLE_STYLES.map((style) => (
           <StyleButton
             key={style}
             type="button"
             $selected={styles.includes(style)}
             onClick={() => onToggleStyle(style)}
+            aria-pressed={styles.includes(style)}
           >
-            {style}
+            {STYLE_LABELS[style]}
           </StyleButton>
         ))}
       </StyleOptions>

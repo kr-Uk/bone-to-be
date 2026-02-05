@@ -10,6 +10,8 @@ import FavoriteStyleSelector from "./components/FavoriteStyleSelector";
 import GenderSelection from "./components/GenderSelection";
 import { basicInfoSchema, type BasicInfoFormValues } from "./schemas/basicInfoSchema";
 
+import type { StyleOption } from '@/shared/constants/styleOptions';
+
 import { BasicInfoExplainData } from "@/shared/constants/diagnosis";
 import { useMediaQuery } from "@/shared/hooks";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
@@ -110,10 +112,10 @@ const BasicInfoPage = () => {
     resolver: zodResolver(basicInfoSchema),
     mode: "onChange",
     defaultValues: {
-      gender: "women",
+      gender: "women" as const,
       height: "",
       weight: "",
-      styles: [],
+      styles: [] as StyleOption[],
     },
   });
 
@@ -135,7 +137,7 @@ const BasicInfoPage = () => {
   const weight = watch("weight");
   const styles = watch("styles");
 
-  const toggleStyle = (style: string) => {
+  const toggleStyle = (style: StyleOption) => {
     const currentStyles = watch("styles");
     const newStyles = currentStyles.includes(style)
       ? currentStyles.filter((s) => s !== style)

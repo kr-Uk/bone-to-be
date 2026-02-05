@@ -13,7 +13,7 @@ export const LeftContainer = styled.div`
   background: #262626;
   border-right: 1px solid #262626;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     max-width: 100%;
     width: 100%;
     height: 45vh;

@@ -21,7 +21,7 @@ export const ModalWrapper = styled.div`
   min-width: 0;
   overflow: hidden;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     flex-direction: column;
     width: 95%;
     height: 90vh;
@@ -64,12 +64,12 @@ export const NavButton = styled.button<{ $position: "left" | "right" }>`
     cursor: default;
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     width: 32px;
     height: 32px;
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     svg {
       width: 14px;
       height: 14px;
@@ -106,7 +106,7 @@ export const CloseButton = styled.button`
     }
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     top: 8px;
     right: 8px;
     width: 32px;
@@ -122,7 +122,7 @@ export const MobileHeader = styled.div`
   background: #262626;
   border-bottom: 1px solid #3f3f3f;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     display: flex;
   }
 `;

@@ -28,11 +28,11 @@ export const RightContainer = styled.div`
     transition: background 0.2s ease;
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     overflow-y: hidden;
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     overflow-y: hidden;
   }
 `;
@@ -57,7 +57,7 @@ export const DesktopHeader = styled.div`
   border-bottom: 1px solid #3f3f3f;
   background: #262626;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     display: none;
   }
 `;
@@ -141,7 +141,7 @@ export const PostContent = styled.div`
 export const Text = styled.p`
   color: #fafafa;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     font-size: 14px; /* Mobile */
   }
 `;
@@ -160,7 +160,7 @@ export const Footer = styled.div`
   position: relative;
   background-color: #262626;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     padding: 8px 16px 4px;
   }
 `;
@@ -227,7 +227,7 @@ export const LikesButton = styled.button`
     font-size: 16px;
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     font-size: 14px;
   }
 `;
@@ -238,7 +238,7 @@ export const FixedInput = styled.div`
   padding: 12px 16px;
   border-top: 1px solid #525252;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     padding: 12px 16px 12px;
   }
 `;

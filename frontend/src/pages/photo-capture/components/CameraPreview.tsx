@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import styled, { keyframes } from "styled-components";
 
 import { ImageGuideline } from "./ImageGuideline";
@@ -14,11 +14,11 @@ const Container = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
 `;
 
-const PreviewWrapper = styled.div`
+const PreviewWrapper = styled.div<{ $aspectRatio: string }>`
   position: relative;
   width: 100%;
   max-width: 400px;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: ${({ $aspectRatio }) => $aspectRatio};
   background-color: ${({ theme }) => theme.colors.gray[900]};
   border-radius: 1rem;
   overflow: hidden;
@@ -117,7 +117,13 @@ const CameraPreview = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 새로운 hook: 카메라 시작, 프레임 캡처, 랜드마크 그리기 모두 처리
-  const { cameraActive, latestLandmarks } = usePoseDetection(videoRef, canvasRef);
+  const { cameraActive, latestLandmarks, canvasDimensions } = usePoseDetection(videoRef, canvasRef);
+
+  // Calculate aspect ratio string for CSS
+  const aspectRatioString = useMemo(
+    () => (canvasDimensions ? `${canvasDimensions.width} / ${canvasDimensions.height}` : "4 / 3"), // Fallback
+    [canvasDimensions],
+  );
 
   // 카메라 활성화 상태를 부모에게 전달
   useEffect(() => {
@@ -142,7 +148,7 @@ const CameraPreview = ({
 
   return (
     <Container>
-      <PreviewWrapper>
+      <PreviewWrapper $aspectRatio={aspectRatioString}>
         {/* 비디오는 숨겨져 있음 (hook이 canvas에 그림) */}
         <Video ref={videoRef} autoPlay playsInline muted />
         {/* 캔버스에 비디오 + 랜드마크가 그려짐 (항상 렌더링) */}

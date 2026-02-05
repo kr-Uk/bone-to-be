@@ -19,6 +19,7 @@ public record PostDetailSummary(
         Long likeCount,
         Long commentCount,
         Boolean isLiked,
+        Boolean isScrapped,
         AuthorSummary author,
         LocalDateTime createdAt
 ) {

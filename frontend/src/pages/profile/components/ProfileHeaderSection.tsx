@@ -4,6 +4,8 @@ import styled from "styled-components";
 
 import { Stack, Text } from "./ProfileCommon";
 
+import baseProfile from "@/assets/image/base__profile.png";
+
 const Card = styled.section`
   width: 100%;
   padding: 2.0625rem;
@@ -85,35 +87,6 @@ const AvatarImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-`;
-
-const AvatarOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  background: var(--color-brand-primary-900, #59168b);
-`;
-
-const AvatarCore = styled.div`
-  width: 6rem;
-  height: 6rem;
-  left: 1.5rem;
-  top: 1.5rem;
-  position: absolute;
-  background: var(--color-brand-primary-200, #e9d4ff);
-
-  @media (max-width: 1024px) {
-    width: 8.333125rem;
-    height: 8.333125rem;
-    left: 2.083125rem;
-    top: 2.083125rem;
-  }
-
-  @media (max-width: 768px) {
-    width: clamp(3.5rem, 12vw, 4.166875rem);
-    height: clamp(3.5rem, 12vw, 4.166875rem);
-    left: clamp(0.875rem, 3vw, 1.041875rem);
-    top: clamp(0.875rem, 3vw, 1.041875rem);
-  }
 `;
 
 const Info = styled(Stack)`
@@ -432,19 +405,13 @@ const ProfileHeaderSection = ({
 }: ProfileHeaderSectionProps) => {
   const bodyTypeLabel = formatBodyType(bodyType);
   const quoteText = bio?.trim() ? bio : "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~";
+  const resolvedProfileImage = profileImageUrl ?? baseProfile;
 
   return (
     <Card>
       <AvatarWrap>
         <Avatar>
-          {profileImageUrl ? (
-            <AvatarImage src={profileImageUrl} alt={`${username} avatar`} />
-          ) : (
-            <>
-              <AvatarOverlay />
-              <AvatarCore />
-            </>
-          )}
+          <AvatarImage src={resolvedProfileImage} alt={`${username} avatar`} />
         </Avatar>
       </AvatarWrap>
       <Info>

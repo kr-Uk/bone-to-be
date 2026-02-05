@@ -1,12 +1,14 @@
 import { useMemo, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
-import { IoAddSharp, IoCheckmark } from "react-icons/io5";
+import { IoCheckmark } from "react-icons/io5";
 import styled from "styled-components";
 
 import { Text } from "./ProfileCommon";
 
 import type { FollowModalType, FollowUser } from "../api/profile.types";
+
+import baseProfile from "@/assets/image/base__profile.png";
 
 type Props = {
   type: FollowModalType;
@@ -155,7 +157,7 @@ function FollowRow({
 }) {
   const isFollowing = user.isFollowing ?? type === "following";
   const buttonLabel = isFollowing ? "Following" : "Follow";
-  const buttonIcon = isFollowing ? <IoCheckmark /> : <IoAddSharp />;
+  const buttonIcon = isFollowing ? <IoCheckmark /> : null;
   const isClickable = Boolean(onUserClick);
   const isRowClickable = isClickable && rowClickable;
 
@@ -194,11 +196,7 @@ function FollowRow({
     >
       <RowLeft>
         <Avatar $clickable={isClickable} onClick={isClickable ? handleRowClick : undefined}>
-          {user.avatarUrl ? (
-            <AvatarImage src={user.avatarUrl} alt={`${user.username} avatar`} />
-          ) : (
-            <AvatarDummy />
-          )}
+          <AvatarImage src={user.avatarUrl ?? baseProfile} alt={`${user.username} avatar`} />
         </Avatar>
 
         <Info>
@@ -371,12 +369,6 @@ const AvatarImage = styled.img`
   object-fit: cover;
 `;
 
-const AvatarDummy = styled.div`
-  width: 1rem;
-  height: 1rem;
-  background: var(--neutral-600, #525252);
-`;
-
 const Info = styled.div`
   display: flex;
   flex-direction: column;
@@ -436,6 +428,8 @@ const ActionButton = styled.button`
   white-space: nowrap;
 
   &[data-active="false"] {
+    background: var(--color-brand-primary-900, #59168b);
     outline-color: var(--color-brand-primary-900, #59168b);
+    color: var(--neutral-50, #fafafa);
   }
 `;

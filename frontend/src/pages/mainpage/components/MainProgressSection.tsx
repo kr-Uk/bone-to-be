@@ -62,6 +62,11 @@ const SectionWrap = styled.section`
   background: ${({ theme }) => theme.colors.gray[900]};
   padding: 8rem 0;
 
+  @supports (content-visibility: auto) {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 900px;
+  }
+
   @media (max-width: 1024px) {
     padding: 6.5rem 0;
   }
@@ -265,7 +270,10 @@ const IconWrap = styled.div`
   transition: background-color 0.3s ease;
 `;
 
-const IconImg = styled.img`
+const IconImg = styled.img.attrs({
+  loading: "lazy",
+  decoding: "async",
+})`
   width: 1.5rem;
   height: 1.5rem;
   display: block;

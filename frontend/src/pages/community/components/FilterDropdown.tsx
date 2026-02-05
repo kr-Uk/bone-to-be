@@ -46,9 +46,9 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
 
   /* Mobile */
   @media (max-width: 767px) {
-    padding: 0.75rem 1rem;
+    padding: 0.25rem 0.75rem;
     font-size: 0.875rem;
-    min-height: 48px; /* Ensure minimum touch target size */
+    line-height: 25px;
   }
 `;
 

@@ -296,7 +296,6 @@ const ReportPage = () => {
           )}
 
           <FitReferenceSection fitReferences={metadata.fitReferences} />
-
         </ContentWrapper>
       </MainContent>
 
@@ -313,19 +312,19 @@ const ReportPage = () => {
           dontRecommendations={metadata.dontRecommendations}
         />
 
-          {/* AI Virtual Fitting - Try-On 이미지 비교 */}
-          {reportData.details &&
-            Array.isArray(reportData.details) &&
-            reportData.details.length > 0 && (
-              <TryOnComparisonSection
-                bestImageUrl={tryonData?.bestImageUrl ?? null}
-                worstImageUrl={tryonData?.worstImageUrl ?? null}
-                isLoading={tryonLoading}
-                isError={tryonError}
-                onRetry={retryTryon}
-              />
-            )}
-        </SectionStack>
+        {/* AI Virtual Fitting - Try-On 이미지 비교 */}
+        {reportData.details &&
+          Array.isArray(reportData.details) &&
+          reportData.details.length > 0 && (
+            <TryOnComparisonSection
+              bestImageUrl={tryonData?.bestImageUrl ?? null}
+              worstImageUrl={tryonData?.worstImageUrl ?? null}
+              isLoading={tryonLoading}
+              isError={tryonError}
+              onRetry={retryTryon}
+            />
+          )}
+      </SectionStack>
     </PageContainer>
   );
 };

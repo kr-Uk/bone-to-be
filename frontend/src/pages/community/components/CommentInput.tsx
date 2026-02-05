@@ -31,7 +31,7 @@ export const CommentInput = forwardRef<HTMLInputElement, Props>(
           disabled={disabled}
         />
         <PostButton type="button" onClick={onSubmit} disabled={disabled || !value.trim()}>
-          게시
+          등록
         </PostButton>
       </Wrapper>
     );

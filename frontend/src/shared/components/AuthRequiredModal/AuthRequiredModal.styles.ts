@@ -20,7 +20,7 @@ export const IconWrapper = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.purple[50]};
+  background: ${({ theme }) => theme.colors.gray[800]};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,6 +39,7 @@ export const Title = styled.h2`
   font-size: ${({ theme }) => theme.typography.heading.sm.fontSize};
   font-weight: ${({ theme }) => theme.typography.heading.sm.fontWeight};
   color: ${({ theme }) => theme.colors.text};
+  color: white;
   margin: 0;
   text-align: center;
 `;
@@ -62,8 +63,8 @@ export const ButtonGroup = styled.div`
 
 const BaseButton = styled.button`
   width: 100%;
-  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
-  border-radius: 8px;
+  padding: 0.75rem ${({ theme }) => theme.spacing.lg};
+  border-radius: 0.25rem;
   font-size: ${({ theme }) => theme.typography.body.lg.medium.fontSize};
   font-weight: ${({ theme }) => theme.typography.body.lg.medium.fontWeight};
   cursor: pointer;

@@ -10,6 +10,7 @@ import * as S from "./FeedDetailModal.styles";
 
 import type { FeedDetailModalProps } from "./types";
 
+import baseProfile from "@/assets/image/base__profile.png";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 export function FeedDetailModal({
@@ -37,6 +38,7 @@ export function FeedDetailModal({
       ? `몸무게 ${detail.weight}kg`
       : "정보 없음";
   const protectedNavigate = useProtectedNavigate();
+  const mobileAvatarSrc = detail?.author.avatarUrl ?? baseProfile;
 
   useEffect(() => {
     // 모달 열릴 때 뒤 페이지 스크롤 막기
@@ -90,15 +92,7 @@ export function FeedDetailModal({
       </S.CloseButton>
       <S.ModalWrapper onClick={(e) => e.stopPropagation()}>
         <S.MobileHeader>
-          {detail?.author.avatarUrl ? (
-            <S.MobileAvatar
-              src={detail.author.avatarUrl}
-              alt="profile"
-              onClick={handleMobileAuthorClick}
-            />
-          ) : (
-            <S.MobileAvatarFallback onClick={handleMobileAuthorClick} />
-          )}
+          <S.MobileAvatar src={mobileAvatarSrc} alt="profile" onClick={handleMobileAuthorClick} />
           <div>
             <S.MobileNameRow>
               <S.MobileName onClick={handleMobileAuthorClick}>

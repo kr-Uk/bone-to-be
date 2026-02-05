@@ -244,7 +244,10 @@ const GenderImageFrame = styled.div`
   overflow: hidden;
 `;
 
-const GenderImage = styled.img`
+const GenderImage = styled.img.attrs({
+  loading: "lazy",
+  decoding: "async",
+})`
   width: 100%;
   height: 100%;
   border-radius: 0.7rem;

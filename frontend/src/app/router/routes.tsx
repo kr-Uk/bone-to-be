@@ -1,28 +1,44 @@
+import { Suspense, lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import type { ReactElement } from "react";
 
 import ErrorLayout from "@/app/layouts/ErrorLayout";
 import { MainLayout } from "@/layouts/MainLayout";
-import AboutPage from "@/pages/AboutPage/AboutPage";
-import CommunityPage from "@/pages/community/CommunityPage";
-import BasicInfoPage from "@/pages/diagnosis/BasicInfoPage";
-import ReportPage from "@/pages/diagnosis/ReportPage";
-import ForbiddenPage from "@/pages/Forbidden/Forbidden";
-import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage";
-import { LoginPage } from "@/pages/LoginPage";
 import MainPage from "@/pages/mainpage/MainPage";
-import NotFound from "@/pages/NotFound/NotFound";
-import { PasswordChangePage } from "@/pages/PasswordChangePage";
-import { PasswordResetPage } from "@/pages/PasswordResetPage";
-import PhotoCapturePage from "@/pages/photo-capture/PhotoCapturePage";
-import ProfilePage from "@/pages/profile/profile";
-import ProfileEditPage from "@/pages/profile/ProfileEditPage";
-import { WithdrawPage } from "@/pages/WithdrawPage";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
+import { RouteFallback } from "@/shared/components/RouteFallback";
 
 // Helper function to wrap components with ProtectedRoute
 const withAuth = (element: ReactElement) => <ProtectedRoute>{element}</ProtectedRoute>;
+const withSuspense = (element: ReactElement) => (
+  <Suspense fallback={<RouteFallback />}>{element}</Suspense>
+);
+
+const AboutPage = lazy(() => import("@/pages/AboutPage/AboutPage"));
+const CommunityPage = lazy(() => import("@/pages/community/CommunityPage"));
+const BasicInfoPage = lazy(() => import("@/pages/diagnosis/BasicInfoPage"));
+const ReportPage = lazy(() => import("@/pages/diagnosis/ReportPage"));
+const PhotoCapturePage = lazy(() => import("@/pages/photo-capture/PhotoCapturePage"));
+const ProfilePage = lazy(() => import("@/pages/profile/profile"));
+const ProfileEditPage = lazy(() => import("@/pages/profile/ProfileEditPage"));
+const ForbiddenPage = lazy(() => import("@/pages/Forbidden/Forbidden"));
+const NotFound = lazy(() => import("@/pages/NotFound/NotFound"));
+const LoginPage = lazy(() =>
+  import("@/pages/LoginPage").then((mod) => ({ default: mod.LoginPage })),
+);
+const ForgotPasswordPage = lazy(() =>
+  import("@/pages/ForgotPasswordPage").then((mod) => ({ default: mod.ForgotPasswordPage })),
+);
+const PasswordResetPage = lazy(() =>
+  import("@/pages/PasswordResetPage").then((mod) => ({ default: mod.PasswordResetPage })),
+);
+const PasswordChangePage = lazy(() =>
+  import("@/pages/PasswordChangePage").then((mod) => ({ default: mod.PasswordChangePage })),
+);
+const WithdrawPage = lazy(() =>
+  import("@/pages/WithdrawPage").then((mod) => ({ default: mod.WithdrawPage })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -39,66 +55,66 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "basic-info",
-            element: withAuth(<BasicInfoPage />),
+            element: withAuth(withSuspense(<BasicInfoPage />)),
           },
           {
             path: "photo-capture",
-            element: withAuth(<PhotoCapturePage />),
+            element: withAuth(withSuspense(<PhotoCapturePage />)),
           },
           {
             path: "report/:reportId",
-            element: withAuth(<ReportPage />),
+            element: withAuth(withSuspense(<ReportPage />)),
           },
         ],
       },
       {
         path: "profile",
-        element: withAuth(<ProfilePage />),
+        element: withAuth(withSuspense(<ProfilePage />)),
       },
       {
         path: "profile/:userId",
-        element: withAuth(<ProfilePage />),
+        element: withAuth(withSuspense(<ProfilePage />)),
       },
       {
         path: "community",
-        element: withAuth(<CommunityPage />),
+        element: withAuth(withSuspense(<CommunityPage />)),
       },
       {
         path: "about",
-        element: <AboutPage />,
+        element: withSuspense(<AboutPage />),
       },
     ],
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: withSuspense(<LoginPage />),
   },
   {
     path: "/findPW",
-    element: <ForgotPasswordPage />,
+    element: withSuspense(<ForgotPasswordPage />),
   },
   {
     path: "/password-reset",
-    element: <PasswordResetPage />,
+    element: withSuspense(<PasswordResetPage />),
   },
   {
     path: "/profile/password",
-    element: withAuth(<PasswordChangePage />),
+    element: withAuth(withSuspense(<PasswordChangePage />)),
   },
   {
     path: "/withdraw",
-    element: withAuth(<WithdrawPage />),
+    element: withAuth(withSuspense(<WithdrawPage />)),
   },
   {
     path: "/profile/edit",
-    element: withAuth(<ProfileEditPage />),
+    element: withAuth(withSuspense(<ProfileEditPage />)),
   },
   {
     path: "/forbidden",
-    element: withAuth(<ForbiddenPage />),
+    element: withAuth(withSuspense(<ForbiddenPage />)),
   },
   {
     path: "*",
-    element: <NotFound />,
+    element: withSuspense(<NotFound />),
   },
 ]);

@@ -1,4 +1,10 @@
-import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+  type InfiniteData,
+} from "@tanstack/react-query";
 import axios from "axios";
 
 import {
@@ -6,6 +12,7 @@ import {
   addFeedLike,
   removeFeedLike,
   addFeedScrap,
+  removeFeedScrap,
   getPresignedUrl,
   uploadImageToS3,
   createFeed,
@@ -32,6 +39,7 @@ import type {
   FeedListResponse,
   FeedCreateRequest,
   CommentLikeToggleRequest,
+  StyleType,
 } from "./community.types";
 
 const mapGenderToUi = (gender: "FEMALE" | "MALE"): "F" | "M" => (gender === "FEMALE" ? "F" : "M");
@@ -46,6 +54,15 @@ const mapSkeletonTypeToUi = (
   };
   return map[type];
 };
+
+const STYLE_LABELS: Record<StyleType, string> = {
+  BASIC: "베이직",
+  CASUAL: "캐주얼",
+  FORMAL: "포멀",
+  ANY: "기타",
+};
+
+const mapStyleToLabel = (style: StyleType) => STYLE_LABELS[style] ?? style;
 
 const mapContentToLines = (content: string) => {
   const lines = content
@@ -63,7 +80,7 @@ const mapFeedItemDtoToUi = (item: FeedListItemDto) => ({
   bodyType: mapSkeletonTypeToUi(item.skeletonType), // "NATURAL" → "Natural"
   height: item.height,
   weight: item.weight,
-  styles: item.style.map((s) => s.toLowerCase()), // ["MINIMAL", "STREET"] → ["minimal", "street"]
+  styles: item.style,
   gender: mapGenderToUi(item.gender), // "FEMALE" → "F"
   isLiked: item.isLiked,
   likeCount: 0, // likeCount 필드가 없으므로 기본값 0 제공
@@ -83,13 +100,13 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
   height: detail.height,
   weight: detail.weight,
   content: mapContentToLines(detail.content),
-  tags: detail.style.map((s) => s.toLowerCase()), // 대문자 → 소문자 변환
+  tags: detail.style.map(mapStyleToLabel),
   createdAt: detail.createdAt,
   isLiked: detail.isLiked,
   likeCount: detail.likeCount,
   likeUsers: [],
   commentCount: detail.commentCount,
-  isSaved: false,
+  isSaved: detail.isScrapped,
 });
 
 const mapFeedCommentDtoToUi = (comment: FeedCommentDto) => ({
@@ -238,6 +255,7 @@ export function useLikeToggle() {
 
       // 이전 상태 스냅샷 저장
       const previousDetail = queryClient.getQueryData<FeedDetailDto>(["feedDetail", feedId]);
+      const previousFeedList = queryClient.getQueriesData({ queryKey: ["feedList"] });
 
       // 낙관적 업데이트: 피드 상세의 좋아요 상태 즉시 변경
       queryClient.setQueryData<FeedDetailDto>(["feedDetail", feedId], (old) => {
@@ -249,19 +267,47 @@ export function useLikeToggle() {
         };
       });
 
+      // 낙관적 업데이트: 피드 목록의 isLiked 상태도 즉시 변경
+      queryClient.setQueriesData<InfiniteData<FeedListResponseDto>>(
+        { queryKey: ["feedList"] },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page) => ({
+              ...page,
+              items: page.items.map((item) =>
+                item.postId === Number(feedId) ? { ...item, isLiked: !isLiked } : item,
+              ),
+            })),
+          };
+        },
+      );
+
       // rollback을 위해 이전 상태 반환
-      return { previousDetail };
+      return { previousDetail, previousFeedList };
     },
     onError: (_, { feedId }, context) => {
       // 에러 발생 시 이전 상태로 rollback
       if (context?.previousDetail) {
         queryClient.setQueryData(["feedDetail", feedId], context.previousDetail);
       }
+      if (context?.previousFeedList) {
+        context.previousFeedList.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
     },
     onSettled: (_, __, { feedId }) => {
       // 성공/실패 무관하게 캐시 무효화하여 서버 상태 동기화
       queryClient.invalidateQueries({ queryKey: ["feedDetail", feedId] });
-      queryClient.invalidateQueries({ queryKey: ["feedList"] });
+
+      // 피드 목록은 즉시 refetch하지 않음 (이미지 깜빡임 방지)
+      queryClient.invalidateQueries({
+        queryKey: ["feedList"],
+        refetchType: "none",
+      });
+
       queryClient.invalidateQueries({ queryKey: ["feedLikes", feedId] });
 
       // Profile page 캐시도 무효화하여 좋아요 동기화
@@ -274,8 +320,28 @@ export function useLikeToggle() {
  * 피드 스크랩
  */
 export function useFeedScrap() {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (feedId: string) => addFeedScrap(feedId),
+    mutationFn: ({ feedId, isScrapped }: { feedId: string; isScrapped: boolean }) =>
+      isScrapped ? removeFeedScrap(feedId) : addFeedScrap(feedId),
+    onMutate: async ({ feedId, isScrapped }) => {
+      await queryClient.cancelQueries({ queryKey: ["feedDetail", feedId] });
+      const previousDetail = queryClient.getQueryData<FeedDetailDto>(["feedDetail", feedId]);
+      queryClient.setQueryData<FeedDetailDto>(["feedDetail", feedId], (old) => {
+        if (!old) return old;
+        return { ...old, isScrapped: !isScrapped };
+      });
+      return { previousDetail };
+    },
+    onError: (_, { feedId }, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(["feedDetail", feedId], context.previousDetail);
+      }
+    },
+    onSettled: (_, __, variables) => {
+      if (!variables?.feedId) return;
+      queryClient.invalidateQueries({ queryKey: ["feedDetail", variables.feedId] });
+    },
   });
 }
 
@@ -308,11 +374,11 @@ export function useFeedCreate() {
     mutationFn: async (params: {
       file: File;
       content: string;
-      gender: "F" | "M";
-      bodyType: "Natural" | "Wave" | "Straight";
-      styles: string[];
-      height: number;
-      weight: number;
+      gender: "F" | "M" | null;
+      bodyType: "Natural" | "Wave" | "Straight" | null;
+      styles: StyleType[] | null;
+      height: number | null;
+      weight: number | null;
     }) => {
       try {
         // 1단계: Presigned URL 발급
@@ -344,9 +410,11 @@ export function useFeedCreate() {
         const feedRequest: FeedCreateRequest = {
           fileId: presignedResponse.data.fileId,
           content: params.content,
-          gender: params.gender === "F" ? "female" : "male",
-          skeletonType: params.bodyType.toUpperCase() as "NATURAL" | "WAVE" | "STRAIGHT",
-          style: params.styles.map((s) => s.toUpperCase()),
+          gender: params.gender ? (params.gender === "F" ? "female" : "male") : null,
+          skeletonType: params.bodyType
+            ? (params.bodyType.toUpperCase() as "NATURAL" | "WAVE" | "STRAIGHT")
+            : null,
+          style: params.styles,
           height: params.height,
           weight: params.weight,
         };

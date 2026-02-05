@@ -45,6 +45,7 @@ public class SecurityConfig {
 
                 // 2. HTTP 요청에 대한 권한 설정
                 .authorizeHttpRequests(auth -> auth
+
                         // 1. 게스트용 (None (Guest))
                         .requestMatchers(
                                 "/auth/**",

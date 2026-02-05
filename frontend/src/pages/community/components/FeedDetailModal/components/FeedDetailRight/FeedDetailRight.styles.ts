@@ -6,34 +6,11 @@ export const RightContainer = styled.div`
   display: flex;
   flex-direction: column;
   background: #262626;
-  overflow-y: auto;
+  overflow: visible;
   position: relative;
 
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-
-  /* Chrome, Edge, Safari */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    transition: background 0.2s ease;
-  }
-
-  @media (max-width: 430px) {
-    overflow-y: hidden;
-  }
-
-  @media (max-width: 430px) {
-    overflow-y: hidden;
+  @media (max-width: 767px) {
+    overflow: visible;
   }
 `;
 
@@ -57,7 +34,7 @@ export const DesktopHeader = styled.div`
   border-bottom: 1px solid #3f3f3f;
   background: #262626;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     display: none;
   }
 `;
@@ -102,12 +79,18 @@ export const Avatar = styled.div`
   cursor: pointer;
   display: grid;
   place-items: center;
+  overflow: hidden;
+  position: relative;
 `;
 
 export const AvatarImage = styled.img`
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
   border-radius: 50%;
 `;
 
@@ -132,11 +115,37 @@ export const PostContent = styled.div`
   position: relative;
 `;
 
-export const Text = styled.p`
+export const Text = styled.p<{ $expanded?: boolean }>`
   color: #fafafa;
+  margin: 0.25rem 0 0;
+  white-space: pre-line;
+  word-break: break-word;
 
-  @media (max-width: 430px) {
+  ${({ $expanded }) =>
+    !$expanded &&
+    `
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    `}
+
+  @media (max-width: 767px) {
     font-size: 14px; /* Mobile */
+  }
+`;
+
+export const TextToggle = styled.button`
+  margin-top: 0.25rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #a1a1a1;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    color: #e5e5e5;
   }
 `;
 
@@ -154,7 +163,7 @@ export const Footer = styled.div`
   position: relative;
   background-color: #262626;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     padding: 8px 16px 4px;
   }
 `;
@@ -221,7 +230,7 @@ export const LikesButton = styled.button`
     font-size: 16px;
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     font-size: 14px;
   }
 `;
@@ -232,7 +241,7 @@ export const FixedInput = styled.div`
   padding: 12px 16px;
   border-top: 1px solid #525252;
 
-  @media (max-width: 430px) {
+  @media (max-width: 767px) {
     padding: 12px 16px 12px;
   }
 `;

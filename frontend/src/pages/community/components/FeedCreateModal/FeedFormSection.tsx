@@ -7,6 +7,8 @@ import { FeedTextarea } from "./FeedTextarea";
 
 import type { FeedFormValues } from "./validation";
 
+import baseProfile from "@/assets/image/base__profile.png";
+
 const BODY_TYPE_OPTIONS = [
   { label: "Natural", value: "Natural" },
   { label: "Wave", value: "Wave" },
@@ -30,13 +32,21 @@ const STYLE_OPTIONS = [
 ];
 
 // ProfileHeader 컴포넌트 분리
-export function ProfileHeader() {
+export function ProfileHeader({
+  username,
+  avatarUrl,
+}: {
+  username?: string | null;
+  avatarUrl?: string | null;
+}) {
+  const resolvedAvatar = avatarUrl ?? baseProfile;
+  const displayName = username?.trim() || "사용자";
   return (
     <S.ProfileHeader>
       <S.Avatar>
-        <S.AvatarPlaceholder>👤</S.AvatarPlaceholder>
+        <S.AvatarImage src={resolvedAvatar} alt={`${displayName} avatar`} />
       </S.Avatar>
-      <S.Username>사용자</S.Username>
+      <S.Username>{displayName}</S.Username>
     </S.ProfileHeader>
   );
 }
@@ -80,7 +90,7 @@ export function FeedFormSection({
         {/* Content Textarea */}
         <FeedTextarea
           {...register("content")}
-          maxLength={2200}
+          maxLength={200}
           currentLength={contentLength}
           error={errors.content?.message}
           placeholder="오늘의 코디를 공유해보세요..."

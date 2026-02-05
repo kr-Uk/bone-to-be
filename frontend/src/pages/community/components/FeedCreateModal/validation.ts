@@ -20,7 +20,7 @@ export const feedFormSchema = z.object({
     }),
 
   // 선택: 내용 (최대 2200자)
-  content: z.string().max(2200, "내용은 최대 2200자까지 입력 가능합니다").default(""),
+  content: z.string().max(200, "내용은 최대 200자까지 입력 가능합니다").default(""),
 
   // 필수: 체형 (Natural, Wave, Straight)
   bodyType: z.enum(["Natural", "Wave", "Straight"], {

@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -11,10 +12,22 @@ import { feedFormSchema, type FeedFormValues } from "./validation";
 
 import type { FeedCreateModalProps } from "./types";
 
+import { getMe } from "@/shared/api/auth";
+import { useAuth } from "@/shared/hooks/useAuth";
+
 export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const { mutate: createFeed, isPending: isSubmitting } = useFeedCreate();
+  const { me, isAuthLoading, isLoggedIn } = useAuth();
+  const shouldFetchMe = !isAuthLoading && isLoggedIn && !me;
+  const { data: meData } = useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: getMe,
+    enabled: shouldFetchMe,
+    staleTime: 1000 * 60 * 5,
+  });
+  const resolvedMe = me ?? meData;
 
   // Initialize React Hook Form
   const {
@@ -174,7 +187,10 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
           </S.DesktopImageSection>
 
           <S.FormSection>
-            <ProfileHeader />
+            <ProfileHeader
+              username={resolvedMe?.nickname ?? null}
+              avatarUrl={resolvedMe?.avatarUrl ?? null}
+            />
 
             <S.ScrollableContent>
               {/* Mobile/Tablet: ImageSection inside ScrollableContent */}

@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
 import { ImageGuideline } from "./ImageGuideline";
-import { RotateDeviceOverlay } from "./RotateDeviceOverlay";
 
 import type { Results } from "@mediapipe/pose";
 
@@ -19,7 +18,7 @@ const PreviewWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 400px;
-  /* aspect-ratio 제거 - canvas가 자연스럽게 크기 결정 */
+  aspect-ratio: 4 / 3;
   background-color: ${({ theme }) => theme.colors.gray[900]};
   border-radius: 1rem;
   overflow: hidden;
@@ -97,40 +96,6 @@ const CountdownNumber = styled.div`
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 `;
 
-const DebugInfo = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 8px 12px;
-  font-size: 12px;
-  z-index: 100;
-  border-radius: 4px;
-  font-family: monospace;
-  line-height: 1.5;
-`;
-
-const CameraSwitchButton = styled.button`
-  margin-top: 8px;
-  padding: 6px 12px;
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 11px;
-  cursor: pointer;
-  font-family: inherit;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primary}dd;
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-`;
-
 interface CameraPreviewProps {
   capturedImage: string | null;
   showFlash: boolean;
@@ -152,16 +117,7 @@ const CameraPreview = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 새로운 hook: 카메라 시작, 프레임 캡처, 랜드마크 그리기 모두 처리
-  const {
-    cameraActive,
-    latestLandmarks,
-    aspectRatio,
-    canvasWidth,
-    canvasHeight,
-    isLandscape,
-    switchCamera,
-    currentFacingMode,
-  } = usePoseDetection(videoRef, canvasRef);
+  const { cameraActive, latestLandmarks } = usePoseDetection(videoRef, canvasRef);
 
   // 카메라 활성화 상태를 부모에게 전달
   useEffect(() => {
@@ -187,50 +143,31 @@ const CameraPreview = ({
   return (
     <Container>
       <PreviewWrapper>
-        {isLandscape ? (
-          <RotateDeviceOverlay />
-        ) : (
-          <>
-            {/* 비디오는 숨겨져 있음 (hook이 canvas에 그림) */}
-            <Video ref={videoRef} autoPlay playsInline muted />
-            {/* 캔버스에 비디오 + 랜드마크가 그려짐 (항상 렌더링) */}
-            <LandmarkCanvas ref={canvasRef} />
+        {/* 비디오는 숨겨져 있음 (hook이 canvas에 그림) */}
+        <Video ref={videoRef} autoPlay playsInline muted />
+        {/* 캔버스에 비디오 + 랜드마크가 그려짐 (항상 렌더링) */}
+        <LandmarkCanvas ref={canvasRef} />
 
-            {/* 전신 촬영 가이드라인 (촬영 전에만 표시) */}
-            <ImageGuideline show={!capturedImage && cameraActive} />
+        {/* 전신 촬영 가이드라인 (촬영 전에만 표시) */}
+        <ImageGuideline show={!capturedImage && cameraActive} />
 
-            {/* 캡처된 이미지 오버레이 (있을 때만 보임) */}
-            {capturedImage && (
-              <CapturedImage $show={!!capturedImage} src={capturedImage} alt="Captured" />
-            )}
-
-            {!capturedImage && !cameraActive && (
-              <LoadingOverlay>카메라를 시작하는 중...</LoadingOverlay>
-            )}
-
-            {/* 카운트다운 오버레이 */}
-            {countdown && countdown > 0 && (
-              <CountdownOverlay>
-                <CountdownNumber key={countdown}>{countdown}</CountdownNumber>
-              </CountdownOverlay>
-            )}
-
-            {showFlash && <FlashOverlay />}
-
-            {/* 개발 모드에서 해상도 및 카메라 정보 표시 */}
-            {import.meta.env.DEV && (
-              <DebugInfo>
-                {canvasWidth} × {canvasHeight} ({aspectRatio.toFixed(2)})
-                <br />
-                Camera: {currentFacingMode === "user" ? "전면" : "후면"}
-                <br />
-                <CameraSwitchButton onClick={switchCamera}>
-                  카메라 전환 ({currentFacingMode === "user" ? "→ 후면" : "→ 전면"})
-                </CameraSwitchButton>
-              </DebugInfo>
-            )}
-          </>
+        {/* 캡처된 이미지 오버레이 (있을 때만 보임) */}
+        {capturedImage && (
+          <CapturedImage $show={!!capturedImage} src={capturedImage} alt="Captured" />
         )}
+
+        {!capturedImage && !cameraActive && (
+          <LoadingOverlay>카메라를 시작하는 중...</LoadingOverlay>
+        )}
+
+        {/* 카운트다운 오버레이 */}
+        {countdown && countdown > 0 && (
+          <CountdownOverlay>
+            <CountdownNumber key={countdown}>{countdown}</CountdownNumber>
+          </CountdownOverlay>
+        )}
+
+        {showFlash && <FlashOverlay />}
       </PreviewWrapper>
     </Container>
   );

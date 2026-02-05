@@ -10,7 +10,6 @@ import { FeedFilters } from "./components/FeedFilters";
 import { FeedGrid } from "./components/FeedGrid";
 import { FeedHeader } from "./components/FeedHeader";
 import { LoadingSpinner } from "./components/LoadingSpinner";
-import { ScrollToTopButton } from "./components/ScrollToTopButton";
 import { SelectedFilters } from "./components/SelectedFilters";
 
 import type { FeedFilters as FeedFiltersType, SortBy } from "./api";
@@ -230,9 +229,6 @@ export default function CommunityPage() {
           </>
         )}
       </ContentContainer>
-
-      {/* 맨 위로 버튼 */}
-      <ScrollToTopButton />
 
       <FeedFAB onClick={handleFABClick} />
 

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import type { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
 import { FabButton } from "./FabButton";
+
+import type { ButtonHTMLAttributes } from "react";
 
 interface FeedFABProps {
   onClick: () => void;

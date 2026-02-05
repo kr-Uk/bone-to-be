@@ -10,6 +10,8 @@ import FavoriteStyleSelector from "./components/FavoriteStyleSelector";
 import GenderSelection from "./components/GenderSelection";
 import { basicInfoSchema, type BasicInfoFormValues } from "./schemas/basicInfoSchema";
 
+import type { StyleOption } from '@/shared/constants/styleOptions';
+
 import { BasicInfoExplainData } from "@/shared/constants/diagnosis";
 import { useMediaQuery } from "@/shared/hooks";
 import { useDiagnosisStore } from "@/shared/stores/diagnosisStore";
@@ -110,10 +112,10 @@ const BasicInfoPage = () => {
     resolver: zodResolver(basicInfoSchema),
     mode: "onChange",
     defaultValues: {
-      gender: "women",
+      gender: "women" as const,
       height: "",
       weight: "",
-      styles: [],
+      styles: "ANY" as const,
     },
   });
 
@@ -133,14 +135,10 @@ const BasicInfoPage = () => {
   const gender = watch("gender");
   const height = watch("height");
   const weight = watch("weight");
-  const styles = watch("styles");
+  const style = watch("styles");
 
-  const toggleStyle = (style: string) => {
-    const currentStyles = watch("styles");
-    const newStyles = currentStyles.includes(style)
-      ? currentStyles.filter((s) => s !== style)
-      : [...currentStyles, style];
-    setValue("styles", newStyles, { shouldValidate: true });
+  const selectStyle = (selectedStyle: StyleOption) => {
+    setValue("styles", selectedStyle, { shouldValidate: true });
   };
 
   const onSubmit = (data: BasicInfoFormValues) => {
@@ -193,7 +191,7 @@ const BasicInfoPage = () => {
           </FormSection>
 
           <FormSection>
-            <FavoriteStyleSelector styles={styles} onToggleStyle={toggleStyle} />
+            <FavoriteStyleSelector style={style} onSelectStyle={selectStyle} />
           </FormSection>
 
           <StartButton type="submit" disabled={!isValid}>

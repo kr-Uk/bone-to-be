@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import type { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
 import { FabButton } from "./FabButton";
+
+import type { ButtonHTMLAttributes } from "react";
 
 const ScrollButton = styled(FabButton)`
   bottom: 92px;

@@ -202,7 +202,7 @@ export type AnalysisRequest = {
   gender: "women" | "men";
   height: number;
   weight: number;
-  styles: string[];
+  styles: string;
   imageKey: string;
 };
 

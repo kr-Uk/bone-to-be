@@ -8,5 +8,7 @@ public enum StyleName {
     CASUAL,
     VINTAGE,
     SPORTY,
-    FEMININE
+    FEMININE,
+    ANY,
+    BASIC
 }

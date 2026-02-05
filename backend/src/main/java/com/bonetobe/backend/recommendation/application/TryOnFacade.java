@@ -70,7 +70,7 @@ public class TryOnFacade {
             DomainCategory.AFTER_TRY_ME);
 
         // 파일 다운로드 url 생성
-        BestWorstClothDownload clothDownloadPresignedUrls = clothService.getClothDownloadPresignedUrls(report.getDiagnosis().getFitType());
+        BestWorstClothDownload clothDownloadPresignedUrls = clothService.getClothByStyleAndGender(report.getDiagnosis().getFitType(), report.getStyleName(), report.getBodyInfo().getGender());
         String userPresignedUrl = fileService.getPublicDownloadUrls(Collections.singletonList(new FileDownloadUrl.Query(report.getPhoto().getId()))).get(0).presignedUrl();
 
         // db 에 저장

@@ -4,6 +4,7 @@ import com.bonetobe.backend.common.BaseEntity;
 import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.file.domain.StoredFile;
+import com.bonetobe.backend.style.domain.StyleName;
 import com.bonetobe.backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -36,6 +37,9 @@ public class Report extends BaseEntity {
     @Embedded
     private Diagnosis diagnosis;
 
+    @Enumerated(EnumType.STRING)
+    private StyleName styleName;
+
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ReportStatus status = ReportStatus.PENDING;
@@ -52,9 +56,15 @@ public class Report extends BaseEntity {
     public static Report startReport(
         User user,
         BodyInfo bodyInfo,
-        Long fileId) {
+        StyleName styleName,
+        Long fileId
+    ) {
         Report report = new Report();
         report.user = user;
+        report.styleName = StyleName.ANY;
+        if (styleName != null) {
+            report.styleName = styleName;
+        }
         report.bodyInfo = bodyInfo;
         report.photo = StoredFile.of(fileId);
         return report;

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { IoCheckmarkCircle, IoWarning, IoCloseCircle } from "react-icons/io5";
 import styled from "styled-components";
 
@@ -126,65 +127,65 @@ const RetryButton = styled.button`
   }
 `;
 
-export function PoseValidationFeedback({
-  validationResult,
-  mode,
-  onRetry,
-}: PoseValidationFeedbackProps) {
-  if (!validationResult) return null;
+export const PoseValidationFeedback = memo<PoseValidationFeedbackProps>(
+  function PoseValidationFeedback({ validationResult, mode, onRetry }) {
+    if (!validationResult) return null;
 
-  const { isValid, errors, warnings, score } = validationResult;
+    const { isValid, errors, warnings, score } = validationResult;
 
-  // 상태 결정
-  let status: "success" | "warning" | "error" | "none" = "none";
-  if (isValid && errors.length === 0) {
-    status = "success";
-  } else if (errors.length > 0) {
-    status = "error";
-  } else if (warnings.length > 0) {
-    status = "warning";
-  }
+    // 상태 결정
+    let status: "success" | "warning" | "error" | "none" = "none";
+    if (isValid && errors.length === 0) {
+      status = "success";
+    } else if (errors.length > 0) {
+      status = "error";
+    } else if (warnings.length > 0) {
+      status = "warning";
+    }
 
-  const getIcon = () => {
-    if (status === "success") return <IoCheckmarkCircle />;
-    if (status === "warning") return <IoWarning />;
-    if (status === "error") return <IoCloseCircle />;
-    return null;
-  };
+    const getIcon = () => {
+      if (status === "success") return <IoCheckmarkCircle />;
+      if (status === "warning") return <IoWarning />;
+      if (status === "error") return <IoCloseCircle />;
+      return null;
+    };
 
-  const getTitle = () => {
-    if (status === "success") return "포즈 검증 완료";
-    if (status === "warning") return "포즈 개선 권장";
-    if (status === "error") return "포즈 검증 실패";
-    return "";
-  };
+    const getTitle = () => {
+      if (status === "success") return "포즈 검증 완료";
+      if (status === "warning") return "포즈 개선 권장";
+      if (status === "error") return "포즈 검증 실패";
+      return "";
+    };
 
-  const messages = [...errors, ...warnings];
+    const messages = [...errors, ...warnings];
 
-  // Don't render if status is "none"
-  if (status === "none") return null;
+    // Don't render if status is "none"
+    if (status === "none") return null;
 
-  return (
-    <Container $status={status}>
-      <Header>
-        <Icon $status={status}>{getIcon()}</Icon>
-        <StatusText>
-          <Title $status={status}>{getTitle()}</Title>
-          <Score>점수: {score} / 100</Score>
-        </StatusText>
-      </Header>
+    return (
+      <Container $status={status}>
+        <Header>
+          <Icon $status={status}>{getIcon()}</Icon>
+          <StatusText>
+            <Title $status={status}>{getTitle()}</Title>
+            <Score>점수: {score} / 100</Score>
+          </StatusText>
+        </Header>
 
-      {messages.length > 0 && (
-        <MessageList>
-          {messages.map((msg, idx) => (
-            <Message key={idx}>{msg}</Message>
-          ))}
-        </MessageList>
-      )}
+        {messages.length > 0 && (
+          <MessageList>
+            {messages.map((msg, idx) => (
+              <Message key={idx}>{msg}</Message>
+            ))}
+          </MessageList>
+        )}
 
-      {status === "error" && (
-        <RetryButton onClick={onRetry}>{mode === "camera" ? "다시 촬영" : "다시 선택"}</RetryButton>
-      )}
-    </Container>
-  );
-}
+        {status === "error" && (
+          <RetryButton onClick={onRetry}>
+            {mode === "camera" ? "다시 촬영" : "다시 선택"}
+          </RetryButton>
+        )}
+      </Container>
+    );
+  },
+);

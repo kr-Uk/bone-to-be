@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styled from "styled-components";
 
 import type { CaptureMode } from "@/shared/types/diagnosis";
@@ -58,7 +59,7 @@ const TabButton = styled.button<{ $active: boolean }>`
   }
 `;
 
-export function ModeSelector({ mode, onModeChange }: ModeSelectorProps) {
+export const ModeSelector = memo<ModeSelectorProps>(function ModeSelector({ mode, onModeChange }) {
   return (
     <Container>
       <TabButton $active={mode === "camera"} onClick={() => onModeChange("camera")}>
@@ -69,4 +70,4 @@ export function ModeSelector({ mode, onModeChange }: ModeSelectorProps) {
       </TabButton>
     </Container>
   );
-}
+});

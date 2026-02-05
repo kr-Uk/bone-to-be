@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { IoCamera, IoRefresh } from "react-icons/io5";
 import styled from "styled-components";
 
@@ -91,29 +92,26 @@ const IconWrapper = styled.span`
   align-items: center;
 `;
 
-export function CameraCaptureControls({
-  onCapture,
-  onRetake,
-  hasImage,
-  cameraActive,
-}: CameraCaptureControlsProps) {
-  return (
-    <Container>
-      {!hasImage ? (
-        <Button $variant="primary" onClick={onCapture} disabled={!cameraActive}>
-          <IconWrapper>
-            <IoCamera />
-          </IconWrapper>
-          촬영하기
-        </Button>
-      ) : (
-        <Button $variant="secondary" onClick={onRetake}>
-          <IconWrapper>
-            <IoRefresh />
-          </IconWrapper>
-          다시 촬영
-        </Button>
-      )}
-    </Container>
-  );
-}
+export const CameraCaptureControls = memo<CameraCaptureControlsProps>(
+  function CameraCaptureControls({ onCapture, onRetake, hasImage, cameraActive }) {
+    return (
+      <Container>
+        {!hasImage ? (
+          <Button $variant="primary" onClick={onCapture} disabled={!cameraActive}>
+            <IconWrapper>
+              <IoCamera />
+            </IconWrapper>
+            촬영하기
+          </Button>
+        ) : (
+          <Button $variant="secondary" onClick={onRetake}>
+            <IconWrapper>
+              <IoRefresh />
+            </IconWrapper>
+            다시 촬영
+          </Button>
+        )}
+      </Container>
+    );
+  },
+);

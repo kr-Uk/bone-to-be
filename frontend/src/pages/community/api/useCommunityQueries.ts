@@ -6,6 +6,7 @@ import {
   addFeedLike,
   removeFeedLike,
   addFeedScrap,
+  removeFeedScrap,
   getPresignedUrl,
   uploadImageToS3,
   createFeed,
@@ -89,7 +90,7 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
   likeCount: detail.likeCount,
   likeUsers: [],
   commentCount: detail.commentCount,
-  isSaved: false,
+  isSaved: detail.isScrapped,
 });
 
 const mapFeedCommentDtoToUi = (comment: FeedCommentDto) => ({
@@ -275,7 +276,8 @@ export function useLikeToggle() {
  */
 export function useFeedScrap() {
   return useMutation({
-    mutationFn: (feedId: string) => addFeedScrap(feedId),
+    mutationFn: ({ feedId, isScrapped }: { feedId: string; isScrapped: boolean }) =>
+      isScrapped ? removeFeedScrap(feedId) : addFeedScrap(feedId),
   });
 }
 

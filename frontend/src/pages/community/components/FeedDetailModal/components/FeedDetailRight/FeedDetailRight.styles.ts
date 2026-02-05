@@ -6,34 +6,11 @@ export const RightContainer = styled.div`
   display: flex;
   flex-direction: column;
   background: #262626;
-  overflow-y: auto;
+  overflow: visible;
   position: relative;
 
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-
-  /* Chrome, Edge, Safari */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    transition: background 0.2s ease;
-  }
-
   @media (max-width: 767px) {
-    overflow-y: hidden;
-  }
-
-  @media (max-width: 767px) {
-    overflow-y: hidden;
+    overflow: visible;
   }
 `;
 
@@ -138,11 +115,37 @@ export const PostContent = styled.div`
   position: relative;
 `;
 
-export const Text = styled.p`
+export const Text = styled.p<{ $expanded?: boolean }>`
   color: #fafafa;
+  margin: 0.25rem 0 0;
+  white-space: pre-line;
+  word-break: break-word;
+
+  ${({ $expanded }) =>
+    !$expanded &&
+    `
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    `}
 
   @media (max-width: 767px) {
     font-size: 14px; /* Mobile */
+  }
+`;
+
+export const TextToggle = styled.button`
+  margin-top: 0.25rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #a1a1a1;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    color: #e5e5e5;
   }
 `;
 

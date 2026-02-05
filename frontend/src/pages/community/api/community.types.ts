@@ -251,6 +251,7 @@ export interface FeedDetailDto {
   likeCount: number;
   commentCount: number;
   isLiked: boolean;
+  isScrapped: boolean;
   author: FeedAuthorDto;
   createdAt: string;
 }

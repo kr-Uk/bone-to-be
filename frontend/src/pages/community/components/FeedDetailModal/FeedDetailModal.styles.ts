@@ -19,7 +19,8 @@ export const ModalWrapper = styled.div`
   border-radius: 16px;
   display: flex;
   min-width: 0;
-  overflow: hidden;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 
   @media (max-width: 767px) {
     flex-direction: column;

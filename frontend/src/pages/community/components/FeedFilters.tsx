@@ -75,9 +75,10 @@ const bodyTypeOptions: FilterOption[] = [
 ];
 
 const styleOptions: FilterOption[] = [
-  { value: "casual", label: "캐주얼" },
-  { value: "street", label: "스트릿" },
-  { value: "minimal", label: "미니멀" },
+  { value: "BASIC", label: "베이직" },
+  { value: "CASUAL", label: "캐주얼" },
+  { value: "FORMAL", label: "포멀" },
+  { value: "ANY", label: "기타" },
 ];
 
 // Height presets (5cm intervals)
@@ -134,7 +135,7 @@ export function FeedFilters({ filters, onFilterChange }: FeedFiltersProps) {
   const handleStylesChange = (value: string | string[] | null) => {
     onFilterChange({
       ...filters,
-      styles: Array.isArray(value) ? value : [],
+      styles: (Array.isArray(value) ? value : []) as FeedFilters["styles"],
     });
   };
 

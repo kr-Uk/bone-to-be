@@ -12,6 +12,7 @@ import {
   addFeedLike,
   removeFeedLike,
   addFeedScrap,
+  removeFeedScrap,
   getPresignedUrl,
   uploadImageToS3,
   createFeed,
@@ -38,6 +39,7 @@ import type {
   FeedListResponse,
   FeedCreateRequest,
   CommentLikeToggleRequest,
+  StyleType,
 } from "./community.types";
 
 const mapGenderToUi = (gender: "FEMALE" | "MALE"): "F" | "M" => (gender === "FEMALE" ? "F" : "M");
@@ -52,6 +54,15 @@ const mapSkeletonTypeToUi = (
   };
   return map[type];
 };
+
+const STYLE_LABELS: Record<StyleType, string> = {
+  BASIC: "베이직",
+  CASUAL: "캐주얼",
+  FORMAL: "포멀",
+  ANY: "기타",
+};
+
+const mapStyleToLabel = (style: StyleType) => STYLE_LABELS[style] ?? style;
 
 const mapContentToLines = (content: string) => {
   const lines = content
@@ -69,7 +80,7 @@ const mapFeedItemDtoToUi = (item: FeedListItemDto) => ({
   bodyType: mapSkeletonTypeToUi(item.skeletonType), // "NATURAL" → "Natural"
   height: item.height,
   weight: item.weight,
-  styles: item.style.map((s) => s.toLowerCase()), // ["MINIMAL", "STREET"] → ["minimal", "street"]
+  styles: item.style,
   gender: mapGenderToUi(item.gender), // "FEMALE" → "F"
   isLiked: item.isLiked,
   likeCount: 0, // likeCount 필드가 없으므로 기본값 0 제공
@@ -89,13 +100,13 @@ const mapFeedDetailDtoToUi = (detail: FeedDetailDto): FeedDetail => ({
   height: detail.height,
   weight: detail.weight,
   content: mapContentToLines(detail.content),
-  tags: detail.style.map((s) => s.toLowerCase()), // 대문자 → 소문자 변환
+  tags: detail.style.map(mapStyleToLabel),
   createdAt: detail.createdAt,
   isLiked: detail.isLiked,
   likeCount: detail.likeCount,
   likeUsers: [],
   commentCount: detail.commentCount,
-  isSaved: false,
+  isSaved: detail.isScrapped,
 });
 
 const mapFeedCommentDtoToUi = (comment: FeedCommentDto) => ({
@@ -309,8 +320,28 @@ export function useLikeToggle() {
  * 피드 스크랩
  */
 export function useFeedScrap() {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (feedId: string) => addFeedScrap(feedId),
+    mutationFn: ({ feedId, isScrapped }: { feedId: string; isScrapped: boolean }) =>
+      isScrapped ? removeFeedScrap(feedId) : addFeedScrap(feedId),
+    onMutate: async ({ feedId, isScrapped }) => {
+      await queryClient.cancelQueries({ queryKey: ["feedDetail", feedId] });
+      const previousDetail = queryClient.getQueryData<FeedDetailDto>(["feedDetail", feedId]);
+      queryClient.setQueryData<FeedDetailDto>(["feedDetail", feedId], (old) => {
+        if (!old) return old;
+        return { ...old, isScrapped: !isScrapped };
+      });
+      return { previousDetail };
+    },
+    onError: (_, { feedId }, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(["feedDetail", feedId], context.previousDetail);
+      }
+    },
+    onSettled: (_, __, variables) => {
+      if (!variables?.feedId) return;
+      queryClient.invalidateQueries({ queryKey: ["feedDetail", variables.feedId] });
+    },
   });
 }
 
@@ -343,11 +374,11 @@ export function useFeedCreate() {
     mutationFn: async (params: {
       file: File;
       content: string;
-      gender: "F" | "M";
-      bodyType: "Natural" | "Wave" | "Straight";
-      styles: string[];
-      height: number;
-      weight: number;
+      gender: "F" | "M" | null;
+      bodyType: "Natural" | "Wave" | "Straight" | null;
+      styles: StyleType[] | null;
+      height: number | null;
+      weight: number | null;
     }) => {
       try {
         // 1단계: Presigned URL 발급
@@ -379,9 +410,11 @@ export function useFeedCreate() {
         const feedRequest: FeedCreateRequest = {
           fileId: presignedResponse.data.fileId,
           content: params.content,
-          gender: params.gender === "F" ? "female" : "male",
-          skeletonType: params.bodyType.toUpperCase() as "NATURAL" | "WAVE" | "STRAIGHT",
-          style: params.styles.map((s) => s.toUpperCase()),
+          gender: params.gender ? (params.gender === "F" ? "female" : "male") : null,
+          skeletonType: params.bodyType
+            ? (params.bodyType.toUpperCase() as "NATURAL" | "WAVE" | "STRAIGHT")
+            : null,
+          style: params.styles,
           height: params.height,
           weight: params.weight,
         };

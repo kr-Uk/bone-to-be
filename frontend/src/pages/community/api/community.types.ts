@@ -7,6 +7,8 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+export type StyleType = "BASIC" | "CASUAL" | "FORMAL" | "ANY";
+
 /**
  * 커뮤니티 피드 아이템
  */
@@ -17,7 +19,7 @@ export interface FeedItem {
   bodyType: "Straight" | "Wave" | "Natural";
   height: number; // cm
   weight?: number; // kg (optional)
-  styles: string[]; // 예: ["casual", "street", "minimal"]
+  styles: StyleType[];
   gender: "M" | "F";
   isLiked: boolean;
   likeCount: number;
@@ -30,7 +32,7 @@ export interface FeedItem {
 export interface FeedFilters {
   gender: "M" | "F" | null;
   bodyType: "Straight" | "Wave" | "Natural" | null;
-  styles: string[]; // multi-select, lowercase values: ["casual", "street", "minimal"]
+  styles: StyleType[]; // multi-select
   heightRange: { min: number; max: number } | null;
   weightRange: { min: number; max: number } | null;
 }
@@ -97,7 +99,7 @@ export interface FeedAuthorDto {
 export interface FeedListItemDto {
   postId: number;
   imageUrl: string;
-  style: string[]; // 대문자: ["MINIMAL", "STREET"]
+  style: StyleType[]; // 대문자: ["BASIC", "CASUAL", "FORMAL", "ANY"]
   gender: "FEMALE" | "MALE"; // 대문자
   height: number;
   weight?: number;
@@ -177,11 +179,11 @@ export interface PresignedUrlResponse {
 export interface FeedCreateRequest {
   fileId: number;
   content: string;
-  gender: "female" | "male";
-  skeletonType: "NATURAL" | "STRAIGHT" | "WAVE"; // 대문자
-  style: string[]; // 대문자: ["MINIMAL", "STREET"]
-  height: number; // cm
-  weight: number; // kg (필수)
+  gender: "female" | "male" | null;
+  skeletonType: "NATURAL" | "STRAIGHT" | "WAVE" | null; // 대문자
+  style: StyleType[] | null; // 대문자: ["BASIC", "CASUAL", "FORMAL", "ANY"]
+  height: number | null; // cm
+  weight: number | null; // kg
 }
 
 /**
@@ -242,7 +244,7 @@ export interface FeedDetail {
 export interface FeedDetailDto {
   postId: number;
   imageUrl: string;
-  style: string[];
+  style: StyleType[];
   gender: "female" | "male";
   height: number;
   weight?: number;
@@ -251,6 +253,7 @@ export interface FeedDetailDto {
   likeCount: number;
   commentCount: number;
   isLiked: boolean;
+  isScrapped: boolean;
   author: FeedAuthorDto;
   createdAt: string;
 }

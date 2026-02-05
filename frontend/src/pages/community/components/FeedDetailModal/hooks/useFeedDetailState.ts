@@ -124,22 +124,30 @@ export function useFeedDetailState({
   };
 
   const handleSaveToggle = () => {
-    if (!feedId || saved || scrapMutation.isPending) return;
-    setSaved(true);
+    if (!feedId || scrapMutation.isPending) return;
+    const nextSaved = !saved;
+    setSaved(nextSaved);
 
-    scrapMutation.mutate(feedId, {
-      onError: (error) => {
-        if (axios.isAxiosError(error)) {
-          const status = error.response?.status;
-          const code = (error.response?.data as { code?: number } | undefined)?.code;
-          if (status === 409 || code === 2050) {
-            setSaved(true);
-            return;
+    scrapMutation.mutate(
+      { feedId, isScrapped: saved },
+      {
+        onError: (error) => {
+          if (axios.isAxiosError(error)) {
+            const status = error.response?.status;
+            const code = (error.response?.data as { code?: number } | undefined)?.code;
+            if (!saved && (status === 409 || code === 2050)) {
+              setSaved(true);
+              return;
+            }
+            if (saved && status === 404) {
+              setSaved(false);
+              return;
+            }
           }
-        }
-        setSaved(false);
+          setSaved(saved);
+        },
       },
-    });
+    );
   };
 
   const handleCommentSubmit = (text: string) => {

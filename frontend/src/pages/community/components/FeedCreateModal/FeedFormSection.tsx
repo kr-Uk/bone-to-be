@@ -7,6 +7,8 @@ import { FeedTextarea } from "./FeedTextarea";
 
 import type { FeedFormValues } from "./validation";
 
+import baseProfile from "@/assets/image/base__profile.png";
+
 const BODY_TYPE_OPTIONS = [
   { label: "Natural", value: "Natural" },
   { label: "Wave", value: "Wave" },
@@ -19,24 +21,28 @@ const GENDER_OPTIONS = [
 ];
 
 const STYLE_OPTIONS = [
-  { label: "클래식", value: "classic" },
-  { label: "포멀", value: "formal" },
-  { label: "스트릿", value: "street" },
-  { label: "캐주얼", value: "casual" },
-  { label: "미니멀", value: "minimal" },
-  { label: "빈티지", value: "vintage" },
-  { label: "스포티", value: "sporty" },
-  { label: "페미닌", value: "feminine" },
+  { label: "베이직", value: "BASIC" },
+  { label: "캐주얼", value: "CASUAL" },
+  { label: "포멀", value: "FORMAL" },
+  { label: "기타", value: "ANY" },
 ];
 
 // ProfileHeader 컴포넌트 분리
-export function ProfileHeader() {
+export function ProfileHeader({
+  username,
+  avatarUrl,
+}: {
+  username?: string | null;
+  avatarUrl?: string | null;
+}) {
+  const resolvedAvatar = avatarUrl ?? baseProfile;
+  const displayName = username?.trim() || "사용자";
   return (
     <S.ProfileHeader>
       <S.Avatar>
-        <S.AvatarPlaceholder>👤</S.AvatarPlaceholder>
+        <S.AvatarImage src={resolvedAvatar} alt={`${displayName} avatar`} />
       </S.Avatar>
-      <S.Username>사용자</S.Username>
+      <S.Username>{displayName}</S.Username>
     </S.ProfileHeader>
   );
 }
@@ -80,7 +86,7 @@ export function FeedFormSection({
         {/* Content Textarea */}
         <FeedTextarea
           {...register("content")}
-          maxLength={2200}
+          maxLength={200}
           currentLength={contentLength}
           error={errors.content?.message}
           placeholder="오늘의 코디를 공유해보세요..."

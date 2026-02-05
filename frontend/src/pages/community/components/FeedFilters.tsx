@@ -75,10 +75,14 @@ const bodyTypeOptions: FilterOption[] = [
 ];
 
 const styleOptions: FilterOption[] = [
-  { value: "BASIC", label: "베이직" },
-  { value: "CASUAL", label: "캐주얼" },
+  { value: "VINTAGE", label: "빈티지" },
+  { value: "STREET", label: "스트릿" },
+  { value: "SPORTY", label: "스포티" },
+  { value: "MINIMAL", label: "미니멀" },
   { value: "FORMAL", label: "포멀" },
-  { value: "ANY", label: "기타" },
+  { value: "FEMININE", label: "페미닌" },
+  { value: "CLASSIC", label: "클래식" },
+  { value: "CASUAL", label: "캐주얼" },
 ];
 
 // Height presets (5cm intervals)

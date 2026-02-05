@@ -80,10 +80,14 @@ export function SelectedFilters({ filters, onRemoveFilter }: SelectedFiltersProp
   }
 
   const styleLabels: Record<string, string> = {
-    BASIC: "베이직",
-    CASUAL: "캐주얼",
+    VINTAGE: "빈티지",
+    STREET: "스트릿",
+    SPORTY: "스포티",
+    MINIMAL: "미니멀",
     FORMAL: "포멀",
-    ANY: "기타",
+    FEMININE: "페미닌",
+    CLASSIC: "클래식",
+    CASUAL: "캐주얼",
   };
 
   filters.styles.forEach((style) => {

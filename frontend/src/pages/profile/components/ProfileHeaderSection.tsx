@@ -325,19 +325,6 @@ const FollowButton = styled.button<{ $active?: boolean }>`
   }
 `;
 
-const MessageButton = styled.button`
-  padding: 0.64625rem 1.25rem;
-  background: white;
-  border-radius: 0.5rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  @media (max-width: 1024px) {
-    padding: 0.5rem 1.5rem;
-    border-radius: 0.625rem;
-  }
-`;
 
 const ActionText = styled(Text)`
   color: ${({ $color }) => $color ?? "black"};
@@ -454,9 +441,6 @@ const ProfileHeaderSection = ({
                 </ActionText>
                 {isFollowing ? <IoCheckmark /> : <IoAddSharp />}
               </FollowButton>
-              <MessageButton type="button">
-                <ActionText>Message</ActionText>
-              </MessageButton>
             </>
           )}
         </Actions>

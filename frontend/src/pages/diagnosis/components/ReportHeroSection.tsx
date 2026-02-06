@@ -9,6 +9,7 @@ const HeroContainer = styled.div`
   flex-direction: column;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray[600]};
   margin-bottom: 0.75rem;
+  padding: 0.75rem 0;
 `;
 
 const Badge = styled.div`
@@ -66,7 +67,6 @@ const DescriptionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 446px;
-  margin-bottom: 0.75rem;
 
   @media (min-width: 1024px) {
     align-items: flex-end;

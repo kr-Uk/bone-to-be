@@ -11,7 +11,10 @@ import ReportSummary from "./components/ReportSummary";
 import TryOnComparisonSection from "./components/TryOnComparisonSection";
 
 import { useReportDetail, useTryOnData } from "@/pages/diagnosis/api";
-import { convertSkeletonTypeToBodyType } from "@/pages/diagnosis/api/diagnosis.types";
+import {
+  convertSkeletonTypeToBodyType,
+  convertApiGenderToComponent,
+} from "@/pages/diagnosis/api/diagnosis.types";
 import { BODY_TYPE_METADATA } from "@/shared/constants/reportMockData";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { isForbiddenError } from "@/shared/utils/errorUtils";
@@ -30,7 +33,7 @@ const HeroWrapper = styled.div`
   margin: 0 auto;
 
   @media (min-width: 768px) {
-    padding: 128px 1.5rem 48px;
+    /* padding: 128px 1.5rem 48px; */
   }
 `;
 
@@ -245,23 +248,25 @@ const ReportPage = () => {
     );
   }
 
-  const resolveBodyTypeKey = () => {
-    if (reportData.skeletonType) {
-      return convertSkeletonTypeToBodyType(reportData.skeletonType);
-    }
+  // skeletonType null 체크
+  if (!reportData.skeletonType) {
+    console.error("[ReportPage] skeletonType is null for reportId:", reportId);
+    return (
+      <ErrorView>
+        <ErrorIcon>⚠️</ErrorIcon>
+        <ErrorTitle>체형 분석 결과가 없습니다</ErrorTitle>
+        <ErrorMessage>분석 결과를 확인할 수 없습니다. 사진을 다시 촬영해주세요.</ErrorMessage>
+        <ErrorButton
+          onClick={() => navigate("/diagnosis/photo-capture", { state: { fromInternalNav: true } })}
+        >
+          사진 다시 촬영하기
+        </ErrorButton>
+      </ErrorView>
+    );
+  }
 
-    const rates = [
-      { key: "straight", value: reportData.straightRate ?? 0 },
-      { key: "wave", value: reportData.waveRate ?? 0 },
-      { key: "natural", value: reportData.naturalRate ?? 0 },
-    ] as const;
-
-    const sorted = [...rates].sort((a, b) => b.value - a.value);
-    return sorted[0].key;
-  };
-
-  // 분석 완료 - Null Safety 체크
-  const bodyTypeKey = resolveBodyTypeKey();
+  // 분석 완료 - skeletonType 기반 bodyType 결정
+  const bodyTypeKey = convertSkeletonTypeToBodyType(reportData.skeletonType);
   const metadata = BODY_TYPE_METADATA[bodyTypeKey];
 
   const ratios = {
@@ -315,7 +320,10 @@ const ReportPage = () => {
       </MainContent>
 
       <SectionStack>
-        <ReportSummary bodyTypeKey={bodyTypeKey} gender={reportData.gender} />
+        <ReportSummary
+          bodyTypeKey={bodyTypeKey}
+          gender={convertApiGenderToComponent(reportData.gender)}
+        />
 
         {/* 상세 골격 분석 섹션 (11개 지표) */}
         {reportData.details &&

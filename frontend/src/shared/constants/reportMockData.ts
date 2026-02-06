@@ -64,9 +64,9 @@ export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
     tagline: "Elegant Curves, Feminine Grace",
     description: {
       mobile:
-        "당신은 부드러운 곡선과\n균형 잡힌\n웨이브 골격입니다.\n몸의 곡선을 살리는 핏이\n우아함을 극대화합니다.",
+        "당신은 부드러운 곡선과 균형 잡힌 웨이브 골격입니다.\n몸의 곡선을 살리는 핏이 우아함을 극대화합니다.",
       tablet:
-        "당신은 부드러운 곡선과\n균형 잡힌 웨이브 골격입니다.\n몸의 곡선을 살리는 핏이\n우아함을 극대화합니다.",
+        "당신은 부드러운 곡선과 균형 잡힌 웨이브 골격입니다.\n몸의 곡선을 살리는 핏이 우아함을 극대화합니다.",
       desktop:
         "당신은 부드러운 곡선과 균형 잡힌\n웨이브 골격입니다.\n몸의 곡선을 살리는 핏이 우아함을 극대화합니다.",
     },
@@ -104,9 +104,9 @@ export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
     tagline: "Sharp Lines, Modern Chic",
     description: {
       mobile:
-        "당신은 직선적이고\n균형 잡힌\n스트레이트 골격입니다.\n깔끔하고 단정한\n실루엣이 세련미를\n극대화합니다.",
+        "당신은 직선적이고 균형 잡힌 스트레이트 골격입니다.\n깔끔하고 단정한 실루엣이 세련미를 극대화합니다.",
       tablet:
-        "당신은 직선적이고\n균형 잡힌 스트레이트 골격입니다.\n깔끔하고 단정한 실루엣이\n세련미를 극대화합니다.",
+        "당신은 직선적이고 균형 잡힌 스트레이트 골격입니다.\n깔끔하고 단정한 실루엣이 세련미를 극대화합니다.",
       desktop:
         "당신은 직선적이고 균형 잡힌\n스트레이트 골격입니다.\n깔끔하고 단정한 실루엣이 세련미를 극대화합니다.",
     },

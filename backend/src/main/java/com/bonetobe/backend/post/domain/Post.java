@@ -40,6 +40,9 @@ public class Post extends BaseEntity {
 
     private Integer weight;
 
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
     @Enumerated(EnumType.STRING)
     private SkeletonType skeletonType;
 
@@ -112,5 +115,11 @@ public class Post extends BaseEntity {
     public void updateStyles(List<Style> styles) {
         postStyles.clear();
         applyStyles(styles);
+    }
+
+    public void deletePost() {
+        if (!isDeleted) {
+            isDeleted = true;
+        }
     }
 }

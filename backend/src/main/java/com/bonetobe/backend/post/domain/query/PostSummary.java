@@ -10,6 +10,7 @@ import java.util.List;
 public record PostSummary(
         Long postId,
         String imageUrl,
+        String authorNickname,
         Gender gender,
         SkeletonType skeletonType,
         List<StyleName> style,

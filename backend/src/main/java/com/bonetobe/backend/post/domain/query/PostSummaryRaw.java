@@ -10,6 +10,7 @@ import java.util.List;
 public record PostSummaryRaw(
         Long postId,
         Long fileId,
+        String authorNickname,
         Gender gender,
         SkeletonType skeletonType,
         List<StyleName> style,
@@ -23,6 +24,7 @@ public record PostSummaryRaw(
         return new PostSummary(
                 postId,
                 imageUrl,
+                authorNickname,
                 gender,
                 skeletonType,
                 style,

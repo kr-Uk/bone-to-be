@@ -4,7 +4,7 @@
   likeCount?: number;
   commentCount?: number;
   gender?: "MALE" | "FEMALE";
-  skeletonType?: "NATURAL" | "WAVE" | "STRAIGHT";
+  skeletonType?: "NATURAL" | "WAVE" | "STRAIGHT" | "UNKNOWN";
   style?: string[];
   height?: number;
   weight?: number;

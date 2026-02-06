@@ -39,6 +39,7 @@ public class UserQueryDslRepositoryImpl implements UserQueryDslRepository {
                         follow.following.id.eq(user.id)
                 )
                 .where(
+                        user.isDeleted.isFalse(),
                         user.nickname.contains(nickname),
                         notMeCond)
                 .fetch();

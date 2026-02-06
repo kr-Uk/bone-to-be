@@ -45,7 +45,8 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 eqSkeletonType(c.skeletonType()),
                 betweenHeight(c.minHeight(), c.maxHeight()),
                 betweenWeight(c.minWeight(), c.maxWeight()),
-                inStyles(c.style())
+                inStyles(c.style()),
+                notDeletedPost()
         };
 
         // 총 개수
@@ -122,7 +123,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 )
                 .from(post)
                 .join(post.storedFile, storedFile)
-                .where(post.user.id.eq(userId))
+                .where(post.user.id.eq(userId), notDeletedPost())
                 .orderBy(post.createdAt.desc(), post.id.desc())
                 .fetch();
     }
@@ -136,7 +137,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                 .join(post.storedFile, storedFile)
                 .leftJoin(postStyle).on(postStyle.post.eq(post))
                 .leftJoin(postStyle.style, style)
-                .where(postLike.user.id.eq(viewerId))
+                .where(postLike.user.id.eq(viewerId), notDeletedPost())
                 .orderBy(post.createdAt.desc())
                 .transform(
                         GroupBy.groupBy(post.id).list(
@@ -170,7 +171,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                         postLike.post.eq(post),
                         postLike.user.id.eq(viewerId)
                 )
-                .where(scrap.user.id.eq(viewerId))
+                .where(scrap.user.id.eq(viewerId), notDeletedPost())
                 .orderBy(post.createdAt.desc())
                 .transform(
                         GroupBy.groupBy(post.id).list(
@@ -238,5 +239,9 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                         .join(postStyle.style, style)
                         .where(style.styleName.in(styles))
         );
+    }
+
+    private BooleanExpression notDeletedPost() {
+        return post.isDeleted.isFalse();
     }
 }

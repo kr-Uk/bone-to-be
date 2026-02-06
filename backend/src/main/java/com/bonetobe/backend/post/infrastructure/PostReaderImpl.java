@@ -34,9 +34,16 @@ public class PostReaderImpl implements PostReader {
 
     @Override
     public Post getById(Long postId) {
-        return postJpaRepository.findById(postId)
+        Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+
+        if (post.getIsDeleted()) {
+            throw new BusinessException(ErrorCode.POST_DELETED);
+        }
+
+        return post;
     }
+
 
     @Override
     public long countByUserId(Long userId) {

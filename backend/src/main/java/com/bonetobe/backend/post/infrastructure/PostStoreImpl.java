@@ -18,6 +18,6 @@ public class PostStoreImpl implements PostStore {
 
     @Override
     public void delete(Post post) {
-        postJpaRepository.delete(post);
+        post.deletePost();
     }
 }

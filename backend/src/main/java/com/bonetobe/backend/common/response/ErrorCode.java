@@ -49,6 +49,8 @@ public enum ErrorCode {
     POST_LIST_INVALID_SKELETON_TYPE(2023, HttpStatus.BAD_REQUEST, "유효하지 않은 체형 값입니다."),
     POST_LIST_INVALID_RANGE(2024, HttpStatus.BAD_REQUEST, "유효하지 않은 범위 조건입니다."),
     POST_LIST_INVALID_LIKE(2025, HttpStatus.BAD_REQUEST, "게시글 좋아요 개수는 음수가 될 수 없습니다."),
+    POST_DELETED(2026, HttpStatus.GONE, "삭제된 게시물입니다."),
+
 
     // 2030~2039 : 게시글 수정 / 삭제 권한
     POST_UPDATE_FORBIDDEN(2030, HttpStatus.FORBIDDEN, "본인이 작성한 게시글만 수정할 수 있습니다."),

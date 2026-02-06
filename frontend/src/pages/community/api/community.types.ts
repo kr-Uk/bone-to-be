@@ -24,9 +24,9 @@ export interface FeedItem {
   id: string;
   imageUrl: string;
   username: string;
-  bodyType: "Straight" | "Wave" | "Natural";
-  height: number; // cm
-  weight?: number; // kg (optional)
+  bodyType: "Straight" | "Wave" | "Natural" | null;
+  height: number | null; // cm
+  weight?: number | null; // kg (optional)
   styles: StyleType[];
   gender: "M" | "F";
   isLiked: boolean;
@@ -109,9 +109,9 @@ export interface FeedListItemDto {
   imageUrl: string;
   style: StyleType[]; // 대문자: ["VINTAGE", "STREET", "SPORTY", "MINIMAL", "FORMAL", "FEMININE", "CLASSIC", "CASUAL"]
   gender: "FEMALE" | "MALE"; // 대문자
-  height: number;
-  weight?: number;
-  skeletonType: "STRAIGHT" | "WAVE" | "NATURAL"; // 대문자
+  height: number | null;
+  weight?: number | null;
+  skeletonType: "STRAIGHT" | "WAVE" | "NATURAL" | null; // 대문자
   isLiked: boolean;
   createdAt: string;
   // 백엔드 응답에 없는 필드들 제거: likeCount, commentCount, author

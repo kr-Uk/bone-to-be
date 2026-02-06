@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { isAxiosError } from "axios";
 import styled from "styled-components";
 
 import { followUser, unfollowUser } from "./api/profile.api";
@@ -34,6 +35,15 @@ const formatSkeletonTypeLabel = (value?: string | null): string | null => {
   if (normalized.includes("straight")) return "Straight";
 
   return value;
+};
+
+const getAxiosErrorMessage = (error: Error | null | undefined): string | null => {
+  if (!error || !isAxiosError(error)) return null;
+  const data = error.response?.data;
+  if (!data || typeof data !== "object") return null;
+  if (!("message" in data)) return null;
+  const message = (data as { message?: unknown }).message;
+  return typeof message === "string" && message.trim().length > 0 ? message : null;
 };
 
 const mapReportToHistoryItem = (report: ReportSummary): UserProfile["bodyTypeHistory"][number] => ({
@@ -160,7 +170,11 @@ const ProfilePage = () => {
     enabled: shouldFetchProfile,
   });
   const { data: myReportList } = useMyReportList({ enabled: isAuthReady && isMe });
-  const { data: representativeReport } = useRepresentativeReport(queryUserId ?? null, {
+  const {
+    data: representativeReport,
+    isError: isRepresentativeError,
+    error: representativeError,
+  } = useRepresentativeReport(queryUserId ?? null, {
     enabled: isAuthReady && !isMe && !!queryUserId,
   });
   const { data: myFeeds } = useMyFeedListQuery({ enabled: isAuthReady && isMe });
@@ -218,6 +232,9 @@ const ProfilePage = () => {
 
   const reportHistory = (myReportList ?? []).map(mapReportToHistoryItem);
   const resolvedHistory = reportHistory.length ? reportHistory : profile.bodyTypeHistory;
+  const representativeErrorMessage = isRepresentativeError
+    ? getAxiosErrorMessage(representativeError) ?? "대표 리포트를 불러오지 못했습니다."
+    : null;
   const representativeBodyType =
     formatSkeletonTypeLabel(representativeReport?.skeletonType) ?? profile.bodyType;
   const representativeRatio = representativeReport
@@ -337,6 +354,7 @@ const ProfilePage = () => {
               <SkeletalTypeSection
                 bodyType={representativeBodyType}
                 bodyTypeRatio={representativeRatio}
+                errorMessage={representativeErrorMessage}
               />
             )}
             <PostsSection

@@ -120,20 +120,32 @@ export const LikesEmpty = styled.div`
 `;
 
 export const FollowButton = styled.button`
-  background: #6366f1;
-  color: #ffffff;
+  background: var(--neutral-800, #262626);
+  color: var(--neutral-200, #e5e5e5);
   font-weight: 700;
   font-size: 14px;
   padding: 8px 18px;
   border-radius: 999px;
+  outline: 1px solid var(--neutral-600, #525252);
+  outline-offset: -1px;
   cursor: pointer;
   transition:
     transform 0.2s ease,
     background 0.2s ease;
 
+  &[data-active="false"] {
+    background: var(--color-brand-primary-900, #59168b);
+    outline-color: var(--color-brand-primary-900, #59168b);
+    color: var(--neutral-50, #fafafa);
+  }
+
   &:hover {
-    background: #4f46e5;
+    background: #2f3033;
     transform: translateY(-1px);
+  }
+
+  &[data-active="false"]:hover {
+    background: var(--color-brand-primary-800, #6b21a8);
   }
 
   &:active {

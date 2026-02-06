@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 
 import {
@@ -10,6 +10,7 @@ import {
   createReport,
   getReportDetail,
   getMyReportList,
+  setRepresentativeReport,
   getRepresentativeReport,
   getTryOnData,
 } from "./diagnosis.api";
@@ -24,6 +25,7 @@ import type {
   CreateReportResponse,
   ReportDetailResponse,
   ReportSummary,
+  SetRepresentativeReportResponse,
   RepresentativeReport,
   TryOnResponse,
 } from "./diagnosis.types";
@@ -57,6 +59,24 @@ export function useMyReportList(options?: {
     queryKey: ["reportList", "me"],
     queryFn: () => getMyReportList(),
     enabled: options?.enabled !== false,
+  });
+}
+
+/**
+ * 대표 리포트 설정
+ */
+export function useSetRepresentativeReport(): UseMutationResult<
+  SetRepresentativeReportResponse["data"],
+  Error,
+  { reportId: number }
+> {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ reportId }) => setRepresentativeReport(reportId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reportList", "me"] });
+    },
   });
 }
 

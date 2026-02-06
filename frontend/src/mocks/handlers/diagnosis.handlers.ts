@@ -7,11 +7,35 @@ import type {
   AnalysisResponse,
   AnalysisResult,
   ReportListResponse,
+  SetRepresentativeReportResponse,
   RepresentativeReportResponse,
   ReportDetailResponse,
 } from "@/pages/diagnosis/api";
 
 import { STYLE_OPTIONS, type StyleOption } from "@/shared/constants/styleOptions";
+
+let reportListData: ReportListResponse["data"] = [
+  {
+    reportId: 6,
+    skeletonType: null,
+    reportStatus: "PENDING",
+    isRepresentative: true,
+    straightRate: 0,
+    naturalRate: 0,
+    waveRate: 0,
+    createdAt: "2026-01-29T22:23:19.89252",
+  },
+  {
+    reportId: 7,
+    skeletonType: null,
+    reportStatus: "PENDING",
+    isRepresentative: false,
+    straightRate: 0,
+    naturalRate: 0,
+    waveRate: 0,
+    createdAt: "2026-01-29T22:23:19.89252",
+  },
+];
 
 /**
  * 진단 관련 MSW 핸들러
@@ -114,28 +138,27 @@ export const diagnosisHandlers = [
     const response: ReportListResponse = {
       code: 200,
       message: "요청 성공",
-      data: [
-        {
-          reportId: 6,
-          skeletonType: null,
-          reportStatus: "PENDING",
-          isRepresentative: true,
-          straightRate: 0,
-          naturalRate: 0,
-          waveRate: 0,
-          createdAt: "2026-01-29T22:23:19.89252",
-        },
-        {
-          reportId: 7,
-          skeletonType: null,
-          reportStatus: "PENDING",
-          isRepresentative: false,
-          straightRate: 0,
-          naturalRate: 0,
-          waveRate: 0,
-          createdAt: "2026-01-29T22:23:19.89252",
-        },
-      ],
+      data: reportListData,
+    };
+
+    return HttpResponse.json(response);
+  }),
+  // PUT /api/reports/:id - 대표 리포트 설정
+  http.put<{ id: string }>("/api/reports/:id", async ({ params }) => {
+    await delay(300);
+    const reportId = Number(params.id);
+
+    if (Number.isFinite(reportId)) {
+      reportListData = reportListData.map((item) => ({
+        ...item,
+        isRepresentative: item.reportId === reportId,
+      }));
+    }
+
+    const response: SetRepresentativeReportResponse = {
+      code: 200,
+      message: "요청 성공",
+      data: null,
     };
 
     return HttpResponse.json(response);

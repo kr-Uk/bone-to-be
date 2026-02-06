@@ -143,7 +143,7 @@ export type ReportDetailMetric = {
  */
 export type ReportDetailResponse = ApiResponse<{
   reportId: number;
-  gender?: "male" | "female";
+  gender?: "MALE" | "FEMALE"; // API에서 대문자로 반환
   skeletonType: SkeletonType | null;
   straightRate: number;
   naturalRate: number;
@@ -166,12 +166,25 @@ export const convertGenderToApi = (gender: "women" | "men"): "MALE" | "FEMALE" =
 
 /**
  * API skeletonType을 프론트엔드 bodyType으로 변환
+ * @param skeletonType - SkeletonType 값 (null이면 안전을 위해 기본값 "natural" 반환)
+ * @returns "natural" | "wave" | "straight"
+ * @note 호출 측에서 null 체크를 먼저 수행하는 것을 권장
  */
 export const convertSkeletonTypeToBodyType = (
   skeletonType: SkeletonType | null,
 ): "natural" | "wave" | "straight" => {
-  if (!skeletonType) return "natural"; // fallback
+  if (!skeletonType) return "natural"; // 안전을 위한 fallback
   return skeletonType.toLowerCase() as "natural" | "wave" | "straight";
+};
+
+/**
+ * API gender 값을 컴포넌트 gender 값으로 변환
+ */
+export const convertApiGenderToComponent = (
+  apiGender: "MALE" | "FEMALE" | undefined,
+): "male" | "female" | undefined => {
+  if (!apiGender) return undefined;
+  return apiGender.toLowerCase() as "male" | "female";
 };
 
 /**

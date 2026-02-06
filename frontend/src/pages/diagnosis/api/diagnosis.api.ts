@@ -12,6 +12,7 @@ import type {
   ReportListResponse,
   ReportSummary,
   ReportSummaryDto,
+  SetRepresentativeReportResponse,
   RepresentativeReportResponse,
   RepresentativeReport,
   RepresentativeReportDto,
@@ -91,6 +92,17 @@ export async function getMyReportList(): Promise<ReportSummary[]> {
   const response = await axios.get<ReportListResponse>("/reports");
 
   return response.data.data.map(mapReportSummary);
+}
+
+/**
+ * 대표 리포트 설정
+ */
+export async function setRepresentativeReport(
+  reportId: number,
+): Promise<SetRepresentativeReportResponse["data"]> {
+  const response = await axios.put<SetRepresentativeReportResponse>(`/reports/${reportId}`);
+
+  return response.data.data;
 }
 
 /**

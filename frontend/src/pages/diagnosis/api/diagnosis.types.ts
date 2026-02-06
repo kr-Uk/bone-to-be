@@ -44,6 +44,11 @@ export type ReportSummaryDto = {
 
 export type ReportListResponse = ApiResponse<ReportSummaryDto[]>;
 
+/**
+ * 대표 리포트 설정
+ */
+export type SetRepresentativeReportResponse = ApiResponse<null>;
+
 export type ReportSummary = {
   reportId: number;
   skeletonType: SkeletonType | null;

@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { applySmoothing, getBodyTypeBadge, getBodyTypeLabels } from "../hooks/useBodyTypeChart";
+import { applySmoothing, getBodyTypeLabels } from "../hooks/useBodyTypeChart";
 
 import { Stack, Text } from "./ProfileCommon";
 
 import type { BodyTypeHistoryItem } from "../api/profile.types";
 import type { CSSProperties } from "react";
 
+import { useSetRepresentativeReport } from "@/pages/diagnosis/api";
 import TriangleChart from "@/shared/components/charts/TriangleChart/TriangleChart";
 
 const Section = styled.section`
@@ -24,6 +25,48 @@ const Section = styled.section`
 
 const SectionHeader = styled(Stack)`
   gap: 0.604375rem;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+const HeaderText = styled(Stack)`
+  gap: 0.604375rem;
+`;
+
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`;
+
+const RepresentativeButton = styled.button`
+  border: 0.0625rem solid var(--neutral-600, #525252);
+  background: transparent;
+  color: var(--neutral-50, #fafafa);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    background: var(--neutral-800, #262626);
+    border-color: var(--neutral-500, #737373);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 `;
 
 const Title = styled(Text)`
@@ -163,10 +206,10 @@ const Card = styled.article<{ $highlight?: boolean; $dimmed?: boolean }>`
   }
 `;
 
-const LatestBadge = styled.span`
+const RepresentativeBadge = styled.span`
   position: absolute;
   top: 1.3125rem;
-  left: 1.3125rem;
+  right: 1.3125rem;
   padding: 0.3125rem 0.625rem;
   background: var(--color-bg-brand, #9810fa);
   color: var(--neutral-50, #fafafa);
@@ -264,9 +307,144 @@ const EmptyState = styled(Text)`
   justify-content: center;
 `;
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1300;
+`;
+
+const ModalCard = styled.div`
+  width: min(36rem, 100%);
+  background: var(--neutral-900, #171717);
+  border: 0.0625rem solid var(--neutral-700, #404040);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.45);
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+`;
+
+const ModalTitle = styled.h3`
+  margin: 0;
+  color: var(--neutral-50, #fafafa);
+  font-size: 1.125rem;
+  font-weight: 700;
+`;
+
+const ModalCloseButton = styled.button`
+  border: none;
+  background: transparent;
+  color: var(--neutral-400, #a3a3a3);
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+
+  &:hover {
+    color: var(--neutral-50, #fafafa);
+  }
+`;
+
+const ReportList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+
+  &::-webkit-scrollbar {
+    width: 0.375rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--neutral-700, #404040);
+    border-radius: 9999px;
+  }
+`;
+
+const ReportRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.625rem;
+  background: var(--neutral-800, #262626);
+  border: 0.0625rem solid var(--neutral-700, #404040);
+`;
+
+const ReportMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const ReportType = styled(Text)`
+  color: var(--neutral-50, #fafafa);
+  font-size: 0.95rem;
+  font-weight: 600;
+`;
+
+const ReportDate = styled(Text)`
+  color: var(--neutral-500, #737373);
+  font-size: 0.75rem;
+  font-weight: 400;
+`;
+
+const ReportActionButton = styled.button<{ $active?: boolean }>`
+  min-width: 7.5rem;
+  border-radius: 0.5rem;
+  border: 0.0625rem solid
+    ${({ $active }) => ($active ? "var(--color-bg-brand, #9810fa)" : "var(--neutral-600, #525252)")};
+  background: ${({ $active }) =>
+    $active ? "var(--color-bg-brand, #9810fa)" : "transparent"};
+  color: ${({ $active }) => ($active ? "var(--neutral-50, #fafafa)" : "var(--neutral-100, #f5f5f5)")};
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-bg-brand, #9810fa);
+    color: var(--neutral-50, #fafafa);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
 interface BodyTypeHistorySectionProps {
   history: BodyTypeHistoryItem[];
 }
+
+const parseReportId = (value: string): number | null => {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return null;
+  }
+
+  return numeric;
+};
 
 const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
   const navigate = useNavigate();
@@ -281,6 +459,37 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
   const velocityRef = useRef(0);
   const lastMoveRef = useRef<{ x: number; time: number } | null>(null);
   const dragResistance = 0.6;
+  const [isRepresentativeModalOpen, setIsRepresentativeModalOpen] = useState(false);
+  const [settingReportId, setSettingReportId] = useState<number | null>(null);
+  const { mutateAsync: setRepresentativeReport, isPending: isRepresentativePending } =
+    useSetRepresentativeReport();
+  const reportOrderMap = useMemo(() => {
+    const entries = history.map((item, index) => ({
+      id: item.id,
+      numericId: parseReportId(item.id),
+      order: index,
+    }));
+
+    const sorted = [...entries].sort((left, right) => {
+      const leftHasId = left.numericId != null;
+      const rightHasId = right.numericId != null;
+
+      if (leftHasId && rightHasId && left.numericId !== right.numericId) {
+        return left.numericId - right.numericId;
+      }
+
+      if (leftHasId !== rightHasId) {
+        return leftHasId ? -1 : 1;
+      }
+
+      return left.order - right.order;
+    });
+
+    return sorted.reduce<Record<string, number>>((acc, entry, index) => {
+      acc[entry.id] = index + 1;
+      return acc;
+    }, {});
+  }, [history]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -350,6 +559,27 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
       left: direction === "left" ? -offset : offset,
       behavior: "smooth",
     });
+  };
+
+  const handleOpenRepresentativeModal = () => {
+    setIsRepresentativeModalOpen(true);
+  };
+
+  const handleCloseRepresentativeModal = () => {
+    setIsRepresentativeModalOpen(false);
+  };
+
+  const handleSetRepresentative = async (reportId: number) => {
+    if (!Number.isFinite(reportId)) {
+      return;
+    }
+
+    setSettingReportId(reportId);
+    try {
+      await setRepresentativeReport({ reportId });
+    } finally {
+      setSettingReportId(null);
+    }
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -474,9 +704,20 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
 
   return (
     <Section>
-      <SectionHeader>
-        <Title as="h2">나의 분석 리포트</Title>
-        <Subtitle as="p">지난 체형 분석 데이터를 확인하세요.</Subtitle>
+      <SectionHeader $direction="row" $align="center" $justify="space-between">
+        <HeaderText>
+          <Title as="h2">나의 분석 리포트</Title>
+          <Subtitle as="p">지난 체형 분석 데이터를 확인하세요.</Subtitle>
+        </HeaderText>
+        <HeaderActions>
+          <RepresentativeButton
+            type="button"
+            onClick={handleOpenRepresentativeModal}
+            disabled={!history.length}
+          >
+            대표 리포트 설정
+          </RepresentativeButton>
+        </HeaderActions>
       </SectionHeader>
       {history.length ? (
         <Carousel>
@@ -498,10 +739,8 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
                 straight: Number(item.ratio.straight),
               });
               const labels = getBodyTypeLabels(item.type);
-              const badgeText = getBodyTypeBadge(item.type);
-              const codeText = item.id.includes("-")
-                ? item.id
-                : `${badgeText.charAt(0)}-${index + 1}`;
+              const reportIndex = reportOrderMap[item.id] ?? index + 1;
+              const codeText = `Report-${reportIndex}`;
               const hasVisibility = Object.keys(visibilityMap).length > 0;
               const intersectionRatio = visibilityMap[item.id] ?? 0;
               const isDimmed = hasVisibility ? intersectionRatio < 0.999 : false;
@@ -519,7 +758,7 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
                   aria-label={`${labels.title} 체형 리포트, ${item.date}, ${codeText}`}
                   onKeyDown={(e) => handleCardKeyDown(e, item.id)}
                 >
-                  {item.isLatest && <LatestBadge>LATEST</LatestBadge>}
+                  {item.isLatest && <RepresentativeBadge>대표 리포트</RepresentativeBadge>}
                   <CardBody>
                     <Preview>
                       <ProfileTriangleChart
@@ -551,6 +790,50 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
         </Carousel>
       ) : (
         <EmptyState as="p">분석 리포트가 없습니다.</EmptyState>
+      )}
+      {isRepresentativeModalOpen && (
+        <ModalOverlay onClick={handleCloseRepresentativeModal}>
+          <ModalCard role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
+            <ModalHeader>
+              <ModalTitle>대표 리포트 설정</ModalTitle>
+              <ModalCloseButton type="button" onClick={handleCloseRepresentativeModal}>
+                닫기
+              </ModalCloseButton>
+            </ModalHeader>
+            <ReportList>
+              {history.map((item, index) => {
+                const reportId = parseReportId(item.id);
+                const isRepresentative = item.isLatest;
+                const isDisabled =
+                  reportId === null ||
+                  isRepresentative ||
+                  (isRepresentativePending && settingReportId === reportId);
+                const actionLabel = isRepresentative ? "대표 리포트" : "대표 리포트 설정";
+
+                return (
+                  <ReportRow key={`report-${item.id}-${index}`}>
+                    <ReportMeta>
+                      <ReportType as="span">{item.type}</ReportType>
+                      <ReportDate as="span">{item.date}</ReportDate>
+                    </ReportMeta>
+                    <ReportActionButton
+                      type="button"
+                      $active={isRepresentative}
+                      disabled={isDisabled}
+                      onClick={() => {
+                        if (reportId !== null) {
+                          handleSetRepresentative(reportId);
+                        }
+                      }}
+                    >
+                      {actionLabel}
+                    </ReportActionButton>
+                  </ReportRow>
+                );
+              })}
+            </ReportList>
+          </ModalCard>
+        </ModalOverlay>
       )}
     </Section>
   );

@@ -48,6 +48,7 @@ public class SecurityConfig {
 
                         // 1. 게스트용 (None (Guest))
                         .requestMatchers(
+                                "/actuator/prometheus", // 프로메테우스 추가
                                 "/auth/**",
                                 "/api/auth/**",
 

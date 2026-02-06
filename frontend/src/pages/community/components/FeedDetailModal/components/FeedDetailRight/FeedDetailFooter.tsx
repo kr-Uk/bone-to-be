@@ -13,6 +13,7 @@ export interface FeedDetailFooterProps {
   onLikesClick: () => void;
   onLikesClose: () => void;
   onFollowToggle: (userId: string) => void;
+  onUserNavigate: () => void;
   commentInput: string;
   onCommentChange: (value: string) => void;
   onCommentSubmit: () => void;
@@ -29,6 +30,7 @@ export function FeedDetailFooter({
   onLikesClick,
   onLikesClose,
   onFollowToggle,
+  onUserNavigate,
   commentInput,
   onCommentChange,
   onCommentSubmit,
@@ -49,6 +51,7 @@ export function FeedDetailFooter({
         likeUsers={likeUsers}
         likeCount={likeCount}
         onFollowToggle={onFollowToggle}
+        onUserNavigate={onUserNavigate}
       />
 
       {(!isMobile || isCommentInputVisible) && (

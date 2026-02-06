@@ -10,12 +10,18 @@ import type { CommentSectionProps } from "../../types";
 
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
-export function CommentSection({ comments, isLoading, hasError }: CommentSectionProps) {
+export function CommentSection({
+  comments,
+  isLoading,
+  hasError,
+  onUserNavigate,
+}: CommentSectionProps & { onUserNavigate?: () => void }) {
   const orderedComments = useMemo(() => buildCommentTree(comments), [comments]);
   const protectedNavigate = useProtectedNavigate();
 
   const handleUserClick = (userId: string) => {
     if (!userId) return;
+    onUserNavigate?.();
     protectedNavigate(`/profile/${userId}`);
   };
 

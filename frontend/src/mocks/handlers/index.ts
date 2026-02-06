@@ -364,7 +364,7 @@ export const handlers = [
       follower: 4200,
       following: 150,
       bodyType: "Natural",
-      bio: "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~",
+      bio: "아직 소개글이 없습니다.",
       bodyTypeRatio: {
         natural: 55,
         wave: 25,

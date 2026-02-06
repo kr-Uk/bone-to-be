@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { GrNext, GrPrevious } from "react-icons/gr";
+import { useLocation } from "react-router-dom";
 import { MdClose } from "react-icons/md";
 
 import { useFeedComments, useFeedDetail, useFeedLikes } from "../../api";
@@ -21,6 +22,8 @@ export function FeedDetailModal({
   hasPrev = false,
   hasNext = false,
 }: FeedDetailModalProps) {
+  const location = useLocation();
+  const prevPathRef = useRef(location.pathname);
   const { data: detail, isLoading: isDetailLoading, error: detailError } = useFeedDetail(feedId);
   const {
     data: commentsData,
@@ -50,8 +53,18 @@ export function FeedDetailModal({
     };
   }, []);
 
+  useEffect(() => {
+    if (prevPathRef.current !== location.pathname) {
+      onClose();
+      prevPathRef.current = location.pathname;
+    }
+  }, [location.pathname, onClose]);
+
   const handleMobileAuthorClick = detail?.author.userId
-    ? () => protectedNavigate(`/profile/${detail.author.userId}`)
+    ? () => {
+        onClose();
+        protectedNavigate(`/profile/${detail.author.userId}`);
+      }
     : undefined;
 
   return (
@@ -117,6 +130,7 @@ export function FeedDetailModal({
           comments={commentsData?.items ?? []}
           isLoading={isDetailLoading || isCommentsLoading || isLikesLoading}
           hasError={Boolean(detailError || commentsError || likesError)}
+          onClose={onClose}
         />
       </S.ModalWrapper>
     </S.Overlay>

@@ -22,6 +22,7 @@ export interface FeedDetailRightProps {
   likeCount?: number;
   isLoading?: boolean;
   hasError?: boolean;
+  onClose: () => void;
 }
 
 export interface CommentSectionProps {
@@ -36,4 +37,5 @@ export interface LikesPanelProps {
   likeUsers: FeedLikeUser[];
   likeCount: number;
   onFollowToggle: (userId: string) => void;
+  onUserNavigate?: () => void;
 }

@@ -90,6 +90,7 @@ const ContentGrid = styled.div`
   grid-template-columns: 21.875rem minmax(0, 1fr);
   gap: 2.5rem;
   margin: 0 auto;
+  margin-bottom: 3rem;
   min-width: 0;
 
   @media (max-width: 1024px) {

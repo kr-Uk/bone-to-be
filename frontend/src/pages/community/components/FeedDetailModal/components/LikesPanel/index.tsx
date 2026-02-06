@@ -1,4 +1,4 @@
-import { type KeyboardEvent } from "react";
+import { type KeyboardEvent, useMemo } from "react";
 
 import * as S from "./LikesPanel.styles";
 
@@ -8,15 +8,37 @@ import baseProfile from "@/assets/image/base__profile.png";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
-export function LikesPanel({ isOpen, onClose, likeUsers, onFollowToggle }: LikesPanelProps) {
+export function LikesPanel({
+  isOpen,
+  onClose,
+  likeUsers,
+  onFollowToggle,
+  onUserNavigate,
+}: LikesPanelProps) {
   const protectedNavigate = useProtectedNavigate();
   const { me } = useAuth();
   const currentUserId = me?.userId != null ? String(me.userId) : null;
+  const orderedUsers = useMemo(() => {
+    const targetId = currentUserId ?? "me";
+    if (!targetId) return likeUsers;
+    const index = likeUsers.findIndex(
+      (user) =>
+        user.id === targetId ||
+        user.id === "me" ||
+        (me?.nickname && user.username === me.nickname),
+    );
+    if (index <= 0) return likeUsers;
+    const next = [...likeUsers];
+    const [meUser] = next.splice(index, 1);
+    return [meUser, ...next];
+  }, [currentUserId, likeUsers, me?.nickname]);
 
   if (!isOpen) return null;
 
   const handleUserClick = (userId: string) => {
     if (!userId) return;
+    onClose();
+    onUserNavigate?.();
     protectedNavigate(`/profile/${userId}`);
   };
 
@@ -36,15 +58,17 @@ export function LikesPanel({ isOpen, onClose, likeUsers, onFollowToggle }: Likes
             ✕
           </S.LikesCloseButton>
         </S.LikesHeader>
-        {likeUsers.length === 0 ? (
+        {orderedUsers.length === 0 ? (
           <S.LikesEmpty>아직 좋아요가 없어요.</S.LikesEmpty>
         ) : (
           <S.LikesList>
-            {likeUsers.map((user) => {
+            {orderedUsers.map((user) => {
               const secondary =
                 user.displayName ?? [user.bodyType, user.location].filter(Boolean).join(" · ");
               const isMe =
-                user.id === "me" || (currentUserId != null && user.id === currentUserId);
+                user.id === "me" ||
+                (currentUserId != null && user.id === currentUserId) ||
+                (me?.nickname != null && user.username === me.nickname);
               const isFollowing = Boolean(user.isFollowing);
               const buttonLabel = isFollowing ? "팔로잉" : "팔로우";
               const handleClick = () => handleUserClick(user.id);

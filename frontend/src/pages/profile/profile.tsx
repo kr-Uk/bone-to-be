@@ -1,5 +1,5 @@
-﻿import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+﻿import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { isAxiosError } from "axios";
 import styled from "styled-components";
 
@@ -157,15 +157,18 @@ const FollowModalCard = styled.div`
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const prevPathnameRef = useRef(location.pathname);
   const { userId: rawUserId } = useParams<{ userId?: string }>();
   const userId = rawUserId ? decodeURIComponent(rawUserId) : undefined;
   const { me, isAuthLoading, isLoggedIn } = useAuth();
   const isAuthReady = !isAuthLoading;
   const protectedNavigate = useProtectedNavigate();
   const meUserId = me?.userId != null ? String(me.userId) : undefined;
+  const needsMeResolution = Boolean(userId && isLoggedIn && !meUserId);
   const isMe = Boolean(isAuthReady && isLoggedIn && (!userId || (meUserId && userId === meUserId)));
   const queryUserId = isMe ? undefined : userId;
-  const shouldFetchProfile = isAuthReady && (Boolean(userId) || isLoggedIn);
+  const shouldFetchProfile = isAuthReady && !needsMeResolution && (Boolean(userId) || isLoggedIn);
   const { data, isLoading, isError } = useProfileQuery(queryUserId, {
     enabled: shouldFetchProfile,
   });
@@ -206,7 +209,24 @@ const ProfilePage = () => {
     }
   }, [data]);
 
-  if (isAuthLoading || (shouldFetchProfile && isLoading)) {
+  useEffect(() => {
+    if (!userId || !meUserId) {
+      return;
+    }
+    if (userId !== meUserId) {
+      return;
+    }
+    navigate("/profile", { replace: true });
+  }, [userId, meUserId, navigate]);
+
+  useEffect(() => {
+    if (prevPathnameRef.current !== location.pathname) {
+      setSelectedFeedId(null);
+      prevPathnameRef.current = location.pathname;
+    }
+  }, [location.pathname]);
+
+  if (isAuthLoading || needsMeResolution || (shouldFetchProfile && isLoading)) {
     return <ProfileSkeleton isOwner={!userId} />;
   }
 

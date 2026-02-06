@@ -21,6 +21,7 @@ export function FeedDetailRight({
   likeCount: likeCountProp,
   isLoading,
   hasError,
+  onClose,
 }: FeedDetailRightProps) {
   const [isLikesOpen, setIsLikesOpen] = useState(false);
   const [commentInput, setCommentInput] = useState("");
@@ -80,7 +81,10 @@ export function FeedDetailRight({
   };
 
   const handleAuthorClick = detail?.author.userId
-    ? () => protectedNavigate(`/profile/${detail.author.userId}`)
+    ? () => {
+        onClose();
+        protectedNavigate(`/profile/${detail.author.userId}`);
+      }
     : undefined;
 
   return (
@@ -107,7 +111,12 @@ export function FeedDetailRight({
           />
         )}
 
-        <CommentSection comments={comments} isLoading={isLoading} hasError={hasError} />
+        <CommentSection
+          comments={comments}
+          isLoading={isLoading}
+          hasError={hasError}
+          onUserNavigate={onClose}
+        />
       </S.ContentStack>
 
       <S.BottomStack>
@@ -127,6 +136,7 @@ export function FeedDetailRight({
             onLikesClick={() => setIsLikesOpen(true)}
             onLikesClose={() => setIsLikesOpen(false)}
             onFollowToggle={handleFollowToggle}
+            onUserNavigate={onClose}
             commentInput={commentInput}
             onCommentChange={setCommentInput}
             onCommentSubmit={handleSubmitComment}

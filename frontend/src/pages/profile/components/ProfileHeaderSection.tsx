@@ -404,7 +404,7 @@ const ProfileHeaderSection = ({
   onOpenSettings,
 }: ProfileHeaderSectionProps) => {
   const bodyTypeLabel = formatBodyType(bodyType);
-  const quoteText = bio?.trim() ? bio : "나랑 어울리는 옷들로 꽉 채워야지이ㅣ~~";
+  const quoteText = bio?.trim() ? bio : "아직 소개글이 없습니다.";
   const resolvedProfileImage = profileImageUrl ?? baseProfile;
 
   return (

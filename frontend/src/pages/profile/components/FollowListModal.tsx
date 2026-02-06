@@ -6,9 +6,9 @@ import styled from "styled-components";
 
 import { Text } from "./ProfileCommon";
 
+import { ProfileAvatar } from "@/shared/components/ProfileAvatar";
 import type { FollowModalType, FollowUser } from "../api/profile.types";
 
-import baseProfile from "@/assets/image/base__profile.png";
 
 type Props = {
   type: FollowModalType;
@@ -195,9 +195,11 @@ function FollowRow({
       tabIndex={isRowClickable ? 0 : undefined}
     >
       <RowLeft>
-        <Avatar $clickable={isClickable} onClick={isClickable ? handleRowClick : undefined}>
-          <AvatarImage src={user.avatarUrl ?? baseProfile} alt={`${user.username} avatar`} />
-        </Avatar>
+        <ProfileAvatar
+          src={user.avatarUrl}
+          alt={`${user.username} avatar`}
+          onClick={isClickable ? handleRowClick : undefined}
+        />
 
         <Info>
           <TopLine>
@@ -348,25 +350,6 @@ const RowLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-`;
-
-const Avatar = styled.div<{ $clickable: boolean }>`
-  width: 3rem;
-  height: 3rem;
-  background: var(--neutral-900, #171717);
-  overflow: hidden;
-  border-radius: 624.9375rem;
-  outline: 0.0625rem var(--neutral-700, #404040) solid;
-  outline-offset: -0.0625rem;
-  display: grid;
-  place-items: center;
-  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
-`;
-
-const AvatarImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `;
 
 const Info = styled.div`

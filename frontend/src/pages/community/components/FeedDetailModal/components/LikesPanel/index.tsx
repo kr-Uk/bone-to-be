@@ -4,7 +4,7 @@ import * as S from "./LikesPanel.styles";
 
 import type { LikesPanelProps } from "../../types";
 
-import baseProfile from "@/assets/image/base__profile.png";
+import { ProfileAvatar } from "@/shared/components/ProfileAvatar";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
@@ -77,18 +77,16 @@ export function LikesPanel({
               return (
                 <S.LikeItem key={user.id}>
                   <S.LikeLeft>
-                    <S.LikeAvatar
+                    <ProfileAvatar
+                      src={user.avatarUrl}
+                      alt={`${user.username} avatar`}
+                      size="2.75rem"
                       role="button"
                       tabIndex={0}
                       onClick={handleClick}
                       onKeyDown={handleKeyDown}
-                      aria-label={`${user.username} 프로필 보기`}
-                    >
-                      <S.LikeAvatarImage
-                        src={user.avatarUrl ?? baseProfile}
-                        alt={`${user.username} avatar`}
-                      />
-                    </S.LikeAvatar>
+                      aria-label={`${user.username} 사용자 프로필 보기`}
+                    />
                     <div>
                       <S.LikeName
                         role="button"

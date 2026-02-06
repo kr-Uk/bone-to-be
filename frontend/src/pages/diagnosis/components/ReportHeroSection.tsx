@@ -67,6 +67,10 @@ const DescriptionWrapper = styled.div`
   flex-direction: column;
   width: 446px;
   margin-bottom: 0.75rem;
+
+  @media (min-width: 1024px) {
+    align-items: flex-end;
+  }
 `;
 
 const Tagline = styled.p`
@@ -77,6 +81,7 @@ const Tagline = styled.p`
   margin: 0;
   text-align: left;
   margin-bottom: 0.5rem;
+  white-space: nowrap;
 
   @media (min-width: 768px) {
     font-size: 32px;

@@ -96,11 +96,16 @@ const CountdownNumber = styled.div`
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 `;
 
+export interface CaptureResult {
+  preview: string | null; // displayCanvas (landmark 포함) - 미리보기용
+  upload: string | null; // captureCanvas (landmark 없음) - S3 업로드용
+}
+
 interface CameraPreviewProps {
   capturedImage: string | null;
   showFlash: boolean;
   countdown?: number | null;
-  onCaptureReady?: (captureFunc: () => string | null) => void;
+  onCaptureReady?: (captureFunc: () => CaptureResult) => void;
   onCameraActiveChange?: (isActive: boolean) => void;
   onLandmarksUpdate?: (landmarks: Results | null) => void;
 }
@@ -114,10 +119,15 @@ const CameraPreview = ({
   onLandmarksUpdate,
 }: CameraPreviewProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const displayCanvasRef = useRef<HTMLCanvasElement>(null); // 사용자에게 표시되는 canvas
+  const captureCanvasRef = useRef<HTMLCanvasElement>(null); // S3 업로드용 canvas (숨김)
 
   // 새로운 hook: 카메라 시작, 프레임 캡처, 랜드마크 그리기 모두 처리
-  const { cameraActive, latestLandmarks, canvasDimensions } = usePoseDetection(videoRef, canvasRef);
+  const { cameraActive, latestLandmarks, canvasDimensions } = usePoseDetection({
+    videoRef,
+    displayCanvasRef,
+    captureCanvasRef,
+  });
 
   // Calculate aspect ratio string for CSS
   const aspectRatioString = useMemo(
@@ -137,22 +147,32 @@ const CameraPreview = ({
 
   // 캡처 함수를 부모 컴포넌트에 전달
   useEffect(() => {
-    if (cameraActive && canvasRef.current && onCaptureReady) {
-      const captureFunc = () => {
-        if (!canvasRef.current) return null;
-        return canvasRef.current.toDataURL("image/jpeg", 0.95);
+    if (cameraActive && captureCanvasRef.current && displayCanvasRef.current && onCaptureReady) {
+      const captureFunc = (): CaptureResult => {
+        // 미리보기용: displayCanvas (landmark 포함, Dev 환경에서만)
+        const preview = displayCanvasRef.current?.toDataURL("image/jpeg", 0.95) || null;
+
+        // S3 업로드용: captureCanvas (항상 순수 비디오 이미지)
+        const upload = captureCanvasRef.current?.toDataURL("image/jpeg", 0.95) || null;
+
+        return { preview, upload };
       };
+
       onCaptureReady(captureFunc);
     }
-  }, [cameraActive, onCaptureReady]);
+  }, [cameraActive, onCaptureReady, captureCanvasRef, displayCanvasRef]);
 
   return (
     <Container>
       <PreviewWrapper $aspectRatio={aspectRatioString}>
         {/* 비디오는 숨겨져 있음 (hook이 canvas에 그림) */}
         <Video ref={videoRef} autoPlay playsInline muted />
-        {/* 캔버스에 비디오 + 랜드마크가 그려짐 (항상 렌더링) */}
-        <LandmarkCanvas ref={canvasRef} />
+
+        {/* Display Canvas: 사용자에게 표시 (비디오 + 디버그 모드일 때 랜드마크) */}
+        <LandmarkCanvas ref={displayCanvasRef} />
+
+        {/* Capture Canvas: 숨김, S3 업로드용 (순수 비디오만) */}
+        <canvas ref={captureCanvasRef} style={{ display: "none" }} aria-hidden="true" />
 
         {/* 전신 촬영 가이드라인 (촬영 전에만 표시) */}
         <ImageGuideline show={!capturedImage && cameraActive} />

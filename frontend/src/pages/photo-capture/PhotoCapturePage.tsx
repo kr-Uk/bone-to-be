@@ -8,7 +8,7 @@ import styled from "styled-components";
 import { AnalysisComplete } from "./components/AnalysisComplete";
 import { AnalysisProgress } from "./components/AnalysisProgress";
 import { CameraCaptureControls } from "./components/CameraCaptureControls";
-import CameraPreview from "./components/CameraPreview";
+import CameraPreview, { type CaptureResult } from "./components/CameraPreview";
 import { ModeSelector } from "./components/ModeSelector";
 import { PoseValidationFeedback } from "./components/PoseValidationFeedback";
 import { ProgressSteps } from "./components/ProgressSteps";
@@ -313,13 +313,15 @@ const PhotoCapturePage = () => {
 
   // State
   const [mode, setMode] = useState<CaptureMode>("camera");
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null); // 미리보기용 (landmark 포함)
+  const [uploadImage, setUploadImage] = useState<string | null>(null); // S3 업로드용 (landmark 없음)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null); // upload 모드용
   const [poseValidation, setPoseValidation] = useState<PoseValidationResult | null>(null);
   const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus>("idle");
   const [countdown, setCountdown] = useState<number | null>(null);
   const [showFlash, setShowFlash] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
-  const captureRef = useRef<(() => string | null) | null>(null);
+  const captureRef = useRef<(() => CaptureResult) | null>(null);
   const latestLandmarksRef = useRef<Results | null>(null);
   const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -372,10 +374,11 @@ const PhotoCapturePage = () => {
         setShowFlash(true);
         setTimeout(() => setShowFlash(false), 200);
 
-        // Capture image
-        const imageData = captureRef.current?.();
-        if (imageData) {
-          setSelectedImage(imageData);
+        // Capture images (preview + upload)
+        const captureResult = captureRef.current?.();
+        if (captureResult) {
+          setPreviewImage(captureResult.preview); // 미리보기용 (landmark 포함)
+          setUploadImage(captureResult.upload); // S3 업로드용 (landmark 없음)
           // Validate pose using latest landmarks
           if (latestLandmarksRef.current) {
             const result = validateFullBodyPose(latestLandmarksRef.current);
@@ -396,6 +399,8 @@ const PhotoCapturePage = () => {
 
   // Handle retry (reset state)
   const handleRetry = useCallback(() => {
+    setPreviewImage(null);
+    setUploadImage(null);
     setSelectedImage(null);
     setPoseValidation(null);
     if (mode === "camera") {
@@ -406,6 +411,8 @@ const PhotoCapturePage = () => {
   // Handle mode change
   const handleModeChange = useCallback((newMode: CaptureMode) => {
     setMode(newMode);
+    setPreviewImage(null);
+    setUploadImage(null);
     setSelectedImage(null);
     setPoseValidation(null);
     setCameraActive(newMode === "camera");
@@ -413,7 +420,10 @@ const PhotoCapturePage = () => {
 
   // Handle analysis flow (새 API 사용)
   const handleAnalyze = useCallback(async () => {
-    if (!selectedImage || !poseValidation?.isValid || !diagnosisData.basicInfo) {
+    // Camera 모드: uploadImage 사용, Upload 모드: selectedImage 사용
+    const imageToUpload = mode === "camera" ? uploadImage : selectedImage;
+
+    if (!imageToUpload || !poseValidation?.isValid || !diagnosisData.basicInfo) {
       return;
     }
 
@@ -421,7 +431,7 @@ const PhotoCapturePage = () => {
       // Step 1: 이미지 압축
       setAnalysisStatus("s3-upload");
 
-      const compressedImage = await compressImage(selectedImage, 1920, 0.8);
+      const compressedImage = await compressImage(imageToUpload, 1920, 0.8);
       const imageBlob = dataURLtoBlob(compressedImage);
       const fileName = generateFilename("diagnosis", "jpg");
 
@@ -451,7 +461,9 @@ const PhotoCapturePage = () => {
 
       // Step 5: reportId 저장 및 이동
       setAnalysisStatus("complete");
-      setPhotoData(selectedImage);
+      // 미리보기 이미지(landmark 포함)를 저장 (리포트 페이지에서 사용자가 확인용으로 볼 수 있도록)
+      const imageToStore = mode === "camera" ? previewImage : selectedImage;
+      setPhotoData(imageToStore || imageToUpload);
       setReportId(reportData.reportId); // 핵심: reportId 저장
 
       // 폴링은 ReportPage에서 처리하므로 즉시 navigate
@@ -462,6 +474,9 @@ const PhotoCapturePage = () => {
       setAnalysisStatus("idle");
     }
   }, [
+    mode,
+    previewImage,
+    uploadImage,
     selectedImage,
     poseValidation,
     diagnosisData.basicInfo,
@@ -479,7 +494,7 @@ const PhotoCapturePage = () => {
   }, []);
 
   // Handle capture ready callback
-  const handleCaptureReady = useCallback((captureFunc: () => string | null) => {
+  const handleCaptureReady = useCallback((captureFunc: () => CaptureResult) => {
     captureRef.current = captureFunc;
   }, []);
 
@@ -556,7 +571,7 @@ const PhotoCapturePage = () => {
           {mode === "camera" ? (
             <>
               <CameraPreview
-                capturedImage={selectedImage}
+                capturedImage={previewImage}
                 countdown={countdown}
                 showFlash={showFlash}
                 onCaptureReady={handleCaptureReady}
@@ -566,7 +581,7 @@ const PhotoCapturePage = () => {
               <CameraCaptureControls
                 onCapture={handleCapture}
                 onRetake={handleRetry}
-                hasImage={!!selectedImage}
+                hasImage={!!previewImage}
                 isValidPose={poseValidation?.isValid ?? false}
                 cameraActive={cameraActive}
               />
@@ -611,7 +626,9 @@ const PhotoCapturePage = () => {
             <Button
               $variant="primary"
               onClick={handleAnalyze}
-              disabled={!selectedImage || !poseValidation?.isValid}
+              disabled={
+                (mode === "camera" ? !uploadImage : !selectedImage) || !poseValidation?.isValid
+              }
             >
               분석하기 <IoArrowForward aria-hidden="true" />
             </Button>

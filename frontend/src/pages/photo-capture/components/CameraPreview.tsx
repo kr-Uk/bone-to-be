@@ -96,11 +96,16 @@ const CountdownNumber = styled.div`
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 `;
 
+export interface CaptureResult {
+  preview: string | null; // displayCanvas (landmark 포함) - 미리보기용
+  upload: string | null; // captureCanvas (landmark 없음) - S3 업로드용
+}
+
 interface CameraPreviewProps {
   capturedImage: string | null;
   showFlash: boolean;
   countdown?: number | null;
-  onCaptureReady?: (captureFunc: () => string | null) => void;
+  onCaptureReady?: (captureFunc: () => CaptureResult) => void;
   onCameraActiveChange?: (isActive: boolean) => void;
   onLandmarksUpdate?: (landmarks: Results | null) => void;
 }
@@ -143,20 +148,19 @@ const CameraPreview = ({
   // 캡처 함수를 부모 컴포넌트에 전달
   useEffect(() => {
     if (cameraActive && captureCanvasRef.current && displayCanvasRef.current && onCaptureReady) {
-      const isDebugMode = import.meta.env.VITE_DEBUG_LANDMARKS === "true";
+      const captureFunc = (): CaptureResult => {
+        // 미리보기용: displayCanvas (landmark 포함, Dev 환경에서만)
+        const preview = displayCanvasRef.current?.toDataURL("image/jpeg", 0.95) || null;
 
-      const captureFunc = () => {
-        // Dev 환경: displayCanvas에서 추출 (marking 포함)
-        // Prod 환경: captureCanvas에서 추출 (순수 이미지)
-        const targetCanvas = isDebugMode ? displayCanvasRef.current : captureCanvasRef.current;
+        // S3 업로드용: captureCanvas (항상 순수 비디오 이미지)
+        const upload = captureCanvasRef.current?.toDataURL("image/jpeg", 0.95) || null;
 
-        if (!targetCanvas) return null;
-        return targetCanvas.toDataURL("image/jpeg", 0.95);
+        return { preview, upload };
       };
 
       onCaptureReady(captureFunc);
     }
-  }, [cameraActive, onCaptureReady, displayCanvasRef, captureCanvasRef]);
+  }, [cameraActive, onCaptureReady, captureCanvasRef, displayCanvasRef]);
 
   return (
     <Container>

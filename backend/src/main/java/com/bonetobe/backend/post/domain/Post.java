@@ -34,13 +34,10 @@ public class Post extends BaseEntity {
     private StoredFile storedFile;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Gender gender;
 
-    @Column(nullable = false)
     private Integer height;
 
-    @Column(nullable = false)
     private Integer weight;
 
     @Enumerated(EnumType.STRING)
@@ -94,7 +91,6 @@ public class Post extends BaseEntity {
                 .forEach(style ->
                         postStyles.add(PostStyle.create(this, style))
                 );
-
     }
 
     public void update(

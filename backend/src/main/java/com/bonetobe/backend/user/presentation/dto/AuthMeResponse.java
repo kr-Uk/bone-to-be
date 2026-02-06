@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Getter
 @Builder
 public class AuthMeResponse {
+    private Long userId;
     private String email;
     private String nickname;
     private String role;
@@ -15,6 +16,7 @@ public class AuthMeResponse {
 
     public static AuthMeResponse from(UserPrincipal principal, String imageUrl) {
         return AuthMeResponse.builder()
+                .userId(principal.getId())
                 .email(principal.getEmail())
                 .nickname(principal.getNickname())
                 .role(principal.getAuthorities().stream()

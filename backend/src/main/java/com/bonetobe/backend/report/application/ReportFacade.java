@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Slf4j
+@Transactional
 @Component
 @RequiredArgsConstructor
 public class ReportFacade {
@@ -66,7 +67,6 @@ public class ReportFacade {
         reportService.delete(report);
     }
 
-    @Transactional
     public void authorizeAndRepresentReport(Long userId, Long reportId) {
         reportService.clearRepresentativeReport(userId);
         Report report = reportService.isOwner(userId, reportId);

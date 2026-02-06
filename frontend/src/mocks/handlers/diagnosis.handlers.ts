@@ -11,7 +11,7 @@ import type {
   ReportDetailResponse,
 } from "@/pages/diagnosis/api";
 
-import { STYLE_OPTIONS, type StyleOption } from '@/shared/constants/styleOptions';
+import { STYLE_OPTIONS, type StyleOption } from "@/shared/constants/styleOptions";
 
 /**
  * 진단 관련 MSW 핸들러
@@ -62,7 +62,7 @@ export const diagnosisHandlers = [
       if (!isValidStyleOption(body.styles)) {
         return HttpResponse.json(
           { error: `Invalid style option: ${body.styles}` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -171,6 +171,7 @@ export const diagnosisHandlers = [
       message: "요청 성공",
       data: {
         reportId: Number(id),
+        gender: "MALE", // 백엔드와 동일한 대문자 형식
         skeletonType: "STRAIGHT",
         straightRate: 0.6363636363636364,
         naturalRate: 0.36363636363636365,

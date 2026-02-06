@@ -125,7 +125,7 @@ public class PostController {
 
     // 내가 좋아요 한 게시글 목록
     @GetMapping("/liked")
-    public ResponseEntity<APIResponse<List<PostListDto.Response>>> getLikedPostList(
+    public ResponseEntity<APIResponse<PostListWithCountDto.Response>> getLikedPostList(
             @AuthenticationPrincipal UserPrincipal user
     ) {
         List<PostSummary> summaries = postFacade.getLikedPostList(user.getId());
@@ -135,7 +135,7 @@ public class PostController {
 
         return ResponseEntity
                 .status(SuccessCode.OK.getStatus())
-                .body(APIResponse.success(SuccessCode.OK, responses));
+                .body(APIResponse.success(SuccessCode.OK, PostListWithCountDto.Response.of(responses)));
     }
 
     // 내가 스크랩 한 게시글 목록

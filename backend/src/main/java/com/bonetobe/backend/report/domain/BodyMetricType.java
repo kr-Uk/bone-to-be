@@ -14,128 +14,121 @@ import static com.bonetobe.backend.common.SkeletonType.*;
 @RequiredArgsConstructor
 public enum BodyMetricType {
 
-    // --- [Group A] 핵심 골격 및 너비 (가장 높은 가중치) ---
-    SHOULDER_WIDTH_INDEX(
-        "shoulder_width_index", "어깨 너비 지수",
-        BodyMetrics::shoulderWidthIndex,
-        0.14, 0.24, "좁음 (Wave)", "넓음 (Natural)",
-        "키 대비 어깨 골격의 너비가 얼마나 넓은지를 나타내는 지표입니다.",
-        List.of(new Zone("좁음", WAVE, 0.17), new Zone("표준", STRAIGHT, 0.19), new Zone("넓음", NATURAL, 0.24)),
-        score -> score < 0.17 ? WAVE : (score < 0.19 ? STRAIGHT : NATURAL),
-        Map.of(WAVE, "어깨 너비가 아담한 편이에요.", STRAIGHT, "어깨 너비가 표준적이에요.", NATURAL, "어깨 프레임이 넓고 뚜렷해요."),
-        Map.of(NATURAL, 1, STRAIGHT, 1, WAVE, 1)
-    ),
-
-    HIP_WIDTH_INDEX(
-        "hip_width_index", "골반 너비 지수",
-        BodyMetrics::hipWidthIndex,
-        0.12, 0.22, "좁음 (Straight)", "넓음 (Wave)",
-        "키 대비 골반 골격의 너비를 측정한 지표입니다.",
-        List.of(new Zone("좁음", STRAIGHT, 0.15), new Zone("표준", NATURAL, 0.17), new Zone("넓음", WAVE, 0.22)),
-        score -> score < 0.15 ? STRAIGHT : (score < 0.17 ? NATURAL : WAVE),
-        Map.of(STRAIGHT, "골반 너비가 좁은 편이에요.", NATURAL, "골반 너비가 표준적이에요.", WAVE, "골반 라인이 돋보이는 편이에요."),
-        Map.of(WAVE, 1, NATURAL, 1, STRAIGHT, 1)
-    ),
+    // --- [Group A] 핵심 판별 지표 (가중치: 3~5점) ---
+    // 가장 신뢰도가 높고, 각 체형을 결정짓는 핵심 무기들입니다.
 
     UPPER_BODY_DEPTH_INDEX(
         "upper_body_depth_index", "상체 두께 지수",
         BodyMetrics::upperBodyDepthIndex,
-        0.12, 0.38, "평면적 (Wave)", "입체적 (Straight)",
+        0.110, 0.170, "납작함 (Wave)", "두꺼움 (Straight)",
         "상체의 앞뒤 두께감을 측정하여 몸의 입체감을 분석한 지표입니다.",
-        List.of(new Zone("납작함", WAVE, 0.18), new Zone("보통", NATURAL, 0.23), new Zone("두꺼움", STRAIGHT, 0.38)),
-        score -> score < 0.18 ? WAVE : (score < 0.23 ? NATURAL : STRAIGHT),
-        Map.of(WAVE, "상체가 얇고 여리여리해요.", NATURAL, "상체 두께가 표준적이에요.", STRAIGHT, "상체에 입체적인 두께감이 있어요."),
-        Map.of(STRAIGHT, 1, NATURAL, 1, WAVE, 1)
-    ),
-
-    // --- [Group B] 라인 및 비율 (중간 가중치) ---
-    SHOULDER_SLOPE_ANGLE(
-        "shoulder_slope_angle", "어깨 기울기 각도",
-        BodyMetrics::shoulderSlopeAngle,
-        0.0, 35.0, "직각 (Natural)", "처짐 (Wave)",
-        "목에서 어깨 끝점으로 이어지는 라인의 기울기를 측정한 지표입니다.",
-        List.of(new Zone("직각", NATURAL, 10.0), new Zone("보통", STRAIGHT, 20.0), new Zone("처짐", WAVE, 35.0)),
-        score -> score < 10.0 ? NATURAL : (score < 20.0 ? STRAIGHT : WAVE),
-        Map.of(NATURAL, "어깨 라인이 직각에 가까워요.", STRAIGHT, "어깨 경사가 표준적이에요.", WAVE, "어깨 라인이 부드럽게 떨어져요."),
-        Map.of(WAVE, 1, NATURAL, 1, STRAIGHT, 1)
+        List.of(new Zone("납작함", WAVE, 0.123), new Zone("보통", NATURAL, 0.130), new Zone("두꺼움", STRAIGHT, 0.170)),
+        score -> score < 0.123 ? WAVE : (score < 0.130 ? NATURAL : STRAIGHT),
+        Map.of(WAVE, "상체가 얇고 여리여리한 편이에요.", NATURAL, "상체 두께가 표준적이에요.", STRAIGHT, "상체에 입체적인 두께감이 있어요."),
+        // [가중치 전략] 스트레이트는 두께가 생명(5점), 나머지는 3점
+        Map.of(STRAIGHT, 5, NATURAL, 3, WAVE, 3)
     ),
 
     WAIST_CURVATURE_INDEX(
         "waist_curvature_index", "허리 곡률 지수",
         BodyMetrics::waistCurvatureIndex,
-        0.0, 0.15, "통허리 (Straight)", "굴곡짐 (Wave)",
-        "허리 라인이 안쪽으로 들어가는 곡선의 정도를 측정한 지표입니다.",
-        List.of(new Zone("통허리", STRAIGHT, 0.08), new Zone("완만함", NATURAL, 0.10), new Zone("굴곡짐", WAVE, 0.15)),
-        score -> score < 0.08 ? STRAIGHT : (score < 0.10 ? NATURAL : WAVE),
-        Map.of(STRAIGHT, "허리 라인이 직선적이에요.", NATURAL, "허리 라인이 자연스러워요.", WAVE, "허리 라인이 잘록하게 들어가요."),
-        Map.of(WAVE, 1, STRAIGHT, 1, NATURAL, 1)
+        9.0, 17.0, "직선적 (Natural)", "곡선형 (Wave)",
+        "허리 라인이 안쪽으로 들어가는 곡선의 강도를 측정한 지표입니다.",
+        List.of(new Zone("직선형", NATURAL, 12.2), new Zone("완만함", STRAIGHT, 13.2), new Zone("곡선형", WAVE, 17.0)),
+        score -> score < 12.2 ? NATURAL : (score < 13.2 ? STRAIGHT : WAVE),
+        Map.of(NATURAL, "허리 라인이 일자에 가까워요.", STRAIGHT, "허리 굴곡이 완만해요.", WAVE, "허리 라인이 잘록하고 곡선이 뚜렷해요."),
+        // [가중치 전략] 웨이브는 곡선이 생명(5점), 나머지는 3점
+        Map.of(WAVE, 5, STRAIGHT, 3, NATURAL, 3)
     ),
 
-    WAIST_LENGTH_INDEX(
-        "waist_length_index", "허리 길이 지수",
-        BodyMetrics::waistLengthIndex,
-        0.85, 1.35, "허리가 짧음(Straight)", "허리가 김 (Natural)",
-        "상체 대비 허리 길이 비율을 통해 허리 길이를 분석한 지표입니다.",
-        List.of(new Zone("짧은 허리", STRAIGHT, 1.05), new Zone("표준", WAVE, 1.15), new Zone("허리가 김", NATURAL, 1.35)),
-        score -> score < 1.05 ? STRAIGHT : (score < 1.15 ? WAVE : NATURAL),
-        Map.of(STRAIGHT, "허리가 짧은 편이에요.", NATURAL, "허리가 평균 길이에요.", WAVE, "허리가 긴 편이에요."),
-        Map.of(WAVE, 1, STRAIGHT, 1, NATURAL, 1)
+    SHOULDER_WIDTH_INDEX(
+        "shoulder_width_index", "어깨 너비 지수",
+        BodyMetrics::shoulderWidthIndex,
+        0.210, 0.270, "좁음 (Wave)", "넓음 (Natural)",
+        "키 대비 어깨 골격의 너비가 얼마나 넓은지를 나타내는 지표입니다.",
+        List.of(new Zone("좁음", WAVE, 0.230), new Zone("표준", STRAIGHT, 0.242), new Zone("넓음", NATURAL, 0.270)),
+        score -> score < 0.230 ? WAVE : (score < 0.242 ? STRAIGHT : NATURAL),
+        Map.of(WAVE, "어깨 너비가 아담한 편이에요.", STRAIGHT, "어깨 너비가 표준적이에요.", NATURAL, "어깨 프레임이 넓고 존재감이 있어요."),
+        // [가중치 전략] 내추럴은 어깨가 생명(5점), 나머지는 3점
+        Map.of(NATURAL, 5, STRAIGHT, 3, WAVE, 3)
     ),
 
-    SHOULDER_HIP_RATIO(
-        "shoulder_hip_ratio", "어깨 골반 비율",
-        BodyMetrics::shoulderHipRatio,
-        0.90, 1.30, "A라인 (Wave)", "Y라인 (Natural)",
-        "어깨와 골반의 너비를 비교하여 상·하체 균형을 분석한 지표입니다.",
-        List.of(new Zone("A라인", WAVE, 0.95), new Zone("I라인", STRAIGHT, 1.15), new Zone("Y라인", NATURAL, 1.30)),
-        score -> score < 0.95 ? WAVE : (score < 1.15 ? STRAIGHT : NATURAL),
-        Map.of(WAVE, "하체에 무게감이 실리는 체형이에요.", STRAIGHT, "상하체 균형이 잘 잡혀 있어요.", NATURAL, "상체 프레임이 돋보이는 체형이에요."),
-        Map.of(WAVE, 1, NATURAL, 1, STRAIGHT, 1)
-    ),
+    // --- [Group B] 라인 및 비율 지표 (가중치: 2~4점) ---
+    // 전반적으로 신뢰할 수 있으나 미세한 겹침이 있는 구간입니다.
 
-    // --- [Group C] 세부 특징 (낮은 가중치) ---
-    JOINT_THICKNESS_INDEX(
-        "joint_thickness_index", "관절 두께 지수",
-        BodyMetrics::jointThicknessIndex,
-        0.03, 0.07, "얇음 (Wave)", "굵음 (Natural)",
-        "손목과 발목의 굵기를 통해 뼈대의 전반적인 두께를 측정한 지표입니다.",
-        List.of(new Zone("얇음", WAVE, 0.04), new Zone("표준", STRAIGHT, 0.05), new Zone("굵음", NATURAL, 0.07)),
-        score -> score < 0.04 ? WAVE : (score < 0.05 ? STRAIGHT : NATURAL),
-        Map.of(WAVE, "손목과 발목 뼈대가 가늘어요.", STRAIGHT, "관절 굵기가 표준적이에요.", NATURAL, "뼈대가 굵고 존재감이 있어요."),
-        Map.of(NATURAL, 1, WAVE, 1, STRAIGHT, 1)
-    ),
-
-    LINEARITY_INDEX(
-        "linearity_index", "체형 직선성 지수",
-        BodyMetrics::linearityIndex,
-        0.60, 1.00, "곡선형 (Wave)", "직선형 (Straight)",
-        "신체 외곽선이 얼마나 직선에 가까운지, 혹은 곡선인지를 나타내는 지표입니다.",
-        List.of(new Zone("곡선", WAVE, 0.75), new Zone("자연스러움", NATURAL, 0.85), new Zone("직선", STRAIGHT, 1.00)),
-        score -> score < 0.75 ? WAVE : (score < 0.85 ? NATURAL : STRAIGHT),
-        Map.of(WAVE, "몸의 실루엣에 곡선이 많아요.", NATURAL, "실루엣이 자연스럽게 흘러요.", STRAIGHT, "몸의 선이 직선으로 곧게 뻗었어요."),
-        Map.of(STRAIGHT, 1, WAVE, 1, NATURAL, 1)
-    ),
-
-    ARM_TORSO_RATIO(
-        "arm_torso_ratio", "팔 몸통 비율",
-        BodyMetrics::armTorsoRatio,
-        0.70, 1.20, "짧음 (Wave)", "김 (Natural)",
-        "상체 길이 대비 팔 길이의 비율을 분석한 지표입니다.",
-        List.of(new Zone("짧음", WAVE, 0.85), new Zone("표준", STRAIGHT, 1.0), new Zone("김", NATURAL, 1.20)),
-        score -> score < 0.85 ? WAVE : (score < 1.0 ? STRAIGHT : NATURAL),
-        Map.of(WAVE, "팔 길이가 아담한 편이에요.", STRAIGHT, "팔 길이가 비율에 맞아요.", NATURAL, "팔이 길고 시원시원해요."),
-        Map.of(NATURAL, 1, WAVE, 1, STRAIGHT, 1)
+    SHOULDER_SLOPE_ANGLE(
+        "shoulder_slope_angle", "어깨 기울기 각도",
+        BodyMetrics::shoulderSlopeAngle,
+        35.0, 48.0, "직각 (Natural)", "처짐 (Wave)",
+        "목에서 어깨 끝점으로 이어지는 라인의 기울기를 측정한 지표입니다.",
+        List.of(new Zone("직각", NATURAL, 40.0), new Zone("보통", STRAIGHT, 42.0), new Zone("처짐", WAVE, 48.0)),
+        score -> score < 40.0 ? NATURAL : (score < 42.0 ? STRAIGHT : WAVE),
+        Map.of(NATURAL, "어깨 라인이 직각에 가까워요.", STRAIGHT, "어깨 경사가 표준적이에요.", WAVE, "어깨 라인이 부드럽게 떨어져요."),
+        // [가중치 전략] 내추럴(직각)과 웨이브(옷걸이) 특징이 강함(4점), 스트레이트는 평범(2점)
+        Map.of(NATURAL, 4, WAVE, 4, STRAIGHT, 2)
     ),
 
     LEG_LENGTH_INDEX(
         "leg_length_index", "다리 길이 지수",
         BodyMetrics::legLengthIndex,
-        0.40, 0.55, "짧음 (Wave)", "김 (Straight)",
+        0.450, 0.520, "짧음 (Wave)", "김 (Straight)",
         "키 대비 다리 길이의 비율을 분석한 지표입니다.",
-        List.of(new Zone("짧음", WAVE, 0.45), new Zone("보통", NATURAL, 0.48), new Zone("김", STRAIGHT, 0.55)),
-        score -> score < 0.45 ? WAVE : (score < 0.48 ? NATURAL : STRAIGHT),
-        Map.of(WAVE, "허리가 길고 다리는 아담해요.", NATURAL, "다리 길이 비율이 표준적이에요.", STRAIGHT, "다리가 길어 비율이 좋아요."),
-        Map.of(STRAIGHT, 1, WAVE, 1, NATURAL, 1)
+        List.of(new Zone("아담함", WAVE, 0.485), new Zone("표준", NATURAL, 0.495), new Zone("김", STRAIGHT, 0.520)),
+        score -> score < 0.485 ? WAVE : (score < 0.495 ? NATURAL : STRAIGHT),
+        Map.of(WAVE, "허리가 길고 다리는 아담한 편이에요.", NATURAL, "다리 길이 비율이 표준적이에요.", STRAIGHT, "다리가 길어 비율이 좋아요."),
+        // [가중치 전략] 다들 비슷하게 3점
+        Map.of(STRAIGHT, 3, NATURAL, 3, WAVE, 3)
+    ),
+
+    ARM_TORSO_RATIO(
+        "arm_torso_ratio", "팔 몸통 비율",
+        BodyMetrics::armTorsoRatio,
+        1.05, 1.30, "짧음 (Wave)", "김 (Natural)",
+        "상체 길이 대비 팔 길이의 비율을 분석한 지표입니다.",
+        List.of(new Zone("아담함", WAVE, 1.15), new Zone("표준", STRAIGHT, 1.20), new Zone("김", NATURAL, 1.30)),
+        score -> score < 1.15 ? WAVE : (score < 1.20 ? STRAIGHT : NATURAL),
+        Map.of(WAVE, "팔 길이가 아담한 편이에요.", STRAIGHT, "팔 길이가 비율에 맞아요.", NATURAL, "팔이 길고 시원시원해요."),
+        // [가중치 전략] 내추럴은 팔 긴게 특징(4점), 나머지는 2점
+        Map.of(NATURAL, 4, WAVE, 2, STRAIGHT, 2)
+    ),
+
+    // --- [Group C] 세부 특징 지표 (가중치: 1~3점) ---
+    // 역설정 로직이나 측정 변수가 많은 보조 지표들입니다.
+
+    JOINT_THICKNESS_INDEX(
+        "joint_thickness_index", "관절 두께 지수",
+        BodyMetrics::jointThicknessIndex,
+        50.0, 80.0, "가늘다 (Wave)", "굵다 (Straight)",
+        "손목과 발목의 둘레를 통해 뼈대의 전반적인 두께를 측정한 지표입니다.",
+        List.of(new Zone("가늘다", WAVE, 57.0), new Zone("보통", NATURAL, 61.0), new Zone("굵다", STRAIGHT, 80.0)),
+        score -> score < 57.0 ? WAVE : (score < 61.0 ? NATURAL : STRAIGHT),
+        Map.of(WAVE, "손목과 발목 뼈대가 가늘어요.", NATURAL, "뼈대 굵기가 표준적이에요.", STRAIGHT, "뼈대가 굵고 존재감이 있어요."),
+        // [가중치 전략] 웨이브(얇음)와 스트레이트(굵음) 특징이 뚜렷함(3점), 내추럴은 중간(2점)
+        Map.of(WAVE, 3, STRAIGHT, 3, NATURAL, 2)
+    ),
+
+    WAIST_LENGTH_INDEX(
+        "waist_length_index", "허리 길이 지수",
+        BodyMetrics::waistLengthIndex,
+        0.230, 0.310, "김 (Wave)", "짧음 (Straight)",
+        "가슴 밑선에서 골반까지의 거리를 측정한 지표입니다. (수치가 낮을수록 시각적으로 깁니다)",
+        List.of(new Zone("김", WAVE, 0.265), new Zone("표준", NATURAL, 0.278), new Zone("짧음", STRAIGHT, 0.310)),
+        score -> score < 0.265 ? WAVE : (score < 0.278 ? NATURAL : STRAIGHT),
+        Map.of(WAVE, "허리 라인이 길고 우아해요.", NATURAL, "허리 길이가 평균적이에요.", STRAIGHT, "허리가 짧고 상체가 컴팩트해요."),
+        // [가중치 전략] 역설정 로직이므로 보너스 점수 수준(1점)
+        Map.of(WAVE, 1, NATURAL, 1, STRAIGHT, 1)
+    ),
+
+    NECK_LENGTH_INDEX(
+        "neck_length_index", "목 길이 지수",
+        BodyMetrics::neckLengthIndex,
+        0.150, 0.180, "김 (Wave)", "짧음 (Straight)",
+        "턱 끝에서 쇄골까지의 길이를 측정한 지표입니다. (수치가 낮을수록 시각적으로 깁니다)",
+        List.of(new Zone("김", WAVE, 0.160), new Zone("표준", NATURAL, 0.164), new Zone("짧음", STRAIGHT, 0.180)),
+        score -> score < 0.160 ? WAVE : (score < 0.164 ? NATURAL : STRAIGHT),
+        Map.of(WAVE, "목선이 길고 가녀려요.", NATURAL, "목 길이가 표준적이에요.", STRAIGHT, "목 길이가 비율에 맞게 안정적이에요."),
+        // [가중치 전략] 역설정 로직이므로 보너스 점수 수준(1점)
+        Map.of(WAVE, 1, NATURAL, 1, STRAIGHT, 1)
     );
 
     // --- Enum Fields ---
@@ -167,6 +160,7 @@ public enum BodyMetricType {
     public AnalysisDetail mapToDetail(BodyMetrics bodyMetrics) {
         Double score = extractor.apply(bodyMetrics);
         SkeletonType skeletonType = analyze(score);
+        Integer weight = typeWeights.get(skeletonType);
         return AnalysisDetail.of(
             key,
             title,
@@ -176,7 +170,8 @@ public enum BodyMetricType {
             guideText,
             new RangeMeta(min, max, leftLabel, rightLabel),
             Analysis.from(skeletonType, resultMessages.get(skeletonType)),
-            zones
+            zones,
+            weight
         );
     }
 }

@@ -19,6 +19,7 @@ public class AnalysisDetail {
     private RangeMeta rangeMeta;
     private Analysis analysis;
     private List<Zone> zones;
+    private Integer weight;
 
     public static AnalysisDetail of(
         String key,
@@ -29,7 +30,8 @@ public class AnalysisDetail {
         String description,
         RangeMeta rangeMeta,
         Analysis analysis,
-        List<Zone> zones
+        List<Zone> zones,
+        Integer weight
     ) {
         AnalysisDetail detail = new AnalysisDetail();
         detail.key = key;
@@ -41,6 +43,7 @@ public class AnalysisDetail {
         detail.rangeMeta = rangeMeta;
         detail.analysis = analysis;
         detail.zones = zones;
+        detail.weight = weight;
         return detail;
     }
 }

@@ -402,8 +402,11 @@ const mapGenderToDto = (gender: "M" | "F") => (gender === "F" ? "female" : "male
 const mapGenderToBackend = (gender: "M" | "F"): "FEMALE" | "MALE" =>
   gender === "F" ? "FEMALE" : "MALE";
 const mapSkeletonTypeToBackend = (
-  type: "Straight" | "Wave" | "Natural",
-): "STRAIGHT" | "WAVE" | "NATURAL" => type.toUpperCase() as "STRAIGHT" | "WAVE" | "NATURAL";
+  type: "Straight" | "Wave" | "Natural" | null | undefined,
+): "STRAIGHT" | "WAVE" | "NATURAL" | null => {
+  if (!type) return null;
+  return type.toUpperCase() as "STRAIGHT" | "WAVE" | "NATURAL";
+};
 const mapStyleToBackend = (styles: FeedItem["styles"]): FeedItem["styles"] => styles;
 
 const toAuthorDto = (item: FeedItem, detail?: FeedDetail): FeedAuthorDto => ({
@@ -418,8 +421,8 @@ const toFeedListItemDto = (item: FeedItem): FeedListItemDto => ({
   imageUrl: item.imageUrl,
   style: mapStyleToBackend(item.styles), // 대문자로 변환
   gender: mapGenderToBackend(item.gender), // "FEMALE" / "MALE"
-  height: item.height,
-  weight: item.weight,
+  height: item.height ?? null,
+  weight: item.weight ?? null,
   skeletonType: mapSkeletonTypeToBackend(item.bodyType), // "STRAIGHT" / "WAVE" / "NATURAL"
   isLiked: item.isLiked,
   createdAt: item.createdAt,
@@ -431,8 +434,8 @@ const toFeedDetailDto = (item: FeedItem, detail: FeedDetail): FeedDetailDto => (
   imageUrl: detail.imageUrl,
   style: item.styles,
   gender: mapGenderToDto(item.gender),
-  height: item.height,
-  weight: item.weight,
+  height: detail.height,
+  weight: detail.weight,
   skeletonType: detail.author.bodyType,
   content: detail.content.join("\n"),
   likeCount: detail.likeCount,
@@ -1296,7 +1299,9 @@ export const communityHandlers = [
     if (minHeight && maxHeight) {
       const min = parseInt(minHeight);
       const max = parseInt(maxHeight);
-      filteredItems = filteredItems.filter((item) => item.height >= min && item.height <= max);
+      filteredItems = filteredItems.filter(
+        (item) => item.height != null && item.height >= min && item.height <= max,
+      );
     }
 
     // 몸무게 범위 필터
@@ -1304,7 +1309,7 @@ export const communityHandlers = [
       const min = parseInt(minWeight);
       const max = parseInt(maxWeight);
       filteredItems = filteredItems.filter(
-        (item) => item.weight && item.weight >= min && item.weight <= max,
+        (item) => item.weight != null && item.weight >= min && item.weight <= max,
       );
     }
 

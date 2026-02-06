@@ -45,8 +45,11 @@ import type {
 const mapGenderToUi = (gender: "FEMALE" | "MALE"): "F" | "M" => (gender === "FEMALE" ? "F" : "M");
 
 const mapSkeletonTypeToUi = (
-  type: "STRAIGHT" | "WAVE" | "NATURAL",
-): "Straight" | "Wave" | "Natural" => {
+  type: "STRAIGHT" | "WAVE" | "NATURAL" | null | undefined,
+): "Straight" | "Wave" | "Natural" | null => {
+  if (!type) {
+    return null;
+  }
   const map = {
     STRAIGHT: "Straight" as const,
     WAVE: "Wave" as const,
@@ -82,8 +85,8 @@ const mapFeedItemDtoToUi = (item: FeedListItemDto) => ({
   imageUrl: item.imageUrl,
   username: "익명", // author 필드가 없으므로 기본값 제공
   bodyType: mapSkeletonTypeToUi(item.skeletonType), // "NATURAL" → "Natural"
-  height: item.height,
-  weight: item.weight,
+  height: item.height ?? null,
+  weight: item.weight ?? null,
   styles: item.style,
   gender: mapGenderToUi(item.gender), // "FEMALE" → "F"
   isLiked: item.isLiked,

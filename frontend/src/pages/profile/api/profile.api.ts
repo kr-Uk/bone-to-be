@@ -39,6 +39,7 @@ export interface FollowUserDto {
   nickname?: string;
   username?: string;
   bodyType?: string | null;
+  skeletonType?: string | null;
   styleTag?: string;
   bio?: string | null;
   profileImage?: string | null;
@@ -63,7 +64,7 @@ export interface ScrappedPostDto {
   postId: number;
   imageUrl: string | null;
   gender: "MALE" | "FEMALE";
-  skeletonType: "NATURAL" | "WAVE" | "STRAIGHT";
+  skeletonType: "NATURAL" | "WAVE" | "STRAIGHT" | "UNKNOWN";
   style: string[];
   height: number;
   weight: number;
@@ -74,7 +75,10 @@ export interface ScrappedPostDto {
 
 const mapFollowUser = (user: FollowUserDto): FollowUser => {
   const username = user.nickname ?? user.username ?? "알 수 없음";
-  const styleTag = normalizeText(user.bodyType ?? user.styleTag, "비공개");
+  const styleTag = normalizeText(
+    user.bodyType ?? user.styleTag ?? user.skeletonType,
+    "비공개",
+  );
   const bio = normalizeText(user.bio, "소개글이 없습니다.");
   const avatarUrl = user.profileImageUrl ?? user.profileImage ?? user.avatarUrl ?? null;
 

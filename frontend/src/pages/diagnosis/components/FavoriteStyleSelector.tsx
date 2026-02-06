@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+import type { StyleOption } from '@/shared/constants/styleOptions';
+
+import { SELECTABLE_STYLES, STYLE_LABELS } from '@/shared/constants/styleOptions';
+
 const Container = styled.div``;
 
 const StyleHeader = styled.div`
@@ -20,11 +24,6 @@ const Label = styled.label`
   @media (max-width: 767px) {
     font-size: 1rem;
   }
-`;
-
-const StyleHint = styled.span`
-  font-size: ${({ theme }) => theme.typography.body.sm.regular.fontSize};
-  color: ${({ theme }) => theme.colors.gray[400]};
 `;
 
 const StyleOptions = styled.div`
@@ -51,31 +50,29 @@ const StyleButton = styled.button<{ $selected: boolean }>`
 `;
 
 interface FavoriteStyleSelectorProps {
-  styles: string[];
-  onToggleStyle: (style: string) => void;
-  styleOptions?: string[];
+  style: StyleOption;
+  onSelectStyle: (style: StyleOption) => void;
 }
 
 const FavoriteStyleSelector = ({
-  styles,
-  onToggleStyle,
-  styleOptions = ["Minimal", "Casual", "Street", "Feminine", "Vintage", "Sporty", "Formal"],
+  style,
+  onSelectStyle,
 }: FavoriteStyleSelectorProps) => {
   return (
     <Container>
       <StyleHeader>
         <Label>선호하는 스타일</Label>
-        <StyleHint>* 복수 선택 가능</StyleHint>
       </StyleHeader>
       <StyleOptions>
-        {styleOptions.map((style) => (
+        {SELECTABLE_STYLES.map((option) => (
           <StyleButton
-            key={style}
+            key={option}
             type="button"
-            $selected={styles.includes(style)}
-            onClick={() => onToggleStyle(style)}
+            $selected={style === option}
+            onClick={() => onSelectStyle(option)}
+            aria-pressed={style === option}
           >
-            {style}
+            {STYLE_LABELS[option]}
           </StyleButton>
         ))}
       </StyleOptions>

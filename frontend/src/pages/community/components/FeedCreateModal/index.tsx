@@ -193,7 +193,7 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
           <S.FormSection>
             <ProfileHeader
               username={resolvedMe?.nickname ?? null}
-              avatarUrl={resolvedMe?.avatarUrl ?? null}
+              avatarUrl={resolvedMe?.avatarUrl ?? resolvedMe?.profileImageUrl ?? null}
             />
 
             <S.ScrollableContent>

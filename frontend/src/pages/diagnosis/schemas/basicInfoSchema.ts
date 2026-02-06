@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { STYLE_OPTIONS } from '@/shared/constants/styleOptions';
+
 export const basicInfoSchema = z.object({
   gender: z.enum(["women", "men"], {
     required_error: "성별을 선택해주세요",
@@ -34,7 +36,12 @@ export const basicInfoSchema = z.object({
         message: "몸무게는 30~200kg 사이여야 합니다",
       },
     ),
-  styles: z.array(z.string()),
+  styles: z.enum([
+    STYLE_OPTIONS.ANY,
+    STYLE_OPTIONS.BASIC,
+    STYLE_OPTIONS.CASUAL,
+    STYLE_OPTIONS.FORMAL,
+  ]),
 });
 
 export type BasicInfoFormValues = z.infer<typeof basicInfoSchema>;

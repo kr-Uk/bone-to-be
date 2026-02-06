@@ -35,6 +35,7 @@ export function FeedDetailRight({
     likeCount,
     likeUsers,
     handleLikeToggle,
+    handleFollowToggle,
     handleSaveToggle,
     handleCommentSubmit: submitComment,
     isSubmittingComment,
@@ -125,6 +126,7 @@ export function FeedDetailRight({
             isLikesOpen={isLikesOpen}
             onLikesClick={() => setIsLikesOpen(true)}
             onLikesClose={() => setIsLikesOpen(false)}
+            onFollowToggle={handleFollowToggle}
             commentInput={commentInput}
             onCommentChange={setCommentInput}
             onCommentSubmit={handleSubmitComment}

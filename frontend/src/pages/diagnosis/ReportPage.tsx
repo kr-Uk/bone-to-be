@@ -6,8 +6,8 @@ import AnalysisDetailsSection from "./components/AnalysisDetailsSection";
 import AnalysisResultCard from "./components/AnalysisResultCard";
 import FitReferenceSection from "./components/FitReferenceSection";
 import RecommendationSection from "./components/RecommendationSection";
-import ReportSummary from "./components/ReportSummary";
 import ReportHeroSection from "./components/ReportHeroSection";
+import ReportSummary from "./components/ReportSummary";
 import TryOnComparisonSection from "./components/TryOnComparisonSection";
 
 import { useReportDetail, useTryOnData } from "@/pages/diagnosis/api";
@@ -245,14 +245,29 @@ const ReportPage = () => {
     );
   }
 
+  const resolveBodyTypeKey = () => {
+    if (reportData.skeletonType) {
+      return convertSkeletonTypeToBodyType(reportData.skeletonType);
+    }
+
+    const rates = [
+      { key: "straight", value: reportData.straightRate ?? 0 },
+      { key: "wave", value: reportData.waveRate ?? 0 },
+      { key: "natural", value: reportData.naturalRate ?? 0 },
+    ] as const;
+
+    const sorted = [...rates].sort((a, b) => b.value - a.value);
+    return sorted[0].key;
+  };
+
   // 분석 완료 - Null Safety 체크
-  const bodyTypeKey = convertSkeletonTypeToBodyType(reportData.skeletonType);
+  const bodyTypeKey = resolveBodyTypeKey();
   const metadata = BODY_TYPE_METADATA[bodyTypeKey];
 
   const ratios = {
-    straight: reportData.straightRate || 0,
-    wave: reportData.waveRate || 0,
-    natural: reportData.naturalRate || 0,
+    straight: Math.round((reportData.straightRate || 0) * 100),
+    wave: Math.round((reportData.waveRate || 0) * 100),
+    natural: Math.round((reportData.naturalRate || 0) * 100),
   };
 
   return (

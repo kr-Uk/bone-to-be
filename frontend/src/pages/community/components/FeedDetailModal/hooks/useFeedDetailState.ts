@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import { useCreateFeedComment, useFeedScrap, useLikeToggle } from "../../../api";
+import { followUser, unfollowUser } from "@/pages/profile/api/profile.api";
 
 import type { FeedLikeUser } from "../../../api";
 
@@ -22,6 +23,7 @@ export interface UseFeedDetailStateReturn {
 
   // 액션
   handleLikeToggle: () => void;
+  handleFollowToggle: (userId: string) => void;
   handleSaveToggle: () => void;
   handleCommentSubmit: (text: string) => void;
 
@@ -123,6 +125,30 @@ export function useFeedDetailState({
     );
   };
 
+  const handleFollowToggle = (userId: string) => {
+    if (!userId) return;
+    const target = likeUsers.find((user) => user.id === userId);
+    if (!target) return;
+
+    const prevIsFollowing = Boolean(target.isFollowing);
+    const nextIsFollowing = !prevIsFollowing;
+
+    setLikeUsers((users) =>
+      users.map((user) =>
+        user.id === userId ? { ...user, isFollowing: nextIsFollowing } : user,
+      ),
+    );
+
+    const request = nextIsFollowing ? followUser(userId) : unfollowUser(userId);
+    request.catch(() => {
+      setLikeUsers((users) =>
+        users.map((user) =>
+          user.id === userId ? { ...user, isFollowing: prevIsFollowing } : user,
+        ),
+      );
+    });
+  };
+
   const handleSaveToggle = () => {
     if (!feedId || scrapMutation.isPending) return;
     const nextSaved = !saved;
@@ -165,6 +191,7 @@ export function useFeedDetailState({
     likeCount,
     likeUsers,
     handleLikeToggle,
+    handleFollowToggle,
     handleSaveToggle,
     handleCommentSubmit,
     isSubmittingComment: createCommentMutation.isPending,

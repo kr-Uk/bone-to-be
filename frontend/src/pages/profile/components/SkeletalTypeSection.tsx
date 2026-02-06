@@ -58,6 +58,17 @@ const Card = styled.div`
   }
 `;
 
+const ErrorCard = styled.div`
+  width: 100%;
+  text-align: center;
+  padding: 5rem;
+  color: ${({theme}) => theme.colors.gray[400]};
+
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+  }
+`;
+
 const ChartWrap = styled.div`
   width: 16rem;
   height: 16rem;
@@ -179,6 +190,7 @@ const PrivateText = styled(Text)`
 interface SkeletalTypeSectionProps {
   bodyType: string;
   bodyTypeRatio: BodyTypeRatio;
+  errorMessage?: string | null;
 }
 
 const formatBodyType = (value?: string) => {
@@ -198,7 +210,18 @@ const formatBodyType = (value?: string) => {
   return `${normalizedValue} Type`;
 };
 
-const SkeletalTypeSection = ({ bodyType, bodyTypeRatio }: SkeletalTypeSectionProps) => {
+const ErrorMessage = styled(Text)`
+  color: var(--neutral-500, #737373);
+  font-size: 1.09375rem;
+  font-weight: 400;
+  line-height: 1.5625rem;
+`;
+
+const SkeletalTypeSection = ({
+  bodyType,
+  bodyTypeRatio,
+  errorMessage,
+}: SkeletalTypeSectionProps) => {
   const smoothRatio = applySmoothing({
     natural: Number(bodyTypeRatio.natural),
     wave: Number(bodyTypeRatio.wave),
@@ -212,38 +235,48 @@ const SkeletalTypeSection = ({ bodyType, bodyTypeRatio }: SkeletalTypeSectionPro
         <Title as="h2">Skeletal Type</Title>
         <Subtitle as="p">이 유저의 최근 골격 진단 결과입니다.</Subtitle>
       </SectionHeader>
-      <Card>
-        <ChartWrap>
-          <ChartInner>
-            <ProfileTriangleChart
-              data={[smoothRatio.straight * 100, smoothRatio.wave * 100, smoothRatio.natural * 100]}
-              labels={["STRAIGHT", "WAVE", "NATURAL"]}
-              customLabels={{
-                enabled: true,
-                alignments: ["center", "right", "left"],
-                font: { size: 12 },
-              }}
-              tooltip={{ enabled: false }}
-              animate={false}
-            />
-          </ChartInner>
-        </ChartWrap>
-        <Details>
-          <LatestBadge>Latest Analysis</LatestBadge>
-          <Stack $gap="0.625rem">
-            <TypeTitle as="h3">{typeTitle}</TypeTitle>
-            <TypeDescription as="p">
-              뼈대가 뚜렷하고 프레임이 단단한 체형.
-              <br />
-              루즈하고 자연스러운 실루엣이 가장 잘 어울립니다.
-            </TypeDescription>
-          </Stack>
-          <PrivateBadge>
-            <CiLock />
-            <PrivateText>Detailed report is private</PrivateText>
-          </PrivateBadge>
-        </Details>
-      </Card>
+      {errorMessage ? (
+        <ErrorCard>
+          <ErrorMessage as="p">{errorMessage}</ErrorMessage>
+        </ErrorCard>
+      ) : (
+        <Card>
+          <ChartWrap>
+            <ChartInner>
+              <ProfileTriangleChart
+                data={[
+                  smoothRatio.straight * 100,
+                  smoothRatio.wave * 100,
+                  smoothRatio.natural * 100,
+                ]}
+                labels={["STRAIGHT", "WAVE", "NATURAL"]}
+                customLabels={{
+                  enabled: true,
+                  alignments: ["center", "right", "left"],
+                  font: { size: 12 },
+                }}
+                tooltip={{ enabled: false }}
+                animate={false}
+              />
+            </ChartInner>
+          </ChartWrap>
+          <Details>
+            <LatestBadge>Latest Analysis</LatestBadge>
+            <Stack $gap="0.625rem">
+              <TypeTitle as="h3">{typeTitle}</TypeTitle>
+              <TypeDescription as="p">
+                뼈대가 뚜렷하고 프레임이 단단한 체형.
+                <br />
+                루즈하고 자연스러운 실루엣이 가장 잘 어울립니다.
+              </TypeDescription>
+            </Stack>
+            <PrivateBadge>
+              <CiLock />
+              <PrivateText>Detailed report is private</PrivateText>
+            </PrivateBadge>
+          </Details>
+        </Card>
+      )}
     </Section>
   );
 };

@@ -146,6 +146,11 @@ export const FeedCard = memo(({ item, isActive, onLike, onClick }: FeedCardProps
     e.stopPropagation();
     onLike();
   };
+  const bodyTypeLabel = item.bodyType?.trim();
+  const hasBodyType = Boolean(bodyTypeLabel);
+  const hasHeight = item.height != null;
+  const hasWeight = item.weight != null;
+  const hasBadges = hasBodyType || hasHeight || hasWeight;
 
   return (
     <CardContainer $isActive={isActive} onClick={onClick}>
@@ -153,10 +158,13 @@ export const FeedCard = memo(({ item, isActive, onLike, onClick }: FeedCardProps
       <Overlay className="overlay">
         <UserInfo>
           <Username>@{item.username}</Username>
-          <BadgesContainer>
-            <Badge>{item.bodyType}</Badge>
-            <HeightBadge>{item.height}cm</HeightBadge>
-          </BadgesContainer>
+          {hasBadges && (
+            <BadgesContainer>
+              {hasBodyType && <Badge>{bodyTypeLabel}</Badge>}
+              {hasHeight && <HeightBadge>{item.height}cm</HeightBadge>}
+              {hasWeight && <HeightBadge>{item.weight}kg</HeightBadge>}
+            </BadgesContainer>
+          )}
         </UserInfo>
       </Overlay>
       <LikeButton

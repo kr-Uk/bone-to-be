@@ -380,8 +380,8 @@ const formatCount = (value: number) => {
 const formatBodyType = (value?: string) => {
   const normalizedValue = value?.trim();
 
-  if (!normalizedValue) {
-    return "Natural Type";
+  if (!normalizedValue || normalizedValue == 'UNKNOWN') {
+    return "UNKNOWN";
   }
 
   return `${normalizedValue} Type`;

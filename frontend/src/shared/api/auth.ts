@@ -6,6 +6,7 @@ export type Me = {
   nickname: string;
   role?: string;
   avatarUrl?: string | null;
+  profileImageUrl?: string | null;
 };
 
 type ApiResponse<T> = {
@@ -58,7 +59,11 @@ export const getMe = async (): Promise<Me> => {
   if (!data?.data) {
     throw new Error("Failed to load auth info.");
   }
-  return data.data;
+  const me = data.data;
+  return {
+    ...me,
+    avatarUrl: me.avatarUrl ?? me.profileImageUrl ?? null,
+  };
 };
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {

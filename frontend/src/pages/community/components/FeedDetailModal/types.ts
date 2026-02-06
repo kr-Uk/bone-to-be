@@ -35,4 +35,5 @@ export interface LikesPanelProps {
   onClose: () => void;
   likeUsers: FeedLikeUser[];
   likeCount: number;
+  onFollowToggle: (userId: string) => void;
 }

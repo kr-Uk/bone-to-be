@@ -5,10 +5,13 @@ import * as S from "./LikesPanel.styles";
 import type { LikesPanelProps } from "../../types";
 
 import baseProfile from "@/assets/image/base__profile.png";
+import { useAuth } from "@/shared/hooks/useAuth";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
-export function LikesPanel({ isOpen, onClose, likeUsers }: LikesPanelProps) {
+export function LikesPanel({ isOpen, onClose, likeUsers, onFollowToggle }: LikesPanelProps) {
   const protectedNavigate = useProtectedNavigate();
+  const { me } = useAuth();
+  const currentUserId = me?.userId != null ? String(me.userId) : null;
 
   if (!isOpen) return null;
 
@@ -40,6 +43,10 @@ export function LikesPanel({ isOpen, onClose, likeUsers }: LikesPanelProps) {
             {likeUsers.map((user) => {
               const secondary =
                 user.displayName ?? [user.bodyType, user.location].filter(Boolean).join(" · ");
+              const isMe =
+                user.id === "me" || (currentUserId != null && user.id === currentUserId);
+              const isFollowing = Boolean(user.isFollowing);
+              const buttonLabel = isFollowing ? "팔로잉" : "팔로우";
               const handleClick = () => handleUserClick(user.id);
               const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) =>
                 handleUserKeyDown(event, user.id);
@@ -71,7 +78,15 @@ export function LikesPanel({ isOpen, onClose, likeUsers }: LikesPanelProps) {
                       {secondary ? <S.LikeMeta>{secondary}</S.LikeMeta> : null}
                     </div>
                   </S.LikeLeft>
-                  <S.FollowButton type="button">팔로우</S.FollowButton>
+                  {!isMe && (
+                    <S.FollowButton
+                      type="button"
+                      data-active={isFollowing}
+                      onClick={() => onFollowToggle(user.id)}
+                    >
+                      {buttonLabel}
+                    </S.FollowButton>
+                  )}
                 </S.LikeItem>
               );
             })}

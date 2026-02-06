@@ -80,6 +80,7 @@ public class PostListDto {
     public record Response(
             Long postId,
             String imageUrl,
+            String authorNickname,
             Gender gender,
             SkeletonType skeletonType,
             List<StyleName> style,
@@ -93,6 +94,7 @@ public class PostListDto {
             return new Response(
                     summary.postId(),
                     summary.imageUrl(),
+                    summary.authorNickname(),
                     summary.gender(),
                     summary.skeletonType(),
                     summary.style(),

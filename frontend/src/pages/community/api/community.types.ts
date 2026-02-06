@@ -107,6 +107,7 @@ export interface FeedAuthorDto {
 export interface FeedListItemDto {
   postId: number;
   imageUrl: string;
+  authorNickname?: string;
   style: StyleType[]; // 대문자: ["VINTAGE", "STREET", "SPORTY", "MINIMAL", "FORMAL", "FEMININE", "CLASSIC", "CASUAL"]
   gender: "FEMALE" | "MALE"; // 대문자
   height: number | null;

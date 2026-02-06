@@ -419,6 +419,7 @@ const toAuthorDto = (item: FeedItem, detail?: FeedDetail): FeedAuthorDto => ({
 const toFeedListItemDto = (item: FeedItem): FeedListItemDto => ({
   postId: Number(item.id),
   imageUrl: item.imageUrl,
+  authorNickname: item.username,
   style: mapStyleToBackend(item.styles), // 대문자로 변환
   gender: mapGenderToBackend(item.gender), // "FEMALE" / "MALE"
   height: item.height ?? null,

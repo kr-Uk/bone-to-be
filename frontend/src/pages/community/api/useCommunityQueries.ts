@@ -83,7 +83,7 @@ const mapContentToLines = (content: string) => {
 const mapFeedItemDtoToUi = (item: FeedListItemDto) => ({
   id: String(item.postId),
   imageUrl: item.imageUrl,
-  username: "익명", // author 필드가 없으므로 기본값 제공
+  username: item.authorNickname ?? "익명",
   bodyType: mapSkeletonTypeToUi(item.skeletonType), // "NATURAL" → "Natural"
   height: item.height ?? null,
   weight: item.weight ?? null,

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import { MdOutlineClose } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -348,9 +349,13 @@ const ModalCloseButton = styled.button`
   border: none;
   background: transparent;
   color: var(--neutral-400, #a3a3a3);
-  font-size: 0.875rem;
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
+  padding: 0;
 
   &:hover {
     color: var(--neutral-50, #fafafa);
@@ -474,8 +479,12 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
       const leftHasId = left.numericId != null;
       const rightHasId = right.numericId != null;
 
-      if (leftHasId && rightHasId && left.numericId !== right.numericId) {
-        return left.numericId - right.numericId;
+      if (leftHasId && rightHasId) {
+        const leftId = left.numericId;
+        const rightId = right.numericId;
+        if (leftId !== null && rightId !== null && leftId !== rightId) {
+          return leftId - rightId;
+        }
       }
 
       if (leftHasId !== rightHasId) {
@@ -809,8 +818,12 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
           <ModalCard role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
             <ModalHeader>
               <ModalTitle>대표 리포트 설정</ModalTitle>
-              <ModalCloseButton type="button" onClick={handleCloseRepresentativeModal}>
-                닫기
+              <ModalCloseButton
+                type="button"
+                aria-label="닫기"
+                onClick={handleCloseRepresentativeModal}
+              >
+                <MdOutlineClose size={18} />
               </ModalCloseButton>
             </ModalHeader>
             <ReportList>

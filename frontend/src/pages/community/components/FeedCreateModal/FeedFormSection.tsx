@@ -60,12 +60,11 @@ interface FeedFormSectionProps {
     gender?: { message?: string };
     height?: { message?: string };
     weight?: { message?: string };
-    styles?: { message?: string };
+  styles?: { message?: string };
   };
   contentLength: number;
   onSubmit: () => void;
   isSubmitting: boolean;
-  isValid: boolean;
 }
 
 export function FeedFormSection({
@@ -75,11 +74,10 @@ export function FeedFormSection({
   contentLength,
   onSubmit,
   isSubmitting,
-  isValid,
 }: FeedFormSectionProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isValid && !isSubmitting) {
+    if (!isSubmitting) {
       onSubmit();
     }
   };
@@ -156,8 +154,8 @@ export function FeedFormSection({
         <S.SubmitButton
           type="button"
           onClick={handleSubmit}
-          $disabled={!isValid || isSubmitting}
-          disabled={!isValid || isSubmitting}
+          $disabled={isSubmitting}
+          disabled={isSubmitting}
         >
           게시하기
         </S.SubmitButton>

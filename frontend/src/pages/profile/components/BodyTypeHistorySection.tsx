@@ -531,6 +531,19 @@ const BodyTypeHistorySection = ({ history }: BodyTypeHistorySectionProps) => {
     };
   }, [history]);
 
+  useEffect(() => {
+    if (!isRepresentativeModalOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isRepresentativeModalOpen]);
+
   const getScrollOffset = () => {
     if (!trackRef.current) {
       return 0;

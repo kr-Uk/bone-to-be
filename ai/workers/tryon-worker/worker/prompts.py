@@ -13,7 +13,8 @@ The model must be clearly visible in a 3:4 aspect ratio
 
 High resolution
 
-The full body must be visible from head to toe without cropping
+The full body must be visible from head to toe without cropping. 
+**CRITICAL**: DO NOT CROP THE HEAD OR FEET. The entire head (including hair) and feet must be visible.
 
 Upper-body-only or lower-body-only images are NOT allowed
 

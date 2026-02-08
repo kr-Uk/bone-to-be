@@ -230,138 +230,6 @@ def handle(message: dict):
             output['body_type_metrics'] = None
             output['debug_info'] = None
 
-        # ---------------------------------------------------------
-        # [Visualizer] Render Mesh Overlay if requested
-        # ---------------------------------------------------------
-        debug_vis_dir = message.get("debug_vis_dir")
-        if debug_vis_dir:
-            print(f"🎨 Generating debug visualization to: {debug_vis_dir}")
-            try:
-                os.makedirs(debug_vis_dir, exist_ok=True)
-                
-                # Lazy import to avoid overhead if not visualizing
-                # Force EGL for headless rendering
-                os.environ['PYOPENGL_PLATFORM'] = 'egl'
-                
-                from regressor.human_shape.utils import HDRenderer, COLORS
-                from worker.utils.vis_utils import weak_persp_to_blender
-                import PIL.Image as pil_img
-
-                # 1. Prepare Background Image (Original Image)
-                # img is (H, W, 3) BGR uint8
-                H, W, _ = img.shape
-                img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                img_float = img_rgb.astype(np.float32) / 255.0
-                bg_img = img_float.transpose(2, 0, 1) # (3, H, W)
-                bg_imgs = bg_img[np.newaxis, ...] # (1, 3, H, W)
-
-                # 2. Get Data from Output
-                body_targets = output.get('body_targets')
-                stage_n_out = output.get('stage_02')
-                
-                if not body_targets or not stage_n_out:
-                    print("⚠️ Visualization skipped: Missing targets or stage output")
-                else:
-                    vertices = stage_n_out['vertices'].detach().cpu().numpy()
-                    faces = stage_n_out['faces'] # faces is likely a tensor or numpy array shared
-                    
-                    camera_parameters = output['camera_parameters']
-                    camera_scale = camera_parameters['scale'].detach()
-                    camera_transl = camera_parameters['translation'].detach()
-
-                    # 3. Convert Camera Parameters
-                    hd_params = weak_persp_to_blender(
-                        body_targets,
-                        camera_scale=camera_scale,
-                        camera_transl=camera_transl,
-                        H=H, W=W,
-                        sensor_width=36, # Default
-                        focal_length=5000, # Default
-                    )
-
-                    # 4. Render
-                    # Initialize Renderer (Singleton-like usually, but per-call is safer here if infrequent)
-                    hd_renderer = HDRenderer()
-                    
-                    # Render for the first person (batch 0)
-                    idx = 0 
-                    body_color = COLORS.get('stage_02', COLORS['default'])
-                    
-                    overlays = hd_renderer(
-                        vertices, faces,
-                        focal_length=hd_params['focal_length_in_px'],
-                        camera_translation=hd_params['transl'],
-                        camera_center=hd_params['center'],
-                        bg_imgs=bg_imgs,
-                        return_with_alpha=True,
-                        body_color=body_color,
-                    )
-                    
-                    # overlays is (B, 4, H, W) or (B, H, W, 4)?
-                    # demo.py: out_img[f'hd_{stage_key}_cat'] = np.concatenate([bg_hd_imgs, overlays], axis=-1)
-                    # This implies channel-last?
-                    # Let's check demo.py again.
-                    # line 263: bg_hd_imgs = np.transpose(hd_imgs, [0, 3, 1, 2]) -> (B, C, H, W)
-                    # line 303: np.concatenate([bg_hd_imgs, overlays], axis=-1) -> This implies 'overlays' matches dimensions?
-                    # Wait, if bg_hd_imgs is (B, C, H, W), concatenating on axis -1 (W) makes it wider side-by-side.
-                    # Ah, demo.py saves 'hd_imgs' which is (B, 3, H, W) transposed back to (B, H, W, 3) later for saving.
-                    
-                    # Let's check typical pyrender output. usually (H, W, 4).
-                    # HDRenderer usually returns (B, C, H, W) if it mimics the input style?
-                    # Let's assume overlays is (B, 4, H, W) to match bg_imgs (B, 3, H, W).
-                    
-                    # For saving, we want (H, W, C).
-                    pass # Just debug print logic flow
-                    
-                    # Convert overlay to HWC
-                    # overlay_np = overlays[0].transpose(1, 2, 0) # (H, W, 4) if it was (4, H, W)
-                    
-                    # Actually, let's just trust whatever HDRenderer returns and check shape.
-                    # But simpler: we just save the overlay itself? Or composite?
-                    # User likely wants "overlay on image".
-                    
-                    # Let's inspect 'overlays' shape from logs if it fails, or assume (B, 4, H, W) based on bg_imgs arg.
-                    overlay = overlays[0].transpose(1, 2, 0) # Assume (4, H, W) -> (H, W, 4)
-                    
-                    # Clip and Scale
-                    overlay = np.clip(overlay * 255, 0, 255).astype(np.uint8)
-                    
-                    # Composite (Alpha Blending)
-                    # img_rgb is (H, W, 3) uint8
-                    overlay_img = pil_img.fromarray(overlay, mode='RGBA')
-                    base_img = pil_img.fromarray(img_rgb, mode='RGB').convert('RGBA')
-                    
-                    # Composite
-                    combined = pil_img.alpha_composite(base_img, overlay_img)
-                    
-                    # 5. [NEW] Maximize Debugging: Draw Keypoints too!
-                    # keypoints in 'body_targets' are in CROP coordinates? No, HumanShapeTarget stores them.
-                    # Let's use the 'body25_keypoints' variable we have in this scope (from step 3 of handle)
-                    # body25_keypoints is (25, 3) in PIXEL coordinates of original image.
-                    
-                    for k in range(25):
-                        x, y, conf = body25_keypoints[k]
-                        if conf > 0.1:
-                           # Draw circle
-                           # coordinates might be float
-                           ix, iy = int(x), int(y)
-                           # Draw on PIL image
-                           from PIL import ImageDraw
-                           draw = ImageDraw.Draw(combined)
-                           draw.ellipse((ix-3, iy-3, ix+3, iy+3), fill=(0, 255, 0, 255), outline=(0, 0, 0, 255))
-                           draw.text((ix+5, iy), str(k), fill=(0, 255, 0, 255))
-
-                    # Save
-                    save_path = os.path.join(debug_vis_dir, f"{report_id}_mesh.png")
-                    combined.save(save_path)
-                    print(f"✅ Saved mesh visualization with keypoints: {save_path}")
-
-            except Exception as e:
-                print(f"⚠️ Visualization failed: {e}")
-                import traceback
-                traceback.print_exc()
-
-
         # 8. Serialize Output
         def make_serializable(obj):
             if isinstance(obj, dict) or str(type(obj)) == "<class 'collections.defaultdict'>":
@@ -385,7 +253,6 @@ def handle(message: dict):
         publish({
             "report_id": report_id,
             "body_metrics": output.get('body_type_metrics'),
-            "debug_info": output.get('debug_info'),
             "status": "COMPLETED"
         })
         print({
@@ -394,6 +261,9 @@ def handle(message: dict):
             "status": "COMPLETED"
         })
         print("✅ Processing completed and published.")
+        
+        # [Local Test Support] Return output for local visualization
+        return output
 
     except Exception as e:
         import traceback

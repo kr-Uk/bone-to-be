@@ -4,10 +4,12 @@ import io
 import traceback
 import base64
 import json
-from PIL import Image
+from PIL import Image, ImageOps
 from worker.publisher import publish
 from worker.config import Config
+
 from worker.prompts import TRYON_PROMPT_TEMPLATE
+import copy
 
 # No google.generativeai dependency needed 
 
@@ -16,16 +18,34 @@ def download_image(url):
     try:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
-        return Image.open(io.BytesIO(response.content))
+        img = Image.open(io.BytesIO(response.content))
+        # Apply EXIF orientation to fix rotated smartphone photos
+        img = ImageOps.exif_transpose(img)
+        return img
     except Exception as e:
         print(f"❌ Failed to download image from {url}: {e}")
         raise
 
 def image_to_base64(image):
-    """Converts PIL Image to base64 string."""
+    """Converts PIL Image to base64 string, resizing if too large while maintaining aspect ratio."""
+    # Make a copy to avoid modifying the original image object
+    img = image.copy()
+    
+    # Resize if larger than max dimension while maintaining aspect ratio
+    max_dimension = 1024
+    width, height = img.size
+    
+    if width > max_dimension or height > max_dimension:
+        # Calculate scale factor based on the larger dimension
+        scale = max_dimension / max(width, height)
+        new_width = int(width * scale)
+        new_height = int(height * scale)
+        img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        print(f"📐 Resized image from {width}x{height} to {new_width}x{new_height}")
+    
     buf = io.BytesIO()
     # Save as PNG to ensure compatibility and consistent format
-    image.save(buf, format='PNG')
+    img.save(buf, format='PNG')
     return base64.b64encode(buf.getvalue()).decode('utf-8')
 
 def upload_image(image_content, url):
@@ -114,6 +134,20 @@ def generate_tryon_gms(person_img, clothing_img, prompt):
     }
     
     print(f"🚀 Sending request to GMS Endpoint...")
+    
+    # DEBUG: Log payload (sanitized)
+    try:
+        debug_payload = copy.deepcopy(payload)
+        if "contents" in debug_payload:
+            for content in debug_payload["contents"]:
+                if "parts" in content:
+                    for part in content["parts"]:
+                        if "inline_data" in part and "data" in part["inline_data"]:
+                            part["inline_data"]["data"] = f"<BASE64_DATA_TRUNCATED_LEN_{len(part['inline_data']['data'])}>"
+        print(f"🔍 DEBUG PAYLOAD: {json.dumps(debug_payload, indent=2, ensure_ascii=False)}")
+    except Exception as e:
+        print(f"⚠️ Failed to log debug payload: {e}")
+
     response = requests.post(url, headers=headers, json=payload, timeout=90)
     
     if response.status_code != 200:

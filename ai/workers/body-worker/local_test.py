@@ -82,6 +82,22 @@ def local_test():
             else:
                 raise FileNotFoundError(f"File not found: {url}")
 
+    # [Visualizer Setup] Initialize once to avoid EGL context exhaustion
+    hd_renderer = None
+    try:
+        os.environ['PYOPENGL_PLATFORM'] = 'egl'
+        import cv2
+        import numpy as np
+        import PIL.Image as pil_img
+        import PIL.ImageDraw
+        from regressor.human_shape.utils import HDRenderer, COLORS
+        from worker.utils.vis_utils import weak_persp_to_blender
+        
+        print("🎨 Initializing HDRenderer (Once)...")
+        hd_renderer = HDRenderer()
+    except Exception as e:
+        print(f"⚠️ Failed to initialize renderer: {e}")
+
     # Patch 'worker.handlers.handler.publish' and 'requests.Session'
     all_results = []
     all_debug_info = []
@@ -90,16 +106,8 @@ def local_test():
         # Print to console
         mock_publish(message)
         
-        # Separate debug info from result
-        debug_info = message.pop('debug_info', None)
-        
-        # Add to lists for file saving
+        # Add to results for file saving
         all_results.append(message)
-        if debug_info:
-            all_debug_info.append({
-                'report_id': message.get('report_id'),
-                'debug_info': debug_info
-            })
 
     with unittest.mock.patch('worker.handlers.handler.publish', side_effect=capture_result), \
          unittest.mock.patch('worker.handlers.handler.requests.Session', side_effect=MockSession):
@@ -113,7 +121,6 @@ def local_test():
                 "weight": mock_weight,
                 "height": mock_height,
                 "gender": mock_gender,
-                "gender": mock_gender,
                 "presignedUrl": img_path,
                 # [DEBUG] Request Visualization
                 "debug_vis_dir": os.path.join(current_dir, 'debug_vis')
@@ -121,9 +128,165 @@ def local_test():
             
             print(f"▶ Processing: {img_name}")
             try:
-                handle(message)
+                # [Capture Output] Handler now returns output for testing
+                output = handle(message)
+                
+                # Extract debug_info from output (not from published message)
+                if output and output.get('debug_info'):
+                    all_debug_info.append({
+                        'report_id': img_name,
+                        'debug_info': output.get('debug_info')
+                    })
+                
+                # ---------------------------------------------------------
+                # [Visualizer] Reuse Renderer
+                # ---------------------------------------------------------
+                debug_vis_dir = message.get('debug_vis_dir')
+                if debug_vis_dir and output and hd_renderer:
+                    try:
+                        os.makedirs(debug_vis_dir, exist_ok=True)
+                        
+                        # 1. Load Image (Local Path)
+                        img = cv2.imread(img_path)
+                        if img is None:
+                            print(f"⚠️ Failed to load image for viz: {img_path}")
+                        else:
+                            H, W, _ = img.shape
+                            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                            img_float = img_rgb.astype(np.float32) / 255.0
+                            bg_img = img_float.transpose(2, 0, 1) # (3, H, W)
+                            bg_imgs = bg_img[np.newaxis, ...] 
+                            
+                            # 2. Extract Data
+                            body_targets = output.get('body_targets')
+                            stage_n_out = output.get('stage_02')
+                            
+                            if body_targets and stage_n_out:
+                                vertices = stage_n_out['vertices'].detach().cpu().numpy()
+                                faces = stage_n_out['faces']
+                                
+                                camera_parameters = output['camera_parameters']
+                                camera_scale = camera_parameters['scale'].detach()
+                                camera_transl = camera_parameters['translation'].detach()
+                                
+                                # 3. Convert Camera
+                                hd_params = weak_persp_to_blender(
+                                    body_targets,
+                                    camera_scale=camera_scale,
+                                    camera_transl=camera_transl,
+                                    H=H, W=W,
+                                    sensor_width=36,
+                                    focal_length=5000,
+                                )
+                                
+                                # 4. Render (Reusing hd_renderer)
+                                body_color = COLORS.get('stage_02', COLORS['default'])
+                                
+                                overlays = hd_renderer(
+                                    vertices, faces,
+                                    focal_length=hd_params['focal_length_in_px'],
+                                    camera_translation=hd_params['transl'],
+                                    camera_center=hd_params['center'],
+                                    bg_imgs=bg_imgs,
+                                    return_with_alpha=True,
+                                    body_color=body_color,
+                                )
+                                
+                                # Composite
+                                overlay = overlays[0].transpose(1, 2, 0)
+                                overlay = np.clip(overlay * 255, 0, 255).astype(np.uint8)
+                                
+                                overlay_img = pil_img.fromarray(overlay, mode='RGBA')
+                                base_img = pil_img.fromarray(img_rgb, mode='RGB').convert('RGBA')
+                                combined = pil_img.alpha_composite(base_img, overlay_img)
+                                
+                                save_path = os.path.join(debug_vis_dir, f"{message.get('reportId')}_mesh.png")
+                                
+                                # ---------------------------------------------------------
+                                # [DEBUG POINT VISUALIZATION]
+                                # ---------------------------------------------------------
+                                debug_info = output.get('debug_info')
+                                if debug_info:
+                                    draw = PIL.ImageDraw.Draw(combined)
+                                    
+                                    # Projection Helper
+                                    def project_point(p3d):
+                                        # p3d: [x, y, z]
+                                        # 1. Camera Transform
+                                        cam_t = hd_params['transl'][0] # [tx, ty, tz]
+                                        p_cam = p3d + cam_t
+                                        
+                                        # 2. Perspective Projection
+                                        f = hd_params['focal_length_in_px'][0]
+                                        c = hd_params['center'][0] # [cx, cy]
+                                        
+                                        x_2d = f * p_cam[0] / p_cam[2] + c[0]
+                                        y_2d = f * p_cam[1] / p_cam[2] + c[1]
+                                        return (x_2d, y_2d)
+                                    
+                                    # 1. Waist Points (Spine2, Pelvis)
+                                    coords = debug_info.get('coordinates', {})
+                                    spine2 = coords.get('spine2')
+                                    pelvis = coords.get('pelvis')
+                                    
+                                    if spine2 and pelvis:
+                                        p_spine2 = project_point(np.array(spine2))
+                                        p_pelvis = project_point(np.array(pelvis))
+                                        
+                                        # Draw Line
+                                        draw.line([p_spine2, p_pelvis], fill=(0, 255, 0, 255), width=3)
+                                        # Draw Points
+                                        r = 5
+                                        draw.ellipse([p_spine2[0]-r, p_spine2[1]-r, p_spine2[0]+r, p_spine2[1]+r], fill=(255, 0, 0, 255))
+                                        draw.ellipse([p_pelvis[0]-r, p_pelvis[1]-r, p_pelvis[0]+r, p_pelvis[1]+r], fill=(255, 0, 0, 255))
+                                        
+                                    # 2. Neck Points (Neck Base, Chin)
+                                    neck = coords.get('neck')
+                                    neck_meas = debug_info.get('neck_measurement', {})
+                                    chin_y = neck_meas.get('chin_y')
+                                    
+                                    if neck and chin_y is not None:
+                                        # Find approximate chin 3D point (vertex with closest Y)
+                                        # We need to search in head region to avoid feet etc.
+                                        head_y = coords.get('head')[1]
+                                        
+                                        # Filter vertices similar to search logic
+                                        candidates = vertices[0] # (N, 3)
+                                        # Simple filter: near head_y and matching chin_y
+                                        # (Assume chin is detected correctly, just find the point)
+                                        # Just find vertex with y closest to chin_y within head vicinity
+                                        
+                                        # Head vicinity mask
+                                        mask = (candidates[:, 1] > head_y - 0.2) & (candidates[:, 1] < head_y + 0.1)
+                                        valid_verts = candidates[mask]
+                                        
+                                        if len(valid_verts) > 0:
+                                            # Find vertex closest to chin_y
+                                            idx = np.argmin(np.abs(valid_verts[:, 1] - chin_y))
+                                            chin_3d = valid_verts[idx]
+                                            
+                                            p_neck = project_point(np.array(neck))
+                                            p_chin = project_point(chin_3d)
+                                            
+                                            # Draw Line
+                                            draw.line([p_neck, p_chin], fill=(0, 0, 255, 255), width=3)
+                                            # Draw Points
+                                            r = 5
+                                            draw.ellipse([p_neck[0]-r, p_neck[1]-r, p_neck[0]+r, p_neck[1]+r], fill=(255, 255, 0, 255))
+                                            draw.ellipse([p_chin[0]-r, p_chin[1]-r, p_chin[0]+r, p_chin[1]+r], fill=(0, 255, 255, 255))
+
+                                combined.save(save_path)
+                                print(f"✅ Saved visualization: {save_path}")
+
+                    except Exception as e:
+                        print(f"⚠️ Visualization failed: {e}")
+                        import traceback
+                        traceback.print_exc()
+
             except Exception as e:
                 print(f"❌ Exception while processing {img_name}: {e}")
+                import traceback
+                traceback.print_exc()
         
         # Save results to file
         output_file = os.path.join(current_dir, 'test_results.json')

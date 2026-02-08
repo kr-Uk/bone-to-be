@@ -1,0 +1,1031 @@
+✅ Found 27 images. Starting processing...
+🎨 Initializing HDRenderer (Once)...
+▶ Processing: straight_fat-3.png
+Processing message: {'reportId': 'straight_fat-3.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_fat-3.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_fat-3.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [      337.1      190.64      685.27      1361.8]
+[DEBUG_REF] BBox: [      337.1      190.64      685.27      1361.8], Size: 1405.452392578125, Scale: 7.027261734008789
+[DEBUG] Center: [     511.18      776.24], Scale: 7.027261734008789, BBoxSize: 1405.452392578125
+[DEBUG] Keypoints range - Original: x[0.0, 685.3], Cropped: x[34.8, 159.1]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=1.0354, waist=0.9377
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_fat-3.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.15117323541982505
+   - waist_curvature_index: 9.920902252197266
+   - shoulder_width_index: 0.253503299577906
+   - waist_length_index: 0.28312885761260986
+   - leg_length_index: 0.4835554361343384
+   - arm_torso_ratio: 1.1196342706680298
+   - shoulder_slope_angle: 39.39478634390807
+   - joint_thickness_index: 62.590757363789784
+   - neck_length_index: 0.16602838039398193
+==================================================
+
+{'report_id': 'straight_fat-3.png', 'body_metrics': {'upper_body_depth_index': 0.15117323541982505, 'waist_curvature_index': 9.920902252197266, 'shoulder_width_index': 0.253503299577906, 'waist_length_index': 0.28312885761260986, 'leg_length_index': 0.4835554361343384, 'arm_torso_ratio': 1.1196342706680298, 'shoulder_slope_angle': 39.39478634390807, 'joint_thickness_index': 62.590757363789784, 'neck_length_index': 0.16602838039398193}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_fat-3.png_mesh.png
+▶ Processing: natural_skinny-2.png
+Processing message: {'reportId': 'natural_skinny-2.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_skinny-2.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_skinny-2.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     348.05      151.74      673.98      1468.4]
+[DEBUG_REF] BBox: [     348.05      151.74      673.98      1468.4], Size: 1580.01953125, Scale: 7.900097846984863
+[DEBUG] Center: [     511.01      810.08], Scale: 7.900097846984863, BBoxSize: 1580.01953125
+[DEBUG] Keypoints range - Original: x[0.0, 674.0], Cropped: x[45.0, 153.8]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9309, waist=0.7898
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_skinny-2.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.11962756558928606
+   - waist_curvature_index: 13.325645446777344
+   - shoulder_width_index: 0.23959002927641285
+   - waist_length_index: 0.2825010418891907
+   - leg_length_index: 0.4743008315563202
+   - arm_torso_ratio: 1.1896584033966064
+   - shoulder_slope_angle: 38.37092157991242
+   - joint_thickness_index: 55.64645087142159
+   - neck_length_index: 0.1639837771654129
+==================================================
+
+{'report_id': 'natural_skinny-2.png', 'body_metrics': {'upper_body_depth_index': 0.11962756558928606, 'waist_curvature_index': 13.325645446777344, 'shoulder_width_index': 0.23959002927641285, 'waist_length_index': 0.2825010418891907, 'leg_length_index': 0.4743008315563202, 'arm_torso_ratio': 1.1896584033966064, 'shoulder_slope_angle': 38.37092157991242, 'joint_thickness_index': 55.64645087142159, 'neck_length_index': 0.1639837771654129}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_skinny-2.png_mesh.png
+▶ Processing: straight_standard-2.png
+Processing message: {'reportId': 'straight_standard-2.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_standard-2.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_standard-2.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [      357.5      188.98      659.85      1345.3]
+[DEBUG_REF] BBox: [      357.5      188.98      659.85      1345.3], Size: 1387.558349609375, Scale: 6.93779182434082
+[DEBUG] Center: [     508.68      767.13], Scale: 6.93779182434082, BBoxSize: 1387.558349609375
+[DEBUG] Keypoints range - Original: x[0.0, 659.9], Cropped: x[34.0, 155.3]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8280, waist=0.7064
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_standard-2.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.12137169760622975
+   - waist_curvature_index: 14.392265319824219
+   - shoulder_width_index: 0.2309559947746216
+   - waist_length_index: 0.27024880051612854
+   - leg_length_index: 0.5002722144126892
+   - arm_torso_ratio: 1.2286655902862549
+   - shoulder_slope_angle: 42.05189810966406
+   - joint_thickness_index: 58.236718705365334
+   - neck_length_index: 0.16143842041492462
+==================================================
+
+{'report_id': 'straight_standard-2.png', 'body_metrics': {'upper_body_depth_index': 0.12137169760622975, 'waist_curvature_index': 14.392265319824219, 'shoulder_width_index': 0.2309559947746216, 'waist_length_index': 0.27024880051612854, 'leg_length_index': 0.5002722144126892, 'arm_torso_ratio': 1.2286655902862549, 'shoulder_slope_angle': 42.05189810966406, 'joint_thickness_index': 58.236718705365334, 'neck_length_index': 0.16143842041492462}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_standard-2.png_mesh.png
+▶ Processing: natural_fat-1.png
+Processing message: {'reportId': 'natural_fat-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_fat-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_fat-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     334.61      234.96      693.53      1414.4]
+[DEBUG_REF] BBox: [     334.61      234.96      693.53      1414.4], Size: 1415.329833984375, Scale: 7.076649188995361
+[DEBUG] Center: [     514.07      824.68], Scale: 7.076649188995361, BBoxSize: 1415.329833984375
+[DEBUG] Keypoints range - Original: x[0.0, 693.5], Cropped: x[34.9, 159.8]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=1.0433, waist=0.9269
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_fat-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.15112499301089513
+   - waist_curvature_index: 10.886079788208008
+   - shoulder_width_index: 0.25822487694258484
+   - waist_length_index: 0.27083995938301086
+   - leg_length_index: 0.48376426100730896
+   - arm_torso_ratio: 1.131932020187378
+   - shoulder_slope_angle: 37.13318103168778
+   - joint_thickness_index: 63.60295589864214
+   - neck_length_index: 0.16474106907844543
+==================================================
+
+{'report_id': 'natural_fat-1.png', 'body_metrics': {'upper_body_depth_index': 0.15112499301089513, 'waist_curvature_index': 10.886079788208008, 'shoulder_width_index': 0.25822487694258484, 'waist_length_index': 0.27083995938301086, 'leg_length_index': 0.48376426100730896, 'arm_torso_ratio': 1.131932020187378, 'shoulder_slope_angle': 37.13318103168778, 'joint_thickness_index': 63.60295589864214, 'neck_length_index': 0.16474106907844543}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_fat-1.png_mesh.png
+▶ Processing: wave_standard-3.png
+Processing message: {'reportId': 'wave_standard-3.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_standard-3.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_standard-3.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [      358.5      181.52      667.57      1379.8]
+[DEBUG_REF] BBox: [      358.5      181.52      667.57      1379.8], Size: 1437.97802734375, Scale: 7.189889907836914
+[DEBUG] Center: [     513.04      780.68], Scale: 7.189889907836914, BBoxSize: 1437.97802734375
+[DEBUG] Keypoints range - Original: x[0.0, 667.6], Cropped: x[36.5, 154.9]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8376, waist=0.7272
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_standard-3.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.12251010362307134
+   - waist_curvature_index: 11.791092872619629
+   - shoulder_width_index: 0.227199579558337
+   - waist_length_index: 0.27255186438560486
+   - leg_length_index: 0.49665355682373047
+   - arm_torso_ratio: 1.2075340747833252
+   - shoulder_slope_angle: 43.296525192438466
+   - joint_thickness_index: 54.061954020092415
+   - neck_length_index: 0.15988411009311676
+==================================================
+
+{'report_id': 'wave_standard-3.png', 'body_metrics': {'upper_body_depth_index': 0.12251010362307134, 'waist_curvature_index': 11.791092872619629, 'shoulder_width_index': 0.227199579558337, 'waist_length_index': 0.27255186438560486, 'leg_length_index': 0.49665355682373047, 'arm_torso_ratio': 1.2075340747833252, 'shoulder_slope_angle': 43.296525192438466, 'joint_thickness_index': 54.061954020092415, 'neck_length_index': 0.15988411009311676}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_standard-3.png_mesh.png
+▶ Processing: straight_fat-2.png
+Processing message: {'reportId': 'straight_fat-2.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_fat-2.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_fat-2.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     309.75      207.28      711.35      1387.7]
+[DEBUG_REF] BBox: [     309.75      207.28      711.35      1387.7], Size: 1416.5115966796875, Scale: 7.0825581550598145
+[DEBUG] Center: [     510.55      797.49], Scale: 7.0825581550598145, BBoxSize: 1416.5115966796875
+[DEBUG] Keypoints range - Original: x[0.0, 711.4], Cropped: x[35.6, 163.6]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=1.0772, waist=0.9915
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_fat-2.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.16150280110661575
+   - waist_curvature_index: 12.005268096923828
+   - shoulder_width_index: 0.2647533033479658
+   - waist_length_index: 0.28448596596717834
+   - leg_length_index: 0.48487401008605957
+   - arm_torso_ratio: 1.0959278345108032
+   - shoulder_slope_angle: 38.33671838283723
+   - joint_thickness_index: 73.74914792736085
+   - neck_length_index: 0.16988778114318848
+==================================================
+
+{'report_id': 'straight_fat-2.png', 'body_metrics': {'upper_body_depth_index': 0.16150280110661575, 'waist_curvature_index': 12.005268096923828, 'shoulder_width_index': 0.2647533033479658, 'waist_length_index': 0.28448596596717834, 'leg_length_index': 0.48487401008605957, 'arm_torso_ratio': 1.0959278345108032, 'shoulder_slope_angle': 38.33671838283723, 'joint_thickness_index': 73.74914792736085, 'neck_length_index': 0.16988778114318848}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_fat-2.png_mesh.png
+▶ Processing: wave_standard-2.jpg
+Processing message: {'reportId': 'wave_standard-2.jpg', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_standard-2.jpg', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_standard-2.jpg: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     237.96       122.4      440.56      905.41]
+[DEBUG_REF] BBox: [     237.96       122.4      440.56      905.41], Size: 939.607666015625, Scale: 4.698038101196289
+[DEBUG] Center: [     339.26      513.91], Scale: 4.698038101196289, BBoxSize: 939.607666015625
+[DEBUG] Keypoints range - Original: x[0.0, 440.6], Cropped: x[35.4, 155.0]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8307, waist=0.7131
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_standard-2.jpg
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.12136735813284548
+   - waist_curvature_index: 13.364218711853027
+   - shoulder_width_index: 0.23012922684832518
+   - waist_length_index: 0.27261966466903687
+   - leg_length_index: 0.49245521426200867
+   - arm_torso_ratio: 1.2157858610153198
+   - shoulder_slope_angle: 41.808765006721984
+   - joint_thickness_index: 53.63479292802824
+   - neck_length_index: 0.16138888895511627
+==================================================
+
+{'report_id': 'wave_standard-2.jpg', 'body_metrics': {'upper_body_depth_index': 0.12136735813284548, 'waist_curvature_index': 13.364218711853027, 'shoulder_width_index': 0.23012922684832518, 'waist_length_index': 0.27261966466903687, 'leg_length_index': 0.49245521426200867, 'arm_torso_ratio': 1.2157858610153198, 'shoulder_slope_angle': 41.808765006721984, 'joint_thickness_index': 53.63479292802824, 'neck_length_index': 0.16138888895511627}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_standard-2.jpg_mesh.png
+▶ Processing: wave_skinny-1.png
+Processing message: {'reportId': 'wave_skinny-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_skinny-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_skinny-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     348.92      159.33      677.59      1394.6]
+[DEBUG_REF] BBox: [     348.92      159.33      677.59      1394.6], Size: 1482.33544921875, Scale: 7.411677360534668
+[DEBUG] Center: [     513.26      776.97], Scale: 7.411677360534668, BBoxSize: 1482.33544921875
+[DEBUG] Keypoints range - Original: x[0.0, 677.6], Cropped: x[39.2, 155.8]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8407, waist=0.7340
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_skinny-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.1210460168242252
+   - waist_curvature_index: 14.130653381347656
+   - shoulder_width_index: 0.22282961513969174
+   - waist_length_index: 0.27681079506874084
+   - leg_length_index: 0.4838767349720001
+   - arm_torso_ratio: 1.2207739353179932
+   - shoulder_slope_angle: 42.136603425126786
+   - joint_thickness_index: 54.47743239630232
+   - neck_length_index: 0.1604846715927124
+==================================================
+
+{'report_id': 'wave_skinny-1.png', 'body_metrics': {'upper_body_depth_index': 0.1210460168242252, 'waist_curvature_index': 14.130653381347656, 'shoulder_width_index': 0.22282961513969174, 'waist_length_index': 0.27681079506874084, 'leg_length_index': 0.4838767349720001, 'arm_torso_ratio': 1.2207739353179932, 'shoulder_slope_angle': 42.136603425126786, 'joint_thickness_index': 54.47743239630232, 'neck_length_index': 0.1604846715927124}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_skinny-1.png_mesh.png
+▶ Processing: straight_standard-3.png
+Processing message: {'reportId': 'straight_standard-3.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_standard-3.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_standard-3.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     356.64      187.53      664.04      1365.8]
+[DEBUG_REF] BBox: [     356.64      187.53      664.04      1365.8], Size: 1413.9788818359375, Scale: 7.069894313812256
+[DEBUG] Center: [     510.34      776.68], Scale: 7.069894313812256, BBoxSize: 1413.9788818359375
+[DEBUG] Keypoints range - Original: x[0.0, 664.0], Cropped: x[35.5, 155.2]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8278, waist=0.7120
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_standard-3.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.12155995653781751
+   - waist_curvature_index: 12.494754791259766
+   - shoulder_width_index: 0.23174491535915362
+   - waist_length_index: 0.2724287509918213
+   - leg_length_index: 0.4960230886936188
+   - arm_torso_ratio: 1.2138135433197021
+   - shoulder_slope_angle: 45.78921993216921
+   - joint_thickness_index: 55.05292442388382
+   - neck_length_index: 0.1614253669977188
+==================================================
+
+{'report_id': 'straight_standard-3.png', 'body_metrics': {'upper_body_depth_index': 0.12155995653781751, 'waist_curvature_index': 12.494754791259766, 'shoulder_width_index': 0.23174491535915362, 'waist_length_index': 0.2724287509918213, 'leg_length_index': 0.4960230886936188, 'arm_torso_ratio': 1.2138135433197021, 'shoulder_slope_angle': 45.78921993216921, 'joint_thickness_index': 55.05292442388382, 'neck_length_index': 0.1614253669977188}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_standard-3.png_mesh.png
+▶ Processing: straight_skinny-1.png
+Processing message: {'reportId': 'straight_skinny-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_skinny-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_skinny-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     360.56         202      660.76      1369.8]
+[DEBUG_REF] BBox: [     360.56         202      660.76      1369.8], Size: 1401.403076171875, Scale: 7.007015228271484
+[DEBUG] Center: [     510.66      785.92], Scale: 7.007015228271484, BBoxSize: 1401.403076171875
+[DEBUG] Keypoints range - Original: x[0.0, 660.8], Cropped: x[34.6, 154.8]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8123, waist=0.7062
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_skinny-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.11759507038190423
+   - waist_curvature_index: 12.706300735473633
+   - shoulder_width_index: 0.22399529633385212
+   - waist_length_index: 0.27199411392211914
+   - leg_length_index: 0.48931625485420227
+   - arm_torso_ratio: 1.2298080921173096
+   - shoulder_slope_angle: 42.78655584709159
+   - joint_thickness_index: 57.63338626254142
+   - neck_length_index: 0.1593119204044342
+==================================================
+
+{'report_id': 'straight_skinny-1.png', 'body_metrics': {'upper_body_depth_index': 0.11759507038190423, 'waist_curvature_index': 12.706300735473633, 'shoulder_width_index': 0.22399529633385212, 'waist_length_index': 0.27199411392211914, 'leg_length_index': 0.48931625485420227, 'arm_torso_ratio': 1.2298080921173096, 'shoulder_slope_angle': 42.78655584709159, 'joint_thickness_index': 57.63338626254142, 'neck_length_index': 0.1593119204044342}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_skinny-1.png_mesh.png
+▶ Processing: straight_fat-1.png
+Processing message: {'reportId': 'straight_fat-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_fat-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_fat-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     324.84      200.81       700.2      1388.9]
+[DEBUG_REF] BBox: [     324.84      200.81       700.2      1388.9], Size: 1425.76025390625, Scale: 7.128801345825195
+[DEBUG] Center: [     512.52      794.88], Scale: 7.128801345825195, BBoxSize: 1425.76025390625
+[DEBUG] Keypoints range - Original: x[0.0, 700.2], Cropped: x[35.8, 161.1]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=1.0757, waist=0.9740
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_fat-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.16043664220738155
+   - waist_curvature_index: 11.741995811462402
+   - shoulder_width_index: 0.2648003049235437
+   - waist_length_index: 0.2942759692668915
+   - leg_length_index: 0.4611949622631073
+   - arm_torso_ratio: 1.0898629426956177
+   - shoulder_slope_angle: 37.940512707320394
+   - joint_thickness_index: 65.69308508874293
+   - neck_length_index: 0.171460822224617
+==================================================
+
+{'report_id': 'straight_fat-1.png', 'body_metrics': {'upper_body_depth_index': 0.16043664220738155, 'waist_curvature_index': 11.741995811462402, 'shoulder_width_index': 0.2648003049235437, 'waist_length_index': 0.2942759692668915, 'leg_length_index': 0.4611949622631073, 'arm_torso_ratio': 1.0898629426956177, 'shoulder_slope_angle': 37.940512707320394, 'joint_thickness_index': 65.69308508874293, 'neck_length_index': 0.171460822224617}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_fat-1.png_mesh.png
+▶ Processing: natural_skinny-1.png
+Processing message: {'reportId': 'natural_skinny-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_skinny-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_skinny-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     346.64      172.88         682      1476.2]
+[DEBUG_REF] BBox: [     346.64      172.88         682      1476.2], Size: 1564.0247802734375, Scale: 7.820123672485352
+[DEBUG] Center: [     514.32      824.55], Scale: 7.820123672485352, BBoxSize: 1564.0247802734375
+[DEBUG] Keypoints range - Original: x[0.0, 682.0], Cropped: x[43.6, 154.8]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9102, waist=0.7681
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_skinny-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.1175555346091319
+   - waist_curvature_index: 10.89995002746582
+   - shoulder_width_index: 0.2434500779105532
+   - waist_length_index: 0.2549257278442383
+   - leg_length_index: 0.48125720024108887
+   - arm_torso_ratio: 1.2115248441696167
+   - shoulder_slope_angle: 37.84463195013997
+   - joint_thickness_index: 58.67686600898392
+   - neck_length_index: 0.16485975682735443
+==================================================
+
+{'report_id': 'natural_skinny-1.png', 'body_metrics': {'upper_body_depth_index': 0.1175555346091319, 'waist_curvature_index': 10.89995002746582, 'shoulder_width_index': 0.2434500779105532, 'waist_length_index': 0.2549257278442383, 'leg_length_index': 0.48125720024108887, 'arm_torso_ratio': 1.2115248441696167, 'shoulder_slope_angle': 37.84463195013997, 'joint_thickness_index': 58.67686600898392, 'neck_length_index': 0.16485975682735443}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_skinny-1.png_mesh.png
+▶ Processing: straight_skinny-2.png
+Processing message: {'reportId': 'straight_skinny-2.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_skinny-2.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_skinny-2.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     357.15      182.57      667.04      1353.8]
+[DEBUG_REF] BBox: [     357.15      182.57      667.04      1353.8], Size: 1405.4486083984375, Scale: 7.027243137359619
+[DEBUG] Center: [      512.1      768.18], Scale: 7.027243137359619, BBoxSize: 1405.4486083984375
+[DEBUG] Keypoints range - Original: x[0.0, 667.0], Cropped: x[34.6, 155.6]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8346, waist=0.7147
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_skinny-2.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.1203894792213124
+   - waist_curvature_index: 14.487839698791504
+   - shoulder_width_index: 0.22912868787491733
+   - waist_length_index: 0.27100756764411926
+   - leg_length_index: 0.4988294243812561
+   - arm_torso_ratio: 1.2331691980361938
+   - shoulder_slope_angle: 43.06631988274373
+   - joint_thickness_index: 55.19302333855997
+   - neck_length_index: 0.1610143780708313
+==================================================
+
+{'report_id': 'straight_skinny-2.png', 'body_metrics': {'upper_body_depth_index': 0.1203894792213124, 'waist_curvature_index': 14.487839698791504, 'shoulder_width_index': 0.22912868787491733, 'waist_length_index': 0.27100756764411926, 'leg_length_index': 0.4988294243812561, 'arm_torso_ratio': 1.2331691980361938, 'shoulder_slope_angle': 43.06631988274373, 'joint_thickness_index': 55.19302333855997, 'neck_length_index': 0.1610143780708313}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_skinny-2.png_mesh.png
+▶ Processing: straight_skinny-3.png
+Processing message: {'reportId': 'straight_skinny-3.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_skinny-3.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_skinny-3.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     365.58      194.73      648.64      1348.7]
+[DEBUG_REF] BBox: [     365.58      194.73      648.64      1348.7], Size: 1384.7862548828125, Scale: 6.923931121826172
+[DEBUG] Center: [     507.11      771.73], Scale: 6.923931121826172, BBoxSize: 1384.7862548828125
+[DEBUG] Keypoints range - Original: x[0.0, 648.6], Cropped: x[34.1, 153.6]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8252, waist=0.7198
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_skinny-3.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.11813909865654745
+   - waist_curvature_index: 12.553506851196289
+   - shoulder_width_index: 0.21881627476611618
+   - waist_length_index: 0.26980534195899963
+   - leg_length_index: 0.502748966217041
+   - arm_torso_ratio: 1.217859148979187
+   - shoulder_slope_angle: 46.13002879520097
+   - joint_thickness_index: 53.647692763392484
+   - neck_length_index: 0.15627425909042358
+==================================================
+
+{'report_id': 'straight_skinny-3.png', 'body_metrics': {'upper_body_depth_index': 0.11813909865654745, 'waist_curvature_index': 12.553506851196289, 'shoulder_width_index': 0.21881627476611618, 'waist_length_index': 0.26980534195899963, 'leg_length_index': 0.502748966217041, 'arm_torso_ratio': 1.217859148979187, 'shoulder_slope_angle': 46.13002879520097, 'joint_thickness_index': 53.647692763392484, 'neck_length_index': 0.15627425909042358}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_skinny-3.png_mesh.png
+▶ Processing: natural_skinny-3.png
+Processing message: {'reportId': 'natural_skinny-3.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_skinny-3.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_skinny-3.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [      344.5      147.72      668.41      1453.8]
+[DEBUG_REF] BBox: [      344.5      147.72      668.41      1453.8], Size: 1567.32763671875, Scale: 7.8366379737854
+[DEBUG] Center: [     506.46      800.78], Scale: 7.8366379737854, BBoxSize: 1567.32763671875
+[DEBUG] Keypoints range - Original: x[0.0, 668.4], Cropped: x[45.1, 153.8]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8250, waist=0.7205
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_skinny-3.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.12196239194918926
+   - waist_curvature_index: 9.764015197753906
+   - shoulder_width_index: 0.22396360872212878
+   - waist_length_index: 0.2777005434036255
+   - leg_length_index: 0.4924446642398834
+   - arm_torso_ratio: 1.194356918334961
+   - shoulder_slope_angle: 43.48664276434087
+   - joint_thickness_index: 54.402571192843155
+   - neck_length_index: 0.16240645945072174
+==================================================
+
+{'report_id': 'natural_skinny-3.png', 'body_metrics': {'upper_body_depth_index': 0.12196239194918926, 'waist_curvature_index': 9.764015197753906, 'shoulder_width_index': 0.22396360872212878, 'waist_length_index': 0.2777005434036255, 'leg_length_index': 0.4924446642398834, 'arm_torso_ratio': 1.194356918334961, 'shoulder_slope_angle': 43.48664276434087, 'joint_thickness_index': 54.402571192843155, 'neck_length_index': 0.16240645945072174}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_skinny-3.png_mesh.png
+▶ Processing: wave_skinny-2.png
+Processing message: {'reportId': 'wave_skinny-2.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_skinny-2.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_skinny-2.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     353.27       188.9      666.92      1385.3]
+[DEBUG_REF] BBox: [     353.27       188.9      666.92      1385.3], Size: 1435.665771484375, Scale: 7.178328990936279
+[DEBUG] Center: [     510.09       787.1], Scale: 7.178328990936279, BBoxSize: 1435.665771484375
+[DEBUG] Keypoints range - Original: x[0.0, 666.9], Cropped: x[36.9, 155.4]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8523, waist=0.7491
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_skinny-2.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.11857290364706322
+   - waist_curvature_index: 12.08310317993164
+   - shoulder_width_index: 0.2219780150381225
+   - waist_length_index: 0.27041685581207275
+   - leg_length_index: 0.49680274724960327
+   - arm_torso_ratio: 1.231904149055481
+   - shoulder_slope_angle: 43.4408828475793
+   - joint_thickness_index: 56.405206656846296
+   - neck_length_index: 0.15710462629795074
+==================================================
+
+{'report_id': 'wave_skinny-2.png', 'body_metrics': {'upper_body_depth_index': 0.11857290364706322, 'waist_curvature_index': 12.08310317993164, 'shoulder_width_index': 0.2219780150381225, 'waist_length_index': 0.27041685581207275, 'leg_length_index': 0.49680274724960327, 'arm_torso_ratio': 1.231904149055481, 'shoulder_slope_angle': 43.4408828475793, 'joint_thickness_index': 56.405206656846296, 'neck_length_index': 0.15710462629795074}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_skinny-2.png_mesh.png
+▶ Processing: straight_standard-1.png
+Processing message: {'reportId': 'straight_standard-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/straight_standard-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report straight_standard-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     348.17      214.31      671.95      1377.6]
+[DEBUG_REF] BBox: [     348.17      214.31      671.95      1377.6], Size: 1395.98974609375, Scale: 6.9799485206604
+[DEBUG] Center: [     510.06      795.97], Scale: 6.9799485206604, BBoxSize: 1395.98974609375
+[DEBUG] Keypoints range - Original: x[0.0, 671.9], Cropped: x[34.3, 157.1]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9114, waist=0.7929
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): straight_standard-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.13188427414035914
+   - waist_curvature_index: 13.76795768737793
+   - shoulder_width_index: 0.23901777805361063
+   - waist_length_index: 0.2741588354110718
+   - leg_length_index: 0.4973304271697998
+   - arm_torso_ratio: 1.2049922943115234
+   - shoulder_slope_angle: 39.92227468864493
+   - joint_thickness_index: 56.642886760729816
+   - neck_length_index: 0.1630905270576477
+==================================================
+
+{'report_id': 'straight_standard-1.png', 'body_metrics': {'upper_body_depth_index': 0.13188427414035914, 'waist_curvature_index': 13.76795768737793, 'shoulder_width_index': 0.23901777805361063, 'waist_length_index': 0.2741588354110718, 'leg_length_index': 0.4973304271697998, 'arm_torso_ratio': 1.2049922943115234, 'shoulder_slope_angle': 39.92227468864493, 'joint_thickness_index': 56.642886760729816, 'neck_length_index': 0.1630905270576477}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/straight_standard-1.png_mesh.png
+▶ Processing: wave_fat-1.png
+Processing message: {'reportId': 'wave_fat-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_fat-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_fat-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     322.99      140.58      693.51      1379.9]
+[DEBUG_REF] BBox: [     322.99      140.58      693.51      1379.9], Size: 1487.1763916015625, Scale: 7.435882091522217
+[DEBUG] Center: [     508.25      760.24], Scale: 7.435882091522217, BBoxSize: 1487.1763916015625
+[DEBUG] Keypoints range - Original: x[0.0, 693.5], Cropped: x[40.4, 159.3]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9062, waist=0.7867
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_fat-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.13212431573550093
+   - waist_curvature_index: 13.266586303710938
+   - shoulder_width_index: 0.24041884818271025
+   - waist_length_index: 0.2812367081642151
+   - leg_length_index: 0.4857866168022156
+   - arm_torso_ratio: 1.1862518787384033
+   - shoulder_slope_angle: 39.07223159726674
+   - joint_thickness_index: 57.31663826522735
+   - neck_length_index: 0.1645791381597519
+==================================================
+
+{'report_id': 'wave_fat-1.png', 'body_metrics': {'upper_body_depth_index': 0.13212431573550093, 'waist_curvature_index': 13.266586303710938, 'shoulder_width_index': 0.24041884818271025, 'waist_length_index': 0.2812367081642151, 'leg_length_index': 0.4857866168022156, 'arm_torso_ratio': 1.1862518787384033, 'shoulder_slope_angle': 39.07223159726674, 'joint_thickness_index': 57.31663826522735, 'neck_length_index': 0.1645791381597519}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_fat-1.png_mesh.png
+▶ Processing: wave_skinny-3.png
+Processing message: {'reportId': 'wave_skinny-3.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_skinny-3.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_skinny-3.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     354.61      182.88      667.36        1383]
+[DEBUG_REF] BBox: [     354.61      182.88      667.36        1383], Size: 1440.086669921875, Scale: 7.200433254241943
+[DEBUG] Center: [     510.98      782.92], Scale: 7.200433254241943, BBoxSize: 1440.086669921875
+[DEBUG] Keypoints range - Original: x[0.0, 667.4], Cropped: x[37.0, 155.2]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8690, waist=0.7480
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_skinny-3.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.11550695792737009
+   - waist_curvature_index: 11.759357452392578
+   - shoulder_width_index: 0.229748545780592
+   - waist_length_index: 0.24244435131549835
+   - leg_length_index: 0.48346149921417236
+   - arm_torso_ratio: 1.2260136604309082
+   - shoulder_slope_angle: 37.67609586490874
+   - joint_thickness_index: 56.19364257534105
+   - neck_length_index: 0.16115795075893402
+==================================================
+
+{'report_id': 'wave_skinny-3.png', 'body_metrics': {'upper_body_depth_index': 0.11550695792737009, 'waist_curvature_index': 11.759357452392578, 'shoulder_width_index': 0.229748545780592, 'waist_length_index': 0.24244435131549835, 'leg_length_index': 0.48346149921417236, 'arm_torso_ratio': 1.2260136604309082, 'shoulder_slope_angle': 37.67609586490874, 'joint_thickness_index': 56.19364257534105, 'neck_length_index': 0.16115795075893402}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_skinny-3.png_mesh.png
+▶ Processing: natural_fat-3.png
+Processing message: {'reportId': 'natural_fat-3.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_fat-3.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_fat-3.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     329.92         178      693.65      1419.7]
+[DEBUG_REF] BBox: [     329.92         178      693.65      1419.7], Size: 1490.0892333984375, Scale: 7.450446128845215
+[DEBUG] Center: [     511.79      798.88], Scale: 7.450446128845215, BBoxSize: 1490.0892333984375
+[DEBUG] Keypoints range - Original: x[0.0, 693.7], Cropped: x[39.9, 158.6]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9424, waist=0.8121
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_fat-3.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.13361445031456853
+   - waist_curvature_index: 11.260369300842285
+   - shoulder_width_index: 0.2522953340707739
+   - waist_length_index: 0.27422910928726196
+   - leg_length_index: 0.4789755642414093
+   - arm_torso_ratio: 1.1056636571884155
+   - shoulder_slope_angle: 39.289599603040365
+   - joint_thickness_index: 62.345568002416904
+   - neck_length_index: 0.16688552498817444
+==================================================
+
+{'report_id': 'natural_fat-3.png', 'body_metrics': {'upper_body_depth_index': 0.13361445031456853, 'waist_curvature_index': 11.260369300842285, 'shoulder_width_index': 0.2522953340707739, 'waist_length_index': 0.27422910928726196, 'leg_length_index': 0.4789755642414093, 'arm_torso_ratio': 1.1056636571884155, 'shoulder_slope_angle': 39.289599603040365, 'joint_thickness_index': 62.345568002416904, 'neck_length_index': 0.16688552498817444}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_fat-3.png_mesh.png
+▶ Processing: natural_fat-2.png
+Processing message: {'reportId': 'natural_fat-2.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_fat-2.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_fat-2.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     334.29      199.43      695.38      1416.3]
+[DEBUG_REF] BBox: [     334.29      199.43      695.38      1416.3], Size: 1460.22998046875, Scale: 7.301149845123291
+[DEBUG] Center: [     514.84      807.86], Scale: 7.301149845123291, BBoxSize: 1460.22998046875
+[DEBUG] Keypoints range - Original: x[0.0, 695.4], Cropped: x[37.6, 159.0]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9647, waist=0.7897
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_fat-2.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.12132965430712074
+   - waist_curvature_index: 14.270734786987305
+   - shoulder_width_index: 0.25278320346105826
+   - waist_length_index: 0.28374233841896057
+   - leg_length_index: 0.4821721315383911
+   - arm_torso_ratio: 1.170939564704895
+   - shoulder_slope_angle: 37.746331227656626
+   - joint_thickness_index: 60.518438981127574
+   - neck_length_index: 0.1642308235168457
+==================================================
+
+{'report_id': 'natural_fat-2.png', 'body_metrics': {'upper_body_depth_index': 0.12132965430712074, 'waist_curvature_index': 14.270734786987305, 'shoulder_width_index': 0.25278320346105826, 'waist_length_index': 0.28374233841896057, 'leg_length_index': 0.4821721315383911, 'arm_torso_ratio': 1.170939564704895, 'shoulder_slope_angle': 37.746331227656626, 'joint_thickness_index': 60.518438981127574, 'neck_length_index': 0.1642308235168457}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_fat-2.png_mesh.png
+▶ Processing: wave_standard-1.png
+Processing message: {'reportId': 'wave_standard-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_standard-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_standard-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     346.35      140.39       671.5        1401]
+[DEBUG_REF] BBox: [     346.35      140.39       671.5        1401], Size: 1512.7154541015625, Scale: 7.563577175140381
+[DEBUG] Center: [     508.93      770.69], Scale: 7.563577175140381, BBoxSize: 1512.7154541015625
+[DEBUG] Keypoints range - Original: x[0.0, 671.5], Cropped: x[41.7, 154.9]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8297, waist=0.6932
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_standard-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.1223888899472723
+   - waist_curvature_index: 12.572341918945312
+   - shoulder_width_index: 0.227718852281331
+   - waist_length_index: 0.27592331171035767
+   - leg_length_index: 0.493559867143631
+   - arm_torso_ratio: 1.1984899044036865
+   - shoulder_slope_angle: 42.02125834711675
+   - joint_thickness_index: 55.15198138084275
+   - neck_length_index: 0.16121193766593933
+==================================================
+
+{'report_id': 'wave_standard-1.png', 'body_metrics': {'upper_body_depth_index': 0.1223888899472723, 'waist_curvature_index': 12.572341918945312, 'shoulder_width_index': 0.227718852281331, 'waist_length_index': 0.27592331171035767, 'leg_length_index': 0.493559867143631, 'arm_torso_ratio': 1.1984899044036865, 'shoulder_slope_angle': 42.02125834711675, 'joint_thickness_index': 55.15198138084275, 'neck_length_index': 0.16121193766593933}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_standard-1.png_mesh.png
+▶ Processing: natural_standard-1.png
+Processing message: {'reportId': 'natural_standard-1.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_standard-1.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_standard-1.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     354.17      236.83      662.63      1422.6]
+[DEBUG_REF] BBox: [     354.17      236.83      662.63      1422.6], Size: 1422.980224609375, Scale: 7.114901065826416
+[DEBUG] Center: [      508.4      829.74], Scale: 7.114901065826416, BBoxSize: 1422.980224609375
+[DEBUG] Keypoints range - Original: x[0.0, 662.6], Cropped: x[36.4, 155.1]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9622, waist=0.7913
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_standard-1.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.11488756327104914
+   - waist_curvature_index: 12.926263809204102
+   - shoulder_width_index: 0.24285412433224388
+   - waist_length_index: 0.2740417420864105
+   - leg_length_index: 0.49225693941116333
+   - arm_torso_ratio: 1.198671817779541
+   - shoulder_slope_angle: 38.0933731207098
+   - joint_thickness_index: 60.24723175020361
+   - neck_length_index: 0.1591062843799591
+==================================================
+
+{'report_id': 'natural_standard-1.png', 'body_metrics': {'upper_body_depth_index': 0.11488756327104914, 'waist_curvature_index': 12.926263809204102, 'shoulder_width_index': 0.24285412433224388, 'waist_length_index': 0.2740417420864105, 'leg_length_index': 0.49225693941116333, 'arm_torso_ratio': 1.198671817779541, 'shoulder_slope_angle': 38.0933731207098, 'joint_thickness_index': 60.24723175020361, 'neck_length_index': 0.1591062843799591}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_standard-1.png_mesh.png
+▶ Processing: natural_standard-3.jpg
+Processing message: {'reportId': 'natural_standard-3.jpg', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_standard-3.jpg', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_standard-3.jpg: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     236.69      104.47      443.22      918.33]
+[DEBUG_REF] BBox: [     236.69      104.47      443.22      918.33], Size: 976.625732421875, Scale: 4.883128643035889
+[DEBUG] Center: [     339.95       511.4], Scale: 4.883128643035889, BBoxSize: 976.625732421875
+[DEBUG] Keypoints range - Original: x[0.0, 443.2], Cropped: x[38.7, 154.5]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8668, waist=0.7533
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_standard-3.jpg
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.12376635508998157
+   - waist_curvature_index: 12.704694747924805
+   - shoulder_width_index: 0.23084243746972524
+   - waist_length_index: 0.2784888446331024
+   - leg_length_index: 0.4857428967952728
+   - arm_torso_ratio: 1.1829272508621216
+   - shoulder_slope_angle: 42.74245850951255
+   - joint_thickness_index: 58.81137428304398
+   - neck_length_index: 0.1627504825592041
+==================================================
+
+{'report_id': 'natural_standard-3.jpg', 'body_metrics': {'upper_body_depth_index': 0.12376635508998157, 'waist_curvature_index': 12.704694747924805, 'shoulder_width_index': 0.23084243746972524, 'waist_length_index': 0.2784888446331024, 'leg_length_index': 0.4857428967952728, 'arm_torso_ratio': 1.1829272508621216, 'shoulder_slope_angle': 42.74245850951255, 'joint_thickness_index': 58.81137428304398, 'neck_length_index': 0.1627504825592041}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_standard-3.jpg_mesh.png
+▶ Processing: wave_fat-2.jpg
+Processing message: {'reportId': 'wave_fat-2.jpg', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_fat-2.jpg', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_fat-2.jpg: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     227.46      141.11      466.57      915.43]
+[DEBUG_REF] BBox: [     227.46      141.11      466.57      915.43], Size: 929.1776733398438, Scale: 4.645888328552246
+[DEBUG] Center: [     347.02      528.27], Scale: 4.645888328552246, BBoxSize: 929.1776733398438
+[DEBUG] Keypoints range - Original: x[0.0, 466.6], Cropped: x[32.3, 160.3]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9627, waist=0.8494
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_fat-2.jpg
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.1428343575003788
+   - waist_curvature_index: 13.50297737121582
+   - shoulder_width_index: 0.24766777138509954
+   - waist_length_index: 0.2796023190021515
+   - leg_length_index: 0.49633514881134033
+   - arm_torso_ratio: 1.184456706047058
+   - shoulder_slope_angle: 38.68344131587326
+   - joint_thickness_index: 62.64486662109808
+   - neck_length_index: 0.16453863680362701
+==================================================
+
+{'report_id': 'wave_fat-2.jpg', 'body_metrics': {'upper_body_depth_index': 0.1428343575003788, 'waist_curvature_index': 13.50297737121582, 'shoulder_width_index': 0.24766777138509954, 'waist_length_index': 0.2796023190021515, 'leg_length_index': 0.49633514881134033, 'arm_torso_ratio': 1.184456706047058, 'shoulder_slope_angle': 38.68344131587326, 'joint_thickness_index': 62.64486662109808, 'neck_length_index': 0.16453863680362701}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_fat-2.jpg_mesh.png
+▶ Processing: wave_fat-3.png
+Processing message: {'reportId': 'wave_fat-3.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/wave_fat-3.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report wave_fat-3.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     338.39      193.19      693.47      1379.5]
+[DEBUG_REF] BBox: [     338.39      193.19      693.47      1379.5], Size: 1423.5501708984375, Scale: 7.117750644683838
+[DEBUG] Center: [     515.93      786.34], Scale: 7.117750644683838, BBoxSize: 1423.5501708984375
+[DEBUG] Keypoints range - Original: x[0.0, 693.5], Cropped: x[35.1, 159.3]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.8805, waist=0.7582
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): wave_fat-3.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.13090051970215494
+   - waist_curvature_index: 15.941600799560547
+   - shoulder_width_index: 0.24178692175383792
+   - waist_length_index: 0.27947619557380676
+   - leg_length_index: 0.4860718250274658
+   - arm_torso_ratio: 1.1912202835083008
+   - shoulder_slope_angle: 39.69546395113646
+   - joint_thickness_index: 59.75155913010589
+   - neck_length_index: 0.1650368869304657
+==================================================
+
+{'report_id': 'wave_fat-3.png', 'body_metrics': {'upper_body_depth_index': 0.13090051970215494, 'waist_curvature_index': 15.941600799560547, 'shoulder_width_index': 0.24178692175383792, 'waist_length_index': 0.27947619557380676, 'leg_length_index': 0.4860718250274658, 'arm_torso_ratio': 1.1912202835083008, 'shoulder_slope_angle': 39.69546395113646, 'joint_thickness_index': 59.75155913010589, 'neck_length_index': 0.1650368869304657}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/wave_fat-3.png_mesh.png
+▶ Processing: natural_standard-2.png
+Processing message: {'reportId': 'natural_standard-2.png', 'weight': 55, 'height': 165, 'gender': 'female', 'presignedUrl': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_images/natural_standard-2.png', 'debug_vis_dir': '/home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis'}
+📊 Processing report natural_standard-2.png: height=1.65m, weight=55kg, gender=female
+🌐 Downloading image from presigned URL...
+✅ YOLO detected 17 keypoints
+🔄 Converting YOLO → OpenPose Body25...
+✅ Converted to Body25 format: (25, 3)
+🚀 Running Shapy inference...
+[DEBUG] Original Body25 Kps (Conf>0): 19
+[DEBUG] Filtered Body25 Kps (Conf>=0.1): 19
+[DEBUG] Calculated BBox (xyxy): [     347.04      198.81      674.81      1416.8]
+[DEBUG_REF] BBox: [     347.04      198.81      674.81      1416.8], Size: 1461.5811767578125, Scale: 7.307905673980713
+[DEBUG] Center: [     510.93       807.8], Scale: 7.307905673980713, BBoxSize: 1461.5811767578125
+[DEBUG] Keypoints range - Original: x[0.0, 674.8], Cropped: x[38.4, 156.1]
+✅ Shapy inference completed
+🔍 DEBUG - Shapy output: chest=0.9418, waist=0.7884
+📊 Calculating body type metrics...
+✅ Body type metrics calculated
+
+==================================================
+ [MOCK PUBLISH] Result:
+ Report ID (Filename): natural_standard-2.png
+ Status: COMPLETED
+ Body Metrics:
+   - upper_body_depth_index: 0.11783259747125176
+   - waist_curvature_index: 12.737752914428711
+   - shoulder_width_index: 0.24260951558907615
+   - waist_length_index: 0.25487878918647766
+   - leg_length_index: 0.4785739481449127
+   - arm_torso_ratio: 1.2197721004486084
+   - shoulder_slope_angle: 40.061257016765964
+   - joint_thickness_index: 59.56415558999089
+   - neck_length_index: 0.16159851849079132
+==================================================
+
+{'report_id': 'natural_standard-2.png', 'body_metrics': {'upper_body_depth_index': 0.11783259747125176, 'waist_curvature_index': 12.737752914428711, 'shoulder_width_index': 0.24260951558907615, 'waist_length_index': 0.25487878918647766, 'leg_length_index': 0.4785739481449127, 'arm_torso_ratio': 1.2197721004486084, 'shoulder_slope_angle': 40.061257016765964, 'joint_thickness_index': 59.56415558999089, 'neck_length_index': 0.16159851849079132}, 'status': 'COMPLETED'}
+✅ Processing completed and published.
+✅ Saved visualization: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/debug_vis/natural_standard-2.png_mesh.png
+
+✅ Results saved to: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_results.json
+✅ Debug info saved to: /home/taekmin/ai-lab/S14P11D210/ai/workers/body-worker/test_debug.json

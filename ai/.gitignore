@@ -1,0 +1,96 @@
+########################################
+# Python common
+########################################
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+########################################
+# Virtual environment
+########################################
+venv/
+.venv/
+env/
+ENV/
+
+########################################
+# Python packaging
+########################################
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+########################################
+# Jupyter / experiment
+########################################
+.ipynb_checkpoints/
+*.ipynb
+
+########################################
+# AI / ML artifacts
+########################################
+# model weights
+*.pt
+*.pth
+*.onnx
+*.ckpt
+*.h5
+*.pb
+
+# numpy / tensor cache
+*.npy
+*.npz
+
+# datasets
+data/
+dataset/
+datasets/
+raw_data/
+inputs/
+outputs/
+
+########################################
+# Shapy / pose intermediate results
+########################################
+*.pkl
+*.joblib
+*.pickle
+*.jsonl
+
+########################################
+# Runtime output
+########################################
+logs/
+log/
+tmp/
+temp/
+cache/
+
+########################################
+# Worker runtime
+########################################
+.env
+.env.*
+!.env.example
+
+########################################
+# OS
+########################################
+.DS_Store
+Thumbs.db
+
+########################################
+# Optional: GPU / CUDA cache
+########################################
+.nv/
+.cuda/
+*.json
+*.png*
+*.Identifier
+
+temp

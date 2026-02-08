@@ -6,7 +6,7 @@ import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import com.bonetobe.backend.notification.application.NotificationFacade;
 import com.bonetobe.backend.notification.domain.AlertType;
 import com.bonetobe.backend.notification.domain.Notification;
-import com.bonetobe.backend.recommendation.application.TryOnFacade;
+import com.bonetobe.backend.recommendation.presentation.TryOnEvent;
 import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.report.domain.ReportCommand;
 import com.bonetobe.backend.report.domain.ReportProducer;
@@ -50,6 +50,7 @@ public class ReportFacade {
         return report.getId();
     }
 
+    @Transactional
     public void saveResultAndSendEvent(ReportResult result) {
         try {
             Report report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
@@ -57,7 +58,7 @@ public class ReportFacade {
             userService.updateSkeletonType(report.getUser(), report.getDiagnosis().getFitType());
 
             // 옷 가상피팅 이벤트 발행
-            publisher.publishEvent(report.getId());
+            publisher.publishEvent(new TryOnEvent(report.getId()));
         } catch (BusinessException e) {
             log.error("리포트 저장 중 에러 발생 :{}", e.getMessage());
         }

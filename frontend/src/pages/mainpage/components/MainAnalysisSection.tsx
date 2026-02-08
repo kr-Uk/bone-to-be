@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import checkIcon from "@/assets/check.svg";
 import img1 from "@/assets/image/best_wave_man2.png";
-import img2 from "@/assets/image/worst_wave_man3.png";
+import img2 from "@/assets/image/worst_wave_man2.png";
 
 const SectionWrap = styled.section`
   width: 100%;

@@ -23,21 +23,22 @@ public class Diagnosis {
 
     public static Diagnosis calculateRatio(List<AnalysisDetail> details) {
         Diagnosis diagnosis = new Diagnosis();
-        int total = details.size();
+        int total = details
+                .stream()
+                .mapToInt(AnalysisDetail::getWeight)
+                .sum();
 
-        EnumMap<SkeletonType, Long> counts =
+        EnumMap<SkeletonType, Integer> weights =
             details.stream()
                 .collect(Collectors.groupingBy(
-                    detail -> {
-                        return detail.getAnalysis().getResultType();
-                    },
+                    detail -> detail.getAnalysis().getResultType(),
                     () -> new EnumMap<>(SkeletonType.class),
-                    Collectors.counting()
-                ));
+                    Collectors.summingInt(AnalysisDetail::getWeight)));
 
-        diagnosis.straightRatio = counts.getOrDefault(STRAIGHT, 0L) / (double) total;
-        diagnosis.waveRatio = counts.getOrDefault(WAVE, 0L) / (double) total;
-        diagnosis.naturalRatio = counts.getOrDefault(NATURAL, 0L) / (double) total;
+
+        diagnosis.straightRatio = weights.getOrDefault(STRAIGHT, 0) / (double) total;
+        diagnosis.waveRatio = weights.getOrDefault(WAVE, 0) / (double) total;
+        diagnosis.naturalRatio = weights.getOrDefault(NATURAL, 0) / (double) total;
 
         return diagnosis;
     }

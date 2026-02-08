@@ -11,11 +11,6 @@ export interface BodyTypeMetadata {
   strengthDescription: string;
   doRecommendations: string[];
   dontRecommendations: string[];
-  fitReferences: Array<{
-    name: string;
-    imageUrl: string;
-    isBest: boolean;
-  }>;
 }
 
 export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
@@ -41,23 +36,6 @@ export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
       "광택이 과하게 도는 실크, 새틴 소재",
       "어깨를 좁아 보이게 하는 래글런 소매",
     ],
-    fitReferences: [
-      {
-        name: "Oversized Blazer",
-        imageUrl: "/images/placeholder-model-1.jpg",
-        isBest: true,
-      },
-      {
-        name: "Linen Set-up",
-        imageUrl: "/images/placeholder-model-2.jpg",
-        isBest: false,
-      },
-      {
-        name: "Wide Slacks",
-        imageUrl: "/images/placeholder-model-3.jpg",
-        isBest: false,
-      },
-    ],
   },
   wave: {
     korean: "웨이브",
@@ -81,23 +59,6 @@ export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
       "지나치게 루즈한 박시 핏",
       "어깨를 강조하는 패드 디자인",
     ],
-    fitReferences: [
-      {
-        name: "Wrap Dress",
-        imageUrl: "/images/placeholder-model-4.jpg",
-        isBest: true,
-      },
-      {
-        name: "Fit & Flare",
-        imageUrl: "/images/placeholder-model-5.jpg",
-        isBest: false,
-      },
-      {
-        name: "Belted Coat",
-        imageUrl: "/images/placeholder-model-6.jpg",
-        isBest: false,
-      },
-    ],
   },
   straight: {
     korean: "스트레이트",
@@ -120,23 +81,6 @@ export const BODY_TYPE_METADATA: Record<BodyTypeKey, BodyTypeMetadata> = {
       "과도하게 볼륨감 있는 디자인",
       "허리를 과하게 조이는 타이트 핏",
       "지나치게 부드러운 드레이프 소재",
-    ],
-    fitReferences: [
-      {
-        name: "Tailored Suit",
-        imageUrl: "/images/placeholder-model-7.jpg",
-        isBest: true,
-      },
-      {
-        name: "Straight Jeans",
-        imageUrl: "/images/placeholder-model-8.jpg",
-        isBest: false,
-      },
-      {
-        name: "Structured Blazer",
-        imageUrl: "/images/placeholder-model-9.jpg",
-        isBest: false,
-      },
     ],
   },
 };

@@ -6,6 +6,7 @@ import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import com.bonetobe.backend.notification.application.NotificationFacade;
 import com.bonetobe.backend.notification.domain.AlertType;
 import com.bonetobe.backend.notification.domain.Notification;
+import com.bonetobe.backend.recommendation.presentation.TryOnEvent;
 import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.report.domain.ReportCommand;
 import com.bonetobe.backend.report.domain.ReportProducer;
@@ -15,6 +16,7 @@ import com.bonetobe.backend.report.presentation.dto.ReportResult;
 import com.bonetobe.backend.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +32,7 @@ public class ReportFacade {
     private final UserService userService;
     private final ReportProducer reportProducer;
     private final NotificationFacade notificationFacade;
-
+    private final ApplicationEventPublisher publisher;
     public Long createReport(ReportCommand command) {
         // 파일 db에 저장
         fileService.completeUpload(fileService.getFile(command.fileId()), command.user().getId());
@@ -48,18 +50,18 @@ public class ReportFacade {
         return report.getId();
     }
 
-    public Report saveResultAndSendEvent(ReportResult result) {
-        Report report = null;
-
+    @Transactional
+    public void saveResultAndSendEvent(ReportResult result) {
         try {
-            report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
+            Report report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
             notificationFacade.saveAndSendNotification(Notification.create(report.getUser().getId(), report.getId(), AlertType.DIAGNOSE));
             userService.updateSkeletonType(report.getUser(), report.getDiagnosis().getFitType());
 
+            // 옷 가상피팅 이벤트 발행
+            publisher.publishEvent(new TryOnEvent(report.getId()));
         } catch (BusinessException e) {
             log.error("리포트 저장 중 에러 발생 :{}", e.getMessage());
         }
-        return report;
     }
 
     public void authorizeAndDeleteReport(Long userId, Long reportId) {

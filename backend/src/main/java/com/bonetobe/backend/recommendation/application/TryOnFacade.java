@@ -20,6 +20,7 @@ import com.bonetobe.backend.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
@@ -49,17 +50,17 @@ public class TryOnFacade {
         notificationFacade.saveAndSendNotification(Notification.create(recommendation.getUser().getId(), recommendation.getId(), AlertType.TRY_ME));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void startTryOn(Long reportId) {
         Report report = reportService.getReportWithFile(reportId);
         // 파일 업로드 url 생성
         FileUploadUrl.Response bestUrl = fileService.createUploadUrl(
-                new FileUploadUrl.Request(
-                    "TryOnBest-" + report.getPhoto().getTitle(),
-                    "image/png",
-                    report.getPhoto().getFileSize()),
-                    report.getUser().getId(),
-                    DomainCategory.AFTER_TRY_ME);
+            new FileUploadUrl.Request(
+                "TryOnBest-" + report.getPhoto().getTitle(),
+                "image/png",
+                report.getPhoto().getFileSize()),
+            report.getUser().getId(),
+            DomainCategory.AFTER_TRY_ME);
 
         FileUploadUrl.Response worstUrl = fileService.createUploadUrl(
             new FileUploadUrl.Request(

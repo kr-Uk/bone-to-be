@@ -52,14 +52,18 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void send(Long userId, Notification data) {
-        emitterRepository.findByUserId(userId)
-            .ifPresent(emitter -> {
-                try {
-                    emitter.send(NotificationMessage.of(data));
-                } catch (IOException e) {
-                    cleanup(userId, emitterRepository.findEmitterId(userId));
-                }
-            });
+        try {
+            emitterRepository.findByUserId(userId)
+                .ifPresent(emitter -> {
+                    try {
+                        emitter.send(NotificationMessage.of(data));
+                    } catch (IOException e) {
+                        cleanup(userId, emitterRepository.findEmitterId(userId));
+                    }
+                });
+        } catch (Exception e) {
+            log.error("알림 전송 실패 {}", e.getMessage());
+        }
     }
 
     @Override

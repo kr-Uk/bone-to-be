@@ -4,11 +4,13 @@ import com.bonetobe.backend.common.exception.BusinessException;
 import com.bonetobe.backend.common.response.ErrorCode;
 import com.bonetobe.backend.recommendation.infrastructure.RecommendationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TryOnServiceImpl implements TryOnService {
@@ -23,6 +25,7 @@ public class TryOnServiceImpl implements TryOnService {
     }
 
     @Override
+    @Transactional
     public Recommendation save(Recommendation recommendation) {
         return recommendationRepository.save(recommendation);
     }

@@ -6,6 +6,7 @@ import com.bonetobe.backend.file.presentation.FileDownloadUrl;
 import com.bonetobe.backend.notification.application.NotificationFacade;
 import com.bonetobe.backend.notification.domain.AlertType;
 import com.bonetobe.backend.notification.domain.Notification;
+import com.bonetobe.backend.recommendation.application.TryOnFacade;
 import com.bonetobe.backend.report.domain.Report;
 import com.bonetobe.backend.report.domain.ReportCommand;
 import com.bonetobe.backend.report.domain.ReportProducer;
@@ -30,6 +31,7 @@ public class ReportFacade {
     private final UserService userService;
     private final ReportProducer reportProducer;
     private final NotificationFacade notificationFacade;
+    private final TryOnFacade tryOnFacade;
 
     public Long createReport(ReportCommand command) {
         // 파일 db에 저장
@@ -48,18 +50,17 @@ public class ReportFacade {
         return report.getId();
     }
 
-    public Report saveResultAndSendEvent(ReportResult result) {
-        Report report = null;
-
+    public void saveResultAndSendEvent(ReportResult result) {
         try {
-            report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
+            Report report = reportService.saveResult(result.reportId(), result.toAnalysisReport());
             notificationFacade.saveAndSendNotification(Notification.create(report.getUser().getId(), report.getId(), AlertType.DIAGNOSE));
             userService.updateSkeletonType(report.getUser(), report.getDiagnosis().getFitType());
 
+            // 옷 가상피팅 실행
+            tryOnFacade.startTryOn(report.getId());
         } catch (BusinessException e) {
             log.error("리포트 저장 중 에러 발생 :{}", e.getMessage());
         }
-        return report;
     }
 
     public void authorizeAndDeleteReport(Long userId, Long reportId) {

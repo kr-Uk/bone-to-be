@@ -14,6 +14,7 @@ public record GetReportList(
     Double straightRate,
     Double naturalRate,
     Double waveRate,
+    Boolean isRepresentative,
     LocalDateTime createdAt
 ) {
     public static GetReportList from(Report report) {
@@ -25,6 +26,7 @@ public record GetReportList(
             diagnosis == null ? 0 : diagnosis.getStraightRatio(),
             diagnosis == null ? 0 :diagnosis.getNaturalRatio(),
             diagnosis == null ? 0 :diagnosis.getWaveRatio(),
+            report.isRepresentative(),
             report.getCreatedAt()
         );
     }

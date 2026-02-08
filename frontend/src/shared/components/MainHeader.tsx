@@ -140,6 +140,12 @@ export const MainHeader = () => {
     setIsSearchOpen(false);
     protectedNavigate("/profile/edit");
   };
+  const handleProfileHeaderNavigate = () => {
+    setIsProfileMenuOpen(false);
+    setIsMobileMenuOpen(false);
+    setIsSearchOpen(false);
+    protectedNavigate(resolveProfilePath(me?.userId ? String(me.userId) : undefined));
+  };
 
   const handleLogout = async () => {
     try {
@@ -382,7 +388,17 @@ export const MainHeader = () => {
                 <CgProfile size={26} />
               </AuthIconButton>
               <ProfileMenu $isOpen={isProfileMenuOpen}>
-                <ProfileMenuHeader>
+                <ProfileMenuHeader
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleProfileHeaderNavigate}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleProfileHeaderNavigate();
+                    }
+                  }}
+                >
                   <ProfileMenuAvatar aria-hidden="true">
                     {me?.avatarUrl ? (
                       <ProfileMenuAvatarImage src={me.avatarUrl} alt={displayName} />
@@ -859,6 +875,18 @@ const ProfileMenuHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.5rem;
+
+  &:hover {
+    background: ${({ theme }) => (theme as AppTheme).colors.gray[700]};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => (theme as AppTheme).colors.brand};
+    outline-offset: 2px;
+  }
 `;
 
 const ProfileMenuAvatar = styled.span`

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, type FieldErrors } from "react-hook-form";
 
 import { useFeedCreate } from "../../api/useCommunityQueries";
 
@@ -36,14 +36,15 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
     handleSubmit,
     watch,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FeedFormValues>({
     resolver: zodResolver(feedFormSchema),
-    mode: "onChange", // Real-time validation
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     defaultValues: {
       content: "",
       height: "",
-      weight: "", // 필수 입력으로 변경 (사용자가 입력해야 함)
+      weight: "", // 선택 입력
       styles: [],
     },
   });
@@ -59,7 +60,7 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
   }, [imageFile]);
 
   // Handle form submission
-  const onSubmit = handleSubmit((data) => {
+  const handleValidSubmit = (data: FeedFormValues) => {
     const resolvedStyles = data.styles.length > 0 ? data.styles : null;
     const resolvedHeight = data.height ? parseInt(data.height, 10) : null;
     const resolvedWeight = data.weight ? parseInt(data.weight, 10) : null;
@@ -86,7 +87,26 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
         },
       },
     );
-  });
+  };
+
+  const handleInvalidSubmit = (formErrors: FieldErrors<FeedFormValues>) => {
+    const orderedErrors: Array<{ message?: string } | undefined> = [
+      formErrors.image,
+      formErrors.content,
+      formErrors.bodyType,
+      formErrors.gender,
+      formErrors.height,
+      formErrors.weight,
+      formErrors.styles as { message?: string } | undefined,
+    ];
+
+    const firstMessage = orderedErrors.find((error) => error?.message)?.message;
+    if (firstMessage) {
+      window.alert(firstMessage);
+    }
+  };
+
+  const onSubmit = handleSubmit(handleValidSubmit, handleInvalidSubmit);
 
   // Handle close
   const handleClose = useCallback(() => {
@@ -218,7 +238,6 @@ export function FeedCreateModal({ isOpen, onClose }: FeedCreateModalProps) {
                 contentLength={contentValue?.length || 0}
                 onSubmit={onSubmit}
                 isSubmitting={isSubmitting}
-                isValid={isValid}
               />
             </S.ScrollableContent>
           </S.FormSection>

@@ -40,10 +40,24 @@ export const feedFormSchema = z.object({
   gender: z.enum(["F", "M"]).optional().nullable(),
 
   // 선택: 키 (양의 정수, 빈 값 허용)
-  height: z.string().regex(/^\d*$/, "숫자만 입력 가능합니다").default(""),
+  height: z
+    .string()
+    .regex(/^\d*$/, "숫자만 입력 가능합니다")
+    .refine(
+      (value) => value === "" || (Number(value) >= 140 && Number(value) <= 250),
+      "키는 140~250cm 범위로 입력해주세요",
+    )
+    .default(""),
 
-  // 필수: 몸무게 (양의 정수, 필수 입력)
-  weight: z.string().regex(/^\d*$/, "숫자만 입력 가능합니다").default(""),
+  // 선택: 몸무게 (양의 정수, 빈 값 허용)
+  weight: z
+    .string()
+    .regex(/^\d*$/, "숫자만 입력 가능합니다")
+    .refine(
+      (value) => value === "" || (Number(value) >= 30 && Number(value) <= 200),
+      "몸무게는 30~200kg 범위로 입력해주세요",
+    )
+    .default(""),
 
   // 필수: 스타일 (최소 1개 이상 선택)
   styles: z.array(z.enum(STYLE_VALUES)).default([]),

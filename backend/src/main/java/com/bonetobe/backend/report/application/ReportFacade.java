@@ -16,6 +16,7 @@ import com.bonetobe.backend.report.presentation.dto.ReportResult;
 import com.bonetobe.backend.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +32,7 @@ public class ReportFacade {
     private final UserService userService;
     private final ReportProducer reportProducer;
     private final NotificationFacade notificationFacade;
-    private final TryOnFacade tryOnFacade;
-
+    private final ApplicationEventPublisher publisher;
     public Long createReport(ReportCommand command) {
         // 파일 db에 저장
         fileService.completeUpload(fileService.getFile(command.fileId()), command.user().getId());
@@ -56,8 +56,8 @@ public class ReportFacade {
             notificationFacade.saveAndSendNotification(Notification.create(report.getUser().getId(), report.getId(), AlertType.DIAGNOSE));
             userService.updateSkeletonType(report.getUser(), report.getDiagnosis().getFitType());
 
-            // 옷 가상피팅 실행
-            tryOnFacade.startTryOn(report.getId());
+            // 옷 가상피팅 이벤트 발행
+            publisher.publishEvent(report.getId());
         } catch (BusinessException e) {
             log.error("리포트 저장 중 에러 발생 :{}", e.getMessage());
         }

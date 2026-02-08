@@ -4,7 +4,6 @@ import styled from "styled-components";
 
 import AnalysisDetailsSection from "./components/AnalysisDetailsSection";
 import AnalysisResultCard from "./components/AnalysisResultCard";
-import FitReferenceSection from "./components/FitReferenceSection";
 import RecommendationSection from "./components/RecommendationSection";
 import ReportHeroSection from "./components/ReportHeroSection";
 import ReportSummary from "./components/ReportSummary";
@@ -314,8 +313,6 @@ const ReportPage = () => {
               strengthDescription={metadata.strengthDescription}
             />
           )}
-
-          <FitReferenceSection fitReferences={metadata.fitReferences} />
         </ContentWrapper>
       </MainContent>
 

@@ -3,7 +3,8 @@ import { useState } from "react";
 import styled from "styled-components";
 
 import checkIcon from "@/assets/check.svg";
-import img1 from "@/assets/인동장씨호정.png";
+import img1 from "@/assets/image/best_wave_man2.png";
+import img2 from "@/assets/image/worst_wave_man3.png";
 
 const SectionWrap = styled.section`
   width: 100%;
@@ -47,15 +48,16 @@ const Container = styled.div`
 const Stack = styled.div`
   position: relative;
   width: 100%;
-  height: 46rem;
+  max-width: 30.75rem;
+  aspect-ratio: 2 / 3;
   border-radius: 0.75rem;
+  justify-self: start;
 
   @media (max-width: 1024px) {
-    height: 38rem;
+    justify-self: center;
   }
 
   @media (max-width: 768px) {
-    height: 26rem;
     max-width: 24rem;
   }
 `;
@@ -65,36 +67,35 @@ const Card = styled(motion.div)`
   inset: 0;
   border-radius: 0.75rem;
   border: 0.0625rem solid ${({ theme }) => theme.colors.gray[400]};
-  background: transparent;
-  padding: 2.5rem;
+  background: ${({ theme }) => theme.colors.gray[900]};
+  padding: 2rem;
 
   @media (max-width: 768px) {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
+`;
+
+const FrontCard = styled(Card)`
+  background: ${({ theme }) => theme.colors.gray[800]};
 `;
 
 const InnerSurface = styled.div`
   width: 100%;
   height: 100%;
+  aspect-ratio: 2 / 3;
   border-radius: 0.75rem;
   background: ${({ theme }) => theme.colors.gray[800]};
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-const SurfaceText = styled.span`
-  color: ${({ theme }) => theme.colors.gray[400]};
-  font-size: ${({ theme }) => theme.typography.body.lg.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.lg.regular.fontWeight};
-  line-height: 1.5rem;
+  overflow: hidden;
 `;
 
 const Overlay = styled.div`
   position: absolute;
-  left: 2.5rem;
-  right: 2.5rem;
-  bottom: 2.5rem;
+  left: 2rem;
+  right: 2rem;
+  bottom: 2rem;
 
   background: ${({ theme }) => theme.colors.gray[900]};
   border: 0.0625rem solid ${({ theme }) => theme.colors.gray[50]};
@@ -108,9 +109,9 @@ const Overlay = styled.div`
   gap: ${({ theme }) => theme.spacing.sm};
 
   @media (max-width: 768px) {
-    left: 1.5rem;
-    right: 1.5rem;
-    bottom: 1.5rem;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 1.25rem;
     padding: ${({ theme }) => theme.spacing.md};
   }
 `;
@@ -315,7 +316,11 @@ const Jang = styled.img.attrs({
   loading: "lazy",
   decoding: "async",
 })`
-  display: flex;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
 `;
 
 export const MainAnalysisSection = () => {
@@ -327,14 +332,25 @@ export const MainAnalysisSection = () => {
         <Stack onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
           <Card animate={hovered ? "hover" : "rest"} variants={backVariants}>
             <InnerSurface>
-              <SurfaceText>Back Image</SurfaceText>
+              <Jang src={img2} />
             </InnerSurface>
+             <Overlay>
+              <OverlayTitle>Analysis Result</OverlayTitle>
+
+              <ProgressTrack>
+                <ProgressBar value={85} />
+              </ProgressTrack>
+
+              <ProgressLabels>
+                <ProgressLabel></ProgressLabel>
+                <ProgressValue>Wave (85%)</ProgressValue>
+              </ProgressLabels>
+            </Overlay>
           </Card>
 
-          <Card animate={hovered ? "hover" : "rest"} variants={frontVariants}>
+          <FrontCard animate={hovered ? "hover" : "rest"} variants={frontVariants}>
             <InnerSurface>
               <Jang src={img1} />
-              <SurfaceText>Front Image</SurfaceText>
             </InnerSurface>
 
             <Overlay>
@@ -345,11 +361,11 @@ export const MainAnalysisSection = () => {
               </ProgressTrack>
 
               <ProgressLabels>
-                <ProgressLabel>Straight</ProgressLabel>
-                <ProgressValue>Natural (85%)</ProgressValue>
+                <ProgressLabel></ProgressLabel>
+                <ProgressValue>Wave (85%)</ProgressValue>
               </ProgressLabels>
             </Overlay>
-          </Card>
+          </FrontCard>
         </Stack>
 
         <Content>

@@ -91,13 +91,6 @@ const InnerSurface = styled.div`
   overflow: hidden;
 `;
 
-const SurfaceText = styled.span`
-  color: ${({ theme }) => theme.colors.gray[400]};
-  font-size: ${({ theme }) => theme.typography.body.lg.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.lg.regular.fontWeight};
-  line-height: 1.5rem;
-`;
-
 const Overlay = styled.div`
   position: absolute;
   left: 2rem;

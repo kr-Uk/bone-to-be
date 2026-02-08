@@ -569,6 +569,11 @@ export function BodyTypeScrollShowcase() {
   );
 
   const [activeKey, setActiveKey] = useState<BodyTypeKey>("STRAIGHT");
+  const activeKeyRef = useRef<BodyTypeKey>("STRAIGHT");
+
+  useEffect(() => {
+    activeKeyRef.current = activeKey;
+  }, [activeKey]);
 
   useEffect(() => {
     const elements = sections
@@ -583,7 +588,7 @@ export function BodyTypeScrollShowcase() {
         if (visible.length === 0) return;
         const topEntry = visible.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         const key = (topEntry.target as HTMLElement).dataset.key as BodyTypeKey | undefined;
-        if (key) setActiveKey(key);
+        if (key && key !== activeKeyRef.current) setActiveKey(key);
       },
       { threshold: [0.2, 0.4, 0.6, 0.8] },
     );
@@ -594,27 +599,70 @@ export function BodyTypeScrollShowcase() {
 
   const [showNav, setShowNav] = useState(false);
   const [navMode, setNavMode] = useState<"fixed" | "absolute">("fixed");
+  const showNavRef = useRef(false);
+  const navModeRef = useRef<"fixed" | "absolute">("fixed");
+
+  useEffect(() => {
+    showNavRef.current = showNav;
+  }, [showNav]);
+
+  useEffect(() => {
+    navModeRef.current = navMode;
+  }, [navMode]);
+
   useEffect(() => {
     const first = document.getElementById("body-type-straight");
     if (!first) return;
 
-    const onScroll = () => {
+    let rafId = 0;
+    let ticking = false;
+
+    const updateNavState = () => {
       if (!wrapRef.current) {
-        setShowNav(false);
+        if (showNavRef.current) {
+          showNavRef.current = false;
+          setShowNav(false);
+        }
+        ticking = false;
         return;
       }
+
       const top = first.getBoundingClientRect().top;
       const wrapRect = wrapRef.current.getBoundingClientRect();
       const hideOffset = 24;
       const isInSection = wrapRect.top <= 0 && wrapRect.bottom > hideOffset;
       const shouldPinToBottom = wrapRect.bottom <= window.innerHeight && wrapRect.bottom > 0;
-      setShowNav(top <= 0 && isInSection);
-      setNavMode(shouldPinToBottom ? "absolute" : "fixed");
+      const nextShowNav = top <= 0 && isInSection;
+      const nextNavMode = shouldPinToBottom ? "absolute" : "fixed";
+
+      if (showNavRef.current !== nextShowNav) {
+        showNavRef.current = nextShowNav;
+        setShowNav(nextShowNav);
+      }
+
+      if (navModeRef.current !== nextNavMode) {
+        navModeRef.current = nextNavMode;
+        setNavMode(nextNavMode);
+      }
+
+      ticking = false;
     };
 
-    onScroll();
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      rafId = window.requestAnimationFrame(updateNavState);
+    };
+
+    updateNavState();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
   }, []);
 
   return (

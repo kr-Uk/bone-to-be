@@ -70,6 +70,8 @@ const Card = styled(motion.div)`
   border: 0.0625rem solid ${({ theme }) => theme.colors.gray[400]};
   background: ${({ theme }) => theme.colors.gray[900]};
   padding: 2rem;
+  will-change: transform;
+  transform: translateZ(0);
 
   @media (max-width: 768px) {
     padding: 1.25rem;
@@ -129,6 +131,7 @@ const Overlay = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(0.25rem);
+  will-change: transform;
 
   padding: ${({ theme }) => theme.spacing.lg};
   display: flex;

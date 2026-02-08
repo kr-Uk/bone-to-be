@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import checkIcon from "@/assets/check.svg";
-import img1 from "@/assets/인동장씨호정.png";
+import img1 from "@/assets/image/best_wave_man2.png";
+import img2 from "@/assets/image/worst_wave_man2.png";
 
 const SectionWrap = styled.section`
   width: 100%;
@@ -47,15 +48,17 @@ const Container = styled.div`
 const Stack = styled.div`
   position: relative;
   width: 100%;
-  height: 46rem;
+  max-width: 30.75rem;
+  aspect-ratio: 2 / 3;
   border-radius: 0.75rem;
+  justify-self: start;
 
   @media (max-width: 1024px) {
-    height: 38rem;
+    justify-self: center;
+    cursor: pointer;
   }
 
   @media (max-width: 768px) {
-    height: 26rem;
     max-width: 24rem;
   }
 `;
@@ -65,42 +68,70 @@ const Card = styled(motion.div)`
   inset: 0;
   border-radius: 0.75rem;
   border: 0.0625rem solid ${({ theme }) => theme.colors.gray[400]};
-  background: transparent;
-  padding: 2.5rem;
+  background: ${({ theme }) => theme.colors.gray[900]};
+  padding: 2rem;
+  will-change: transform;
+  transform: translateZ(0);
 
   @media (max-width: 768px) {
-    padding: 1.5rem;
+    padding: 1.25rem;
+  }
+`;
+
+const FrontCard = styled(Card)`
+  background: ${({ theme }) => theme.colors.gray[800]};
+`;
+
+const ResultBadge = styled.div<{ $variant: "best" | "worst" }>`
+  position: absolute;
+  top: 1rem;
+  right: ${({ $variant}) =>($variant === "best" ? "1.5rem" : "1.8rem")};
+  z-index: 2;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.45rem;
+  background: transparent;
+  border: 0.0625rem solid
+    ${({ $variant, theme }) => ($variant === "best" ? "#9810FA" : theme.colors.gray[500])};
+  color: ${({ $variant, theme }) => ($variant === "best" ? "#9810FA" : theme.colors.gray[500])};
+  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transform: translate(30%, -30%);
+
+  @media (max-width: 768px) {
+    top: 1.25rem;
+      right: ${({ $variant}) =>($variant === "best" ? "1.25rem" : "1.5rem")};
+    transform: translate(24%, -24%);
   }
 `;
 
 const InnerSurface = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
+  aspect-ratio: 2 / 3;
   border-radius: 0.75rem;
   background: ${({ theme }) => theme.colors.gray[800]};
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-const SurfaceText = styled.span`
-  color: ${({ theme }) => theme.colors.gray[400]};
-  font-size: ${({ theme }) => theme.typography.body.lg.regular.fontSize};
-  font-weight: ${({ theme }) => theme.typography.body.lg.regular.fontWeight};
-  line-height: 1.5rem;
+  overflow: hidden;
 `;
 
 const Overlay = styled.div`
   position: absolute;
-  left: 2.5rem;
-  right: 2.5rem;
-  bottom: 2.5rem;
+  left: 2rem;
+  right: 2rem;
+  bottom: 2rem;
 
   background: ${({ theme }) => theme.colors.gray[900]};
   border: 0.0625rem solid ${({ theme }) => theme.colors.gray[50]};
   border-radius: 0.5rem;
   box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(0.25rem);
+  will-change: transform;
 
   padding: ${({ theme }) => theme.spacing.lg};
   display: flex;
@@ -108,9 +139,9 @@ const Overlay = styled.div`
   gap: ${({ theme }) => theme.spacing.sm};
 
   @media (max-width: 768px) {
-    left: 1.5rem;
-    right: 1.5rem;
-    bottom: 1.5rem;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 1.25rem;
     padding: ${({ theme }) => theme.spacing.md};
   }
 `;
@@ -315,26 +346,78 @@ const Jang = styled.img.attrs({
   loading: "lazy",
   decoding: "async",
 })`
-  display: flex;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
 `;
 
 export const MainAnalysisSection = () => {
   const [hovered, setHovered] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1025px)");
+    const syncMode = (matches: boolean) => {
+      setIsDesktop(matches);
+      setHovered(false);
+    };
+
+    syncMode(mediaQuery.matches);
+    const onChange = (event: MediaQueryListEvent) => {
+      syncMode(event.matches);
+    };
+
+    mediaQuery.addEventListener("change", onChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", onChange);
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (!isDesktop) return;
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isDesktop) return;
+    setHovered(false);
+  };
+
+  const handleClick = () => {
+    if (isDesktop) return;
+    setHovered((prev) => !prev);
+  };
 
   return (
     <SectionWrap>
       <Container>
-        <Stack onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+        <Stack onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleClick}>
           <Card animate={hovered ? "hover" : "rest"} variants={backVariants}>
             <InnerSurface>
-              <SurfaceText>Back Image</SurfaceText>
+              <Jang src={img2} />
+              <ResultBadge $variant="worst">WORST</ResultBadge>
             </InnerSurface>
+             <Overlay>
+              <OverlayTitle>Analysis Result</OverlayTitle>
+
+              <ProgressTrack>
+                <ProgressBar value={85} />
+              </ProgressTrack>
+
+              <ProgressLabels>
+                <ProgressLabel></ProgressLabel>
+                <ProgressValue>Wave (85%)</ProgressValue>
+              </ProgressLabels>
+            </Overlay>
           </Card>
 
-          <Card animate={hovered ? "hover" : "rest"} variants={frontVariants}>
+          <FrontCard animate={hovered ? "hover" : "rest"} variants={frontVariants}>
             <InnerSurface>
               <Jang src={img1} />
-              <SurfaceText>Front Image</SurfaceText>
+              <ResultBadge $variant="best">BEST</ResultBadge>
             </InnerSurface>
 
             <Overlay>
@@ -345,11 +428,11 @@ export const MainAnalysisSection = () => {
               </ProgressTrack>
 
               <ProgressLabels>
-                <ProgressLabel>Straight</ProgressLabel>
-                <ProgressValue>Natural (85%)</ProgressValue>
+                <ProgressLabel></ProgressLabel>
+                <ProgressValue>Wave (85%)</ProgressValue>
               </ProgressLabels>
             </Overlay>
-          </Card>
+          </FrontCard>
         </Stack>
 
         <Content>

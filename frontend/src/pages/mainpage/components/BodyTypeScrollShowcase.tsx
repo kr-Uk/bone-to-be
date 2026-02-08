@@ -3,6 +3,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import styled, { css } from "styled-components";
 
+import naturalManImage from "@/assets/image/natural_man.jpg";
+import naturalWomanImage from "@/assets/image/natural_woman.jpg";
+import straightManImage from "@/assets/image/straight_man.png";
+import straightWomanImage from "@/assets/image/straight_woman.png";
+import waveManImage from "@/assets/image/wave_man.jpg";
+import waveWomanImage from "@/assets/image/wave_woman.png";
 import { useProtectedNavigate } from "@/shared/hooks/useProtectedNavigate";
 
 type BodyTypeKey = "STRAIGHT" | "WAVE" | "NATURAL";
@@ -60,7 +66,7 @@ const Frame = styled.div`
   z-index: 1;
 
   @media (min-width: 901px) {
-    padding-right: calc(${({ theme }) => theme.spacing.lg} + 6.5rem);
+    padding-right: calc(${({ theme }) => theme.spacing.lg});
   }
 
   @media (max-width: 900px) {
@@ -190,7 +196,7 @@ const GenderGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: ${({ theme }) => theme.spacing.xl};
-  width: 37rem;
+  width: 41rem;
   transform: translateX(-1.25rem);
 
   @media (max-width: 1024px) {
@@ -215,7 +221,7 @@ const GenderCard = styled.div<{ $active?: boolean }>`
   border: 0.0625rem solid ${({ theme }) => theme.colors.gray[700]};
   border-radius: 0.9rem;
   padding: 1rem;
-  height: 27.75rem;
+  height: 30.5rem;
   aspect-ratio: 2 / 3;
   display: flex;
   align-items: center;
@@ -531,6 +537,8 @@ export function BodyTypeScrollShowcase() {
         cta: "스트레이트 추천 룩 보기",
         maleLabel: "Male model",
         femaleLabel: "Female model",
+        maleImageSrc: straightManImage,
+        femaleImageSrc: straightWomanImage,
       },
       {
         key: "WAVE",
@@ -541,6 +549,8 @@ export function BodyTypeScrollShowcase() {
         cta: "웨이브 추천 룩 보기",
         maleLabel: "Male model",
         femaleLabel: "Female model",
+        maleImageSrc: waveManImage,
+        femaleImageSrc: waveWomanImage,
       },
       {
         key: "NATURAL",
@@ -551,12 +561,19 @@ export function BodyTypeScrollShowcase() {
         cta: "내추럴 추천 룩 보기",
         maleLabel: "Male model",
         femaleLabel: "Female model",
+        maleImageSrc: naturalManImage,
+        femaleImageSrc: naturalWomanImage,
       },
     ],
     [],
   );
 
   const [activeKey, setActiveKey] = useState<BodyTypeKey>("STRAIGHT");
+  const activeKeyRef = useRef<BodyTypeKey>("STRAIGHT");
+
+  useEffect(() => {
+    activeKeyRef.current = activeKey;
+  }, [activeKey]);
 
   useEffect(() => {
     const elements = sections
@@ -571,7 +588,7 @@ export function BodyTypeScrollShowcase() {
         if (visible.length === 0) return;
         const topEntry = visible.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         const key = (topEntry.target as HTMLElement).dataset.key as BodyTypeKey | undefined;
-        if (key) setActiveKey(key);
+        if (key && key !== activeKeyRef.current) setActiveKey(key);
       },
       { threshold: [0.2, 0.4, 0.6, 0.8] },
     );
@@ -582,27 +599,70 @@ export function BodyTypeScrollShowcase() {
 
   const [showNav, setShowNav] = useState(false);
   const [navMode, setNavMode] = useState<"fixed" | "absolute">("fixed");
+  const showNavRef = useRef(false);
+  const navModeRef = useRef<"fixed" | "absolute">("fixed");
+
+  useEffect(() => {
+    showNavRef.current = showNav;
+  }, [showNav]);
+
+  useEffect(() => {
+    navModeRef.current = navMode;
+  }, [navMode]);
+
   useEffect(() => {
     const first = document.getElementById("body-type-straight");
     if (!first) return;
 
-    const onScroll = () => {
+    let rafId = 0;
+    let ticking = false;
+
+    const updateNavState = () => {
       if (!wrapRef.current) {
-        setShowNav(false);
+        if (showNavRef.current) {
+          showNavRef.current = false;
+          setShowNav(false);
+        }
+        ticking = false;
         return;
       }
+
       const top = first.getBoundingClientRect().top;
       const wrapRect = wrapRef.current.getBoundingClientRect();
       const hideOffset = 24;
       const isInSection = wrapRect.top <= 0 && wrapRect.bottom > hideOffset;
       const shouldPinToBottom = wrapRect.bottom <= window.innerHeight && wrapRect.bottom > 0;
-      setShowNav(top <= 0 && isInSection);
-      setNavMode(shouldPinToBottom ? "absolute" : "fixed");
+      const nextShowNav = top <= 0 && isInSection;
+      const nextNavMode = shouldPinToBottom ? "absolute" : "fixed";
+
+      if (showNavRef.current !== nextShowNav) {
+        showNavRef.current = nextShowNav;
+        setShowNav(nextShowNav);
+      }
+
+      if (navModeRef.current !== nextNavMode) {
+        navModeRef.current = nextNavMode;
+        setNavMode(nextNavMode);
+      }
+
+      ticking = false;
     };
 
-    onScroll();
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      rafId = window.requestAnimationFrame(updateNavState);
+    };
+
+    updateNavState();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
   }, []);
 
   return (

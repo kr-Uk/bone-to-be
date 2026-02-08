@@ -54,8 +54,13 @@ const categoryItems = [
 const MainPage = () => {
   const protectedNavigate = useProtectedNavigate();
   const aosRef = useRef<{ refresh: () => void } | null>(null);
+  const aosRefreshRafRef = useRef<number | null>(null);
   const refreshAos = useCallback(() => {
-    aosRef.current?.refresh();
+    if (aosRefreshRafRef.current !== null) return;
+    aosRefreshRafRef.current = window.requestAnimationFrame(() => {
+      aosRef.current?.refresh();
+      aosRefreshRafRef.current = null;
+    });
   }, []);
 
   useEffect(() => {
@@ -98,6 +103,10 @@ const MainPage = () => {
     const cancelSchedule = scheduleInit();
     return () => {
       cancelled = true;
+      if (aosRefreshRafRef.current !== null) {
+        window.cancelAnimationFrame(aosRefreshRafRef.current);
+        aosRefreshRafRef.current = null;
+      }
       cancelSchedule?.();
     };
   }, []);

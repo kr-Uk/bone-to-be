@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import checkIcon from "@/assets/check.svg";
@@ -55,6 +55,7 @@ const Stack = styled.div`
 
   @media (max-width: 1024px) {
     justify-self: center;
+    cursor: pointer;
   }
 
   @media (max-width: 768px) {
@@ -79,7 +80,33 @@ const FrontCard = styled(Card)`
   background: ${({ theme }) => theme.colors.gray[800]};
 `;
 
+const ResultBadge = styled.div<{ $variant: "best" | "worst" }>`
+  position: absolute;
+  top: 1rem;
+  right: ${({ $variant}) =>($variant === "best" ? "1.5rem" : "1.8rem")};
+  z-index: 2;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.45rem;
+  background: transparent;
+  border: 0.0625rem solid
+    ${({ $variant, theme }) => ($variant === "best" ? "#9810FA" : theme.colors.gray[500])};
+  color: ${({ $variant, theme }) => ($variant === "best" ? "#9810FA" : theme.colors.gray[500])};
+  font-size: ${({ theme }) => theme.typography.body.sm.semibold.fontSize};
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transform: translate(30%, -30%);
+
+  @media (max-width: 768px) {
+    top: 1.25rem;
+      right: ${({ $variant}) =>($variant === "best" ? "1.25rem" : "1.5rem")};
+    transform: translate(24%, -24%);
+  }
+`;
+
 const InnerSurface = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
   aspect-ratio: 2 / 3;
@@ -325,14 +352,50 @@ const Jang = styled.img.attrs({
 
 export const MainAnalysisSection = () => {
   const [hovered, setHovered] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1025px)");
+    const syncMode = (matches: boolean) => {
+      setIsDesktop(matches);
+      setHovered(false);
+    };
+
+    syncMode(mediaQuery.matches);
+    const onChange = (event: MediaQueryListEvent) => {
+      syncMode(event.matches);
+    };
+
+    mediaQuery.addEventListener("change", onChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", onChange);
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (!isDesktop) return;
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isDesktop) return;
+    setHovered(false);
+  };
+
+  const handleClick = () => {
+    if (isDesktop) return;
+    setHovered((prev) => !prev);
+  };
 
   return (
     <SectionWrap>
       <Container>
-        <Stack onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+        <Stack onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleClick}>
           <Card animate={hovered ? "hover" : "rest"} variants={backVariants}>
             <InnerSurface>
               <Jang src={img2} />
+              <ResultBadge $variant="worst">WORST</ResultBadge>
             </InnerSurface>
              <Overlay>
               <OverlayTitle>Analysis Result</OverlayTitle>
@@ -351,6 +414,7 @@ export const MainAnalysisSection = () => {
           <FrontCard animate={hovered ? "hover" : "rest"} variants={frontVariants}>
             <InnerSurface>
               <Jang src={img1} />
+              <ResultBadge $variant="best">BEST</ResultBadge>
             </InnerSurface>
 
             <Overlay>

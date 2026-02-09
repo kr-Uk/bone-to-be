@@ -7,7 +7,6 @@ import { IoMenu } from "react-icons/io5";
 import { LuUserCog } from "react-icons/lu";
 import { MdFavoriteBorder, MdLogout, MdOutlineClose } from "react-icons/md";
 import { RiShareBoxLine } from "react-icons/ri";
-import { TbLineScan } from "react-icons/tb";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 
@@ -33,7 +32,6 @@ type NavItem = {
 
 const baseNavItems: NavItem[] = [
   { label: "ABOUT", path: "/about" },
-  { label: "FUNCTION" },
   { label: "COMMUNITY", path: "/community" },
 ];
 
@@ -104,7 +102,6 @@ export const MainHeader = () => {
     : baseNavItems;
   const navIcons: Record<string, ReactNode> = {
     ABOUT: <RiShareBoxLine size={19} strokeWidth={2.1} />,
-    FUNCTION: <TbLineScan size={19} strokeWidth={2.1} />,
     COMMUNITY: <FiUsers size={19} strokeWidth={2.1} />,
     MYPAGE: <FiUser size={19} strokeWidth={2.1} />,
     "MY PAGE": <FiUser size={19} strokeWidth={2.1} />,

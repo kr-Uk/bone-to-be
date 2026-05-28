@@ -61,7 +61,7 @@
 - Prometheus 메트릭 수집 + **Grafana 대시보드**
 - **Loki + Promtail** 로그 수집 파이프라인으로 팀 협업 디버깅 효율 개선
 
-### 3. AI 체형 인식 & 가상 착용 (협업)
+### 3. AI 체형 인식 & 가상 착용
 - WebRTC 카메라 입력 → MediaPipe Pose(2D) → 4D-Humans(3D/4D Skeleton)
 - 인식 골격 좌표 기반 의류 오버레이 / 핏 시뮬레이션
 

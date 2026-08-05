@@ -20,10 +20,33 @@
 
 | 항목 | 내용 |
 |:---:|---|
-| **기간** | 2026.01 ~ 2026.02 |
-| **형태** | 팀 프로젝트 (6인 · 백엔드 3명) |
-| **담당** | **백엔드** — 커뮤니티 API 설계·구현 · S3 파일 업로드 · 모니터링 환경 구축 |
+| **기간** | 2026.01 ~ 2026.02 (약 1개월) |
+| **형태** | SSAFY 팀 프로젝트 (6인 · 백엔드 3명) |
 | **한줄 소개** | AI 체형 인식으로 골격 유형을 판별하고 맞춤 의류를 추천·가상 착용하는 서비스 |
+
+---
+
+## 👥 담당 (김민욱)
+
+> 이 레포는 **팀 전체 결과물**입니다. 아래가 제가 맡은 범위입니다.
+
+### 맡은 것
+
+| 영역 | 내용 |
+|---|---|
+| **커뮤니티 피드 도메인** | 게시글 CRUD · 댓글 · 좋아요(게시글/댓글) · 스크랩 · 유저 검색 |
+| **게시글 상세 통합 조회** | QueryDSL `GroupBy.transform` + LEFT JOIN으로 N+1 제거 |
+| **다중 조건 피드 검색** | QueryDSL `BooleanBuilder` 동적 쿼리 |
+| **S3 이미지 업로드** | Presigned URL 발급 + 3단계 파일 라이프사이클 |
+| **애플리케이션 메트릭** | Actuator · Micrometer · Prometheus · Grafana 컨테이너 구성 |
+
+코드 위치: `backend/src/main/java/com/bonetobe/backend/post/` · `.../user/`
+
+### 맡지 않은 것
+
+- **AI 서버**(`shapy` 체형 인식 · `tryon` 가상 착용)와 **RabbitMQ 연동** — 다른 팀원
+- **Loki · Promtail 로그 수집** — 다른 팀원 (제 범위는 메트릭 수집까지)
+- **프론트엔드**(React · WebRTC) · **GitLab CI/CD 배포** — 다른 팀원
 
 ---
 
@@ -32,10 +55,10 @@
 | 분류 | 기술 |
 |:---:|---|
 | **Backend** | Java 17 · Spring Boot 3.5.9 · Spring Data JPA · QueryDSL 5.0 · Spring AMQP(RabbitMQ) |
-| **Storage** | AWS S3 (Spring Cloud AWS) — Presigned URL 업로드 |
+| **Storage** | AWS S3 — Presigned URL 업로드 |
 | **AI Server** | FastAPI · MediaPipe Pose · 4D-Humans · PyTorch |
-| **Database** | PostgreSQL |
-| **Monitoring** | Prometheus · Grafana · Loki · Promtail |
+| **Database** | PostgreSQL · Redis |
+| **Monitoring** | Prometheus · Grafana (메트릭) · Loki · Promtail (로그) |
 | **Infra** | Docker · GitLab CI/CD · AWS EC2 · Nginx |
 
 ---
@@ -45,61 +68,174 @@
 ![BoneToBe Architecture](docs/architecture.png)
 
 - **Spring Boot 메인 서버 ↔ FastAPI AI 서버**를 RabbitMQ로 분리
-- 체형 분석/Try-On 요청을 이벤트로 발행 → AI 서버가 비동기 처리 → 결과 큐로 회신
-- 도메인 주도 설계(9개 바운디드 컨텍스트) + Facade 패턴으로 트랜잭션·이벤트 조율
+- 체형 분석 / Try-On 요청을 이벤트로 발행 → AI 서버가 비동기 처리 → 결과 큐로 회신
+- AI 연산 지연을 사용자 응답 흐름에서 격리
+
+> 이벤트 기반 분리 구조는 **팀 설계**이며, RabbitMQ 연동 구현은 다른 팀원이 담당했습니다.
 
 ---
 
-## ✨ 핵심 기능
+## 🧱 피드 도메인 설계 (담당)
 
-### 1. 커뮤니티 (담당)
-- 체형별 코디 공유 피드 — 게시글 CRUD · 댓글 · 좋아요 · 스크랩
-- 스타일·성별·체형 타입 등 **다중 조건 필터링**(QueryDSL 동적 쿼리)
-- 다양한 디자인 패턴을 적용해 도메인 로직과 영속성 분리
+제 **첫 백엔드 프로젝트**였고, 여기서 처음으로 계층 분리와 의존성 역전을 적용했습니다.
 
-### 2. 모니터링 환경 구축 (담당)
-- Prometheus 메트릭 수집 + **Grafana 대시보드**
-- **Loki + Promtail** 로그 수집 파이프라인으로 팀 협업 디버깅 효율 개선
+```
+post/
+├── presentation/     PostController · ReplyController · PostLikeController · ScrapController
+├── application/      PostFacade · ReplyFacade · PostLikeFacade · ScrapFacade
+├── domain/           Post · Reply · PostLike · Scrap (엔티티)
+│                     PostService     ← PostServiceImpl
+│                     PostReader · PostStore · PostLikeReader · PostLikeStore   ← 인터페이스
+└── infrastructure/   PostReaderImpl · PostStoreImpl · PostLikeReaderImpl · ScrapStoreImpl
+                      PostJpaRepository · PostQueryDslRepositoryImpl · PostDetailQueryDslRepositoryImpl
+```
 
-### 3. AI 체형 인식 & 가상 착용
-- WebRTC 카메라 입력 → MediaPipe Pose(2D) → 4D-Humans(3D/4D Skeleton)
-- 인식 골격 좌표 기반 의류 오버레이 / 핏 시뮬레이션
+**`domain`이 `Reader` / `Store` 인터페이스를 정의하고 `infrastructure`가 구현합니다.**
+`application`의 Facade는 JPA도 QueryDSL도 모른 채 도메인 인터페이스만 봅니다.
+조회(`Reader`)와 변경(`Store`)을 나눠, 복잡한 조회가 QueryDSL로 빠져나가도 변경 로직이 오염되지 않습니다.
 
-### 4. 이벤트 기반 비동기 처리
-- RabbitMQ Manual ACK로 메시지 손실 방지
-- AI 연산 지연을 사용자 응답 흐름에서 격리 → 응답성·확장성 확보
+### API
 
----
+| 메서드 | 경로 | 설명 |
+|:---:|---|---|
+| `GET` | `/feeds` | 피드 목록 (정렬 · 페이징 · 다중 조건 필터) |
+| `GET` | `/feeds/{feedId}` | 게시글 상세 |
+| `POST` `PUT` `DELETE` | `/feeds` · `/feeds/{postId}` | 게시글 작성 · 수정 · 삭제 |
+| `POST` | `/feeds/presigned-url` | 이미지 업로드용 서명 URL 발급 |
+| `GET` | `/feeds/me` · `/feeds/liked` · `/feeds/scrapped` | 내 글 · 좋아요한 글 · 스크랩한 글 |
+| `GET` | `/feeds/users/{userId}` | 특정 유저의 글 |
 
-## 🚀 CI/CD & 배포
-
-- GitLab CI로 자동 빌드·테스트 → Docker 이미지 빌드 → EC2 배포
-- Nginx Reverse Proxy 구성
+> 지금 다시 보면 같은 컨트롤러 안에서 `{feedId}`와 `{postId}`를 섞어 썼습니다.
+> 리소스 이름을 하나로 통일했어야 했고, 이후 프로젝트에서는 **API 컨벤션을 코드보다 먼저
+> 문서로 정하고 시작**하게 된 계기가 됐습니다
+> ([DotShelf `patterns.md`](https://github.com/kr-Uk/dotshelf/blob/main/backend/docs/architecture/patterns.md)).
 
 ---
 
 ## 🔧 트러블슈팅 & 기술적 의사결정
 
 <details>
-<summary><b>S3 Presigned URL — 3단계 파일 라이프사이클 관리</b></summary>
+<summary><b>좋아요 동시성 — 버그를 기다리지 않고 첫 구현부터 막기</b></summary>
 
-> 이미지를 서버가 중계 업로드하면 트래픽·메모리 부담이 큽니다. **Presigned URL**을 발급해 클라이언트가 S3에 직접 업로드하도록 분산하되, "URL만 받고 실제 업로드는 안 한" orphan 파일 문제를 막기 위해 파일 상태를 `REQUESTED`(발급) → `UPLOADED` → `CONFIRMED`로 추적하도록 설계했습니다. 업로드 완료 처리 시 **소유자 검증**을 거쳐 권한 없는 파일 확정을 차단합니다.
+> 좋아요는 클릭 연타 · 네트워크 재시도 · 중복 전송이 일상인 엔드포인트입니다.
+> `SELECT`로 존재를 확인한 뒤 `INSERT`하는 순차 처리는 두 요청이 동시에 `SELECT`하면
+> 둘 다 "없음"으로 판단해 각자 `INSERT`를 시도하고, 중복 삽입이나 UNIQUE 위반 예외로 이어집니다.
+>
+> ```sql
+> -- 삽입: Postgres 원자 연산 + UNIQUE 제약. 반환값(1/0)으로 중복 판별
+> INSERT INTO post_like (post_id, user_id) VALUES (:postId, :userId)
+> ON CONFLICT (post_id, user_id) DO NOTHING
+>
+> -- 카운터: 원자 갱신 + 언더플로우 방지
+> UPDATE post SET like_count = like_count + :delta
+> WHERE post_id = :postId AND (like_count + :delta) >= 0
+> ```
+>
+> 방어가 실제로 동작하는지 확인하려고 **Testcontainers로 프로덕션과 같은 PostgreSQL을 띄우고**,
+> 동일 사용자의 100개 동시 요청을 `CountDownLatch`로 정확히 같은 시점에 출발시켰습니다.
+>
+> | 지표 | 결과 |
+> |---|---|
+> | 실제 삽입된 행 | **1건** |
+> | 중복 감지 | **99건** |
+> | 기타 예외 | **0건** |
+> | `like_count` | **정확히 1** |
+>
+> 애플리케이션 락 없이 DB 제약과 원자 연산만으로 정합성이 유지됨을 확인했습니다.
+>
+> **한계** — 인기 게시글에서는 카운터 행에 락이 몰립니다. 트래픽이 커지면 Redis 카운터 +
+> 주기적 flush나 샤딩 카운터가 필요합니다. 현재 규모에서는 정합성을 우선했습니다.
 </details>
 
 <details>
-<summary><b>커뮤니티 피드 집계 조회 — N+1 회피 + 외부 호출 분리</b></summary>
+<summary><b>게시글 상세 조회 N+1 — (7+K)회를 1회로</b></summary>
 
-> 게시글 목록은 각 글마다 좋아요 수·댓글 수·내가 좋아요/스크랩했는지를 함께 보여줘야 해 단순 조회 시 N+1이 발생합니다. QueryDSL projection(`PostDetailSummaryRaw`)으로 **집계값을 한 번의 쿼리로** 가져오고, 이미지 Presigned URL 생성은 DB 쿼리와 분리해 일괄 매핑(`toSummary`)하도록 구성했습니다. (DB 조회 ↔ S3 호출 책임 분리)
+> 상세 조회 하나에 Post · 작성자 · 프로필 이미지 · 게시글 이미지 · 스타일 태그 ·
+> 조회자의 좋아요/스크랩 여부까지 여러 도메인이 필요합니다. JPA 기본 방식이면 연관 관계마다
+> 개별 쿼리가 나가고, `PostStyle`에서 `Style`을 지연 로딩하면서 **스타일 개수 K만큼 쿼리가 더 붙어
+> (7+K)회로 선형 증가**합니다.
+>
+> QueryDSL `GroupBy.transform` + LEFT JOIN으로 통합 조회하고, 조회자의 좋아요/스크랩 여부는
+> `on(...)` 조건 JOIN으로 함께 처리해 **1 쿼리**로 줄였습니다.
+> 컬렉션이 곱해지며 행이 불어나는 건 `transform`의 `groupBy`로 접었습니다.
+>
+> | 지표 | 개선 전 | 개선 후 |
+> |---|:---:|:---:|
+> | DB 쿼리 수 | 9회 | **1회** (88.9% 감소) |
+> | 스타일 K개일 때 | (7+K)회 | **1회 고정** |
+>
+> **정직하게 덧붙이면** — 소량 시드 데이터 + 로컬 컨테이너에서는 통합 조회가 **오히려 느립니다**
+> (41ms → 142ms). RTT가 0에 가까워 다중 JOIN의 계획 수립과 결과 집합 전개 비용이
+> trivial 쿼리 9회보다 크기 때문입니다. 이 최적화의 이점은 응답 시간이 아니라
+> **왕복 횟수가 K와 무관하게 고정된다는 것**이고, RTT가 있고 커넥션 풀이 경합할 때 드러납니다.
+> 그래서 지표를 시간이 아니라 쿼리 수로 잡았습니다.
+>
+> 행 폭증에 대한 한계도 있습니다 — 이미지와 스타일이 각각 M·K개면 M×K행이 내려옵니다.
+> 개수가 커지면 컬렉션 하나는 별도 배치 조회로 빼는 게 맞습니다.
 </details>
 
 <details>
-<summary><b>커뮤니티 다중 조건 검색 — QueryDSL 동적 쿼리</b></summary>
+<summary><b>S3 Presigned URL — 백엔드를 파일 데이터 경로에서 빼기</b></summary>
 
-> 스타일·성별·체형 타입 등 선택적 필터 조합을 정적 SQL로 처리하면 분기가 폭발합니다. QueryDSL `BooleanBuilder`로 조건을 동적 조립해 단일 쿼리로 처리했습니다.
+> `MultipartFile` 방식은 파일 전량을 백엔드가 수신 → 임시 저장 → S3로 재전송합니다.
+> **백엔드가 파일 이동 경로에 항상 포함**되므로 파일 크기만큼 CPU · 메모리 · 대역폭을 씁니다.
+>
+> ```
+> [개선 전]  Client ──파일──> Backend ──파일──> S3
+> [개선 후]  Client <─URL── Backend
+>            Client ──────파일──────> S3
+>            Client ──메타데이터──> Backend
+> ```
+>
+> 백엔드가 처리하는 파일 데이터는 **0 bytes**, 응답은 짧은 URL 문자열뿐입니다.
+>
+> 다만 "URL만 받고 실제 업로드는 안 한" orphan 파일이 남을 수 있어, 파일 상태를
+> `REQUESTED`(발급) → `UPLOADED` → `CONFIRMED`로 추적하도록 설계했습니다.
+> 업로드 완료 처리 시 **소유자 검증**을 거쳐 권한 없는 파일 확정을 차단합니다.
+>
+> **한계** — 클라이언트가 `UPLOADED` 콜백을 보내지 않으면 S3에 참조되지 않는 객체가 남습니다.
+> S3 라이프사이클 규칙이나 정리 배치가 필요하고, 현재는 미구현입니다.
 </details>
 
 <details>
-<summary><b>모니터링 환경 구축 — Grafana + Loki</b></summary>
+<summary><b>다중 조건 피드 검색 — QueryDSL 동적 쿼리</b></summary>
 
-> 팀이 운영 중 문제를 빠르게 파악하도록 Prometheus 메트릭 + Grafana 대시보드와 Loki/Promtail 로그 수집 파이프라인을 구축해, 흩어진 컨테이너 로그를 한 곳에서 조회·디버깅할 수 있게 했습니다.
+> 스타일 · 성별 · 체형 타입 등 선택적 필터 조합을 정적 SQL로 처리하면 분기가 폭발합니다.
+> QueryDSL `BooleanBuilder`로 조건을 동적 조립해 단일 쿼리로 처리했습니다.
+> 각 필터는 값이 `null`이면 조건을 추가하지 않는 방식이라, 조합 수가 늘어도 코드는 그대로입니다.
 </details>
+
+<details>
+<summary><b>애플리케이션 메트릭 수집 환경</b></summary>
+
+> Actuator + Micrometer로 애플리케이션 메트릭(JVM · HTTP · 커넥션 풀)을 노출하고,
+> Prometheus 수집 + Grafana 시각화 컨테이너를 `docker-compose`에 추가했습니다.
+> Grafana는 `127.0.0.1`에만 바인드하고 익명 접근·회원가입을 비활성화했습니다.
+>
+> 제 범위는 **메트릭 수집까지**이며, 팀 배포 스택의 Loki · Promtail 로그 수집은 다른 팀원이 구성했습니다.
+</details>
+
+---
+
+## 🚀 실행
+
+```bash
+docker compose up -d          # PostgreSQL · Redis · RabbitMQ · Prometheus · Grafana
+cd backend && ./gradlew bootRun
+                              # Swagger: /swagger-ui.html
+```
+
+배포 스택 전체 구성은 [`exec/빌드 배포 가이드라인.md`](exec/빌드%20배포%20가이드라인.md)를 참고하세요.
+
+---
+
+## 📝 회고
+
+첫 백엔드 프로젝트였고, 남은 것은 세 가지입니다.
+
+1. **계층을 나누는 이유를 몸으로 알게 됐습니다.** 처음엔 Facade와 Service가 왜 둘 다 필요한지
+   몰랐는데, 복잡한 조회가 QueryDSL로 빠지면서 조회/변경을 나눠둔 게 실제로 도움이 됐습니다.
+2. **동시성은 나중에 고치는 게 아니라 처음부터 막는 것**이라는 걸 배웠습니다.
+   `ON CONFLICT`를 먼저 쓰고 나중에 Testcontainers로 검증한 순서가 맞았습니다.
+3. **컨벤션은 코드보다 먼저 정해야 합니다.** `{feedId}`/`{postId}`가 섞인 걸 뒤늦게 발견하고,
+   다음 팀 프로젝트에서는 아키텍처 규약 문서를 프로젝트 첫날에 작성했습니다.

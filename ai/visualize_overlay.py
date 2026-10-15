@@ -83,14 +83,14 @@ def main():
         data = json.load(f)
 
     result = data.get("result", {})
-    image_url = "REDACTED_EXPIRED_SIGNED_URL"
+    image_url = os.environ.get("IMAGE_URL") or data.get("request", {}).get("image_url")
     
     if not image_url:
-        print("No image_url found.")
+        print("No image_url found. Set IMAGE_URL or include request.image_url in response_dump.json.")
         return
 
     # 1. Load Image
-    print(f"Downloading {image_url}...")
+    print("Downloading input image...")
     orig_img = download_image(image_url)
     H, W = orig_img.shape[:2]
     print(f"📐 Original image size: {W}x{H} (width x height)")

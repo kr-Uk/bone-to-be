@@ -14,6 +14,8 @@
   <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white"/>
 </p>
 
+![Bone To Be 프로젝트 요약](docs/portfolio/overview.png)
+
 ---
 
 ## 📌 프로젝트 개요
@@ -110,11 +112,20 @@ post/
 > 지금 다시 보면 같은 컨트롤러 안에서 `{feedId}`와 `{postId}`를 섞어 썼습니다.
 > 리소스 이름을 하나로 통일했어야 했고, 이후 프로젝트에서는 **API 컨벤션을 코드보다 먼저
 > 문서로 정하고 시작**하게 된 계기가 됐습니다
-> ([DotShelf `patterns.md`](https://github.com/kr-Uk/dotshelf/blob/main/backend/docs/architecture/patterns.md)).
+> ([DotShelf `patterns.md`](https://github.com/kr-Uk/dotshelf/blob/dev/backend/docs/architecture/patterns.md)).
 
 ---
 
 ## 🔧 트러블슈팅 & 기술적 의사결정
+
+<details>
+<summary><b>검증 결과 이미지로 보기</b></summary>
+
+| 상세 조회 최적화 | 좋아요 동시성 검증 |
+|---|---|
+| ![상세 조회 최적화](docs/portfolio/query-optimization.png) | ![좋아요 동시성 검증](docs/portfolio/like-concurrency.png) |
+
+</details>
 
 <details>
 <summary><b>좋아요 동시성 — 버그를 기다리지 않고 첫 구현부터 막기</b></summary>

@@ -14,6 +14,8 @@
   <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white"/>
 </p>
 
+[화면 데모](https://bonetobe-demo.pages.dev/) · [포트폴리오 PDF](https://kr-uk.github.io/portfolio/portfolio-backend.pdf)
+
 ![Bone To Be 프로젝트 요약](docs/portfolio/overview.png)
 
 ---
@@ -22,7 +24,7 @@
 
 | 항목 | 내용 |
 |:---:|---|
-| **기간** | 2026.01 ~ 2026.02 (약 1개월) |
+| **기간** | 2026.01 ~ 2026.02 (약 2개월) |
 | **형태** | SSAFY 팀 프로젝트 (6인 · 백엔드 3명) |
 | **한줄 소개** | AI 체형 인식으로 골격 유형을 판별하고 맞춤 의류를 추천·가상 착용하는 서비스 |
 
@@ -161,7 +163,7 @@ post/
 </details>
 
 <details>
-<summary><b>게시글 상세 조회 N+1 — (7+K)회를 1회로</b></summary>
+<summary><b>게시글 상세 조회 — 개별 조회 대조 구현과 QueryDSL 통합 조회 비교</b></summary>
 
 > 상세 조회 하나에 Post · 작성자 · 프로필 이미지 · 게시글 이미지 · 스타일 태그 ·
 > 조회자의 좋아요/스크랩 여부까지 여러 도메인이 필요합니다. JPA 기본 방식이면 연관 관계마다
@@ -172,12 +174,14 @@ post/
 > `on(...)` 조건 JOIN으로 함께 처리해 **1 쿼리**로 줄였습니다.
 > 컬렉션이 곱해지며 행이 불어나는 건 `transform`의 `groupBy`로 접었습니다.
 >
-> | 지표 | 개선 전 | 개선 후 |
+> | 지표 | 개별 조회 대조 구현 | QueryDSL 통합 조회 |
 > |---|:---:|:---:|
 > | 핵심 상세 조회 쿼리 수 | 9회 | **1회** (88.9% 감소) |
 > | 파일 조회 포함 엔드포인트 DB 경로 | 9회 | **3회** |
 > | 엔드포인트 DB 경로 p50 | 19.399ms | **7.883ms** (59.4% 감소) |
 > | 스타일 K개일 때 | (7+K)회 | **핵심 조회 1회 고정** |
+>
+> 실제 상세 조회는 처음부터 QueryDSL로 구현했습니다. 왼쪽 수치는 비교를 위해 작성한 개별 조회 대조 구현입니다.
 >
 > 기존 단발 측정에서는 41ms → 142ms로 통합 조회가 더 느리게 나와 실행 순서와 초기화 비용의
 > 영향을 크게 받았습니다. 이를 보완해 PostgreSQL 15 Testcontainers에서 warm-up 30회 후
